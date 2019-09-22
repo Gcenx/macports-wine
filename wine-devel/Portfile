@@ -271,6 +271,14 @@ platform darwin {
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
 
+    if {${os.major} >= 16 && [variant_exists universal] && [variant_isset universal]} {
+        depends_lib-append                      port:libunwind
+        depends_skip_archcheck-append           libunwind
+        lappend merger_configure_args(x86_64)   --with-unwind
+        lappend merger_configure_args(i386)     --without-unwind
+    } else {
+        configure.args-append   --without-unwind
+    }
 
     if {${os.major} < 10} {
         configure.args-delete   --with-opencl
