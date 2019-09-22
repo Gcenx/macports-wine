@@ -1,0 +1,122 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+categories                  graphics
+maintainers                 openmaintainer
+license                     Apache-2
+
+if {${os.major} < 20} {
+    supported_archs             x86_64
+} else {
+    supported_archs         x86_64 arm64
+}
+
+platforms                   darwin
+description                 an implementation of Vulkan for Metal
+name                        MoltenVK
+conflicts                   CX-MoltenVK VulkanSDK
+set my_name                 MoltenVK
+
+long_description            ${name} is an implementation of the high-performance, \
+                            industry-standard Vulkan graphics and compute API, that \
+                            runs on Apple's Metal graphics framework.
+
+# MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
+version                     1.1.4
+
+subport MoltenVK {
+    name                    MoltenVK
+    conflicts               CX-MoltenVK VulkanSDK
+    set my_name             MoltenVK
+    revision                0
+    use_xz                  yes
+    extract.suffix          .tar.xz
+    distname                macos${extract.suffix}
+    distfiles               ${distname}
+
+    checksums               rmd160  2188c935ef18b1041d9fe35dffd4c93f78290bf0 \
+                            sha256  5236594dcd488b4d37192c2bf11546538d527faa77ebc7f26bf5bad45d50a957 \
+                            size    8842772
+}
+
+subport CX-MoltenVK {
+    name                    CX-MoltenVK
+    conflicts               MoltenVK VulkanSDK
+    set my_name             CX-MoltenVK
+    revision                0
+    use_xz                  yes
+    extract.suffix          .tar.xz
+    distname                macos_dxvk_patched${extract.suffix}
+    distfiles               ${distname}
+
+    checksums               rmd160  623ebca5480278b3cddf79b2b21b828fe8345af2 \
+                            sha256  70c601ba7772aa124ce5a3c35bd6dc25d4bb923c51c6282fa107d72ffc977f3c \
+                            size    8838988
+}
+
+# Avoid distfiles conflicting
+dist_subdir                 MoltenVK${version}_${revision}
+
+# Placed here so VulkanSDK can override the url
+master_sites                https://github.com/Gcenx/MoltenVK/releases/download/v${version}
+
+subport VulkanSDK {
+    name                    VulkanSDK
+    conflicts               MoltenVK CX-MoltenVK
+    set my_name             VulkanSDK
+    dist_subdir             MoltenVK
+    version                 1.2.170.0
+    distname                vulkansdk-macos-${version}
+    use_dmg                 yes
+
+    master_sites            https://sdk.lunarg.com/sdk/download/${version}/mac/
+
+    checksums               sha256  5c7264a66c57918f617d2b62dc062fd8c0a671915819b4c9420cd431e7808729 \
+                            rmd160  fff4feeea5ee769efcf5537318f1a99415b739fb \
+                            size    492395748
+}
+
+use_configure               no
+build                       {}
+
+destroot {
+    if {${subport} eq {VulkanSDK}} {
+        set output_dir ${worksrcpath}/macOS
+        file delete -force ${destroot}${prefix}/bin
+        file copy ${output_dir}/bin ${destroot}${prefix}
+        file copy ${output_dir}/Frameworks/vulkan.framework ${destroot}${frameworks_dir}
+        file copy ${worksrcpath}/MoltenVK/MoltenVK.xcframework ${destroot}${frameworks_dir}
+        file delete -force ${destroot}${prefix}/lib
+        file copy ${output_dir}/lib ${destroot}${prefix}
+        file delete -force ${destroot}${prefix}/include
+        file copy ${output_dir}/include ${destroot}${prefix}
+        file delete -force ${destroot}${prefix}/share
+        file copy ${output_dir}/share ${destroot}${prefix}
+        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json \
+                                           ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json \
+                                           ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/SPIRV-Cross/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/spirv-cross-c-shared.pc
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools-shared.pc
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools.pc
+    } else {
+        set output_dir ${workpath}/Package/Release/MoltenVK
+        file copy ${output_dir}/dylib/macOS/libMoltenVK.dylib ${destroot}${prefix}/lib
+        if {${os.major} < 20} {
+            # Turn the dylib into a single arch for lower macOS versions
+            system "cd ${destroot}${prefix}/lib && lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
+        }
+        file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
+    }
+}
+
+platform darwin {
+    if {${os.major} < 15} {
+        archive_sites
+        distfiles
+        depends_build
+        pre-fetch {
+            ui_error "${subport} @${version} requires macOS El Capitan or later"
+            return -code error "incompatible OS X version"
+        }
+    }
+}

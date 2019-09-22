@@ -1,0 +1,70 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+PortGroup               github 1.0
+PortGroup               cmake 1.1
+
+github.setup            FNA-XNA FAudio 21.07
+revision                0
+
+# zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1/gstreamer1-gst-plugins-base
+license                 LGPL-2+
+categories              audio
+platforms               darwin
+maintainers             {gcenx @gcenx} openmaintainer
+description             XAudio reimplementation
+long_description        an XAudio reimplementation that focuses solely on developing \
+                        fully accurate DirectX Audio runtime libraries for the FNA project,\
+                        including XAudio2, X3DAudio, XAPO, and XACT3.
+
+# GitHub requires TLS v1.2
+if {${os.major} > 15} {
+    github.tarball_from         archive
+} else {
+    depends_fetch-append        port:curl
+    
+    fetch {
+            # Manually download the file(s) if they don't exist
+            if {![file exists ${distpath}/${github.project}-${github.version}.tar.gz ]} {
+                system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${github.project}-${github.version}.tar.gz https://github.com/${github.author}/${github.project}/archive/refs/tags/${github.version}.tar.gz"
+            }
+    }
+}
+
+depends_build-append    port:pkgconfig
+
+depends_lib-append      port:libsdl2 \
+                        port:gstreamer1 \
+                        port:gstreamer1-gst-plugins-base
+
+checksums               rmd160  ac4d1772f5d2f248d1e97cbcabbfdf687170ecdc \
+                        sha256  30738397354d27b32e03aea648d5f8ba7ff6a63e02282b8f1533a44af2ba06b3 \
+                        size    1148544
+
+# remove set deployment target and hard-coded RPATH setting
+patchfiles              patch-faudio-remove-deployment-target.diff
+
+configure.args          -DGSTREAMER=ON \
+                        -DBUILD_UTILS=OFF \
+                        -DBUILD_TESTS=ON \
+                        -DXNASONG=ON \
+                        -DCMAKE_INSTALL_INCLUDEDIR=include/FAudio
+
+variant wma description "Use gstreamer1-gst-libav for additional xWMA support - note license changes" {
+    license                GPL-2+
+    depends_lib-append     port:gstreamer1-gst-libav
+}
+
+# This legacy compatibility variant can be removed after August 2021.
+variant ffmpeg requires wma description {Legacy compatibility variant} {}
+
+#pre-destroot {
+#    there are some utilities to consider, but the facttool segfaulted when I tried to open an audio engine
+#    they are not installed by default with the cmake install script, and other pkg systems don't install them
+#    they can be re-enabled by toggling -DBUILD_UTILS=ON, and manually installed like so if desired
+#    file copy ${workpath}/build/facttool ${destroot}${prefix}/bin/
+#}
+
+test.run                 yes
+test.cmd                 ./faudio_tests
+test.target
