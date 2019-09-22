@@ -1,0 +1,41 @@
+From bed429133624a905170555a4ae526f4d72cc94dc Mon Sep 17 00:00:00 2001
+From: Ken Thomases <ken@codeweavers.com>
+Date: Mon, 16 Sep 2019 13:42:06 -0500
+Subject: [PATCH] ntdll: Fix the Mac build with SDKs older than 10.14.
+
+Also, fix some warnings with the 10.14 SDK.
+Thanks to Gijs Vermeulen for reporting the issue.
+
+Signed-off-by: Ken Thomases <ken@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/ntdll/signal_x86_64.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/dlls/ntdll/signal_x86_64.c b/dlls/ntdll/signal_x86_64.c
+index e76e5be6aad..81ebe8c7e74 100644
+--- a/dlls/ntdll/signal_x86_64.c
++++ b/dlls/ntdll/signal_x86_64.c
+@@ -55,6 +55,9 @@
+ # define UNW_LOCAL_ONLY
+ # include <libunwind.h>
+ #endif
++#ifdef __APPLE__
++# include <mach/mach.h>
++#endif
+
+ #define NONAMELESSUNION
+ #define NONAMELESSSTRUCT
+@@ -3209,10 +3212,10 @@ static void *mac_thread_gsbase(void)
+     static int gsbase_offset = -1;
+     void *ret;
+
+-    kern_return_t kr = thread_info(mach_thread_self(), THREAD_IDENTIFIER_INFO, (thread_identifier_info_t) &tiinfo, &info_count);
++    kern_return_t kr = thread_info(mach_thread_self(), THREAD_IDENTIFIER_INFO, (thread_info_t) &tiinfo, &info_count);
+     if (kr == KERN_SUCCESS)
+     {
+-        TRACE("pthread_self() %p thread ID %lx gsbase %lx\n", pthread_self(), tiinfo.thread_id, tiinfo.thread_handle);
++        TRACE("pthread_self() %p thread ID %llx gsbase %llx\n", pthread_self(), tiinfo.thread_id, tiinfo.thread_handle);
+         return (void*)tiinfo.thread_handle;
+     }
+
