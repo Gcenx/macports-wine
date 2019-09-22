@@ -60,9 +60,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  91094a2201a50a9a21c3dd2e3e80d43a79f07741 \
-                            sha256  3bca9084354a60d202f6b8e670b130366126db0583fa27054f1f02294de7bab0 \
-                            size    21962632 \
+                            rmd160  494fcbf689605f183089a295ced125b674fc19bd \
+                            sha256  8d7ba7a0643626c0349442577a1f1b06d3062a4129aac0bd5a2b0eb15b5b1d9f \
+                            size    22205248 \
                             ${wine_gecko_distfile} \
                             rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
                             sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
@@ -72,9 +72,9 @@ checksums                   ${wine_distfile} \
                             sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
                             size    50806272 \
                             ${wine_mono_distfile} \
-                            rmd160  e42fa8c06fcd727d5c2cd635ee1bbe0bbe40ebfb \
-                            sha256  d6fa1f019bfa3c572438e4a2473ce25af1e937ed4cdcbe46554164ce25db0a76 \
-                            size    116183552
+                            rmd160  31aaf07fd8a2c5eaf7f27360f21224576962bee4 \
+                            sha256  b91f4656fca72d036934c2a9e845b2dfadad291e48e0b013fb2b08698200ff74 \
+                            size    94981632
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
