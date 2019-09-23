@@ -95,6 +95,7 @@ depends_lib                 port:fontconfig \
                             port:zlib \
                             port:libsdl2 \
                             port:mpg123 \
+                            port:libgsm \
                             port:FAudio
 
 depends_build               port:bison \
@@ -133,7 +134,7 @@ configure.args              --disable-tests \
                             --without-gphoto \
                             --with-glu \
                             --with-gnutls \
-                            --without-gsm \
+                            --with-gsm \
                             --with-gstreamer \
                             --without-hal \
                             --with-jpeg \
