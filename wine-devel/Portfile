@@ -95,7 +95,7 @@ depends_lib                 port:fontconfig \
                             port:zlib \
                             port:libsdl2 \
                             port:mpg123 \
-                            port:libunwind
+                            port:FAudio
 
 depends_build               port:bison \
                             port:flex \
