@@ -99,8 +99,7 @@ depends_lib                 port:fontconfig \
 
 depends_build               port:bison \
                             port:flex \
-                            port:pkgconfig \
-                            port:mingw-w64
+                            port:pkgconfig
 
 patchfiles                  sdk-fix.patch
 
@@ -267,6 +266,10 @@ platform darwin {
     depends_lib-delete          port:fontconfig
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
+
+    # mingw-w64 was freaking when passed +universal
+    depends_build-append                    port:mingw-w64
+    depends_skip_archcheck-append           mingw-w64
 
     if {[variant_exists universal] && [variant_isset universal]} {
         depends_lib-append                      port:libunwind
