@@ -81,6 +81,11 @@ depends_lib                 port:fontconfig \
                             port:freetype \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
+                            port:gstreamer1-gst-plugins-good \
+                            port:gphoto2 \
+                            port:kerberos5 \
+                            port:gettext \
+                            port:libusb \
                             port:jpeg \
                             port:lcms2 \
                             port:libiconv \
@@ -100,7 +105,8 @@ depends_lib                 port:fontconfig \
 
 depends_build               port:bison \
                             port:flex \
-                            port:pkgconfig
+                            port:pkgconfig \
+                            port:mingw-w64
 
 patchfiles                  sdk-fix.patch
 
@@ -129,9 +135,9 @@ configure.args              --disable-tests \
                             --without-dbus \
                             --with-fontconfig \
                             --with-freetype \
-                            --without-gettext \
+                            --with-gettext \
                             --without-gettextpo \
-                            --without-gphoto \
+                            --with-gphoto \
                             --with-glu \
                             --with-gnutls \
                             --with-gsm \
@@ -170,10 +176,7 @@ configure.args              --disable-tests \
                             --without-vulkan \
                             --without-vkd3d \
                             --without-x \
-                            --with-sdl \
-                            --without-inotify \
-                            --without-krb5 \
-                            --without-gssapi
+                            --with-sdl
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
 variant x11 {
@@ -270,10 +273,6 @@ platform darwin {
     depends_lib-delete          port:fontconfig
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
-
-    # mingw-w64 was freaking when passed +universal
-    depends_build-append                    port:mingw-w64
-    depends_skip_archcheck-append           mingw-w64
 
     if {[variant_exists universal] && [variant_isset universal]} {
         depends_lib-append                      port:libunwind
