@@ -82,6 +82,7 @@ depends_lib                 port:fontconfig \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
                             port:gstreamer1-gst-plugins-good \
+                            port:gstreamer1-gst-libav \
                             port:gphoto2 \
                             port:kerberos5 \
                             port:gettext \
@@ -128,54 +129,54 @@ configure.install           ${worksrcpath}/tools/install-sh
 configure.args              --disable-tests \
                             --without-alsa \
                             --without-capi \
-                            --with-cms \
-                            --with-coreaudio \
-                            --with-cups \
-                            --with-curses \
-                            --without-dbus \
-                            --with-fontconfig \
-                            --with-freetype \
-                            --with-gettext \
-                            --without-gettextpo \
-                            --with-gphoto \
-                            --with-glu \
-                            --with-gnutls \
-                            --with-gsm \
-                            --with-gstreamer \
                             --without-hal \
-                            --with-jpeg \
-                            --without-ldap \
-                            --with-mpg123 \
-                            --without-netapi \
-                            --with-openal \
-                            --with-opencl \
-                            --with-opengl \
-                            --without-osmesa \
                             --without-oss \
-                            --with-pcap \
-                            --with-png \
+                            --without-netapi \
+                            --without-ldap \
                             --with-pthread \
                             --without-pulse \
                             --without-sane \
-                            --with-tiff \
                             --without-udev \
                             --without-v4l2 \
+                            --without-gettextpo \
+                            --without-xshm \
+                            --without-osmesa \
+                            --without-glu \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xinerama \
                             --without-xinput \
                             --without-xinput2 \
-                            --with-xml \
                             --without-xrandr \
                             --without-xrender \
                             --without-xshape \
-                            --without-xshm \
-                            --with-xslt \
                             --without-xxf86vm \
-                            --with-zlib \
+                            --without-x \
                             --without-vulkan \
                             --without-vkd3d \
-                            --without-x \
+                            --with-cms \
+                            --with-coreaudio \
+                            --with-cups \
+                            --with-curses \
+                            --with-dbus \
+                            --with-fontconfig \
+                            --with-freetype \
+                            --with-gettext \
+                            --with-gphoto \
+                            --with-gnutls \
+                            --with-gsm \
+                            --with-gstreamer \
+                            --with-jpeg \
+                            --with-mpg123 \
+                            --with-openal \
+                            --with-opencl \
+                            --with-opengl \
+                            --with-pcap \
+                            --with-png \
+                            --with-tiff \
+                            --with-xml \
+                            --with-xslt \
+                            --with-zlib \
                             --with-sdl
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
@@ -195,10 +196,12 @@ variant x11 {
                                 port:xrender
 
     configure.args-delete       --without-osmesa \
+                                --without-glu \
                                 --without-xcomposite \
                                 --without-xcursor \
                                 --without-xinerama \
                                 --without-xinput \
+                                --without-xinput2 \
                                 --without-xrandr \
                                 --without-xrender \
                                 --without-xshape \
@@ -206,10 +209,12 @@ variant x11 {
                                 --without-x
 
     configure.args-append       --with-osmesa \
+                                --with-glu \
                                 --with-xcomposite \
                                 --with-xcursor \
                                 --with-xinerama \
                                 --with-xinput \
+                                --with-xinput2 \
                                 --with-xrandr \
                                 --with-xrender \
                                 --with-xshape \
@@ -217,6 +222,11 @@ variant x11 {
                                 --with-x \
                                 --x-include=${prefix}/include \
                                 --x-lib=${prefix}/lib
+}
+
+# ffmpeg takes forever to build plus would cuase a license change
+variant ffmpeg {
+    depends_lib-append          port:gstreamer1-gst-plugins-bad
 }
 
 if {${os.platform} ne "darwin" || (${os.major} >= 9 && ${os.major} <= 17)} {
@@ -268,20 +278,21 @@ if {[variant_isset universal]} {
     compiler.fallback-append    macports-clang-5.0
 }
 
+if {[variant_isset universal]} {
+    # The usage of an external unwind libary was added since Wine 4.15, but only for wine64
+    depends_lib-append                      port:libunwind
+    depends_skip_archcheck-append           libunwind
+    lappend merger_configure_args(x86_64)   --with-unwind
+    lappend merger_configure_args(i386)     --without-unwind
+} else {
+    configure.args-append   --without-unwind
+}
+
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
     depends_lib-delete          port:fontconfig
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
-
-    if {[variant_exists universal] && [variant_isset universal]} {
-        depends_lib-append                      port:libunwind
-        depends_skip_archcheck-append           libunwind
-        lappend merger_configure_args(x86_64)   --with-unwind
-        lappend merger_configure_args(i386)     --without-unwind
-    } else {
-        configure.args-append   --without-unwind
-    }
 
     if {${os.major} < 10} {
         configure.args-delete   --with-opencl
