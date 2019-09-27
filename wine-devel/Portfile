@@ -3,6 +3,7 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   active_variants 1.1
 
 # Please keep the wine, wine-devel and wine-crossover ports as similar as possible.
 
@@ -228,6 +229,7 @@ variant x11 {
 # ffmpeg takes forever to build plus would cause a license change
 variant ffmpeg {
     depends_lib-append          port:gstreamer1-gst-plugins-bad
+    require_active_variants     port:FAudio ffmpeg
 }
 
 configure.universal_args
