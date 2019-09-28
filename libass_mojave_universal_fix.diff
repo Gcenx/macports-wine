@@ -1,0 +1,11 @@
+--- /libass/Portfile.orig	2019-09-27 18:20:53.000000000 -0400
++++ /libass/Portfile	2019-09-27 18:20:52.000000000 -0400
+@@ -43,7 +43,7 @@
+     }
+     lappend merger_configure_args(i386)     --enable-asm
+     lappend merger_configure_args(x86_64)   --enable-asm
+-    lappend merger_configure_env(i386)      LDFLAGS='-Wl,-read_only_relocs,suppress'
++    configure.ldflags-append -Wl,-read_only_relocs,suppress
+ } else {
+     if {${build_arch} eq "i386" || ${build_arch} eq "x86_64"} {
+         depends_build-append    port:yasm
