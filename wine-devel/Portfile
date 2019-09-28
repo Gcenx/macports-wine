@@ -133,7 +133,6 @@ configure.args              --disable-tests \
                             --without-oss \
                             --without-netapi \
                             --without-ldap \
-                            --with-pthread \
                             --without-pulse \
                             --without-sane \
                             --without-udev \
@@ -154,6 +153,7 @@ configure.args              --disable-tests \
                             --without-x \
                             --without-vulkan \
                             --without-vkd3d \
+                            --with-pthread \
                             --with-cms \
                             --with-coreaudio \
                             --with-cups \
@@ -309,13 +309,13 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
-    if {${os.major} < 9} {
+    if {${os.major} < 12} {
         archive_sites
         distfiles
         depends_build
         depends_lib
         pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.5 or later."
+            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {
