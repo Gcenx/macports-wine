@@ -48,16 +48,13 @@ long_description            Wine is a compatibility layer capable of running \
 
 master_sites                http://ftp.codeweavers.com/pub/crossover/source/:winesource \
                             http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
-                            sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko \
-                            http://dl.winehq.org/wine/wine-mono/${wine_mono_version}/:winemono \
-                            sourceforge:project/wine/Wine%20Mono/${wine_mono_version}/:winemono
+                            sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko
 
 extract.only                ${wine_distfile}
 
 distfiles                   ${wine_distfile}:winesource \
                             ${wine_gecko_distfile}:winegecko \
                             ${wine_gecko64_distfile}:winegecko \
-                            ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
                             rmd160  8e2c9e4a5321685e2fe55e988f7d8927d251c12d \
