@@ -30,8 +30,6 @@ set wine_distfile           ${distname}${extract.suffix}
 set wine_gecko_version      2.47
 set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
 set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
-set wine_mono_version       4.7.5
-set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
 worksrcdir                  sources/wine
 use_parallel_build          yes
 
@@ -73,10 +71,6 @@ checksums                   ${wine_distfile} \
                             rmd160  254da21cb2503f20d065167b385b3e83ea3ab327 \
                             sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
                             size    50806272 \
-                            ${wine_mono_distfile} \
-                            rmd160  0fa40e1701cd76e5590929beb20a3cb8b2c3184d \
-                            sha256  154d68d476cdedef56f159d837fbb5eef9358a9f85de89f86c189ec4da004b3f \
-                            size    56470528
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -335,9 +329,6 @@ if {${os.endian} eq "big"} {
 post-destroot {
     xinstall -d ${destroot}${prefix}/share/wine/gecko
     xinstall -m 0644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
-
-    xinstall -d ${destroot}${prefix}/share/wine/mono
-    xinstall -m 0644 ${distpath}/${wine_mono_distfile} ${destroot}${prefix}/share/wine/mono
 
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
