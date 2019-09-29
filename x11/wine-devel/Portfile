@@ -3,6 +3,7 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   active_variants 1.1
 
 # Please keep the wine, wine-devel and wine-crossover ports as similar as possible.
 
@@ -11,35 +12,32 @@ PortGroup                   compiler_blacklist_versions 1.0
 # https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
 # see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
-# Crossover-specific bug reports are accepted at info@codeweavers.com
-
-name                        wine-crossover
-conflicts                   wine wine-devel
+name                        wine-devel
+conflicts                   wine wine-crossover
 set my_name                 wine
-version                     18.5.0
+version                     4.17
 revision                    0
+set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
-homepage                    https://www.codeweavers.com/products/more-information/source
+maintainers                 {ryandesign @ryandesign} openmaintainer
+homepage                    https://www.winehq.org
 platforms                   darwin
-distname                    crossover-sources-${version}
+use_xz                      yes
+distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 set wine_gecko_version      2.47
 set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
 set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
-set wine_mono_version       4.7.5
+set wine_mono_version       4.9.3
 set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
-worksrcdir                  sources/wine
 use_parallel_build          yes
 
-description                 A Windows API implementation (Wine 4.0 with CodeWeavers modifications for CrossOver)
+description                 A Windows API implementation
 
 long_description            Wine is a compatibility layer capable of running \
                             Windows applications. \
-                            This version contains the CodeWeavers patches for \
-                            CrossOver. \
                             Instead of simulating internal Windows logic like \
                             a virtual machine or emulator, Wine translates \
                             Windows API calls into POSIX calls on-the-fly, \
@@ -47,7 +45,9 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                http://ftp.codeweavers.com/pub/crossover/source/:winesource \
+master_sites                http://mirrors.ibiblio.org/wine/source/${branch}/:winesource \
+                            http://dl.winehq.org/wine/source/${branch}/:winesource \
+                            sourceforge:project/wine/Source/:winesource \
                             http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
                             sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko \
                             http://dl.winehq.org/wine/wine-mono/${wine_mono_version}/:winemono \
@@ -61,9 +61,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  8e2c9e4a5321685e2fe55e988f7d8927d251c12d \
-                            sha256  ca4027d6c2f6f85f9baef0e19e50682ebadcaa3e35df883089f9342c4e3384fe \
-                            size    74953768 \
+                            rmd160  14b8da957944eb8ff238eb5d53d3400ae4d3f9ad \
+                            sha256  7480a1436687486996ba6cf91fef71b70e6dafffbf2c55ea2430094c1025b2ae \
+                            size    22230616 \
                             ${wine_gecko_distfile} \
                             rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
                             sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
@@ -73,9 +73,9 @@ checksums                   ${wine_distfile} \
                             sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
                             size    50806272 \
                             ${wine_mono_distfile} \
-                            rmd160  0fa40e1701cd76e5590929beb20a3cb8b2c3184d \
-                            sha256  154d68d476cdedef56f159d837fbb5eef9358a9f85de89f86c189ec4da004b3f \
-                            size    56470528
+                            rmd160  0cd7043f6d90dde62c30c6770140d91faab92684 \
+                            sha256  7cf6b7674697f9de9cd1630ceb1de4c56adebb617fcca4d179a22cb7e1b2476d \
+                            size    95017472
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -103,14 +103,12 @@ depends_lib                 port:fontconfig \
                             port:libsdl2 \
                             port:mpg123 \
                             port:libgsm \
-                            port:FAudio \
-                            port:dbus
+                            port:FAudio
 
 depends_build               port:bison \
                             port:flex \
-                            port:pkgconfig
-
-patchfiles                  patch-include-distversion.h.diff
+                            port:pkgconfig \
+                            port:mingw-w64
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -154,12 +152,12 @@ configure.args              --disable-tests \
                             --without-x \
                             --without-vulkan \
                             --without-vkd3d \
+                            --without-dbus \
                             --with-pthread \
                             --with-cms \
                             --with-coreaudio \
                             --with-cups \
                             --with-curses \
-                            --with-dbus \
                             --with-fontconfig \
                             --with-freetype \
                             --with-gettext \
@@ -238,7 +236,7 @@ set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
-if {${build_arch} eq "x86_64" && ${os.major} < 18} {
+if {${build_arch} eq "x86_64" && ${os.major} < 19} {
     default_variants            +universal
 }
 
@@ -276,15 +274,21 @@ if {[variant_isset universal]} {
     compiler.fallback-append    macports-clang-5.0
 }
 
+if {[variant_isset universal]} {
+    # The usage of an external unwind libary was added since Wine 4.15, but only for wine64
+    depends_lib-append                      port:libunwind
+    depends_skip_archcheck-append           libunwind
+    lappend merger_configure_args(x86_64)   --with-unwind
+    lappend merger_configure_args(i386)     --without-unwind
+} else {
+    configure.args-append   --without-unwind
+}
+
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
     depends_lib-delete          port:fontconfig
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
-
-    } else {
-        configure.args-append   --without-vulkan
-    }
 
     if {${os.major} < 10} {
         configure.args-delete   --with-opencl
@@ -371,5 +375,4 @@ if {[variant_isset universal]} {
 }
 
 livecheck.type              regex
-livecheck.url               http://ftp.codeweavers.com/pub/crossover/source/
-livecheck.regex             crossover-sources-(\[0-9.\]+)\\.tar
+livecheck.regex             {"/announce/([^"]+)"}

@@ -1,0 +1,61 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem      1.0
+PortGroup       github 1.0
+PortGroup       muniversal 1.0
+
+github.setup    libass libass 0.14.0
+categories      multimedia
+license         ISC
+maintainers     nomaintainer
+platforms       darwin
+description     subtitle renderer for the ASS/SSA subtitle format
+
+long_description \
+    libass is a portable subtitle renderer for the \
+    ASS/SSA (Advanced Substation Alpha/Substation Alpha) \
+    subtitle format. It is mostly compatible with VSFilter.
+
+depends_build   port:pkgconfig
+depends_lib     port:fribidi \
+                port:fontconfig
+
+use_autoreconf  yes
+
+configure.args  --enable-fontconfig \
+                --disable-harfbuzz \
+                --disable-silent-rules
+
+checksums           rmd160  0266c988fec11e2fbaa17b63e7cdb498022b65a2 \
+                    sha256  d6c5878ecc52b0617d802bc6c2c2fdf9b9c6d1d785a5d2b46c6f20b864fa1a66
+
+if {[variant_isset universal]} {
+    # Needed by configure to correctly set the yasm build flags.
+    foreach arch ${configure.universal_archs} {
+        set merger_host($arch) "${arch}-apple-${os.platform}${os.major}.${os.minor}.0"
+    }
+
+    # I don't feel safe using a *86* match here. Who knows what other arch could
+    # be matching in the future.
+    if {"i386" in ${configure.universal_archs} ||
+        "x86_64" in ${configure.universal_archs}} {
+        depends_build-append port:yasm
+    }
+    lappend merger_configure_args(i386)     --enable-asm
+    lappend merger_configure_args(x86_64)   --enable-asm
+    configure.ldflags-append -Wl,-read_only_relocs,suppress
+} else {
+    if {${build_arch} eq "i386" || ${build_arch} eq "x86_64"} {
+        depends_build-append    port:yasm
+        configure.args-append   --enable-asm
+    }
+    if {${build_arch} eq "i386"} {
+        configure.ldflags-append -Wl,-read_only_relocs,suppress
+    }
+}
+
+post-destroot {
+    set docdir ${prefix}/share/doc/${name}
+    xinstall -d ${destroot}${docdir}
+    xinstall -m 0644 -W ${worksrcpath} COPYING Changelog README.md ${destroot}${docdir}
+}
