@@ -1,0 +1,52 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+categories                  graphics
+maintainers                 openmaintainer
+license                     Apache-2
+
+# MoltenVK would build for i386, but it uses Metal which only works on x86_64.
+supported_archs             x86_64
+platforms                   darwin
+description                 an implementation of Vulkan for Metal
+name                        MoltenVK
+set my_name                 MoltenVK
+
+long_description            ${name} is an implementation of the high-performance, \
+                            industry-standard Vulkan graphics and compute API, that \
+                            runs on Apple's Metal graphics framework.
+
+version                     1.1.121.1
+distname                    vulkansdk-macos-${version}
+set MoltenVK_distfile       ${distname}${extract.suffix}
+
+master_sites                https://sdk.lunarg.com/sdk/download/${version}/mac/${MoltenVK_distfile}
+distfiles                   ${MoltenVK_distfile}
+
+extract.only                ${MoltenVK_distfile}
+
+checksums                   rmd160  30388d603c95b6eea5228e900ceb25553119f30d \
+                            sha256  c4a177a2a08bb2496dff02cdc1730ce5893c599ae9b6b9867895970a5f987c4f \
+                            size    244630832
+
+use_configure       no
+build {}
+
+destroot {
+    set output_dir ${worksrcpath}/MoltenVK/macOS
+    copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
+    copy ${output_dir}/static/libMoltenVK.a ${destroot}${prefix}/lib
+    copy {*}[glob ${output_dir}/framework/*.framework] ${destroot}${frameworks_dir}
+}
+
+platform darwin {
+    if {${os.major} < 15} {
+        archive_sites
+        distfiles
+        depends_build
+        pre-fetch {
+            ui_error "${subport} @${version} requires macOS El Capitan or later"
+            return -code error "incompatible OS X version"
+        }
+    }
+}
