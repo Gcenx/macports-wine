@@ -150,7 +150,6 @@ configure.args              --disable-tests \
                             --without-xshape \
                             --without-xxf86vm \
                             --without-x \
-                            --without-vulkan \
                             --without-vkd3d \
                             --without-dbus \
                             --with-pthread \
@@ -236,7 +235,7 @@ set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
-if {${build_arch} eq "x86_64" && ${os.major} < 18} {
+if {${build_arch} eq "x86_64" && ${os.major} < 19} {
     default_variants            +universal
 }
 
@@ -279,6 +278,17 @@ platform darwin {
     depends_lib-delete          port:fontconfig
     configure.args-delete       --with-fontconfig
     configure.args-append       --without-fontconfig
+    
+    # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
+    # it uses Metal it only works on 64-bit
+    if {${os.major} >= 15 && [variant_isset universal]} {
+        depends_lib-append                      port:MoltenVK
+        depends_skip_archcheck-append           MoltenVK
+        lappend merger_configure_args(x86_64)   --with-vulkan
+        lappend merger_configure_args(i386)     --without-vulkan
+    } else {
+        configure.args-append   --without-vulkan
+    }
 
     if {${os.major} < 10} {
         configure.args-delete   --with-opencl
