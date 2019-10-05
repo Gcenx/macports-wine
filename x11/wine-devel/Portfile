@@ -140,7 +140,6 @@ configure.args              --disable-tests \
                             --without-inotify \
                             --without-xshm \
                             --without-osmesa \
-                            --without-glu \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xinerama \
@@ -153,6 +152,7 @@ configure.args              --disable-tests \
                             --without-x \
                             --without-vkd3d \
                             --without-dbus \
+                            --with-glu \
                             --with-pthread \
                             --with-cms \
                             --with-coreaudio \
@@ -195,7 +195,6 @@ variant x11 {
                                 port:xrender
 
     configure.args-delete       --without-osmesa \
-                                --without-glu \
                                 --without-xcomposite \
                                 --without-xcursor \
                                 --without-xinerama \
@@ -208,7 +207,6 @@ variant x11 {
                                 --without-x
 
     configure.args-append       --with-osmesa \
-                                --with-glu \
                                 --with-xcomposite \
                                 --with-xcursor \
                                 --with-xinerama \
@@ -229,6 +227,10 @@ variant ffmpeg {
     require_active_variants     port:FAudio ffmpeg
 }
 
+if {${os.platform} ne "darwin" || (${os.major} >= 9 && ${os.major} <= 18)} {
+    default_variants        +x11
+}
+
 configure.universal_args
 
 set merger_build_args(x86_64)     "dlldir=\\\\\${libdir}/wine64"
@@ -236,7 +238,7 @@ set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
-if {${build_arch} eq "x86_64" && ${os.major} < 19} {
+if {${build_arch} eq "x86_64" && ${os.major} < 18} {
     default_variants            +universal
 }
 
