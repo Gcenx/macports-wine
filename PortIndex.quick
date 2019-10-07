@@ -1,5 +1,7 @@
-moltenvk 0
-libvpx 395
-wine 1185
-wine-crossover 2576
-wine-devel 4138
+cmake 0
+cmake-devel 814
+moltenvk 1616
+libvpx 2011
+wine 2801
+wine-crossover 4192
+wine-devel 5754
