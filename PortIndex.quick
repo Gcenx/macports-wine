@@ -1,6 +1,8 @@
 cmake 0
 cmake-devel 814
 moltenvk 1616
-wine 2011
-wine-crossover 3416
-wine-devel 4992
+libomp 2011
+libomp-devel 2695
+wine 3371
+wine-crossover 4776
+wine-devel 6352
