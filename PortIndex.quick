@@ -1,7 +1,5 @@
-cmake 0
-cmake-devel 814
-moltenvk 1616
-wine 2011
-wine-crossover 3429
-wine-devel 5018
-wine-staging 6477
+moltenvk 0
+wine 395
+wine-crossover 1813
+wine-devel 3402
+wine-staging 4861
