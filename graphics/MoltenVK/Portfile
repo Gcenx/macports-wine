@@ -33,9 +33,9 @@ use_configure       no
 build {}
 
 destroot {
-    copy /MoltenVK/macOS/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
-    copy /MoltenVK/macOS/static/libMoltenVK.a ${destroot}${prefix}/lib
-    copy {*}[glob /MoltenVK/macOS/framework/*.framework] ${destroot}${frameworks_dir}
+    copy ${worksrcpath}/MoltenVK/macOS/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
+    copy ${worksrcpath}/MoltenVK/macOS/static/libMoltenVK.a ${destroot}${prefix}/lib
+    copy {*}[glob ${worksrcpath}/MoltenVK/macOS/framework/*.framework] ${destroot}${frameworks_dir}
 }
 
 platform darwin {
