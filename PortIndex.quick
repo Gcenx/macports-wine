@@ -2,5 +2,6 @@ cmake 0
 cmake-devel 814
 moltenvk 1616
 wine 2011
-wine-crossover 3416
-wine-devel 4992
+wine-crossover 3429
+wine-devel 5018
+wine-staging 6464
