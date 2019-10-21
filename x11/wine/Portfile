@@ -5,7 +5,7 @@ PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 
-# Please keep the wine, wine-devel and wine-crossover ports as similar as possible.
+# Please keep the wine, wine-devel wine-staging and wine-crossover ports as similar as possible.
 
 # When updating the version of wine, update wine_gecko and wine_mono to compatible versions
 # as referenced in the source code. Check here by replacing X.Y with the version:
@@ -13,7 +13,7 @@ PortGroup                   active_variants 1.1
 # see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
 name                        wine
-conflicts                   wine-devel wine-crossover
+conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     4.0.2
 set branch                  [lindex [split ${version} .] 0].0
