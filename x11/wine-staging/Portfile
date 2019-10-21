@@ -54,8 +54,6 @@ master_sites                http://github.com/wine-mirror/wine/archive/:winesour
 
 extract.only                ${wine_distfile} \
                             ${wine_staging_distfile}
-                            
-#extract.post_args           mv wine-${wine_distfile} ${wine_distfile}
 
 distfiles                   ${wine_distfile}:winesource \
                             ${wine_gecko_distfile}:winegecko \
@@ -117,8 +115,11 @@ depends_build               port:bison \
                             port:pkgconfig \
                             port:mingw-w64
 
-pre-configure {
+post-extract {
     system -W /bin "${workpath}/wine-staging-4.18/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"
+}
+
+pre-configure {
     if {[variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
