@@ -116,7 +116,7 @@ depends_build               port:bison \
                             port:mingw-w64
 
 post-extract {
-    system -W /bin "${workpath}/wine-staging-4.18/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"
+    system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"
 }
 
 pre-configure {
