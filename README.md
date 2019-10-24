@@ -1,7 +1,7 @@
 # macports-wine
 The current macports-ports versions of `wine`, `wine-devel`, `wine-crossover` & `MoltenVK` are not fully updated and/or are missing additinal dependencies.
 \
-The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenVK min is lowered from 10.12 to 10.11
+The provided ports are updated but are only compatible for 10.8 > [10.14](https://trac.macports.org/ticket/56991#comment:70), MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `wine` Wine-4.0.2
@@ -14,7 +14,7 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 To use this repository download/git clone into your home directory and edit then follow
 [4.6. Local Portfile Repositories](https://guide.macports.org/chunked/development.local-repositories.html)
 
-## Additinal set required for `wine-devel` & `wine-staging`
+## Additinal step required for `wine-devel` & `wine-staging`
 Before installing `wine-devel` or `wine-staging` `mingw-w64` needs to be installed
 ```
 port install mingw-w64
