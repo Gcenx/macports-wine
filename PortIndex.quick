@@ -1,5 +1,12 @@
-moltenvk 0
-wine 395
-wine-crossover 1813
-wine-devel 3402
-wine-staging 4861
+orc 0
+gstreamer1 462
+gstreamer1-gst-libav 1220
+gstreamer1-gst-plugins-bad 1769
+gstreamer1-gst-plugins-base 3011
+gstreamer1-gst-plugins-good 3843
+gstreamer1-gst-plugins-ugly 5056
+moltenvk 5945
+wine 6340
+wine-crossover 7758
+wine-devel 9347
+wine-staging 10806

@@ -9,6 +9,13 @@ The provided ports are updated but are only compatible for 10.8 > [10.14](https:
 - `wine-staging` Wine-Staging-4.18
 - `wine-crossover` Wine-CrossOver-18.5.0
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.121.1)
+- `orc` (v0.4.30_1 - Fix OrcTargetPowerPCFlags enum typedef)
+- `gstreamer1` (v1.16.1)
+- `gstreamer1-gst-libav` (v1.16.1)
+- `gstreamer1-gst-plugins-bad` (v1.16.1)
+- `gstreamer1-gst-plugins-base` (v1.16.1)
+- `gstreamer1-gst-plugins-good` (v1.16.1)
+- `gstreamer1-gst-plugins-ugly` (v1.16.1)
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
