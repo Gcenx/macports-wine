@@ -16,7 +16,7 @@ long_description            ${name} is an implementation of the high-performance
                             industry-standard Vulkan graphics and compute API, that \
                             runs on Apple's Metal graphics framework.
 
-version                     1.1.121.1
+version                     1.1.126.0
 distname                    vulkansdk-macos-${version}
 set MoltenVK_distfile       ${distname}${extract.suffix}
 
@@ -25,17 +25,18 @@ distfiles                   ${MoltenVK_distfile}
 
 extract.only                ${MoltenVK_distfile}
 
-checksums                   rmd160  30388d603c95b6eea5228e900ceb25553119f30d \
-                            sha256  c4a177a2a08bb2496dff02cdc1730ce5893c599ae9b6b9867895970a5f987c4f \
-                            size    244630832
+checksums                   rmd160  6eb0f63fdd033f4c868fc8e5efb897954e1c07a8 \
+                            sha256  1ae62cc33227cbb32eff50951011405b0afa7a220765df06a975d6334cc45db4 \
+                            size    251430772
 
 use_configure       no
 build {}
 
 destroot {
-    copy ${worksrcpath}/MoltenVK/macOS/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
-    copy ${worksrcpath}/MoltenVK/macOS/static/libMoltenVK.a ${destroot}${prefix}/lib
-    copy {*}[glob ${worksrcpath}/MoltenVK/macOS/framework/*.framework] ${destroot}${frameworks_dir}
+    set output_dir ${worksrcpath}/MoltenVK/macOS
+    copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
+    copy ${output_dir}/static/libMoltenVK.a ${destroot}${prefix}/lib
+    copy {*}[glob ${output_dir}/framework/*.framework] ${destroot}${frameworks_dir}
 }
 
 platform darwin {
