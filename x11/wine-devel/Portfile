@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
-version                     4.19
+version                     4.20
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -29,7 +29,7 @@ set wine_distfile           ${distname}${extract.suffix}
 set wine_gecko_version      2.47
 set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
 set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
-set wine_mono_version       4.9.3
+set wine_mono_version       4.9.4
 set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
 use_parallel_build          yes
 
@@ -60,9 +60,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  e82ac9b27d754b0523c93aa69cd0df9eba08b36c \
-                            sha256  361abeebb676c65acafdb2bcdc96a7fbd2a7bc8689f7bebbcca97d8ca069ce20 \
-                            size    22283616 \
+                            rmd160  bffa591d3871a6cc486bc4b5d3ef101f36c8afff \
+                            sha256  60a0060bf7ac13948d55d8637b5c1d0b3ba11ff236bf5a084b557247ca2698d3 \
+                            size    22314856 \
                             ${wine_gecko_distfile} \
                             rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
                             sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
@@ -72,9 +72,9 @@ checksums                   ${wine_distfile} \
                             sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
                             size    50806272 \
                             ${wine_mono_distfile} \
-                            rmd160  0cd7043f6d90dde62c30c6770140d91faab92684 \
-                            sha256  7cf6b7674697f9de9cd1630ceb1de4c56adebb617fcca4d179a22cb7e1b2476d \
-                            size    95017472
+                            rmd160  30b9b03b20bc6c6e204b15a92e820d3de17768c4 \
+                            sha256  51a6ff38323fcda71d70ead90c252b5eaeacec542ba737dbd1d676787b210fdd \
+                            size    95266304
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
