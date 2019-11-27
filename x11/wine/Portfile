@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     4.0.2
+version                     4.0.3
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -60,9 +60,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  3abcc7967ccebe2bb66819d9afafb48294698095 \
-                            sha256  994050692f8417ee206daafa5fc0ff810cc9392ffda1786ac0f0fb0cf74dbd74 \
-                            size    21668348 \
+                            rmd160  347dab2714272e4ef36f397cdbc52c5b95ea211a \
+                            sha256  25026d9f98a5d62583b8a02c91b1adaca9a2ff000d54095bb274045379e00fda \
+                            size    21680420 \
                             ${wine_gecko_distfile} \
                             rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
                             sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
@@ -343,9 +343,6 @@ if {${os.endian} eq "big"} {
 }
 
 post-destroot {
-    xinstall -d ${destroot}${prefix}/libexec/wine
-    file rename ${destroot}${prefix}/bin/wine ${destroot}${prefix}/libexec/wine/wine
-
     xinstall -d ${destroot}${prefix}/share/wine/gecko
     xinstall -m 644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
 
