@@ -4,9 +4,9 @@ The current macports-ports versions of `wine`, `wine-devel`, `wine-crossover` & 
 The provided ports are updated but are only compatible for 10.8 > [10.14](https://trac.macports.org/ticket/56991#comment:70), MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `wine` Wine-4.0.2
-- `wine-devel` Wine-Devel-4.20
-- `wine-staging` Wine-Staging-4.20
+- `wine` Wine-4.0.3
+- `wine-devel` Wine-Devel-4.21
+- `wine-staging` Wine-Staging-4.21
 - `wine-crossover` Wine-CrossOver-18.5.0
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.126.0)
 
