@@ -17,8 +17,7 @@ PortGroup                   active_variants 1.1
 name                        wine-crossover
 conflicts                   wine wine-devel wine-staging
 set my_name                 wine
-version                     18.5.0
-revision                    0
+version                     19.0.0
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
@@ -56,10 +55,10 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_gecko_distfile}:winegecko \
                             ${wine_gecko64_distfile}:winegecko \
 
-checksums                   ${wine_distfile} \
-                            rmd160  8e2c9e4a5321685e2fe55e988f7d8927d251c12d \
-                            sha256  ca4027d6c2f6f85f9baef0e19e50682ebadcaa3e35df883089f9342c4e3384fe \
-                            size    74953768 \
+checksums                   crossover-sources-19.0.0.tar.gz \
+                            rmd160  d1c04f21a859e8b8f82dad145d7e19e4f8226f52 \
+                            sha256  53fc80e87c6e56440edabdecf16b04b425f879f82c1abf0561ad7899cb1b4ed1 \
+                            size    135502775 \
                             ${wine_gecko_distfile} \
                             rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
                             sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
