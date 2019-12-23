@@ -1,7 +1,7 @@
 # macports-wine
 The current macports-ports versions of `wine`, `wine-devel`, `wine-crossover` & `MoltenVK` are not fully updated and/or are missing additinal dependencies.
 \
-The provided ports are updated but are only compatible for 10.8 > [10.14](https://trac.macports.org/ticket/56991#comment:70), MoltenVK minimum requirement was lowered from 10.12 to 10.11
+The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `wine` Wine-4.0.3
@@ -34,3 +34,33 @@ port install mingw-w64
 - FAudio (wma support needs +ffmpeg variant)
 - MoltenVK
 - gstreamer1-gst-plugins-bad (behind +ffmpeg variant)
+
+## How to use on macOS Mojave;
+Install macports as usual then apply the following patch
+```
+diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macports.conf
+--- /opt/local/etc/macports/macports.conf.orig	                        2019-09-27 22:22:38.000000000 -0400
++++ /opt/local/etc/macports/macports.conf	                            2019-09-27 22:22:14.000000000 -0400
+@@ -1,6 +1,9 @@
+ # MacPorts system-wide configuration file.
+ # Commented-out values are defaults unless otherwise noted.
+ 
++macosx_deployment_target     10.13
++macosx_sdk_version           10.13
++
+ # Directory under which MacPorts should install ports. This must be
+ # where MacPorts itself is installed.
+ prefix              	/opt/local
+diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl
+--- /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig     2019-09-21 16:25:24.000000000 -0700
++++ /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl          2019-09-21 16:26:20.000000000 -0700
+@@ -1477,6 +1477,7 @@
+                 append_to_environment_value configure $env_var -isysroot${configure.sdkroot}
+             }
+             append_to_environment_value configure "LDFLAGS" -Wl,-syslibroot,${configure.sdkroot}
++            append_to_environment_value configure "LDFLAGS" -Wl,-w
+         }
+ 
+         # add extra flags that are conditional on whether we're building universal
+```
+Now follow from `How to use this repository` section 
