@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
-version                     4.21
+version                     5.0-rc3
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -26,9 +26,9 @@ use_xz                      yes
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set wine_gecko_version      2.47
-set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
-set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
+set wine_gecko_version      2.47.1
+set wine_gecko_distfile     wine-gecko-${wine_gecko_version}-x86.msi
+set wine_gecko64_distfile   wine-gecko-${wine_gecko_version}-x86_64.msi
 set wine_mono_version       4.9.4
 set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
 use_parallel_build          yes
@@ -60,17 +60,17 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  6505fdf5f15034f9751f5dcd60f03ea85dc7894b \
-                            sha256  324ce14a70059835f33d293f0740b1bf0366bc6b5514548bc083d89b44744ad0 \
-                            size    22395844 \
+                            rmd160  c93fba798d309f9bc5b7e70ed1c2c19946a0b139 \
+                            sha256  8495db00c726ee2ff7dd2f96acedf4916e5bf722910ba479dcf55aa66096b97a \
+                            size    22467348 \
                             ${wine_gecko_distfile} \
-                            rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
-                            sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
-                            size    49266176 \
+                            rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
+                            sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
+                            size    50735104 \
                             ${wine_gecko64_distfile} \
-                            rmd160  254da21cb2503f20d065167b385b3e83ea3ab327 \
-                            sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
-                            size    50806272 \
+                            rmd160  0325bcc04c7e0e7653b40e0e4f068381224c6beb \
+                            sha256  69312e79a988da3e7d292382005e92bc4d4b2a52a23c34440ae3007feb57474a \
+                            size    52311040 \
                             ${wine_mono_distfile} \
                             rmd160  30b9b03b20bc6c6e204b15a92e820d3de17768c4 \
                             sha256  51a6ff38323fcda71d70ead90c252b5eaeacec542ba737dbd1d676787b210fdd \

@@ -5,8 +5,8 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 
 ## This repository contains;
 - `wine` Wine-4.0.3
-- `wine-devel` Wine-Devel-4.21
-- `wine-staging` Wine-Staging-4.21
+- `wine-devel` Wine-Devel-5.0-rc3
+- `wine-staging` Wine-Staging-5.0-rc3
 - `wine-crossover` Wine-CrossOver-19.0.0
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.130.0)
 
@@ -63,4 +63,5 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
  
          # add extra flags that are conditional on whether we're building universal
 ```
+Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
 Now follow from `How to use this repository` section 
