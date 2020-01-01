@@ -55,7 +55,7 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_gecko_distfile}:winegecko \
                             ${wine_gecko64_distfile}:winegecko \
 
-checksums                   crossover-sources-19.0.0.tar.gz \
+checksums                   ${wine_distfile} \
                             rmd160  d1c04f21a859e8b8f82dad145d7e19e4f8226f52 \
                             sha256  53fc80e87c6e56440edabdecf16b04b425f879f82c1abf0561ad7899cb1b4ed1 \
                             size    135502775 \
