@@ -65,4 +65,4 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
          # add extra flags that are conditional on whether we're building universal
 ```
 Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
-Now follow from `How to use this repository` section 
+Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section 
