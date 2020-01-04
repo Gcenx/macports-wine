@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
-version                     5.0-rc3
+version                     5.0-rc4
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -60,9 +60,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  c93fba798d309f9bc5b7e70ed1c2c19946a0b139 \
-                            sha256  8495db00c726ee2ff7dd2f96acedf4916e5bf722910ba479dcf55aa66096b97a \
-                            size    22467348 \
+                            rmd160  4bf1b7a49e01fff6bb334347363848df622e9fa5 \
+                            sha256  7a031f13768ff517371a684b9459effb36b4870e17d7f73d7dbc9b55bb71ade8 \
+                            size    22465960 \
                             ${wine_gecko_distfile} \
                             rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
                             sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
@@ -86,7 +86,6 @@ depends_lib                 port:fontconfig \
                             port:gphoto2 \
                             port:kerberos5 \
                             port:gettext \
-                            port:libusb \
                             port:jpeg \
                             port:lcms2 \
                             port:libiconv \
