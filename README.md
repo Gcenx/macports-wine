@@ -9,7 +9,6 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 - `wine-staging` Wine-Staging-5.0-rc3
 - `wine-crossover` Wine-CrossOver-19.0.0
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.130.0)
-- `FAudio` FAudio-20.01
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
