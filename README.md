@@ -5,8 +5,8 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 
 ## This repository contains;
 - `wine` Wine-4.0.3
-- `wine-devel` Wine-Devel-5.0-rc4
-- `wine-staging` Wine-Staging-5.0-rc4
+- `wine-devel` Wine-Devel-5.0-rc5
+- `wine-staging` Wine-Staging-5.0-rc5
 - `wine-crossover` Wine-CrossOver-19.0.0
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.130.0)
 
@@ -19,6 +19,13 @@ Before installing `wine-crossover`, `wine-devel` or `wine-staging` `mingw-w64` n
 ```
 port install mingw-w64
 ```
+
+## Recommended install command;
+```
+sudo su
+yes | port install wine-staging +ffmpeg +universal +x11
+```
+This will install `wine-staging` with wow64 support and all possible depedenceis, `+ffmpeg` will take a while but gives `FAudio` wma support along with gstreamer will also have wma support.
 
 ## Wine Portfile additinal dependancies;
 - gstreamer1-gst-plugins-good (codecs)

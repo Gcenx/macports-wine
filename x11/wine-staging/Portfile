@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-devel wine-crossover
 set my_name                 wine
-version                     5.0-rc4
+version                     5.0-rc5
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -61,9 +61,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  c7f4e1ccb2213e93d075df7627375f1a2116026a \
-                            sha256  9765aee3afbf6abf823e65977f8a3e7922a0d69d9f4208573cb165b4650f3427 \
-                            size    36685053 \
+                            rmd160  c9516074dfed3e943e052a9c3b0a729159ea60cd \
+                            sha256  85cbe10ab7490d972f477be8a78069e394dac76acd71f9c60da8241743e5abdb \
+                            size    36675694 \
                             ${wine_gecko_distfile} \
                             rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
                             sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
@@ -77,9 +77,9 @@ checksums                   ${wine_distfile} \
                             sha256  51a6ff38323fcda71d70ead90c252b5eaeacec542ba737dbd1d676787b210fdd \
                             size    95266304 \
                             ${wine_staging_distfile} \
-                            rmd160  ac1a8661ca836d1e86ad027a554773f70bbfe3de \
-                            sha256  06fd0cb7f45b33871a0e0fe21785aae44e4b0840681e677e7444ed6c441fb278 \
-                            size    9936166
+                            rmd160  e72482027bbfade16dcd96ccb43fef4395f6fdd3 \
+                            sha256  f6707bfd291a08cb2c6892f077e01618af40d9db0f293597e5d427946e481b7c \
+                            size    9940496
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
