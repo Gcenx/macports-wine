@@ -33,7 +33,6 @@ This will install `wine-staging` with wow64 support and all possible depedenceis
 - gphoto2
 - kerberos5
 - gettext (translations)
-- libusb
 - gnutls (encryption)
 - libsdl2 (controllers)
 - mpg123 (mp3 audio)
