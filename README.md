@@ -5,8 +5,8 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 
 ## This repository contains;
 - `wine` Wine-4.0.3
-- `wine-devel` Wine-Devel-5.0-rc5
-- `wine-staging` Wine-Staging-5.0-rc5
+- `wine-devel` Wine-Devel-5.0-rc6
+- `wine-staging` Wine-Staging-5.0-rc6
 - `wine-crossover` Wine-CrossOver-19.0.1
 - `MoltenVK` (unpacks vulkansdk-macos-1.1.130.0)
 
