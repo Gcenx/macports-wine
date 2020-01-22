@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     4.0.3
+version                     5.0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -26,10 +26,10 @@ use_xz                      yes
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set wine_gecko_version      2.47
-set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
-set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
-set wine_mono_version       4.7.5
+set wine_gecko_version      2.47.1
+set wine_gecko_distfile     wine-gecko-${wine_gecko_version}-x86.msi
+set wine_gecko64_distfile   wine-gecko-${wine_gecko_version}-x86_64.msi
+set wine_mono_version       4.9.4
 set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
 use_parallel_build          yes
 
@@ -60,21 +60,21 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  347dab2714272e4ef36f397cdbc52c5b95ea211a \
-                            sha256  25026d9f98a5d62583b8a02c91b1adaca9a2ff000d54095bb274045379e00fda \
-                            size    21680420 \
+                            rmd160  e71b6b21a2265d0558cb022b0270f2593fed9a2c \
+                            sha256  181550ba69a80b00c631f80c28ff7642264613bbecdb0c0fc04d6534866713b4 \
+                            size    22469428 \
                             ${wine_gecko_distfile} \
-                            rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
-                            sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
-                            size    49266176 \
+                            rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
+                            sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
+                            size    50735104 \
                             ${wine_gecko64_distfile} \
-                            rmd160  254da21cb2503f20d065167b385b3e83ea3ab327 \
-                            sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
-                            size    50806272 \
+                            rmd160  0325bcc04c7e0e7653b40e0e4f068381224c6beb \
+                            sha256  69312e79a988da3e7d292382005e92bc4d4b2a52a23c34440ae3007feb57474a \
+                            size    52311040 \
                             ${wine_mono_distfile} \
-                            rmd160  0fa40e1701cd76e5590929beb20a3cb8b2c3184d \
-                            sha256  154d68d476cdedef56f159d837fbb5eef9358a9f85de89f86c189ec4da004b3f \
-                            size    56470528
+                            rmd160  30b9b03b20bc6c6e204b15a92e820d3de17768c4 \
+                            sha256  51a6ff38323fcda71d70ead90c252b5eaeacec542ba737dbd1d676787b210fdd \
+                            size    95266304
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -86,7 +86,6 @@ depends_lib                 port:fontconfig \
                             port:gphoto2 \
                             port:kerberos5 \
                             port:gettext \
-                            port:libusb \
                             port:jpeg \
                             port:lcms2 \
                             port:libiconv \
@@ -107,9 +106,7 @@ depends_lib                 port:fontconfig \
 depends_build               port:bison \
                             port:flex \
                             port:pkgconfig
-                            
-patchfiles                  Freetype_Render_Fix.diff
-                            
+
 pre-configure {
     if {[variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
