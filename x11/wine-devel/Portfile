@@ -15,14 +15,13 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
-version                     5.0
+version                     5.1
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 {ryandesign @ryandesign} openmaintainer
+maintainers                 openmaintainer
 homepage                    https://www.winehq.org
 platforms                   darwin
-use_xz                      yes
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
@@ -44,9 +43,7 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                http://mirrors.ibiblio.org/wine/source/${branch}/:winesource \
-                            http://dl.winehq.org/wine/source/${branch}/:winesource \
-                            sourceforge:project/wine/Source/:winesource \
+master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
                             http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
                             sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko \
                             http://dl.winehq.org/wine/wine-mono/${wine_mono_version}/:winemono \
@@ -60,9 +57,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  e71b6b21a2265d0558cb022b0270f2593fed9a2c \
-                            sha256  181550ba69a80b00c631f80c28ff7642264613bbecdb0c0fc04d6534866713b4 \
-                            size    22469428 \
+                            rmd160  fd901cc5884c0831de408b0a46e8246dd2d64cc8 \
+                            sha256  a91f564b0b88f2030126277bc5b83abaa2e7e9e0fb06489fbe34946e71cc8f20 \
+                            size    36732892 \
                             ${wine_gecko_distfile} \
                             rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
                             sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
@@ -113,15 +110,14 @@ pre-configure {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
-
-        configure.cmd ${worksrcpath}/configure
+        configure.cmd ${workpath}/wine-wine-${version}/configure
     }
 }
 
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # http://bugs.winehq.org/show_bug.cgi?id=35310
-configure.install           ${worksrcpath}/tools/install-sh
+configure.install           ${workpath}/wine-wine-${version}/tools/install-sh
 
 configure.args              --disable-tests \
                             --without-alsa \
@@ -360,7 +356,7 @@ post-destroot {
 
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
-    xinstall -m 0644 -W ${worksrcpath} \
+    xinstall -m 0644 -W ${workpath}/wine-wine-${version} \
         ANNOUNCE \
         AUTHORS \
         COPYING.LIB \
