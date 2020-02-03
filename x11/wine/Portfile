@@ -19,10 +19,9 @@ version                     5.0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 {ryandesign @ryandesign} openmaintainer
+maintainers                 openmaintainer
 homepage                    https://www.winehq.org
 platforms                   darwin
-use_xz                      yes
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
@@ -44,9 +43,7 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                http://mirrors.ibiblio.org/wine/source/${branch}/:winesource \
-                            http://dl.winehq.org/wine/source/${branch}/:winesource \
-                            sourceforge:project/wine/Source/:winesource \
+master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
                             http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
                             sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko \
                             http://dl.winehq.org/wine/wine-mono/${wine_mono_version}/:winemono \
@@ -60,9 +57,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_mono_distfile}:winemono
 
 checksums                   ${wine_distfile} \
-                            rmd160  e71b6b21a2265d0558cb022b0270f2593fed9a2c \
-                            sha256  181550ba69a80b00c631f80c28ff7642264613bbecdb0c0fc04d6534866713b4 \
-                            size    22469428 \
+                            rmd160  b4816f2fbcbfef1a043dd7eaf3055804767093cf \
+                            sha256  533ee5966be7e13c8cbebf8b8d496bb5692287e1a455683a560887bb63d60b7e \
+                            size    36678531 \
                             ${wine_gecko_distfile} \
                             rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
                             sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
@@ -105,22 +102,22 @@ depends_lib                 port:fontconfig \
 
 depends_build               port:bison \
                             port:flex \
-                            port:pkgconfig
+                            port:pkgconfig \
+                            port:mingw-w64
 
 pre-configure {
     if {[variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
-
-        configure.cmd ${worksrcpath}/configure
+        configure.cmd ${workpath}/wine-wine-${version}/configure
     }
 }
 
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # http://bugs.winehq.org/show_bug.cgi?id=35310
-configure.install           ${worksrcpath}/tools/install-sh
+configure.install           ${workpath}/wine-wine-${version}/tools/install-sh
 
 configure.args              --disable-tests \
                             --without-alsa \
@@ -134,6 +131,7 @@ configure.args              --disable-tests \
                             --without-udev \
                             --without-v4l2 \
                             --without-gettextpo \
+                            --without-inotify \
                             --without-xshm \
                             --without-osmesa \
                             --without-xcomposite \
@@ -272,6 +270,16 @@ if {[variant_isset universal]} {
     compiler.fallback-append    macports-clang-5.0
 }
 
+if {[variant_isset universal]} {
+    # The usage of an external unwind libary was added since Wine 4.15, but only for wine64
+    depends_lib-append                      port:libunwind
+    depends_skip_archcheck-append           libunwind
+    lappend merger_configure_args(x86_64)   --with-unwind
+    lappend merger_configure_args(i386)     --without-unwind
+} else {
+    configure.args-append   --without-unwind
+}
+
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
     depends_lib-delete          port:fontconfig
@@ -341,14 +349,14 @@ if {${os.endian} eq "big"} {
 
 post-destroot {
     xinstall -d ${destroot}${prefix}/share/wine/gecko
-    xinstall -m 644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
+    xinstall -m 0644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
 
     xinstall -d ${destroot}${prefix}/share/wine/mono
-    xinstall -m 644 ${distpath}/${wine_mono_distfile} ${destroot}${prefix}/share/wine/mono
+    xinstall -m 0644 ${distpath}/${wine_mono_distfile} ${destroot}${prefix}/share/wine/mono
 
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
-    xinstall -m 644 -W ${worksrcpath} \
+    xinstall -m 0644 -W ${workpath}/wine-wine-${version} \
         ANNOUNCE \
         AUTHORS \
         COPYING.LIB \
@@ -374,4 +382,4 @@ if {[variant_isset universal]} {
 }
 
 livecheck.type              regex
-livecheck.regex             {"/announce/([0-9]+\.0(\.[0-9]+)*)"}
+livecheck.regex             {"/announce/([^"]+)"}
