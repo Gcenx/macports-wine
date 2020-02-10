@@ -1,14 +1,16 @@
 # macports-wine
-The current macports-ports versions of `wine`, `wine-devel`, `wine-crossover` & `MoltenVK` are not fully updated and/or are missing additinal dependencies.
+The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 \
 The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `wine` Wine-5.0
-- `wine-devel` Wine-Devel-5.1
-- `wine-staging` Wine-Staging-5.1
-- `wine-crossover` Wine-CrossOver-19.0.1
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.131.1)
+- `wine` Wine-5.0
+- `wine-crossover` Wine-CrossOver-19.0.1
+- `wine-devel` Wine-Devel-5.1
+- `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
+- `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
+- `wine-staging` Wine-Staging-5.1
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -39,6 +41,9 @@ This will install `wine-staging` with wow64 support and all possible depedenceis
 - FAudio (wma support needs +ffmpeg variant)
 - MoltenVK
 - gstreamer1-gst-plugins-bad (behind +ffmpeg variant)
+
+## `Wine-Mono` & `Wine-Gecko`?
+From Wine-5.0 it's possbile to have a shared version of both gecko & mono, instead of installing into each prefix the shared versions will be used.
 
 ## How to use on macOS Mojave;
 Install macports as usual then apply the following patch

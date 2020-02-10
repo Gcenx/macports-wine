@@ -334,9 +334,23 @@ if {${os.endian} eq "big"} {
 }
 
 post-destroot {
+    # Add custom tool for easy launching explorer
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
+    # Add the missing default tools
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/msiexec
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/notepad
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/regedit
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/regsvr32
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/wineboot
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winecfg
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/wineconsole
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winedbg
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winefile
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winemine
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winepath
+    # CrossOver19.0.1 is based on Wine-4.12.1 this version doesn't use a shared gecko
     xinstall -d ${destroot}${prefix}/share/wine/gecko
     xinstall -m 0644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
-
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \

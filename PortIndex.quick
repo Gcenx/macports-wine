@@ -1,5 +1,7 @@
 moltenvk 0
 wine 395
-wine-crossover 1776
-wine-devel 3353
-wine-staging 4746
+wine-crossover 1807
+wine-devel 3384
+wine-gecko 4808
+wine-mono 5137
+wine-staging 5651

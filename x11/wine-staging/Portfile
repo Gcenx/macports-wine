@@ -26,11 +26,6 @@ distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 set wine_staging_distfile   v${version}${extract.suffix}
-set wine_gecko_version      2.47.1
-set wine_gecko_distfile     wine-gecko-${wine_gecko_version}-x86.msi
-set wine_gecko64_distfile   wine-gecko-${wine_gecko_version}-x86_64.msi
-set wine_mono_version       4.9.4
-set wine_mono_distfile      wine-mono-${wine_mono_version}.msi
 use_parallel_build          yes
 
 description                 A Windows API implementation
@@ -45,37 +40,18 @@ long_description            Wine is a compatibility layer capable of running \
                             integrate Windows applications into your desktop.
 
 master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
-                            http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
-                            sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko \
-                            http://dl.winehq.org/wine/wine-mono/${wine_mono_version}/:winemono \
-                            sourceforge:project/wine/Wine%20Mono/${wine_mono_version}/:winemono \
                             https://github.com/wine-staging/wine-staging/archive/:stagingsource
 
 extract.only                ${wine_distfile} \
                             ${wine_staging_distfile}
 
 distfiles                   ${wine_distfile}:winesource \
-                            ${wine_gecko_distfile}:winegecko \
-                            ${wine_gecko64_distfile}:winegecko \
-                            ${wine_mono_distfile}:winemono \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
                             rmd160  fd901cc5884c0831de408b0a46e8246dd2d64cc8 \
                             sha256  a91f564b0b88f2030126277bc5b83abaa2e7e9e0fb06489fbe34946e71cc8f20 \
                             size    36732892 \
-                            ${wine_gecko_distfile} \
-                            rmd160  b15d7a97bb601604a469360054d7680ea1a6b9c6 \
-                            sha256  f00b0e2892404827e8ce6811dedfc25ae699a09955bb3df1bbb31753e51da051 \
-                            size    50735104 \
-                            ${wine_gecko64_distfile} \
-                            rmd160  0325bcc04c7e0e7653b40e0e4f068381224c6beb \
-                            sha256  69312e79a988da3e7d292382005e92bc4d4b2a52a23c34440ae3007feb57474a \
-                            size    52311040 \
-                            ${wine_mono_distfile} \
-                            rmd160  30b9b03b20bc6c6e204b15a92e820d3de17768c4 \
-                            sha256  51a6ff38323fcda71d70ead90c252b5eaeacec542ba737dbd1d676787b210fdd \
-                            size    95266304 \
                             ${wine_staging_distfile} \
                             rmd160  7efdba4dc5ec3d62ccacc1630f4cebff64050b44 \
                             sha256  810f9841cdd1645cad615a7640765159036ac5f79b5f4bfe9c71ede920d9d91f \
@@ -106,7 +82,9 @@ depends_lib                 port:fontconfig \
                             port:libsdl2 \
                             port:mpg123 \
                             port:libgsm \
-                            port:FAudio
+                            port:FAudio \
+                            port:wine-mono \
+                            port:wine-gecko
 
 depends_build               port:bison \
                             port:flex \
@@ -360,12 +338,8 @@ if {${os.endian} eq "big"} {
 }
 
 post-destroot {
-    xinstall -d ${destroot}${prefix}/share/wine/gecko
-    xinstall -m 0644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
-
-    xinstall -d ${destroot}${prefix}/share/wine/mono
-    xinstall -m 0644 ${distpath}/${wine_mono_distfile} ${destroot}${prefix}/share/wine/mono
-
+    # Add custom tool for easy launching explorer
+    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${workpath}/wine-wine-${version} \
