@@ -14,7 +14,7 @@ The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenV
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
-[4.6. Local Portfile Repositories](https://guide.macports.org/chunked/development.local-repositories.html)
+[4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)
 
 ## Prerequisite;
 ```
