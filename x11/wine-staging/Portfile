@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-devel wine-crossover
 set my_name                 wine
-version                     5.2
+version                     5.3
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -49,13 +49,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  f41815d2fec0b6da75581676260a2f6a9f427179 \
-                            sha256  08153c93a2e227933749fa6c4c6e389b2d01b88c2c494b11e017122894197581 \
-                            size    37494548 \
+                            rmd160  5cb5fff385b22ee0e950c2ae2531d5bf4760482e \
+                            sha256  60caa9c706366cd6f5d7392af3b7bbde86483fe239d08736f2583b0b622c7173 \
+                            size    37648152 \
                             ${wine_staging_distfile} \
-                            rmd160  52f96cd9a720ae2a643d8ab308573733364ae7c4 \
-                            sha256  b0a477df57098cca41c78b18119a5172f6704587d8eae8816508ad70f46229e3 \
-                            size    9898002
+                            rmd160  3d671dc859d785efa3cc9701d4bb3f07bc68497c \
+                            sha256  2d50b5abb51d0a9eea60768a5e1ee50705b94a295cfa7671ce35f3406d4bbc06 \
+                            size    9904213
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -211,7 +211,7 @@ variant ffmpeg {
     require_active_variants     port:FAudio ffmpeg
 }
 
-if {${os.platform} ne "darwin" || (${os.major} >= 9 && ${os.major} <= 18)} {
+if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
@@ -222,12 +222,21 @@ set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
+if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
+    macosx_deployment_target    "10.14"
+    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
+    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+}
+
 if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
     default_variants            +universal
 }
 
 if {[variant_isset universal]} {
     supported_archs         i386 x86_64
+} elseif {${build_arch} eq "x86_64" && ${os.major} >= 19} {
+    supported_archs         x86_64
 } else {
     supported_archs         i386
 }
@@ -315,14 +324,8 @@ platform darwin {
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {
-        archive_sites
-        distfiles
-        depends_build
-        depends_lib
-        pre-fetch {
-            ui_error "${name} cannot be built on macOS 10.15 or later."
-            return -code error "incompatible macOS version"
-        }
+        notes-append {
+        Only wine64 will be avaliable on macOS 10.15 and above}
     }
 }
 
