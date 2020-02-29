@@ -26,7 +26,7 @@ port install mingw-w64
 ## Recommended install command;
 ```
 sudo su
-yes | port install wine-staging +ffmpeg +universal +x11
+yes | port install wine-staging +ffmpeg
 ```
 This will install `wine-staging` with wow64 support and all possible depedenceis, `+ffmpeg` will take a while but gives `FAudio` wma support along with gstreamer will also have wma support.
 
