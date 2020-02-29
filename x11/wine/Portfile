@@ -199,7 +199,7 @@ variant ffmpeg {
     require_active_variants     port:FAudio ffmpeg
 }
 
-if {${os.platform} ne "darwin" || (${os.major} >= 9 && ${os.major} <= 18)} {
+if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
@@ -216,6 +216,8 @@ if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
 
 if {[variant_isset universal]} {
     supported_archs         i386 x86_64
+} elseif {${build_arch} eq "x86_64" && ${os.major} >= 19} {
+    supported_archs         x86_64
 } else {
     supported_archs         i386
 }
@@ -303,14 +305,8 @@ platform darwin {
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {
-        archive_sites
-        distfiles
-        depends_build
-        depends_lib
-        pre-fetch {
-            ui_error "${name} cannot be built on macOS 10.15 or later."
-            return -code error "incompatible macOS version"
-        }
+        notes-append {
+        Only wine64 will be avaliable on macOS 10.15 and above}
     }
 }
 

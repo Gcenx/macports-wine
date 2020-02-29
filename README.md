@@ -1,16 +1,18 @@
 # macports-wine
 The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 \
-The provided ports are updated but are only compatible for 10.8 > 10.14, MoltenVK minimum requirement was lowered from 10.12 to 10.11
+The provided ports are updated but are only compatible for 10.8 > 10.15*, MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.131.1)
 - `wine` Wine-5.0
 - `wine-crossover` Wine-CrossOver-19.0.1
-- `wine-devel` Wine-Devel-5.2
+- `wine-devel` Wine-Devel-5.3
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
-- `wine-staging` Wine-Staging-5.2
+- `wine-staging` Wine-Staging-5.3
+- `i686-w64-mingw32-binutils` BugFix - Stops conflicting files
+- `x86_64-w64-mingw32-binutils` BugFix - Stops conflicting files
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -75,3 +77,28 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
 ```
 Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section 
+
+## How to use on macOS Catalina;
+Due to some bugged prebuilt packages its best to force build eveything from source to avoid issues. `wine`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches
+
+#### Edit the following file `/opt/local/etc/macports/macports.conf`
+
+```
+# When MacPorts should build ports from source.
+# - ifneeded: Download binary archives if available; build from source
+#   otherwise.
+# - always: Always build from source; never try fetching archives.
+# - never: Never build from source; try fetching archives and abort if
+#   unavailable.
+#buildfromsource    ifneeded
+```
+Change to;
+```
+# When MacPorts should build ports from source.
+# - ifneeded: Download binary archives if available; build from source
+#   otherwise.
+# - always: Always build from source; never try fetching archives.
+# - never: Never build from source; try fetching archives and abort if
+#   unavailable.
+buildfromsource         always
+```
