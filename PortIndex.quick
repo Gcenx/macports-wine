@@ -2,8 +2,8 @@ i686-w64-mingw32-binutils 0
 x86_64-w64-mingw32-binutils 545
 moltenvk 1100
 wine 1495
-wine-crossover 2907
-wine-devel 4484
-wine-gecko 5908
-wine-mono 6237
-wine-staging 6751
+wine-crossover 2662
+wine-devel 4025
+wine-gecko 5204
+wine-mono 5533
+wine-staging 6047

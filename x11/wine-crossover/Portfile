@@ -18,7 +18,7 @@ name                        wine-crossover
 conflicts                   wine wine-devel wine-staging
 set my_name                 wine
 version                     19.0.1
-revision                    1
+revision                    2
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
@@ -27,9 +27,6 @@ platforms                   darwin
 distname                    crossover-sources-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set wine_gecko_version      2.47
-set wine_gecko_distfile     wine_gecko-${wine_gecko_version}-x86.msi
-set wine_gecko64_distfile   wine_gecko-${wine_gecko_version}-x86_64.msi
 worksrcdir                  sources/wine
 use_parallel_build          yes
 
@@ -46,28 +43,16 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                http://ftp.codeweavers.com/pub/crossover/source/:winesource \
-                            http://dl.winehq.org/wine/wine-gecko/${wine_gecko_version}/:winegecko \
-                            sourceforge:project/wine/Wine%20Gecko/${wine_gecko_version}/:winegecko
+master_sites                http://ftp.codeweavers.com/pub/crossover/source/:winesource
 
 extract.only                ${wine_distfile}
 
 distfiles                   ${wine_distfile}:winesource \
-                            ${wine_gecko_distfile}:winegecko \
-                            ${wine_gecko64_distfile}:winegecko \
 
 checksums                   ${wine_distfile} \
                             rmd160  0ea82e03f3b6e3d780362958c8c21bf6bb31df7b \
                             sha256  bff1d80c4a4feb0d0624322ab2af75a01f4f29fa14f682cafac4219071b31e46 \
-                            size    135505841 \
-                            ${wine_gecko_distfile} \
-                            rmd160  abf7cc78b49dd0623bc8fe87ae0e32bb8694e13d \
-                            sha256  3b8a361f5d63952d21caafd74e849a774994822fb96c5922b01d554f1677643a \
-                            size    49266176 \
-                            ${wine_gecko64_distfile} \
-                            rmd160  254da21cb2503f20d065167b385b3e83ea3ab327 \
-                            sha256  c565ea25e50ea953937d4ab01299e4306da4a556946327d253ea9b28357e4a7d \
-                            size    50806272 \
+                            size    135505841
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -94,20 +79,25 @@ depends_lib                 port:fontconfig \
                             port:libsdl2 \
                             port:mpg123 \
                             port:libgsm \
-                            port:FAudio
+                            port:FAudio \
+                            port:wine-gecko
 
 depends_build               port:bison \
                             port:flex \
                             port:pkgconfig
 
-patchfiles                  patch-include-distversion.h.diff
+patchfiles                  patch-include-distversion.h.diff \
+                            0001-mshtml-Refactor-Gecko-loading-code.diff \
+                            0002-mshtml-Support-loading-Gecko-from-global-location.diff \
+                            0003-mshtml-Update-to-Wine-Gecko2.47.1.diff
 
 pre-configure {
     if {[variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
-
+        configure.cmd ${worksrcpath}/configure
+    } else {
         configure.cmd ${worksrcpath}/configure
     }
 }
@@ -276,11 +266,21 @@ if {[variant_isset universal]} {
     compiler.fallback-append    macports-clang-5.0
 }
 
+if {[variant_isset universal]} {
+    # The usage of an external unwind libary was added since Wine 4.15, but only for wine64
+    depends_lib-append                      port:libunwind
+    depends_skip_archcheck-append           libunwind
+    lappend merger_configure_args(x86_64)   --with-unwind
+    lappend merger_configure_args(i386)     --without-unwind
+} else {
+    configure.args-append                   --without-unwind
+}
+
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
-    depends_lib-delete          port:fontconfig
-    configure.args-delete       --with-fontconfig
-    configure.args-append       --without-fontconfig
+    depends_lib-delete                          port:fontconfig
+    configure.args-delete                       --with-fontconfig
+    configure.args-append                       --without-fontconfig
     
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
@@ -289,12 +289,16 @@ platform darwin {
         depends_skip_archcheck-append           MoltenVK
         lappend merger_configure_args(x86_64)   --with-vulkan
         lappend merger_configure_args(i386)     --without-vulkan
+    } elseif {${os.major} >= 19} {
+        depends_lib-append                      port:MoltenVK
+        depends_skip_archcheck-append           MoltenVK
+        configure.args-append                   --with-vulkan
     } else {
-        configure.args-append   --without-vulkan
+        configure.args-append                   --without-vulkan
     }
 
     if {${os.major} < 10} {
-        configure.args-delete   --with-opencl
+        configure.args-delete                   --with-opencl
     }
 
     notes {
@@ -339,22 +343,19 @@ if {${os.endian} eq "big"} {
 
 post-destroot {
     # Add custom tool for easy launching explorer
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
     # Add the missing default tools
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/msiexec
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/notepad
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/regedit
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/regsvr32
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/wineboot
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winecfg
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/wineconsole
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winedbg
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winefile
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winemine
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/winepath
-    # CrossOver19.0.1 is based on Wine-4.12.1 this version doesn't use a shared gecko
-    xinstall -d ${destroot}${prefix}/share/wine/gecko
-    xinstall -m 0644 -W ${distpath} ${wine_gecko_distfile} ${wine_gecko64_distfile} ${destroot}${prefix}/share/wine/gecko
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/msiexec
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/notepad
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/regedit
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/regsvr32
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/wineboot
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winecfg
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/wineconsole
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winedbg
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winefile
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winemine
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winepath
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
