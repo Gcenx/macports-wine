@@ -16,6 +16,7 @@ name                        wine
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     5.0
+revision                    1
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -25,6 +26,7 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
+worksrcdir                  wine-wine-${version}
 use_parallel_build          yes
 
 description                 A Windows API implementation
@@ -88,14 +90,16 @@ pre-configure {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
-        configure.cmd ${workpath}/wine-wine-${version}/configure
+        configure.cmd ${workpath}/${worksrcdir}/configure
+    } else {
+    configure.cmd ${workpath}/${worksrcdir}/configure
     }
 }
 
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # http://bugs.winehq.org/show_bug.cgi?id=35310
-configure.install           ${workpath}/wine-wine-${version}/tools/install-sh
+configure.install           ${workpath}/${worksrcdir}/tools/install-sh
 
 configure.args              --disable-tests \
                             --without-alsa \
@@ -210,6 +214,13 @@ set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
+if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
+    macosx_deployment_target    "10.14"
+    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
+    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+}
+
 if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
     default_variants            +universal
 }
@@ -257,14 +268,14 @@ if {[variant_isset universal]} {
     lappend merger_configure_args(x86_64)   --with-unwind
     lappend merger_configure_args(i386)     --without-unwind
 } else {
-    configure.args-append   --without-unwind
+    configure.args-append                   --without-unwind
 }
 
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
-    depends_lib-delete          port:fontconfig
-    configure.args-delete       --with-fontconfig
-    configure.args-append       --without-fontconfig
+    depends_lib-delete                          port:fontconfig
+    configure.args-delete                       --with-fontconfig
+    configure.args-append                       --without-fontconfig
     
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
@@ -273,12 +284,16 @@ platform darwin {
         depends_skip_archcheck-append           MoltenVK
         lappend merger_configure_args(x86_64)   --with-vulkan
         lappend merger_configure_args(i386)     --without-vulkan
+    } elseif {${os.major} >= 19} {
+        depends_lib-append                      port:MoltenVK
+        depends_skip_archcheck-append           MoltenVK
+        configure.args-append                   --with-vulkan
     } else {
-        configure.args-append   --without-vulkan
+        configure.args-append                   --without-vulkan
     }
 
     if {${os.major} < 10} {
-        configure.args-delete   --with-opencl
+        configure.args-delete                   --with-opencl
     }
 
     notes {
@@ -323,10 +338,10 @@ if {${os.endian} eq "big"} {
 
 post-destroot {
     # Add custom tool for easy launching explorer
-    xinstall ${workpath}/wine-wine-${version}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
+    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
-    xinstall -m 0644 -W ${workpath}/wine-wine-${version} \
+    xinstall -m 0644 -W ${workpath}/${worksrcdir} \
         ANNOUNCE \
         AUTHORS \
         COPYING.LIB \
