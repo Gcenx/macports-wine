@@ -16,7 +16,7 @@ name                        wine-staging
 conflicts                   wine wine-devel wine-crossover
 set my_name                 wine
 version                     5.3
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -92,6 +92,8 @@ depends_build               port:bison \
                             port:flex \
                             port:pkgconfig \
                             port:mingw-w64
+
+patchfiles                  ntdll-Delay-NFC-table-loading-on-macOS.diff
 
 post-extract {
     system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"

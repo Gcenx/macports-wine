@@ -16,7 +16,7 @@ name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
 version                     5.3
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -84,6 +84,8 @@ depends_build               port:bison \
                             port:flex \
                             port:pkgconfig \
                             port:mingw-w64
+
+patchfiles                  ntdll-Delay-NFC-table-loading-on-macOS.diff
 
 pre-configure {
     if {[variant_isset universal]} {
