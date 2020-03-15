@@ -4,15 +4,19 @@ The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-
 The provided ports are updated but are only compatible for 10.8 > 10.15*, MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
+- `FAudio` FAudio-20.03
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.131.1)
 - `wine` Wine-5.0
-- `wine-crossover` Wine-CrossOver-19.0.1
-- `wine-devel` Wine-Devel-5.3
+- `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko`)
+- `wine-devel` Wine-Devel-5.4
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
-- `wine-staging` Wine-Staging-5.3
+- `wine-staging` Wine-Staging-5.4
 - `i686-w64-mingw32-binutils` BugFix - Stops conflicting files
 - `x86_64-w64-mingw32-binutils` BugFix - Stops conflicting files
+- `i686-w64-mingw32-gcc` Update - Use gcc-9.3.0
+- `x86_64-w64-mingw32-gcc` Update - Use gcc-9.3.0
+- `libSDL2` BugFix - sdl2-config.cmake passes .so instead of .dylib
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow

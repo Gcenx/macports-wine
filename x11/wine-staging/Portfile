@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-devel wine-crossover
 set my_name                 wine
-version                     5.3
-revision                    2
+version                     5.4
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -51,13 +51,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  5cb5fff385b22ee0e950c2ae2531d5bf4760482e \
-                            sha256  60caa9c706366cd6f5d7392af3b7bbde86483fe239d08736f2583b0b622c7173 \
-                            size    37648152 \
+                            rmd160  f1a23211fc1afc3ad1929f20a8d5b91108d55f92 \
+                            sha256  95172bca024583332690c8a715f07cc780f7017c9117fdb03429f257433df450 \
+                            size    37585264 \
                             ${wine_staging_distfile} \
-                            rmd160  3d671dc859d785efa3cc9701d4bb3f07bc68497c \
-                            sha256  2d50b5abb51d0a9eea60768a5e1ee50705b94a295cfa7671ce35f3406d4bbc06 \
-                            size    9904213
+                            rmd160  c0369edc231b30526d4dfe869b6c35edc0d03998 \
+                            sha256  6a6a1083fab694ccdcb834eb68b69afde607c22e0635ad143f8ec0e2fc50b757 \
+                            size    9924147
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -92,8 +92,6 @@ depends_build               port:bison \
                             port:flex \
                             port:pkgconfig \
                             port:mingw-w64
-
-patchfiles                  ntdll-Delay-NFC-table-loading-on-macOS.diff
 
 post-extract {
     system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"
@@ -309,6 +307,7 @@ platform darwin {
     if {${os.major} < 10} {
         configure.args-delete                   --with-opencl
     }
+    
     notes {
         When using the Mac Driver, it might be useful to enable RetinaMode\
         when you're using a high DPI monitor. To do that, open up Wine's\
