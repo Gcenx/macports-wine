@@ -1,0 +1,57 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+PortGroup               github 1.0
+PortGroup               cmake 1.1
+
+github.setup            FNA-XNA FAudio 20.03
+revision                0
+
+license                 zlib
+categories              audio
+platforms               darwin
+maintainers             nomaintainer
+description             XAudio reimplementation
+long_description        an XAudio reimplementation that focuses solely on developing \
+                        fully accurate DirectX Audio runtime libraries for the FNA project,\
+                        including XAudio2, X3DAudio, XAPO, and XACT3.
+
+depends_lib-append      port:libsdl2
+
+checksums               rmd160  c3a00ea95ac9f34e5011ba1aa1b4553f47b0526c \
+                        sha256  654500c4adac47fdd4885877c2496d8b4c313af7a6b59f7cfca76e03297d28f6 \
+                        size    908871
+
+configure.args          -DFFMPEG=OFF \
+                        -DBUILD_UTILS=OFF \
+                        -DBUILD_TESTS=ON \
+                        -DXNASONG=ON
+
+variant ffmpeg description "Use ffmpeg for additional xWMA support - note license changes" {
+    license                GPL-2+
+    depends_lib-append     path:lib/libavcodec.dylib:ffmpeg
+    configure.args-replace -DFFMPEG=OFF -DFFMPEG=ON
+}
+
+# macOS minimum of 10.9, per cert requirements
+if {${os.major} < 13} {
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} requires Mac OS X 10.9 or later."
+        return -code error "incompatible Mac OS X version"
+    }
+}
+
+#pre-destroot {
+#    there are some utilities to consider, but the facttool segfaulted when I tried to open an audio engine
+#    they are not installed by default with the cmake install script, and other pkg systems don't install them
+#    they can be re-enabled by toggling -DBUILD_UTILS=ON, and manually installed like so if desired
+#    file copy ${workpath}/build/facttool ${destroot}${prefix}/bin/
+#}
+
+test.run                 yes
+test.cmd                 ./faudio_tests
+test.target
