@@ -15,6 +15,9 @@ The provided ports are updated but are only compatible for 10.8 > 10.15*, Molten
 - `x86_64-w64-mingw32-binutils` BugFix - Stops conflicting files
 - `i686-w64-mingw32-gcc` Update - Use gcc-9.3.0
 - `x86_64-w64-mingw32-gcc` Update - Use gcc-9.3.0
+- `cargo` Downgrade broken 0.43.0 to 0.41.0
+- `librsvg` Downgrade broken 2.48.0 to 2.46.4
+- `portutil.tcl` Patched to allow Xcode 9.4.1 on macOS Mojave
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -28,9 +31,17 @@ port install mingw-w64
 ## Recommended install command;
 ```
 sudo su
+yes | port install wine-staging
+```
+This will install `wine-staging` with wow64 support, x11 support and all possible dependencies except `gstreamer1-gst-plugins-bad`  and `FAudio` won't be built with wma support.
+
+### Alternative install command (wma audio support);
+```
+sudo su
 yes | port install wine-staging +ffmpeg
 ```
-This will install `wine-staging` with wow64 support and all possible depedenceis, `+ffmpeg` will take a while but gives `FAudio` wma support along with gstreamer will also have wma support.
+
+This will install `wine-staging` with wow64 support, x11 support and all possible depedenceis, `+ffmpeg` **will take a long time** but gives `FAudio` wma support along with gstreamer will also have wma support.
 
 ## Wine Portfile additinal dependancies;
 - gstreamer1-gst-plugins-good (codecs)
@@ -49,8 +60,9 @@ This will install `wine-staging` with wow64 support and all possible depedenceis
 ## `Wine-Mono` & `Wine-Gecko`?
 From Wine-5.0 it's possbile to have a shared version of both gecko & mono, instead of installing into each prefix the shared versions will be used.
 
-## How to use on macOS Mojave;
-Install macports as usual then apply the following patch
+
+## How to use on macOS High Sierra & macOS Mojave;
+Install macports as usual then apply the following patch.
 ```
 diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macports.conf
 --- /opt/local/etc/macports/macports.conf.orig	                        2019-09-27 22:22:38.000000000 -0400
@@ -77,30 +89,24 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
  
          # add extra flags that are conditional on whether we're building universal
 ```
-Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
-Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section 
+Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
+Install Xcode Command Line Tools 9.4.1 or place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
 
 ## How to use on macOS Catalina;
-Due to some bugged prebuilt packages its best to force build eveything from source to avoid issues. `wine`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches
+Due to some bugged prebuilt packages it's best to force build eveything from source to avoid issues. `wine`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.
 
-#### Edit the following file `/opt/local/etc/macports/macports.conf`
-
+Install macports as usual then apply the following patch
 ```
-# When MacPorts should build ports from source.
-# - ifneeded: Download binary archives if available; build from source
-#   otherwise.
-# - always: Always build from source; never try fetching archives.
-# - never: Never build from source; try fetching archives and abort if
-#   unavailable.
-#buildfromsource    ifneeded
-```
-Change to;
-```
-# When MacPorts should build ports from source.
-# - ifneeded: Download binary archives if available; build from source
-#   otherwise.
-# - always: Always build from source; never try fetching archives.
-# - never: Never build from source; try fetching archives and abort if
-#   unavailable.
-buildfromsource         always
+diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.conf
+--- /opt/local/etc/macports/macports.conf            2019-10-20 16:21:20.000000000 -0400
++++ /opt/local/etc/macports/macports.conf            2020-03-23 11:38:41.000000000 -0400
+@@ -44,7 +47,7 @@
+ # - always: Always build from source; never try fetching archives.
+ # - never: Never build from source; try fetching archives and abort if
+ #   unavailable.
+-#buildfromsource         ifneeded
++buildfromsource         always
+ 
+ # Type of archive to use for port images. Supported types are cpgz,
+ # cpio, tar, tbz, tbz2, tgz, tlz, txz, xar, zip.
 ```
