@@ -89,8 +89,8 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
  
          # add extra flags that are conditional on whether we're building universal
 ```
+Install Xcode Command Line Tools 9.4.1 or place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`  
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
-Install Xcode Command Line Tools 9.4.1 or place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`
 
 ## How to use on macOS Catalina;
 Due to some bugged prebuilt packages it's best to force build eveything from source to avoid issues. `wine`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.
