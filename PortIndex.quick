@@ -12,8 +12,8 @@ cargo-stage1 6846
 moltenvk 7346
 librsvg 7741
 wine 8424
-wine-crossover 9606
-wine-devel 10984
-wine-gecko 12178
-wine-mono 12507
-wine-staging 13021
+wine-crossover 9481
+wine-devel 10764
+wine-gecko 11833
+wine-mono 12162
+wine-staging 12676
