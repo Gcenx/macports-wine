@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-staging wine-crossover
 set my_name                 wine
-version                     5.4
+version                     5.5
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,20 +47,17 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  f1a23211fc1afc3ad1929f20a8d5b91108d55f92 \
-                            sha256  95172bca024583332690c8a715f07cc780f7017c9117fdb03429f257433df450 \
-                            size    37585264
+                            rmd160  ba4cfb80d9de5d19bc82078cdf93e8406908bd25 \
+                            sha256  f5363733e18e1f22b848c064face96f933313db801890f0d010b0a0c17fcefa4 \
+                            size    39429950
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
                             port:freetype \
+                            port:FAudio \
+                            port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
-                            port:gstreamer1-gst-plugins-good \
-                            port:gstreamer1-gst-libav \
-                            port:gphoto2 \
-                            port:kerberos5 \
-                            port:gettext \
                             port:jpeg \
                             port:lcms2 \
                             port:libiconv \
@@ -68,22 +65,19 @@ depends_lib                 port:fontconfig \
                             port:libpng \
                             port:libxml2 \
                             port:libxslt \
+                            port:mpg123 \
                             port:ncurses \
-                            port:gnutls \
                             port:openal-soft \
                             port:tiff \
-                            port:zlib \
-                            port:libsdl2 \
-                            port:mpg123 \
-                            port:libgsm \
-                            port:FAudio \
+                            port:libunwind \
+                            port:wine-gecko \
                             port:wine-mono \
-                            port:wine-gecko
+                            port:zlib
 
 depends_build               port:bison \
                             port:flex \
-                            port:pkgconfig \
-                            port:mingw-w64
+                            port:mingw-w64 \
+                            port:pkgconfig
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -101,58 +95,66 @@ pre-configure {
 # http://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install           ${workpath}/${worksrcdir}/tools/install-sh
 
-configure.args              --disable-tests \
-                            --without-alsa \
+configure.args              --without-alsa \
                             --without-capi \
-                            --without-hal \
-                            --without-oss \
-                            --without-netapi \
-                            --without-ldap \
-                            --without-pulse \
-                            --without-sane \
-                            --without-udev \
-                            --without-v4l2 \
-                            --without-gettextpo \
-                            --without-inotify \
-                            --without-xshm \
-                            --without-osmesa \
-                            --without-xcomposite \
-                            --without-xcursor \
-                            --without-xinerama \
-                            --without-xinput \
-                            --without-xinput2 \
-                            --without-xrandr \
-                            --without-xrender \
-                            --without-xshape \
-                            --without-xxf86vm \
-                            --without-x \
-                            --without-vkd3d \
-                            --without-dbus \
-                            --with-glu \
-                            --with-pthread \
                             --with-cms \
                             --with-coreaudio \
                             --with-cups \
                             --with-curses \
+                            --without-dbus \
+                            --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --with-gettext \
-                            --with-gphoto \
+                            --without-gcrypt \
+                            --without-gettext \
+                            --without-gettextpo \
+                            --without-gphoto \
+                            --with-glu \
                             --with-gnutls \
-                            --with-gsm \
+                            --without-gsm \
+                            --without-gssapi \
                             --with-gstreamer \
+                            --without-gtk3 \
+                            --without-hal \
+                            --without-inotify \
                             --with-jpeg \
+                            --without-krb5 \
+                            --without-ldap \
+                            --with-mingw \
                             --with-mpg123 \
+                            --without-netapi \
                             --with-openal \
                             --with-opencl \
                             --with-opengl \
+                            --without-osmesa \
+                            --without-oss \
                             --with-pcap \
                             --with-png \
+                            --with-pthread \
+                            --without-pulse \
+                            --without-sane \
+                            --with-sdl \
                             --with-tiff \
+                            --without-udev \
+                            --with-unwind \
+                            --without-v4l2 \
+                            --without-vkd3d \
+                            --without-xcomposite \
+                            --without-xcursor \
+                            --without-xfixes \
+                            --without-xinerama \
+                            --without-xinput \
+                            --without-xinput2 \
                             --with-xml \
+                            --without-xrandr \
+                            --without-xrender \
+                            --without-xshape \
+                            --without-xshm \
                             --with-xslt \
+                            --without-xxf86vm \
                             --with-zlib \
-                            --with-sdl
+                            --without-x \
+                            --without-va
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
 variant x11 {
@@ -173,6 +175,7 @@ variant x11 {
     configure.args-delete       --without-osmesa \
                                 --without-xcomposite \
                                 --without-xcursor \
+                                --without-xfixes \
                                 --without-xinerama \
                                 --without-xinput \
                                 --without-xinput2 \
@@ -185,6 +188,7 @@ variant x11 {
     configure.args-append       --with-osmesa \
                                 --with-xcomposite \
                                 --with-xcursor \
+                                --with-xfixes \
                                 --with-xinerama \
                                 --with-xinput \
                                 --with-xinput2 \
@@ -199,7 +203,8 @@ variant x11 {
 
 # ffmpeg takes forever to build plus would cause a license change
 variant ffmpeg {
-    depends_lib-append          port:gstreamer1-gst-plugins-bad
+    depends_lib-append          port:gstreamer1-gst-plugins-good \
+                                port:gstreamer1-gst-plugins-bad
     require_active_variants     port:FAudio ffmpeg
 }
 
@@ -261,22 +266,12 @@ if {[variant_isset universal]} {
     compiler.fallback-append    macports-clang-5.0
 }
 
-if {[variant_isset universal]} {
-    # The usage of an external unwind libary was added since Wine 4.15, but only for wine64
-    depends_lib-append                      port:libunwind
-    depends_skip_archcheck-append           libunwind
-    lappend merger_configure_args(x86_64)   --with-unwind
-    lappend merger_configure_args(i386)     --without-unwind
-} else {
-    configure.args-append                   --without-unwind
-}
-
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
     depends_lib-delete                          port:fontconfig
     configure.args-delete                       --with-fontconfig
     configure.args-append                       --without-fontconfig
-    
+
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && [variant_isset universal]} {
