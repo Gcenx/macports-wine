@@ -7,10 +7,10 @@ The provided ports are updated but are only compatible for 10.8 > 10.15*, Molten
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.131.1)
 - `wine` Wine-5.0
 - `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko`)
-- `wine-devel` Wine-Devel-5.4
+- `wine-devel` Wine-Devel-5.5
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
-- `wine-staging` Wine-Staging-5.4
+- `wine-staging` Wine-Staging-5.5
 - `i686-w64-mingw32-binutils` BugFix - Stops conflicting files
 - `x86_64-w64-mingw32-binutils` BugFix - Stops conflicting files
 - `i686-w64-mingw32-gcc` Update - Use gcc-9.3.0
@@ -18,6 +18,7 @@ The provided ports are updated but are only compatible for 10.8 > 10.15*, Molten
 - `cargo` Downgrade broken 0.43.0 to 0.41.0
 - `librsvg` Downgrade broken 2.48.0 to 2.46.4
 - `portutil.tcl` Patched to allow Xcode 9.4.1 on macOS Mojave
+- `crossbinutils.tcl` Patch to remove `--enable-install-libbfd`
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -33,7 +34,7 @@ port install mingw-w64
 sudo su
 yes | port install wine-staging
 ```
-This will install `wine-staging` with wow64 support, x11 support and all possible dependencies except `gstreamer1-gst-plugins-bad`  and `FAudio` won't be built with wma support.
+This will install `wine-staging` with wow64 support, x11 support and all possible dependencies except `gstreamer1-gst-plugins-good` & `gstreamer1-gst-plugins-bad`  and `FAudio` won't be built with wma support.
 
 ### Alternative install command (wma audio support);
 ```
@@ -44,17 +45,12 @@ yes | port install wine-staging +ffmpeg
 This will install `wine-staging` with wow64 support, x11 support and all possible depedenceis, `+ffmpeg` **will take a long time** but gives `FAudio` wma support along with gstreamer will also have wma support.
 
 ## Wine Portfile additinal dependancies;
-- gstreamer1-gst-plugins-good (codecs)
-- gstreamer1-gst-libav
-- gphoto2
-- kerberos5
-- gettext (translations)
 - gnutls (encryption)
 - libsdl2 (controllers)
 - mpg123 (mp3 audio)
-- libgsm
 - FAudio (wma support needs +ffmpeg variant)
 - MoltenVK
+- gstreamer1-gst-plugins-good (behind +ffmpeg variant)
 - gstreamer1-gst-plugins-bad (behind +ffmpeg variant)
 
 ## `Wine-Mono` & `Wine-Gecko`?
