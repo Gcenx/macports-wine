@@ -15,8 +15,3 @@ maintainers         {mojca @mojca} openmaintainer
 configure.args-append \
                     --disable-multilib \
                     --disable-werror
-
-# Remove due to commit;
-# libctf: installable libctf as a shared library
-configure.args-delete \
-                    --enable-install-libbfd
