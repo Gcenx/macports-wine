@@ -106,3 +106,5 @@ diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.c
  # Type of archive to use for port images. Supported types are cpgz,
  # cpio, tar, tbz, tbz2, tgz, tlz, txz, xar, zip.
 ```
+Found this helpful?  
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gcenx?locale.x=en_US)
