@@ -305,13 +305,14 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
-    if {${os.major} < 12} {
+    # Multiple Ports fail to build on 10.8 but not 10.7 or 10.9
+    if {${os.major} == 12} {
         archive_sites
         distfiles
         depends_build
         depends_lib
         pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+            ui_error "${name} @${version} requires Mac OS X 10.7, 10.9 or later."
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {

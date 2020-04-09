@@ -16,7 +16,7 @@ long_description            ${name} is an implementation of the high-performance
                             industry-standard Vulkan graphics and compute API, that \
                             runs on Apple's Metal graphics framework.
 
-version                     1.2.131.1
+version                     1.2.135.0
 distname                    vulkansdk-macos-${version}
 set MoltenVK_distfile       ${distname}${extract.suffix}
 
@@ -25,9 +25,9 @@ distfiles                   ${MoltenVK_distfile}
 
 extract.only                ${MoltenVK_distfile}
 
-checksums                   rmd160  13f0ce3d5ff0f84da9fd45470e40b33fe4c41252 \
-                            sha256  fbc01a433d61d303dd3ceef19a12a99ba3431498de2d761679073f12b05a7870 \
-                            size    153982937
+checksums                   rmd160  a3300b70e81d2968161f194eff50c4992835a0bc \
+                            sha256  81da27908836f6f5f41ed7962ff1b4be56ded3b447d4802a98b253d492f985cf \
+                            size    183100867
 
 use_configure       no
 build {}
