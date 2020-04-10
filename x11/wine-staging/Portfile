@@ -63,6 +63,7 @@ checksums                   ${wine_distfile} \
 depends_lib                 port:fontconfig \
                             port:freetype \
                             port:FAudio \
+                            port:libgcrypt \
                             port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
@@ -88,7 +89,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 post-extract {
-    system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${workpath}/wine-wine-${version} --all"
+    system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${workpath}/${worksrcdir} --all"
 }
 
 pre-configure {
@@ -117,7 +118,7 @@ configure.args              --without-alsa \
                             --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --without-gcrypt \
+                            --with-gcrypt \
                             --without-gettext \
                             --without-gettextpo \
                             --without-gphoto \
@@ -151,6 +152,7 @@ configure.args              --without-alsa \
                             --with-unwind \
                             --without-v4l2 \
                             --without-vkd3d \
+                            --without-xattr \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
@@ -165,8 +167,8 @@ configure.args              --without-alsa \
                             --with-xslt \
                             --without-xxf86vm \
                             --with-zlib \
-                            --without-x \
-                            --without-va
+                            --without-va \
+                            --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
 variant x11 {

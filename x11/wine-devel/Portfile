@@ -139,6 +139,7 @@ configure.args              --without-alsa \
                             --with-unwind \
                             --without-v4l2 \
                             --without-vkd3d \
+                            --without-xattr \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
@@ -153,8 +154,8 @@ configure.args              --without-alsa \
                             --with-xslt \
                             --without-xxf86vm \
                             --with-zlib \
-                            --without-x \
-                            --without-va
+                            --without-va \
+                            --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
 variant x11 {
