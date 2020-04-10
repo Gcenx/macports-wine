@@ -5,7 +5,7 @@ The provided ports are updated and is possible to build on 10.7>10.15*, 10.8 fai
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `FAudio` FAudio-20.04 , includes fallback for 10.8 and lower systems to use FAudio-20.03
+- `FAudio` FAudio-20.04 , 10.8 and lower use FAudio-20.03
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.135.0)
 - `wine` Wine-5.0
 - `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko`)
@@ -13,23 +13,18 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
 - `wine-staging` Wine-Staging-5.5
-- `i686-w64-mingw32-binutils` BugFix - Stops conflicting files
-- `x86_64-w64-mingw32-binutils` BugFix - Stops conflicting files
+- `i686-w64-mingw32-binutils` Revision bump to force rebuild
+- `x86_64-w64-mingw32-binutils` Revision bump to force rebuild
 - `i686-w64-mingw32-gcc` Update - Use gcc-9.3.0
 - `x86_64-w64-mingw32-gcc` Update - Use gcc-9.3.0
 - `cargo` Downgrade broken 0.43.0 to 0.41.0
 - `librsvg` Downgrade broken 2.48.0 to 2.46.4
 - `portutil.tcl` Patched to allow Xcode 9.4.1 on macOS Mojave
-- `crossbinutils.tcl` Patch to remove `--enable-install-libbfd`
+- `crossbinutils.tcl` Patched to remove `--enable-install-libbfd`
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
 [4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)
-
-## Prerequisite;
-```
-port install mingw-w64
-```
 
 ## Recommended install command;
 ```
@@ -49,6 +44,7 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 ## Wine Portfile additinal dependancies;
 - gnutls (encryption)
 - libsdl2 (controllers)
+- libgcrypt (additinal encription on wine-staging)
 - mpg123 (mp3 audio)
 - FAudio (wma support needs +ffmpeg variant)
 - MoltenVK
