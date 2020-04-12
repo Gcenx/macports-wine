@@ -92,8 +92,7 @@ pre-configure {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
-        configure.cmd ${worksrcpath}/configure
-    } else {
+
         configure.cmd ${worksrcpath}/configure
     }
 }
@@ -221,17 +220,19 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
+configure.ldflags-append           -Wl,-rpath,${prefix}/lib
+
 configure.universal_args
 
 set merger_build_args(x86_64)     "dlldir=\\\\\${libdir}/wine64"
-set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
+set merger_destroot_args(x86_64)  "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
-set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
+set merger_configure_args(i386)   --with-wine64=${worksrcpath}-x86_64
 
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
     configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
-    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    build.args-append           "dlldir=\\\\\${libdir}/wine64"
     destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
 }
 
@@ -343,19 +344,20 @@ if {${os.endian} eq "big"} {
 
 post-destroot {
     # Add custom tool for easy launching explorer
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
     # Add the missing default tools
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/msiexec
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/notepad
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/regedit
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/regsvr32
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/wineboot
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winecfg
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/wineconsole
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winedbg
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winefile
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winemine
-    xinstall ${workpath}/${worksrcdir}/tools/wineapploader.in ${destroot}${prefix}/bin/winepath
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/msiexec
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/notepad
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/regedit
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/regsvr32
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/wineboot
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/winecfg
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/wineconsole
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/winedbg
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/winefile
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/winemine
+    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/winepath
+
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
