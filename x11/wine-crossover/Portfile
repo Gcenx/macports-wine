@@ -5,7 +5,7 @@ PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 
-# Please keep the wine, wine-devel wine-staging and wine-crossover ports as similar as possible.
+# Please keep the wine-stable, wine-devel wine-staging and wine-crossover ports as similar as possible.
 
 # When updating the version of wine, update wine_gecko and wine_mono to compatible versions
 # as referenced in the source code. Check here by replacing X.Y with the version:
@@ -15,10 +15,10 @@ PortGroup                   active_variants 1.1
 # Crossover-specific bug reports are accepted at info@codeweavers.com
 
 name                        wine-crossover
-conflicts                   wine wine-devel wine-staging
+conflicts                   wine wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     19.0.1
-revision                    2
+revision                    3
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
@@ -85,7 +85,8 @@ depends_build               port:bison \
 patchfiles                  patch-include-distversion.h.diff \
                             0001-mshtml-Refactor-Gecko-loading-code.diff \
                             0002-mshtml-Support-loading-Gecko-from-global-location.diff \
-                            0003-mshtml-Update-to-Wine-Gecko2.47.1.diff
+                            0003-mshtml-Update-to-Wine-Gecko2.47.1.diff \
+                            skip-building-winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -212,7 +213,20 @@ variant x11 {
 # ffmpeg takes forever to build plus would cause a license change
 variant ffmpeg {
     depends_lib-append          port:gstreamer1-gst-plugins-good \
-                                port:gstreamer1-gst-plugins-bad
+                                port:gstreamer1-gst-plugins-bad \
+                                port:gstreamer1-gst-plugins-ugly \
+                                port:gstreamer1-gst-libav
+
+    configure.args-delete       --without-dbus \
+                                --without-gtk3 \
+                                --without-krb5 \
+                                --without-va
+
+    configure.args-append       --with-dbus \
+                                --with-gtk3 \
+                                --with-krb5 \
+                                --with-va
+    
     require_active_variants     port:FAudio ffmpeg
 }
 
@@ -220,6 +234,7 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
+# dlopen is used within wine since 5.6, wine no longer finds libs so hardcode them
 configure.ldflags-append           -Wl,-rpath,${prefix}/lib
 
 configure.universal_args

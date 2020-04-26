@@ -6,12 +6,14 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `MoltenVK` (unpacks vulkansdk-macos-1.2.135.0)
-- `wine` Wine-5.0
-- `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko`)
-- `wine-devel` Wine-Devel-5.6
+- `wine` Marked obsolete (swapping to Winehq naming scheme)
+- `wine-stable` Wine-5.0
+- `wine-devel` Wine-Devel-5.7
+- `wine-staging` Wine-Staging-5.7
+- `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
-- `wine-staging` Wine-Staging-5.6.1
+- `wine-mono-5.0.0` Wine-Mono-5.0.0 (/opt/wine/mono)
 - `i686-w64-mingw32-gcc` Update - Use gcc-9.3.0
 - `x86_64-w64-mingw32-gcc` Update - Use gcc-9.3.0
 - `cargo` Downgrade to 0.41.0
@@ -46,10 +48,11 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 - MoltenVK
 - gstreamer1-gst-plugins-good (behind +ffmpeg variant)
 - gstreamer1-gst-plugins-bad (behind +ffmpeg variant)
+- port:gstreamer1-gst-plugins-ugly (behind +ffmpeg variant)
+- gstreamer1-gst-libav (behind +ffmpeg variant)
 
 ## `Wine-Mono` & `Wine-Gecko`?
 From Wine-5.0 it's possbile to have a shared version of both gecko & mono, instead of installing into each prefix the shared versions will be used.
-
 
 ## How to use on macOS High Sierra & macOS Mojave;
 Install macports as usual then apply the following patch.
