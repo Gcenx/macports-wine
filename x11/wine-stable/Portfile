@@ -12,12 +12,12 @@ PortGroup                   active_variants 1.1
 # https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
 # see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
-name                        wine-devel
-conflicts                   wine wine-stable wine-staging wine-crossover
+name                        wine-stable
+conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     5.7
+version                     5.0
 revision                    0
-set branch                  [lindex [split ${version} .] 0].x
+set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 openmaintainer
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  d480f461c7e4075b633447ee736f4ff295e60e01 \
-                            sha256  1db7627ed6203f3dd0616eb31020393074ae1428e81af8d1ea86c782ab45fa02 \
-                            size    39585066
+                            rmd160  b4816f2fbcbfef1a043dd7eaf3055804767093cf \
+                            sha256  533ee5966be7e13c8cbebf8b8d496bb5692287e1a455683a560887bb63d60b7e \
+                            size    36678531
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -63,16 +63,16 @@ depends_lib                 port:fontconfig \
                             port:libiconv \
                             port:libpcap \
                             port:libpng \
-                            port:libusb \
-                            port:libunwind \
                             port:libxml2 \
                             port:libxslt \
                             port:mpg123 \
                             port:ncurses \
                             port:openal-soft \
                             port:tiff \
+                            port:libunwind \
                             port:wine-gecko \
-                            port:wine-mono-5.0.0
+                            port:wine-mono \
+                            port:zlib
 
 depends_build               port:bison \
                             port:flex \
@@ -138,7 +138,6 @@ configure.args              --without-alsa \
                             --with-tiff \
                             --without-udev \
                             --with-unwind \
-                            --with-usb \
                             --without-v4l2 \
                             --without-vkd3d \
                             --without-xattr \
@@ -155,6 +154,7 @@ configure.args              --without-alsa \
                             --without-xshm \
                             --with-xslt \
                             --without-xxf86vm \
+                            --with-zlib \
                             --without-va \
                             --without-x
 

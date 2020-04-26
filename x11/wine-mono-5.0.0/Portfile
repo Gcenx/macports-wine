@@ -1,0 +1,40 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+categories                  x11
+maintainers                 openmaintainer
+license                     GPL, LGPL2.1, MPL
+
+supported_archs             noarch
+platforms                   darwin
+description                 Wine's built-in replacement for Microsoft's .NET Framework
+name                        wine-mono-5.0.0
+set my_name                 wine-mono
+
+long_description            ${name} is a package containing Mono and other projects, \
+                            intended as a replacement for the .NET runtime and class \
+                            libraries in Wine. It works in conjunction with Wine's \
+                            builtin mscoree.dll, and it is not intended to be useful \
+                            for any other purpose.
+use_xz                      yes
+version                     5.0.0
+distname                    wine-mono-${version}-x86
+set wine-mono_distfile      ${distname}${extract.suffix}
+
+master_sites                https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono /
+distfiles                   ${wine-mono_distfile}:mono
+
+extract.only                ${wine-mono_distfile}
+
+checksums                   rmd160  e70cc6ad48b58d12ed718f070508f49bd505dfdf \
+                            sha256  d1d116c15970f6d292e37c38cc5d95d60ba2d12ba8619b5edcbd4c5977b1b804 \
+                            size    39005692
+
+use_configure               no
+build {}
+destroot.violate_mtree      yes
+
+destroot {
+    file mkdir ${destroot}/opt/wine/mono
+    file copy ${workpath}/wine-mono-${version} ${destroot}/opt/wine/mono
+}
