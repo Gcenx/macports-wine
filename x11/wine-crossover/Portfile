@@ -219,13 +219,11 @@ variant ffmpeg {
 
     configure.args-delete       --without-dbus \
                                 --without-gtk3 \
-                                --without-krb5 \
-                                --without-va
+                                --without-krb5
 
     configure.args-append       --with-dbus \
                                 --with-gtk3 \
-                                --with-krb5 \
-                                --with-va
+                                --with-krb5
     
     require_active_variants     port:FAudio ffmpeg
 }
@@ -252,7 +250,7 @@ if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
 }
 
 if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
-    default_variants            +universal
+    default_variants-append     +universal
 }
 
 if {[variant_isset universal]} {
@@ -330,8 +328,19 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
+    if {${os.major} < 9} {
+        known_fail yes
+        archive_sites
+        distfiles
+        depends_build
+        depends_lib
+        pre-fetch {
+            ui_error "${name} @${version} requires Mac OS X 10.5 or later."
+            return -code error "incompatible Mac OS X version"
+        }
     # Multiple Ports fail to build on 10.8 but not 10.7 or 10.9
-    if {${os.major} == 12} {
+    } elseif {${os.major} == 12} {
+        known_fail yes
         archive_sites
         distfiles
         depends_build
@@ -347,6 +356,7 @@ platform darwin {
 }
 
 if {${os.endian} eq "big"} {
+    known_fail yes
     archive_sites
     distfiles
     depends_build
