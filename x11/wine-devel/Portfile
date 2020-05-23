@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     5.8
+version                     5.9
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  a3848492bfa8a8280f1cc0d602d969b8b3cb0b56 \
-                            sha256  212d43987b0227feae8a930a7690ed22f527acd08af97520fc85a3760fdb0f55 \
-                            size    39632479
+                            rmd160  942cc297f024176dd2eea780a1f29f3e7a095da2 \
+                            sha256  f66e3116c78ae34cac834785fc53b7b978d6072e23dcb2862a638cd70e91c81d \
+                            size    39711836
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -291,12 +291,12 @@ platform darwin {
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && [variant_isset universal]} {
-        depends_lib-append                      port:MoltenVK
+        depends_lib-append                      path:lib/MoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK
         lappend merger_configure_args(x86_64)   --with-vulkan
         lappend merger_configure_args(i386)     --without-vulkan
     } elseif {${os.major} >= 19} {
-        depends_lib-append                      port:MoltenVK
+        depends_lib-append                      path:lib/MoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK
         configure.args-append                   --with-vulkan
     } else {

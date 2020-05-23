@@ -5,11 +5,12 @@ The provided ports are updated and is possible to build on 10.7>10.15*, 10.8 fai
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `MoltenVK` (unpacks vulkansdk-macos-1.2.135.0)
+- `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.135.0)
+- `VulkanSDK` (Installs vulkansdk-macos-1.2.135.0)
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0
-- `wine-devel` Wine-Devel-5.7
-- `wine-staging` Wine-Staging-5.7
+- `wine-devel` Wine-Devel-5.9
+- `wine-staging` Wine-Staging-5.9
 - `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
@@ -22,7 +23,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `gstreamer1-gst-plugins-bad` Updated to 1.16.2
 - `gstreamer1-gst-plugins-ugly`  Updated to 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
 - `gstreamer1-gst-libav` Updated  Updated to 1.16.2
-- `portutil.tcl` Patched to allow Xcode 9.4.1 on macOS Mojave
+- `zstd` Downgraded to 1.4.4, [1.4.5 has a bug when building as +universal](https://trac.macports.org/ticket/60542)
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -86,28 +87,13 @@ diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/loca
  
          # add extra flags that are conditional on whether we're building universal
 ```
-Install Xcode Command Line Tools 9.4.1 or place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`  
+Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`  
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
 
 ## How to use on macOS Catalina;
-Due to some bugged prebuilt packages it's best to force build eveything from source to avoid issues. `wine`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.
+`wine-stable`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.
 
-Install macports as usual then apply the following patch
-```
-diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.conf
---- /opt/local/etc/macports/macports.conf            2019-10-20 16:21:20.000000000 -0400
-+++ /opt/local/etc/macports/macports.conf            2020-03-23 11:38:41.000000000 -0400
-@@ -44,7 +47,7 @@
- # - always: Always build from source; never try fetching archives.
- # - never: Never build from source; try fetching archives and abort if
- #   unavailable.
--#buildfromsource         ifneeded
-+buildfromsource         always
- 
- # Type of archive to use for port images. Supported types are cpgz,
- # cpio, tar, tbz, tbz2, tgz, tlz, txz, xar, zip.
-```
-Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
+Follow [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
 
 Found this helpful?  
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gcenx?locale.x=en_US)
