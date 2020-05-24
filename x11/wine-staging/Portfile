@@ -92,7 +92,7 @@ post-extract {
     system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
-patchfiles                  skip-building-winemenubuilder.patch
+#patchfiles                  skip-building-winemenubuilder.patch
 
 pre-configure {
     if {[variant_isset universal]} {

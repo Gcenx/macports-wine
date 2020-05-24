@@ -79,7 +79,7 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
-patchfiles                  skip-building-winemenubuilder.patch
+#patchfiles                  skip-building-winemenubuilder.patch
 
 pre-configure {
     if {[variant_isset universal]} {
