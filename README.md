@@ -23,7 +23,6 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `gstreamer1-gst-plugins-bad` Updated to 1.16.2
 - `gstreamer1-gst-plugins-ugly`  Updated to 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
 - `gstreamer1-gst-libav` Updated  Updated to 1.16.2
-- `zstd` Downgraded to 1.4.4, [1.4.5 has a bug when building as +universal](https://trac.macports.org/ticket/60542)
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
