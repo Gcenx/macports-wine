@@ -8,21 +8,17 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.135.0)
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.135.0)
 - `wine` Marked obsolete (swap to Winehq naming scheme)
-- `wine-stable` Wine-5.0
-- `wine-devel` Wine-Devel-5.9
-- `wine-staging` Wine-Staging-5.9
-- `wine-crossover` Wine-CrossOver-19.0.1 (patched to use `wine-gecko-2.47.1`)
+- `wine-stable` Wine-5.0.1
+- `wine-devel` Wine-Devel-5.11
+- `wine-staging` Wine-Staging-5.11
+- `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
 - `wine-mono-5.0.0` Wine-Mono-5.0.0 (/opt/wine/mono)
+- `wine-mono-5.10.0` Wine-Mono-5.10.0 (/opt/wine/mono)
 - `cargo` Downgraded to 0.41.0 (Needed for 32Bit support)
 - `rust` Downgraded to 1.42.0 (Needed for 32Bit support)
-- `gstreamer1` Updated to 1.16.2
-- `gstreamer1-gst-plugins-base` Updated to 1.16.2
-- `gstreamer1-gst-plugins-good` Updated to 1.16.2
-- `gstreamer1-gst-plugins-bad` Updated to 1.16.2
-- `gstreamer1-gst-plugins-ugly`  Updated to 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
-- `gstreamer1-gst-libav` Updated  Updated to 1.16.2
+- `gstreamer1-gst-plugins-ugly` 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow

@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     5.9
+version                     5.11
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  942cc297f024176dd2eea780a1f29f3e7a095da2 \
-                            sha256  f66e3116c78ae34cac834785fc53b7b978d6072e23dcb2862a638cd70e91c81d \
-                            size    39711836
+                            rmd160  9add6f1ab79d67bad60576616009cffd83137968 \
+                            sha256  5d5b0ab27e1e0e8fbc2ddedb36312604134cc237ff24fd901440300ea2b38bd9 \
+                            size    39846333
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -72,14 +72,14 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
-                            port:wine-mono-5.0.0
+                            port:wine-mono-5.1.0
 
 depends_build               port:bison \
                             port:flex \
                             port:mingw-w64 \
                             port:pkgconfig
 
-#patchfiles                  skip-building-winemenubuilder.patch
+patchfiles                  skip-building-winemenubuilder.patch
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -225,21 +225,21 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
-# dlopen is used within wine since 5.6, wine no longer finds libs so hardcode them
+# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append           -Wl,-rpath,${prefix}/lib
 
 configure.universal_args
 
-set merger_build_args(x86_64)     "dlldir=\\\\\${libdir}/wine64"
-set merger_destroot_args(x86_64)  "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
-set merger_configure_args(i386)   --with-wine64=${worksrcpath}-x86_64
+set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
-    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
-    build.args-append           "dlldir=\\\\\${libdir}/wine64"
+    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
     destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
 if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
