@@ -1,0 +1,21 @@
+Subject: [PATCH] Revert "HACK: Disable the wait window as it is deemed
+ confusing"
+
+---
+ programs/wineboot/wineboot.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git programs/wineboot/wineboot.c programs/wineboot/wineboot.c
+index a288bb9..4c58693 100644
+--- programs/wineboot/wineboot.c
++++ programs/wineboot/wineboot.c
+@@ -1200,8 +1200,7 @@ static void update_wineprefix( BOOL force )
+ 
+         if ((process = start_rundll32( inf_path, FALSE )))
+         {
+-            /* HACK: Disable the wait window as it is deemed confusing */
+-            HWND hwnd = 1 ? NULL : show_wait_window();
++            HWND hwnd = show_wait_window();
+             for (;;)
+             {
+                 MSG msg;

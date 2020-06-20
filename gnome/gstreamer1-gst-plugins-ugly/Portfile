@@ -9,7 +9,7 @@ name                gstreamer1-gst-plugins-ugly
 set my_name         gst-plugins-ugly
 # please only commit stable updates (even numbered releases)
 version             1.16.2
-revision            0
+revision            1
 description         A set of good-quality plug-ins for GStreamer that might pose distribution \
                     problems.
 long_description    GStreamer Ugly Plug-ins is a set of plug-ins that have good quality and \
@@ -41,7 +41,8 @@ depends_lib         port:gstreamer1-gst-plugins-base \
 patch.pre_args      -p1
 patchfiles          asfdemux-always_re-initialize_metadata_and_global_metadata.patch \
                     asfdemux-Re-initialize_demux-adapter_in_gst_asf_demux_reset.patch \
-                    asfdemux-Only_forward_SEEK_event_when_in_push_mode.patch
+                    asfdemux-Only_forward_SEEK_event_when_in_push_mode.patch \
+                    asfdemux-gst_asf_demux_reset_GST_FORMAT_TIME_fix.patch
 
 configure.args-append \
                     --disable-fatal-warnings \

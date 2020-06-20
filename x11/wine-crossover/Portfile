@@ -17,8 +17,8 @@ PortGroup                   active_variants 1.1
 name                        wine-crossover
 conflicts                   wine wine-stable wine-devel wine-staging
 set my_name                 wine
-version                     19.0.1
-revision                    3
+version                     19.0.2
+revision                    0
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
@@ -50,9 +50,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource \
 
 checksums                   ${wine_distfile} \
-                            rmd160  0ea82e03f3b6e3d780362958c8c21bf6bb31df7b \
-                            sha256  bff1d80c4a4feb0d0624322ab2af75a01f4f29fa14f682cafac4219071b31e46 \
-                            size    135505841
+                            rmd160  2755a26d808af34ee2941a7cbb75cc7fc43b6d07 \
+                            sha256  4647594cf21fe926e619001f49e38e9da149b0c89b0b948a0a4abce2a94dbaac \
+                            size    138476045
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -83,6 +83,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 patchfiles                  patch-include-distversion.h.diff \
+                            Revert-HACK-Disable-the-wait-window-as-it-is-deemed-confusing.diff \
                             0001-mshtml-Refactor-Gecko-loading-code.diff \
                             0002-mshtml-Support-loading-Gecko-from-global-location.diff \
                             0003-mshtml-Update-to-Wine-Gecko2.47.1.diff \
@@ -232,21 +233,21 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
-# dlopen is used within wine since 5.6, wine no longer finds libs so hardcode them
+# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append           -Wl,-rpath,${prefix}/lib
 
 configure.universal_args
 
-set merger_build_args(x86_64)     "dlldir=\\\\\${libdir}/wine64"
-set merger_destroot_args(x86_64)  "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
-set merger_configure_args(i386)   --with-wine64=${worksrcpath}-x86_64
+set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
-    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
-    build.args-append           "dlldir=\\\\\${libdir}/wine64"
+    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
     destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
 if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
