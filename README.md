@@ -10,7 +10,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.1
 - `wine-devel` Wine-Devel-5.12
-- `wine-staging` Wine-Staging-5.12
+- `wine-staging` Wine-Staging-5.12.1
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
