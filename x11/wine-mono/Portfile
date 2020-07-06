@@ -11,14 +11,42 @@ description                 Wine's built-in replacement for Microsoft's .NET Fra
 name                        wine-mono
 set my_name                 wine-mono
 
-long_description            ${name} is a package containing Mono and other projects, \
-                            intended as a replacement for the .NET runtime and class \
-                            libraries in Wine. It works in conjunction with Wine's \
-                            builtin mscoree.dll, and it is not intended to be useful \
-                            for any other purpose.
+subport wine-mono-5.1.0 {
+    version         5.1.0
+    revision        0
+    
+    checksums       rmd160  2196f9176b8c6cad2e0bde328613af9080a78dff \
+                    sha256  7c69355566055121669f7e416e44185a5ccceb4312d0c19587d2303e63b6b63f \
+                    size    41627164
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
 
-version                     4.9.4
-distname                    wine-mono-bin-${version}
+subport wine-mono-5.0.0 {
+    version         5.0.1
+    revision        1
+    checksums       rmd160  700512e7bbb71c21b283e5a2f518c2fc248cd6ff \
+                    sha256  c899f176cbb7b1c411abbc103e17ae05702df21a502534c6f71c891ebde7b604 \
+                    size    38986060
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+    
+    # wine-mon-5.0.0 had regressions that wine-mono-5.0.1 resolved but wine looks for wine-mono-5.0.0
+    post-destroot {
+    file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-5.0.0
+    }
+    
+}
+
+if {${subport} eq ${name}} {
+    version         4.9.4
+    revision        0
+    checksums       rmd160  b3a85e8f857666c8f58c40b158059fa2815f4c0f \
+                    sha256  df97cdb904a583a1f92ce17d9d4793aed063ebc9bb139b6d1989b22a534c7b63 \
+                    size    91218178
+    distname        wine-mono-bin-${version}
+}
+
 set wine-mono_distfile      ${distname}${extract.suffix}
 
 master_sites                https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono /
@@ -26,13 +54,15 @@ distfiles                   ${wine-mono_distfile}:mono
 
 extract.only                ${wine-mono_distfile}
 
-checksums                   rmd160  b3a85e8f857666c8f58c40b158059fa2815f4c0f \
-                            sha256  df97cdb904a583a1f92ce17d9d4793aed063ebc9bb139b6d1989b22a534c7b63 \
-                            size    91218178
-
 use_configure               no
 build {}
 destroot.violate_mtree      yes
+
+long_description            ${subport} is a package containing Mono and other projects, \
+                            intended as a replacement for the .NET runtime and class \
+                            libraries in Wine. It works in conjunction with Wine's \
+                            builtin mscoree.dll, and it is not intended to be useful \
+                            for any other purpose.
 
 destroot {
     file mkdir ${destroot}/opt/wine/mono
