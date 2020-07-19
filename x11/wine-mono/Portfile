@@ -2,7 +2,7 @@
 
 PortSystem                  1.0
 categories                  x11
-maintainers                 openmaintainer
+maintainers                 {gcenx @gcenx}
 license                     GPL, LGPL2.1, MPL
 
 supported_archs             noarch

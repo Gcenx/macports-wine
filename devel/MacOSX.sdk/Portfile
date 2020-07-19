@@ -1,0 +1,168 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+name                MacOSX.sdk
+categories          devel
+platforms           macosx
+maintainers         {gcenx @gcenx}
+
+github.setup        alexey-lysiuk macos-sdk 33b24f4
+license             Restrictive Nomirror
+
+homepage            https://developer.apple.com/macos/
+
+checksums           rmd160  f259fd41e9d66af2cba10f8510ed797a773d81cd \
+                    sha256  e2bef214891582052fbd8dc31a920b1dd4cfe5bb528a5070cd343105ed11f915 \
+                    size    653371210
+
+subport MacOSX10.15.sdk {
+    set macos_name  {macOS Catalina}
+    set xcode_vers  11.6
+    version         10.15
+    revision        0
+    
+    homepage        https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_15_release_notes
+}
+
+subport MacOSX10.14.sdk {
+    set macos_name  {macOS Mojave}
+    set xcode_vers  10.3
+    version         10.14
+    revision        0
+    
+    homepage        https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_14_release_notes
+}
+
+subport MacOSX10.13.sdk {
+    set macos_name  {macOS High Sierra}
+    set xcode_vers  9.3
+    version         10.13
+    revision        0
+    
+    homepage        https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13/
+    
+    # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
+    post-destroot {
+        file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
+        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
+    }
+}
+
+subport MacOSX10.12.sdk {
+    set macos_name  {macOS Sierra}
+    set xcode_vers  8.3
+    version         10.12
+    revision        0
+    
+    # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
+    post-destroot {
+        file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
+        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
+        
+        # AMDil_r700.dylib is not a valid dylib and also links to
+        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
+        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+    }
+}
+
+subport MacOSX10.11.sdk {
+    set macos_name  {OS X El Capitan}
+    set xcode_vers  7.3
+    version         10.11
+    revision        0
+    
+    # AMDil_r700.dylib is not a valid dylib and also links to
+    # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
+    # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+    post-destroot {
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
+        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+    }
+}
+
+# All other SDKs contain actual real dylib files and not tbd stubs causing macports to incorrectly believe the installed SDK is broken
+
+# You'd think this would be in Tcl or MacPorts base already.
+# http://wiki.tcl.tk/4884
+proc map {prefix list} {
+    set result {}
+    foreach item ${list} {
+        lappend result [{*}${prefix} ${item}]
+    }
+    return ${result}
+}
+
+# You'd think this would be in MacPorts base already.
+proc shell_quote {path} {
+    # This is terrible, but good enough for this port.
+    return "\"${path}\""
+}
+
+proc check_disk_space {path requested_bytes} {
+    set requested_mbytes [expr {${requested_bytes} / 1024 / 1024}]
+    set df_k [lindex [split [exec df -k ${path}] \n] end]
+    set volume_mbytes [expr {[lindex ${df_k} 1] / 1024}]
+    set free_mbytes [expr {[lindex ${df_k} 3] / 1024}]
+    set needed_mbytes [expr {ceil((1.05 * ${requested_mbytes} + 0.01 * ${volume_mbytes}) - ${free_mbytes})}]
+    ui_debug "${requested_mbytes} MiB requested; ${free_mbytes} MiB free"
+    if {${needed_mbytes} > 0} {
+        ui_error "The disk is nearly full. Please free up an additional ${needed_mbytes} MiB."
+        return -code error "insufficient disk space"
+    }
+}
+
+set sdk_dir         ${prefix}/Developer/SDKs
+set sdk_dir2        /Library/Developer/CommandLineTools/SDKs
+
+use_configure       no
+
+destroot.violate_mtree      yes
+
+build {}
+
+pre-destroot {
+    xinstall -d ${destroot}${sdk_dir}
+    xinstall -d ${destroot}${sdk_dir2}
+}
+
+if {${subport} eq ${name}} {
+    version             10.15
+    revision            0
+    description         latest macOS SDK
+    long_description    This port installs a link to the latest macOS SDK.
+    distfiles
+    supported_archs     noarch
+    depends_run-append  port:MacOSX${version}.sdk
+    destroot {
+        ln -s MacOSX${version}.sdk ${destroot}${sdk_dir}/MacOSX.sdk
+    }
+} else {
+    set macos_version   [lindex [split ${version} -] 0]
+    set macos_build     [lindex [split ${version} -] 1]
+    set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
+    if {[vercmp ${macos_version} 10.14] >= 0} {
+        supported_archs x86_64
+    } else {
+        supported_archs i386 x86_64
+    }
+    description         ${macos_name} v${macos_version} (${macos_build}) SDK
+    long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
+    destroot {
+        move ${worksrcpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+    }
+}
+
+if {[llength ${supported_archs}] > 1} {
+    variant universal {}
+    default_variants +universal
+    variant_set universal
+}
+
+livecheck.type      none

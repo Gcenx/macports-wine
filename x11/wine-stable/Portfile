@@ -20,7 +20,7 @@ revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 openmaintainer
+maintainers                 {gcenx @gcenx}
 homepage                    https://www.winehq.org
 platforms                   darwin
 distname                    ${my_name}-${version}
@@ -302,7 +302,14 @@ platform darwin {
     } else {
         configure.args-append                   --without-vulkan
     }
-
+    
+    # Support GPU initialization via Metal since Wine-4.15, however the 10.10, 10.11, 10.12 SDKs,
+    # don't support registryID in MTLDevice protocol, it's recomended to
+    # use the the 10.13 or greater SDK so disable the option to avoid build errors
+    if {${os.major} >= 14 && ${os.major} <= 16} {
+        configure.args-append        ac_cv_header_Metal_Metal_h="no"
+    }
+    
     if {${os.major} < 10} {
         configure.args-delete                   --with-opencl
     }

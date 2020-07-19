@@ -1,7 +1,7 @@
 # macports-wine
 The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 \
-The provided ports are updated and is possible to build on 10.7>10.15*, 10.8 fails on multiple dependencies currently still investigating those, I recommend building on 10.9 and above to avoid any issues\
+These have been tested and compile using MacOSX10.10.sdk and above, it's recomended to compile wine using the MacOSX10.13.sdk however that's currently not possible as `ld64` currently only supports TAPIv2.\
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
@@ -9,8 +9,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.141.2)
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.1
-- `wine-devel` Wine-Devel-5.12
-- `wine-staging` Wine-Staging-5.12.1
+- `wine-devel` Wine-Devel-5.13
+- `wine-staging` Wine-Staging-5.13
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
@@ -19,6 +19,14 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `cargo` Downgraded to 0.41.0 (Needed for 32Bit support)
 - `rust` Downgraded to 1.42.0 (Needed for 32Bit support)
 - `gstreamer1-gst-plugins-ugly` 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
+- `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
+
+## MacOSX.sdk contains the following subports;
+- `subport MacOSX10.15.sdk`
+- `subport MacOSX10.14.sdk`
+- `subport MacOSX10.13.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
+- `subport MacOSX10.12.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
+- `subport MacOSX10.11.sdk`
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow
@@ -70,19 +78,10 @@ diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macpo
  # Directory under which MacPorts should install ports. This must be
  # where MacPorts itself is installed.
  prefix              	/opt/local
-diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl
---- /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig     2019-09-21 16:25:24.000000000 -0700
-+++ /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl          2019-09-21 16:26:20.000000000 -0700
-@@ -1477,6 +1477,7 @@
-                 append_to_environment_value configure $env_var -isysroot${configure.sdkroot}
-             }
-             append_to_environment_value configure "LDFLAGS" -Wl,-syslibroot,${configure.sdkroot}
-+            append_to_environment_value configure "LDFLAGS" -Wl,-w
-         }
- 
-         # add extra flags that are conditional on whether we're building universal
 ```
-Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/`  
+Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/` \
+Or run `port install MacOSX10.13.sdk`\
+Run `port install ld64` to avoid i386 linker warning that can turn into errors for some Ports\
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
 
 ## How to use on macOS Catalina;

@@ -15,15 +15,15 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     5.12.1
+version                     5.13
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 openmaintainer
+maintainers                 {gcenx @gcenx}
 homepage                    https://www.winehq.org
 platforms                   darwin
-distname                    ${my_name}-5.12
+distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 set wine_staging_distfile   v${version}${extract.suffix}
@@ -51,13 +51,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  7e37d51c81ced6c0ef3a398a814ac35bc53fe4fb \
-                            sha256  32b051ffc13f1b874d9ee69c951300403fd2c5a99303db4a48f7aacf2ac6fb8a \
-                            size    39910857 \
+                            rmd160  bbfcfa4e8f37e41b0d23f464c1c1a938f655441a \
+                            sha256  b50924881c35a11574996811a6852dce993dba80745713595a2b8e81bb7cee2d \
+                            size    39925855 \
                             ${wine_staging_distfile} \
-                            rmd160  a9155e15da24edbe2798554eab513254369980f5 \
-                            sha256  11911605fc3db56fe441b42f0841f4d16df0e6fd7ef2c8774a7edae080fc9326 \
-                            size    9834548
+                            rmd160  77061b02b2b81afc86e47cc4e0fd5706c0948770 \
+                            sha256  395c047d993cf8809727abecadacf2851f078d1f0e68d622a6e6c5284717cb68 \
+                            size    9807468
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -315,7 +315,14 @@ platform darwin {
     } else {
         configure.args-append                   --without-vulkan
     }
-
+    
+    # Support GPU initialization via Metal since Wine-4.15, however the 10.10, 10.11, 10.12 SDKs,
+    # don't support registryID in MTLDevice protocol, it's recomended to
+    # use the the 10.13 or greater SDK so disable the option to avoid build errors
+    if {${os.major} >= 14 && ${os.major} <= 16} {
+        configure.args-append        ac_cv_header_Metal_Metal_h="no"
+    }
+    
     if {${os.major} < 10} {
         configure.args-delete                   --with-opencl
     }
