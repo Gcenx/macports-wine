@@ -21,7 +21,7 @@ version                     19.0.2
 revision                    0
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 {ryandesign @ryandesign} {jeremyhu @jeremyhu} openmaintainer
+maintainers                 {gcenx @gcenx}
 homepage                    https://www.codeweavers.com/products/more-information/source
 platforms                   darwin
 distname                    crossover-sources-${version}
