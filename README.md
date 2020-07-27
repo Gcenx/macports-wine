@@ -1,7 +1,7 @@
 # macports-wine
 The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 \
-These have been tested and compile using MacOSX10.10.sdk and above, it's recomended to compile wine using the MacOSX10.13.sdk however that's currently not possible as `ld64` currently only supports TAPIv2.\
+All `wine-*` Ports currently compile on Mac OSX 10.9 and later, Mac OSX 10.8 should also work however as multiple distfiles are obtained from GitHub installing below Mac OSX 10.9 requires additinal steps that won't be outlined here.\ 
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
@@ -29,7 +29,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `subport MacOSX10.11.sdk`
 
 ## How to use this repository
-To use this repository download/git clone into your home directory and edit then follow
+To use this repository download/git clone into your home directory and edit then follow\
 [4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)
 
 ## Recommended install command;
@@ -37,7 +37,7 @@ To use this repository download/git clone into your home directory and edit then
 sudo su
 yes | port install wine-staging
 ```
-This will install `wine-staging` with wow64 support, x11 support and all possible dependencies except `gstreamer1-gst-plugins-good`, `gstreamer1-gst-plugins-bad, `gstreamer1-gst-plugins-ugly`, `gstreamer1-gst-libav` and `FAudio` won't be built with wma support.
+This will install `wine-staging` with wow64 support, x11 support and all possible dependencies except `gstreamer1-gst-plugins-good`, `gstreamer1-gst-plugins-bad`, `gstreamer1-gst-plugins-ugly`, `gstreamer1-gst-libav` and `FAudio` won't be built with wma support.
 
 ### Alternative install command (wma audio support);
 ```
@@ -78,16 +78,27 @@ diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macpo
  # Directory under which MacPorts should install ports. This must be
  # where MacPorts itself is installed.
  prefix              	/opt/local
+ -diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl
+ --- /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig     2019-09-21 16:25:24.000000000 -0700
+ +++ /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl          2019-09-21 16:26:20.000000000 -0700
+ @@ -1477,6 +1477,7 @@
+                  append_to_environment_value configure $env_var -isysroot${configure.sdkroot}
+              }
+              append_to_environment_value configure "LDFLAGS" -Wl,-syslibroot,${configure.sdkroot}
+ +            append_to_environment_value configure "LDFLAGS" -Wl,-w
+          }
+  
+          # add extra flags that are conditional on whether we're building universal
 ```
-Place a `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/` \
-Or run `port install MacOSX10.13.sdk`\
-Run `port install ld64` to avoid i386 linker warning that can turn into errors for some Ports\
+Place a copy of the `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/` \
+Or run `port install MacOSX10.13.sdk`
+\
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
 
 ## How to use on macOS Catalina;
 `wine-stable`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina, I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.
-
+\
 Follow [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
-
+\
 Found this helpful?  
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gcenx?locale.x=en_US)

@@ -67,6 +67,12 @@ subport MacOSX10.12.sdk {
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+        
+        # These don't appear until OS X 10.8
+        if {${os.major} <= 11} {
+            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarFoundation.framework
+            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarAgent.framework
+        }
     }
 }
 
@@ -76,13 +82,23 @@ subport MacOSX10.11.sdk {
     version         10.11
     revision        0
     
-    # AMDil_r700.dylib is not a valid dylib and also links to
-    # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-    # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+    # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
     post-destroot {
+        file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
+        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
+        
+        # AMDil_r700.dylib is not a valid dylib and also links to
+        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
+        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+        
+        # These don't appear until OS X 10.8
+        if {${os.major} <= 11} {
+            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarFoundation.framework
+            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarAgent.framework
+        }
     }
 }
 

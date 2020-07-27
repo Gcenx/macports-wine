@@ -5,7 +5,7 @@ PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 
-# Please keep the wine-stable, wine-devel wine-staging and wine-crossover ports as similar as possible.
+# Please keep the wine-stable, wine-devel, wine-staging and wine-crossover ports as similar as possible.
 
 # When updating the version of wine, update wine_gecko and wine_mono to compatible versions
 # as referenced in the source code. Check here by replacing X.Y with the version:
@@ -238,8 +238,9 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
-# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append           -Wl,-rpath,${prefix}/lib
+# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its
+# own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
+configure.ldflags-append          -Wl,-rpath,${prefix}/lib
 
 configure.universal_args
 
@@ -278,22 +279,18 @@ compiler.blacklist-append   *llvm-gcc-4.2
 # http://bugs.winehq.org/show_bug.cgi?id=32872
 # clang < 3.2 have code generation problems:
 # http://llvm.org/bugs/show_bug.cgi?id=9707
-compiler.blacklist-append   {clang < 500}
+# wine for 64-bit requires clang >= 3.8
+compiler.blacklist-append   {clang < 800} \
+                            gcc-4.0 \
+                            gcc-4.2 \
+                            apple-gcc-4.2 \
+                            macports-clang-3.3 \
+                            macports-clang-3.4 \
+                            macports-clang-3.7
+compiler.fallback-append    macports-clang-5.0
 
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   macports-gcc-*
-
-if {[variant_isset universal]} {
-    # wine for 64-bit requires clang >= 3.8
-    compiler.blacklist-append   {clang < 800} \
-                                gcc-4.0 \
-                                gcc-4.2 \
-                                apple-gcc-4.2 \
-                                macports-clang-3.3 \
-                                macports-clang-3.4 \
-                                macports-clang-3.7
-    compiler.fallback-append    macports-clang-5.0
-}
 
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
@@ -316,11 +313,19 @@ platform darwin {
         configure.args-append                   --without-vulkan
     }
     
-    # Support GPU initialization via Metal since Wine-4.15, however the 10.10, 10.11, 10.12 SDKs,
+    # Support GPU initialization via Metal since Wine-4.15, however the 10.11, 10.12 SDKs,
     # don't support registryID in MTLDevice protocol, it's recomended to
-    # use the the 10.13 or greater SDK so disable the option to avoid build errors
-    if {${os.major} >= 14 && ${os.major} <= 16} {
+    # use the 10.13 or greater SDK so disable the option to avoid build errors
+    if {${os.major} <= 16} {
         configure.args-append        ac_cv_header_Metal_Metal_h="no"
+    }
+    
+    # wine-5.9 and later ntdll requires "_fstatat" that's not avalible until the 10.10 SDK
+    # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
+    # gstreamer requires "_fdopendir" that's not avalible until the 10.10 SKD
+    if {${os.major} <= 13 && ${configure.sdkroot} eq ""} {
+        depends_build-append        port:MacOSX10.11.sdk
+        configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     }
     
     if {${os.major} < 10} {
