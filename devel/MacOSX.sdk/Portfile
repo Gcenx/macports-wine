@@ -1,65 +1,67 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
-PortGroup           github 1.0
 
 name                MacOSX.sdk
+version             10.14
 categories          devel
 platforms           macosx
 maintainers         {gcenx @gcenx}
 
-github.setup        alexey-lysiuk macos-sdk 33b24f4
 license             Restrictive Nomirror
 
 homepage            https://developer.apple.com/macos/
 
-checksums           rmd160  f259fd41e9d66af2cba10f8510ed797a773d81cd \
-                    sha256  e2bef214891582052fbd8dc31a920b1dd4cfe5bb528a5070cd343105ed11f915 \
-                    size    653371210
-
-subport MacOSX10.15.sdk {
-    set macos_name  {macOS Catalina}
-    set xcode_vers  11.6
-    version         10.15
-    revision        0
-    
-    homepage        https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_15_release_notes
-}
-
 subport MacOSX10.14.sdk {
-    set macos_name  {macOS Mojave}
-    set xcode_vers  10.3
-    version         10.14
-    revision        0
+    set macos_name      {macOS Mojave}
+    set xcode_vers      10.3
+    version             10.14
+    revision            0
     
-    homepage        https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_14_release_notes
+    homepage            https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_14_release_notes
+    
+    checksums           rmd160  7684478f171e30842274fafb784b91a8e79485dd \
+                        sha256  e0a9747ae9838aeac70430c005f9757587aa055c690383d91165cf7b4a80401d \
+                        size    31704241
 }
 
 subport MacOSX10.13.sdk {
-    set macos_name  {macOS High Sierra}
-    set xcode_vers  9.3
-    version         10.13
-    revision        0
+    set macos_name      {macOS High Sierra}
+    set xcode_vers      9.3
+    version             10.13
+    revision            0
     
-    homepage        https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13/
+    homepage            https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13/
+    
+    checksums           rmd160  255ee173939065c9d1b7433f287163cdd00e0033 \
+                        sha256  27943fb63c35e262b2da1cb4cc60d7427702a40caf20ec15c9d773919c6e409b \
+                        size    32183283
+    
+    depends_build       port:MacOSX10.11.sdk
     
     # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
     post-destroot {
         file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
-        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
+        file copy   ${sdk_dir}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
     }
 }
 
 subport MacOSX10.12.sdk {
-    set macos_name  {macOS Sierra}
-    set xcode_vers  8.3
-    version         10.12
-    revision        0
+    set macos_name      {macOS Sierra}
+    set xcode_vers      8.3
+    version             10.12
+    revision            0
+    
+    checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
+                        sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
+                        size    36301027
+    
+    depends_build       port:MacOSX10.11.sdk
     
     # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
     post-destroot {
         file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
-        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
+        file copy   ${sdk_dir}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
         
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
@@ -77,16 +79,16 @@ subport MacOSX10.12.sdk {
 }
 
 subport MacOSX10.11.sdk {
-    set macos_name  {OS X El Capitan}
-    set xcode_vers  7.3
-    version         10.11
-    revision        0
+    set macos_name      {OS X El Capitan}
+    set xcode_vers      7.3
+    version             10.11
+    revision            0
     
-    # QuickTime.framework was deprecated, lets replace it with a working copy from MacOSX10.11.sdk
+    checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
+                        sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
+                        size    36006642
+    
     post-destroot {
-        file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
-        file copy   ${worksrcpath}/MacOSX10.11.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
-        
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
         # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
@@ -133,12 +135,32 @@ proc check_disk_space {path requested_bytes} {
     }
 }
 
-set sdk_dir         ${prefix}/Developer/SDKs
-set sdk_dir2        /Library/Developer/CommandLineTools/SDKs
+set sdk_dir                 ${prefix}/Developer/SDKs
+set sdk_dir2                /Library/Developer/CommandLineTools/SDKs
 
-use_configure       no
+use_configure               no
 
 destroot.violate_mtree      yes
+
+use_bzip2                   yes
+
+distname                    MacOSX${version}
+
+# Workaround "GitHub requires TLS v1.2"
+if {${os.major} <= 12} {
+
+    # we need to use macports curl not system curl
+    depends_build-append        port:curl
+    
+    fetch {
+        # now manually download the file(s) if they don't exist
+        if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} ]} {
+            system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/${distname}${extract.suffix}"
+        }
+    }
+} else {
+    master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
+}
 
 build {}
 
@@ -148,7 +170,6 @@ pre-destroot {
 }
 
 if {${subport} eq ${name}} {
-    version             10.15
     revision            0
     description         latest macOS SDK
     long_description    This port installs a link to the latest macOS SDK.
@@ -170,8 +191,13 @@ if {${subport} eq ${name}} {
     description         ${macos_name} v${macos_version} (${macos_build}) SDK
     long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
     destroot {
-        move ${worksrcpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
-        ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+        move ${worksrcpath}.sdk ${destroot}${sdk_dir}
+        
+        # Check if the SDK exits before adding a symlink
+        # can't use ${developer_dir}/SDKs as that could return Xcode
+        if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
+            ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+        }
     }
 }
 
