@@ -1,16 +1,17 @@
 # macports-wine
 The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 \
-All `wine-*` Ports currently compile on Mac OSX 10.9 and later, Mac OSX 10.8 should also work however as multiple distfiles are obtained from GitHub installing below Mac OSX 10.9 requires additinal steps that won't be outlined here.\ 
+The provided `wine-*` Ports compile on Mac OSX 10.8 and later, as multiple distfiles are obtained from GitHub that now requires TLS1.2 or greater, workarounds were added into the affected Portfile.\ 
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.141.2)
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.141.2)
+- 'FAudio' FAudio-20.08
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.1
-- `wine-devel` Wine-Devel-5.13
-- `wine-staging` Wine-Staging-5.13
+- `wine-devel` Wine-Devel-5.14
+- `wine-staging` Wine-Staging-5.14
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
 - `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
 - `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
@@ -22,7 +23,6 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 
 ## MacOSX.sdk contains the following subports;
-- `subport MacOSX10.15.sdk`
 - `subport MacOSX10.14.sdk`
 - `subport MacOSX10.13.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
 - `subport MacOSX10.12.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
@@ -52,7 +52,7 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 - libsdl2 (controllers)
 - libgcrypt (additinal encription on wine-staging)
 - mpg123 (mp3 audio)
-- FAudio (wma support needs +ffmpeg variant)
+- FAudio (wma support needs +wma variant)
 - MoltenVK
 - gstreamer1-gst-plugins-good (behind +ffmpeg variant)
 - gstreamer1-gst-plugins-bad (behind +ffmpeg variant)
