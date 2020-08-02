@@ -7,7 +7,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 ## This repository contains;
 - `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.141.2)
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.141.2)
-- 'FAudio' FAudio-20.08
+- `FAudio` FAudio-20.08
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.1
 - `wine-devel` Wine-Devel-5.14
