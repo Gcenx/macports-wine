@@ -58,7 +58,7 @@ if {${os.major} <= 12} {
     fetch {
             # now manually download the file(s) if they don't exist
             if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine-mono_distfile} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/${wine-mono_distfile}"
+                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine-mono_distfile} https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/${wine-mono_distfile}"
             }
     }
 } else {

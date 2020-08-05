@@ -5,8 +5,8 @@ The provided `wine-*` Ports compile on Mac OSX 10.8 and later, as multiple distf
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.141.2)
-- `VulkanSDK` (Installs vulkansdk-macos-1.2.141.2)
+- `MoltenVK` (Installs MoltenVK.dylib & MoltenVK.framework from vulkansdk-macos-1.2.148.0)
+- `VulkanSDK` (Installs vulkansdk-macos-1.2.148.0)
 - `FAudio` FAudio-20.08
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.1
@@ -44,7 +44,6 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 sudo su
 yes | port install wine-staging +ffmpeg
 ```
-
 This will install `wine-staging` with wow64 support, x11 support and all possible depedenceis, `+ffmpeg` **will take a long time** but gives `FAudio` wma support along with gstreamer will also have wma support.
 
 ## Wine Portfile additinal dependancies;

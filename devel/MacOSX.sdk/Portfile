@@ -155,7 +155,7 @@ if {${os.major} <= 12} {
     fetch {
         # now manually download the file(s) if they don't exist
         if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} ]} {
-            system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/${distname}${extract.suffix}"
+            system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/${distname}${extract.suffix}"
         }
     }
 } else {
