@@ -27,10 +27,10 @@ if {${os.major} <= 12} {
     fetch {
             # now manually download the file(s) if they don't exist
             if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko_distfile} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO http://dl.winehq.org/wine/wine-gecko/${version}/${wine_gecko_distfile}"
+                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko_distfile} http://dl.winehq.org/wine/wine-gecko/${version}/${wine_gecko_distfile}"
             }
             if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko64_distfile} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO http://dl.winehq.org/wine/wine-gecko/${version}/${wine_gecko64_distfile}"
+                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko64_distfile} http://dl.winehq.org/wine/wine-gecko/${version}/${wine_gecko64_distfile}"
             }
     }
 } else {

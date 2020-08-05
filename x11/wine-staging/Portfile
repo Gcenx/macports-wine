@@ -49,10 +49,10 @@ if {${os.major} <= 12} {
     # now manually download the file(s) if they don't exist
     fetch {
             if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/wine-mirror/wine/archive/${distname}${extract.suffix}"
+                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} https://github.com/wine-mirror/wine/archive/${distname}${extract.suffix}"
             }
             if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_staging_distfile} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/wine-staging/wine-staging/archive/${wine_staging_distfile}"
+                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine_staging_distfile} https://github.com/wine-staging/wine-staging/archive/${wine_staging_distfile}"
             }
     }
 } else {

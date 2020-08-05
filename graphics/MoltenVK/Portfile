@@ -17,26 +17,52 @@ long_description            ${name} is an implementation of the high-performance
                             industry-standard Vulkan graphics and compute API, that \
                             runs on Apple's Metal graphics framework.
 
-version                     1.0.43
+# MoltenVK version from https://github.com/KhronosGroup/MoltenVK/releases
+version                     1.0.44
 
-set VulkanSDK_version       1.2.141.2
+# This needs to match the LunarG SDK version
+set VulkanSDK_version       1.2.148.0
 
 distname                    vulkansdk-macos-${VulkanSDK_version}
 use_dmg                     yes
 
 master_sites                https://sdk.lunarg.com/sdk/download/${VulkanSDK_version}/mac/
 
-checksums                   rmd160  43ba9861628957ae55d498222560f4920e17ec9c \
-                            sha256  3f53554a6f947dcce71924a777e195f0fe094c2bfbbcd4000a595c72f31b54fd \
-                            size    208993103
+checksums                   rmd160  3967cbed755e9f9ea2391b3b6fa8dc8058b41519 \
+                            sha256  54042a138f6497a3cf173a56449cb7310e9a9d4934c4ec3f65c7b0b3e43cb848 \
+                            size    223296311
 
 use_configure       no
 build {}
 
+subport VulkanSDK {
+    name                        VulkanSDK
+    conflicts                   MoltenVK
+    set my_name                 VulkanSDK
+    dist_subdir                 MoltenVK
+    version                     ${VulkanSDK_version}
+}
+
 destroot {
-    set output_dir ${worksrcpath}/MoltenVK/macOS
-    copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
-    copy ${output_dir}/framework/MoltenVK.framework ${destroot}${frameworks_dir}
+    if {${subport} eq {VulkanSDK}} {
+        set output_dir ${worksrcpath}/macOS
+        file delete -force ${destroot}${prefix}/bin
+        file copy ${output_dir}/bin ${destroot}${prefix}
+        file copy ${output_dir}/Frameworks/vulkan.framework ${destroot}${frameworks_dir}
+        file delete -force ${destroot}${prefix}/lib
+        file copy ${output_dir}/lib ${destroot}${prefix}
+        file delete -force ${destroot}${prefix}/include
+        file copy ${output_dir}/include ${destroot}${prefix}
+        file delete -force ${destroot}${prefix}/share
+        file copy ${output_dir}/share ${destroot}${prefix}
+        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
+        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json
+        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+    } else {
+        set output_dir ${worksrcpath}/MoltenVK/macOS
+        copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
+        copy ${output_dir}/framework/MoltenVK.framework ${destroot}${frameworks_dir}
+    }
 }
 
 platform darwin {
