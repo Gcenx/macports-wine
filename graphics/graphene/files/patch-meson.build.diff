@@ -1,0 +1,11 @@
+--- meson.build.orig	2019-09-08 09:28:59.000000000 -0700
++++ meson.build	2020-04-12 23:52:34.000000000 -0700
+@@ -249,7 +249,7 @@
+ sse2_cflags = []
+ if get_option('sse2')
+   sse_prog = '''
+-#if defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 9))
++#if !defined(__APPLE__) && defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 9))
+ # if !defined(__amd64__) && !defined(__x86_64__)
+ #   error "Need GCC >= 4.9 for SSE2 intrinsics on x86"
+ # endif
