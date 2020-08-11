@@ -1,6 +1,3 @@
-[binaries]
-pkgconfig = '@@PREFIX@@/bin/pkg-config'
-
 [host_machine]
 system = 'darwin'
 cpu_family = 'x86_64'
