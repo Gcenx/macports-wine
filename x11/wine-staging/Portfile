@@ -99,7 +99,8 @@ depends_lib                 port:fontconfig \
                             port:wine-gecko \
                             port:wine-mono-5.1.0
 
-depends_build               port:bison \
+depends_build               port:autoconf \
+                            port:bison \
                             port:flex \
                             port:mingw-w64 \
                             port:pkgconfig
@@ -108,7 +109,8 @@ post-extract {
     system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
-patchfiles                  skip-building-winemenubuilder.patch
+patchfiles                  skip-building-winemenubuilder.patch \
+                            configure_add_disable_quicktime.patch
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -162,6 +164,7 @@ configure.args              --without-alsa \
                             --with-png \
                             --with-pthread \
                             --without-pulse \
+                            --without-quicktime \
                             --without-sane \
                             --with-sdl \
                             --with-tiff \

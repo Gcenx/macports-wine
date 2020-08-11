@@ -92,7 +92,8 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
-patchfiles                  skip-building-winemenubuilder.patch
+patchfiles                  skip-building-winemenubuilder.patch \
+                            configure_add_disable_quicktime.patch
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -146,6 +147,7 @@ configure.args              --without-alsa \
                             --with-png \
                             --with-pthread \
                             --without-pulse \
+                            --without-quicktime \
                             --without-sane \
                             --with-sdl \
                             --with-tiff \
