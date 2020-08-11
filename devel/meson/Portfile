@@ -60,6 +60,10 @@ patchfiles-append   patch-meson-search-prefix-for-cross-files.diff
 post-patch {
     reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/data/shell-completions/bash/meson \
                                          ${worksrcpath}/mesonbuild/coredata.py
+    
+    # Patch meson so cross files use standard tools
+    reinplace "s|allow_default_for_cross=False|allow_default_for_cross=True|g" ${worksrcpath}/mesonbuild/dependencies/base.py \
+                                                                               ${worksrcpath}/mesonbuild/cmake/executor.py
 }
 
 post-destroot {
@@ -70,8 +74,6 @@ post-destroot {
     # install our MacPorts cross files
     xinstall -m 755 -d ${destroot}${prefix}/share/meson/
     copy ${filespath}/cross ${destroot}${prefix}/share/meson/
-    reinplace "s|@@PREFIX@@|${prefix}|g" ${destroot}${prefix}/share/meson/cross/i386-darwin \
-                                         ${destroot}${prefix}/share/meson/cross/x86_64-darwin
 }
 
 # the following block avoids requiring users to 'sudo port select python3 python37'
