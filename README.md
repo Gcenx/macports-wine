@@ -9,7 +9,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.148.0)
 - `FAudio` FAudio-20.08
 - `wine` Marked obsolete (swap to Winehq naming scheme)
-- `wine-stable` Wine-5.0.1
+- `wine-stable` Wine-5.0.2
 - `wine-devel` Wine-Devel-5.14
 - `wine-staging` Wine-Staging-5.14
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
