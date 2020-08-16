@@ -90,8 +90,9 @@ variant opengl requires x11 description {Add OpenGL graphics interface} {
     configure.args-append   --enable-glx
 }
 
-if {${build_arch} eq "i386" && ${os.major} >= 17} {
-    configure.ldflags-append -w
+# https://bugs.freedesktop.org/show_bug.cgi?id=30910#c6
+if {[variant_isset universal] && ${os.major} >= 17} {
+    lappend merger_configure_env(i386)    "LDFLAGS=-w"
 }
 
 platform macosx {

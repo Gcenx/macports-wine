@@ -49,21 +49,7 @@ if {${subport} eq ${name}} {
 
 set wine-mono_distfile      ${distname}${extract.suffix}
 
-# Workaround "GitHub requires TLS v1.2"
-if {${os.major} <= 12} {
-
-    # we need to use macports curl not system curl
-    depends_build-append        port:curl
-    
-    fetch {
-            # now manually download the file(s) if they don't exist
-            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine-mono_distfile} ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine-mono_distfile} https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/${wine-mono_distfile}"
-            }
-    }
-} else {
-    master_sites                https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono /
-}
+master_sites                https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono /
 
 distfiles                   ${wine-mono_distfile}:mono
 

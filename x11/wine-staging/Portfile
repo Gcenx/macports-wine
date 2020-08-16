@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     5.14
+version                     5.15
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -41,24 +41,8 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-# Workaround "GitHub requires TLS v1.2"
-if {${os.major} <= 12} {
-    # we need to use macports curl not system curl
-    depends_build-append        port:curl
-
-    # now manually download the file(s) if they don't exist
-    fetch {
-            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} https://github.com/wine-mirror/wine/archive/${distname}${extract.suffix}"
-            }
-            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_staging_distfile} ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${wine_staging_distfile} https://github.com/wine-staging/wine-staging/archive/${wine_staging_distfile}"
-            }
-    }
-} else {
-    master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
-                                https://github.com/wine-staging/wine-staging/archive/:stagingsource
-}
+master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
+                            https://github.com/wine-staging/wine-staging/archive/:stagingsource
 
 extract.only                ${wine_distfile} \
                             ${wine_staging_distfile}
@@ -67,13 +51,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  be326452282892f57fbc43009014cea369d31bbd \
-                            sha256  c46e0e10fe6ac18dad2fc95d5c1e4adbbe303e1a768d4207a3cea4f48f5ee586 \
-                            size    39975502 \
+                            rmd160  77403e5b93538553939ad76fca83e4a92b105b45 \
+                            sha256  7d5502a956f2195721b09a372988ae4c0d39eaa2c37f5e748971d2b6ce52ac13 \
+                            size    40035471 \
                             ${wine_staging_distfile} \
-                            rmd160  7e8449dbde6dab4f49c3614f42f083fdd71f6b01 \
-                            sha256  16805879471e86a13c5c4f390f52ec7c8a353e69924f0698985bd3fd1d270b1b \
-                            size    9780843
+                            rmd160  4c688678d3859320b7441d96c9cce1eba020d9ca \
+                            sha256  a57b3266b430a5a5ea8334ed2ddbe263e4df4b638d90590465bee8afa65babc7 \
+                            size    9840101
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -110,7 +94,7 @@ post-extract {
 }
 
 patchfiles                  skip-building-winemenubuilder.patch \
-                            configure_add_disable_quicktime.patch
+                            mfplat-streaming-support-Correct-a-variable-name.patch
 
 pre-configure {
     if {[variant_isset universal]} {
