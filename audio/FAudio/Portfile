@@ -8,7 +8,6 @@ version                 20.08
 github.setup            FNA-XNA FAudio ${version}
 revision                1
 
-#license                 zlib
 # zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1/gstreamer1-gst-plugins-base
 license                 LGPL-2+
 categories              audio
@@ -28,22 +27,6 @@ depends_lib-append      port:libsdl2 \
 checksums               rmd160  e24c9e179d5a806ad63d324a63a4200f6a6b321e \
                         sha256  8aef339e0ddef9ca963a2903407e6ed254dbf8427fdb2977df6f47e99047f700 \
                         size    1131793
-
-# Workaround "GitHub requires TLS v1.2"
-if {${os.major} <= 12} {
-    # we need to use macports curl not system curl
-    depends_build-append        port:curl
-
-    # now manually download the file(s) if they don't exist
-    fetch {
-            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${version}${extract.suffix} ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${version}${extract.suffix} https://github.com/FNA-XNA/FAudio/archive/${version}${extract.suffix}"
-            }
-    }
-    checksums               rmd160  e24c9e179d5a806ad63d324a63a4200f6a6b321e \
-                            sha256  8aef339e0ddef9ca963a2903407e6ed254dbf8427fdb2977df6f47e99047f700 \
-                            size    1131793
-}
 
 # remove set deployment target and hard-coded RPATH setting
 patchfiles              patch-faudio-remove-deployment-target.diff

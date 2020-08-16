@@ -146,21 +146,7 @@ use_bzip2                   yes
 
 distname                    MacOSX${version}
 
-# Workaround "GitHub requires TLS v1.2"
-if {${os.major} <= 12} {
-
-    # we need to use macports curl not system curl
-    depends_build-append        port:curl
-    
-    fetch {
-        # now manually download the file(s) if they don't exist
-        if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} ]} {
-            system -W /bin "${prefix}/bin/curl -Lo ${portdbpath}/distfiles/${dist_subdir}/${distname}${extract.suffix} https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/${distname}${extract.suffix}"
-        }
-    }
-} else {
-    master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
-}
+master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
 
 build {}
 
