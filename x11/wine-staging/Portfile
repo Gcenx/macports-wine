@@ -16,7 +16,7 @@ name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
 version                     5.15
-revision                    0
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -26,7 +26,7 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set wine_staging_distfile   v${version}${extract.suffix}
+set wine_staging_distfile   v5.15.2${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
 
@@ -55,9 +55,9 @@ checksums                   ${wine_distfile} \
                             sha256  7d5502a956f2195721b09a372988ae4c0d39eaa2c37f5e748971d2b6ce52ac13 \
                             size    40035471 \
                             ${wine_staging_distfile} \
-                            rmd160  4c688678d3859320b7441d96c9cce1eba020d9ca \
-                            sha256  a57b3266b430a5a5ea8334ed2ddbe263e4df4b638d90590465bee8afa65babc7 \
-                            size    9840101
+                            rmd160  549ede4069fed2f6dc46a60e366a7be0d0e103bd \
+                            sha256  ee97e6fc20b3ed8d90d5ee9fac23492b66f2ecffddd9b544d1cbfc12cb1fd56b \
+                            size    9835501
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -90,11 +90,10 @@ depends_build               port:autoconf \
                             port:pkgconfig
 
 post-extract {
-    system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
+    system -W /bin "${workpath}/wine-staging-${version}.2/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
-patchfiles                  skip-building-winemenubuilder.patch \
-                            mfplat-streaming-support-Correct-a-variable-name.patch
+patchfiles                  skip-building-winemenubuilder.patch
 
 pre-configure {
     if {[variant_isset universal]} {
