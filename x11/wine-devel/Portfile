@@ -345,7 +345,7 @@ platform darwin {
         }
     } elseif {${os.major} > 18} {
         notes-append {
-        Only wine64 will be avaliable on macOS 10.15 and above}
+        Only wine64 will be available on macOS 10.15 and above}
     }
 }
 
