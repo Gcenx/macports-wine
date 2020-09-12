@@ -1,0 +1,34 @@
+From 6c50dbd14ec1c652faecc5ca84d78dab74d89b64 Mon Sep 17 00:00:00 2001
+From: Chip Davis <cdavis@codeweavers.com>
+Date: Sun, 24 Nov 2019 20:13:31 -0600
+Subject: [PATCH] winegcc: Pass through -fuse-ld= to the linker.
+
+Signed-off-by: Chip Davis <cdavis@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ tools/winegcc/winegcc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git tools/winegcc/winegcc.c tools/winegcc/winegcc.c
+index 140ca078226..939c1e5c913 100644
+--- tools/winegcc/winegcc.c
++++ tools/winegcc/winegcc.c
+@@ -73,7 +73,7 @@
+  *          object-file-name  -llibrary -nostartfiles  -nodefaultlibs
+  *          -nostdlib -s  -static  -static-libgcc  -static-libstdc++
+  *          -shared  -shared-libgcc  -symbolic  -Wl,option
+- *          -Xlinker option -u symbol --image-base
++ *          -Xlinker option -u symbol --image-base -fuse-ld
+  *
+  *      Directory Options
+  *          -Bprefix  -Idir  -I-  -Ldir  -specs=file
+@@ -1329,6 +1329,9 @@ static int is_linker_arg(const char* arg)
+ 	case 'a':
+ 	    if (strcmp("-arch", arg) == 0) return 1;
+ 	    break;
++	case 'f':
++	    if (strncmp("-fuse-ld=", arg, 9) == 0) return 1;
++	    break;
+     }
+ 
+     for (j = 0; j < ARRAY_SIZE(link_switches); j++)
