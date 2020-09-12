@@ -82,13 +82,28 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
-patchfiles                  patch-include-distversion.h.diff \
-                            Revert-HACK-Disable-the-wait-window-as-it-is-deemed-confusing.diff \
-                            0001-mshtml-Refactor-Gecko-loading-code.diff \
-                            0002-mshtml-Support-loading-Gecko-from-global-location.diff \
-                            0003-mshtml-Update-to-Wine-Gecko2.47.1.diff \
-                            skip-building-winemenubuilder.diff \
-                            configure_add_disable_quicktime.diff
+# Required patch to compile crossover-wine source
+patchfiles                  patch_include_distversion.h.diff
+
+# Upgrade wine-gecko to the currently used version with loading from a global location (remove for CrossOver-20)
+patchfiles-append           0001-mshtml_Refactor_Gecko_loading_code.diff \
+                            0002-mshtml_Support_loading_Gecko_from_global_location.diff \
+                            0003_mshtml_Update_to_Wine_Gecko2.47.1.diff
+
+# Restore wineboot "wait" window
+patchfiles-append           Revert_HACK_Disable_the_wait_window_as_it_is_deemed_confusing
+
+# Disabled Quicktime
+patchfiles-append           configure_add_disable_quicktime.diff
+
+# Disable winemenubuilder, stops useless .desktop files
+patchfiles-append           skip_building_winemenubuilder.diff
+
+# Allow overriding LD (remove for CrossOver-20)
+patchfiles-append           winegcc_Pass_through_-fuse-ld=_to_the_linker.diff
+
+# If no GPU is found print an error (remove for CrossOver-20)
+patchfiles-append           winemac.drv_Print_error_when_no_GPUs_are_detected.diff
 
 pre-configure {
     if {[variant_isset universal]} {
