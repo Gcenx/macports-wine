@@ -3,9 +3,8 @@
 PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               cmake 1.1
-version                 20.09
 
-github.setup            FNA-XNA FAudio ${version}
+github.setup            FNA-XNA FAudio 20.09
 revision                1
 
 # zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1/gstreamer1-gst-plugins-base
