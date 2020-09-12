@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     5.16
+version                     5.17
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -51,13 +51,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  bce98afab51cb1e46eb0cf0c3cd6132188e6ed6d \
-                            sha256  98fe0b7a4a4e9b255d20f5c81cbd862cd214429076e8d7d66cd65ac72687c2c1 \
-                            size    40081787 \
+                            rmd160  3b6b31945b71850059f6c7fcfc7549ebe6247430 \
+                            sha256  03f55d74330da0ef11840b97a6d95604b4dfee9bf5c1774db3aed196a613b09e \
+                            size    40140516 \
                             ${wine_staging_distfile} \
-                            rmd160  5741addd1c5627c4caca4ef3d160982997bd0c52 \
-                            sha256  241dde851ff04fffa08f9f1c37fd9d30d5ca1e27c1ee31913ff74ac412445dd5 \
-                            size    9830408
+                            rmd160  625cd98e80146e49342b1cedb3dbc70e1437a11d \
+                            sha256  75fda21f97b8548033aac4432fb163b5653c8924cea053679edb012ebdd6e34f \
+                            size    10342408
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -93,7 +93,8 @@ post-extract {
     system -W /bin "${workpath}/wine-staging-${version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
-patchfiles                  skip-building-winemenubuilder.patch
+# Disable winemenubuilder, stops useless .desktop files
+patchfiles                  skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {

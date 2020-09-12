@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     5.16
+version                     5.17
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  bce98afab51cb1e46eb0cf0c3cd6132188e6ed6d \
-                            sha256  98fe0b7a4a4e9b255d20f5c81cbd862cd214429076e8d7d66cd65ac72687c2c1 \
-                            size    40081787
+                            rmd160  3b6b31945b71850059f6c7fcfc7549ebe6247430 \
+                            sha256  03f55d74330da0ef11840b97a6d95604b4dfee9bf5c1774db3aed196a613b09e \
+                            size    40140516
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -79,7 +79,8 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
-patchfiles                  skip-building-winemenubuilder.patch
+# Disable winemenubuilder, stops useless .desktop files
+patchfiles                  skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
