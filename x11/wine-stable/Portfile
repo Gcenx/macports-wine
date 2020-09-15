@@ -86,7 +86,7 @@ patchfiles                  skip_building_winemenubuilder.diff
 patchfiles-append           configure_add_disable_quicktime.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=49774 (Regression, check again for Wine-Stable-5.0.3)
-patchfiles-append           winemac.drv_Don't_fail_GPU_detection_if_some_IOKit_properties_are_missing.diff \
+patchfiles-append           winemac.drv_Dont_fail_GPU_detection_if_some_IOKit_properties_are_missing.diff \
                             winemac.drv_Print_error_when_no_GPUs_are_detected.diff
 
 pre-configure {
