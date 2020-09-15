@@ -16,7 +16,7 @@ name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
 version                     5.17
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -84,6 +84,9 @@ patchfiles                  skip_building_winemenubuilder.diff
 
 # Add CrossOver Steam HACK
 patchfiles-append           HACK_CrossOver_Steam.diff
+
+# Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=49624
+patchfiles-append           ntdll_Use_the_MacOS_file_handle_limit_workaround.diff
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -321,10 +324,6 @@ platform darwin {
         depends_build-append        port:MacOSX10.11.sdk
         configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     }
-    
-    # Having this enabled causes CEF/gecko to instantly crash
-    # https://bugs.winehq.org/show_bug.cgi?id=49624
-    configure.args-append        ac_cv_cflags__fno_stack_protector="no"
     
     notes {
         When using the Mac Driver, it might be useful to enable RetinaMode\
