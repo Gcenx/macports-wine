@@ -16,7 +16,7 @@ name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
 version                     5.17
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -26,7 +26,8 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set wine_staging_distfile   v${version}.1${extract.suffix}
+set staging_version         5.17.2
+set wine_staging_distfile   v${staging_version}${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
 
@@ -55,9 +56,9 @@ checksums                   ${wine_distfile} \
                             sha256  03f55d74330da0ef11840b97a6d95604b4dfee9bf5c1774db3aed196a613b09e \
                             size    40140516 \
                             ${wine_staging_distfile} \
-                            rmd160  172ab2c98e88a724a8a60cce363af581c6dfaced \
-                            sha256  f47b963cf75b53ec738e85f38971d9189b2c3cc2dfe3b1fad9636c6552d32828 \
-                            size    10342532
+                            rmd160  e0537ce7e6e2b1b1dfb1107fde805497684a9751 \
+                            sha256  b4594ac16265453500f2c3f6957f37d92a1bb2e778393f103d0ba6020f89829a \
+                            size    10343771
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -90,7 +91,7 @@ depends_build               port:autoconf \
                             port:pkgconfig
 
 post-extract {
-    system -W /bin "${workpath}/wine-staging-${version}.1/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
+    system -W /bin "${workpath}/wine-staging-${staging_version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
 # Disable winemenubuilder, stops useless .desktop files
@@ -98,6 +99,9 @@ patchfiles                  skip_building_winemenubuilder.diff
 
 # Add CrossOver Steam HACK
 patchfiles-append           HACK_CrossOver_Steam.diff
+
+# Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=49624
+patchfiles-append           ntdll_Use_the_MacOS_file_handle_limit_workaround.diff
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -335,10 +339,6 @@ platform darwin {
         depends_build-append        port:MacOSX10.11.sdk
         configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     }
-    
-    # Having this enabled causes CEF/gecko to instantly crash
-    # https://bugs.winehq.org/show_bug.cgi?id=49624
-    configure.args-append        ac_cv_cflags__fno_stack_protector="no"
     
     notes {
         When using the Mac Driver, it might be useful to enable RetinaMode\
