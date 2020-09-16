@@ -1,0 +1,16 @@
+--- loader/wine_info.plist.in.orig	2020-06-11 12:25:44.000000000 -0400
++++ loader/wine_info.plist.in		2020-09-15 19:34:35.000000000 -0400
+@@ -9,11 +9,11 @@
+     <key>CFBundleExecutable</key>
+     <string>wineloader</string><!-- CrossOver Hack 10913 -->
+     <key>CFBundleIdentifier</key>
+-    <string>com.codeweavers.CrossOver.wineloader</string><!-- CrossOver Hack 10913 -->
++    <string>org.winehq.wine-crossover.wine</string>
+     <key>CFBundleInfoDictionaryVersion</key>
+     <string>6.0</string>
+     <key>CFBundleName</key>
+-    <string>CrossOver-Hosted Application</string><!-- CrossOver Hack 10913 -->
++    <string>Wine/string>
+     <key>CFBundlePackageType</key>
+     <string>APPL</string>
+     <key>CFBundleShortVersionString</key>

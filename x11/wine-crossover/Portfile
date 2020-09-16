@@ -91,7 +91,7 @@ patchfiles-append           0001-mshtml_Refactor_Gecko_loading_code.diff \
                             0003_mshtml_Update_to_Wine_Gecko2.47.1.diff
 
 # Restore wineboot "wait" window
-patchfiles-append           Revert_HACK_Disable_the_wait_window_as_it_is_deemed_confusing
+patchfiles-append           Revert_HACK_Disable_the_wait_window_as_it_is_deemed_confusing.diff
 
 # Disabled Quicktime
 patchfiles-append           configure_add_disable_quicktime.diff
@@ -102,8 +102,8 @@ patchfiles-append           skip_building_winemenubuilder.diff
 # Allow overriding LD (remove for CrossOver-20)
 patchfiles-append           winegcc_Pass_through_-fuse-ld=_to_the_linker.diff
 
-# If no GPU is found print an error (remove for CrossOver-20)
-patchfiles-append           winemac.drv_Print_error_when_no_GPUs_are_detected.diff
+# Patch CFBundleName to "Wine" & CFBundleIdentifier to "org.winehq.wine-crossover.wine"
+patchfiles-append           HACK_use_standard_name_plist.diff
 
 pre-configure {
     if {[variant_isset universal]} {
