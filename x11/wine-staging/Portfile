@@ -97,9 +97,6 @@ post-extract {
 # Disable winemenubuilder, stops useless .desktop files
 patchfiles                  skip_building_winemenubuilder.diff
 
-# Add CrossOver Steam HACK
-patchfiles-append           HACK_CrossOver_Steam.diff
-
 # Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=49624
 patchfiles-append           ntdll_Use_the_MacOS_file_handle_limit_workaround.diff
 
@@ -311,14 +308,14 @@ platform darwin {
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && [variant_isset universal]} {
-        depends_lib-append                      path:lib/MoltenVK.dylib:MoltenVK
+        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK
-        lappend merger_configure_args(x86_64)   --with-vulkan
+        lappend merger_configure_args(x86_64)   --with-vulkan ac_cv_lib_soname_MoltenVK=${prefix}/lib/libMoltenVK.dylib ac_cv_lib_soname_vulkan=
         lappend merger_configure_args(i386)     --without-vulkan
     } elseif {${os.major} >= 19} {
-        depends_lib-append                      path:lib/MoltenVK.dylib:MoltenVK
+        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK
-        configure.args-append                   --with-vulkan
+        configure.args-append                   --with-vulkan ac_cv_lib_soname_MoltenVK=${prefix}/lib/libMoltenVK.dylib ac_cv_lib_soname_vulkan=
     } else {
         configure.args-append                   --without-vulkan
     }
