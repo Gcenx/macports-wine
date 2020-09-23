@@ -5,7 +5,6 @@ categories                  graphics
 maintainers                 openmaintainer
 license                     Apache-2
 
-# MoltenVK would build for i386, but it uses Metal which only works on x86_64.
 supported_archs             x86_64
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
@@ -55,9 +54,9 @@ destroot {
         file copy ${output_dir}/include ${destroot}${prefix}
         file delete -force ${destroot}${prefix}/share
         file copy ${output_dir}/share ${destroot}${prefix}
-        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
-        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json
-        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+        reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json \
+                                           ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json \
+                                           ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
     } else {
         set output_dir ${worksrcpath}/MoltenVK/macOS
         copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
