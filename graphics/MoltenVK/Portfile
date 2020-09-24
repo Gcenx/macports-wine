@@ -40,6 +40,18 @@ subport VulkanSDK {
     set my_name                 VulkanSDK
     dist_subdir                 MoltenVK
     version                     ${VulkanSDK_version}
+    
+    notes-append "
+        ************************************************************
+        In order for the vulkan loader within applications to find,
+        libMoltenVK.dylib we need to copy ${prefix}/share/vulkan
+        into each user's
+        ~/share directory;
+        
+        mkdir ~/.local
+        cp -R ${prefix}/share/vulkan ~/.local/share/
+        ************************************************************
+    "
 }
 
 destroot {
