@@ -80,7 +80,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles                  skip_building_winemenubuilder.diff
+patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 # Disable Quicktime
 patchfiles-append           configure_add_disable_quicktime.diff
