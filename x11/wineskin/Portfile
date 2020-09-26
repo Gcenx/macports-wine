@@ -1,0 +1,45 @@
+PortSystem          1.0
+PortGroup           github 1.0
+
+name                wineskin
+version             1.8.4.2
+
+revision            0
+categories          x11
+maintainers         {gcenx @gcenx} openmaintainer
+license             LGPL-2.1
+platforms           darwin
+description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS/Mac OS X.
+
+long_description    ${description}
+
+homepage            https://github.com/Gcenx/WineskinServer/
+
+distname            Wineskin.Winery
+use_xz              yes
+extract.suffix      .txz
+
+master_sites        https://github.com/Gcenx/WineskinServer/releases/download/V${version}/
+
+checksums           rmd160  f06859eab113197cf1880919657826e661c404a0 \
+                    sha256  6e2515a541a0166e2b4d6eacc8122f004512d08c90bd7bcd3c474509c4d1dc0c \
+                    size    766456
+
+use_configure       no
+build {}
+
+if {${os.major} < 13} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} requires Mac OS X 10.9 or later."
+        return -code error "incompatible Mac OS X version"
+    }
+}
+
+destroot {
+        file copy "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
+}
