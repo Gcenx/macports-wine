@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     5.17
-revision                    2
+version                     5.18
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  3b6b31945b71850059f6c7fcfc7549ebe6247430 \
-                            sha256  03f55d74330da0ef11840b97a6d95604b4dfee9bf5c1774db3aed196a613b09e \
-                            size    40140516
+                            rmd160  db25716acd7c19b89f82af73ca543f4ab3c1396b \
+                            sha256  ec2fef94ec7781bd44fbac6ec781dc8ca936503b8fd0547241f73cd22a940df8 \
+                            size    40363170
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -68,7 +68,6 @@ depends_lib                 port:fontconfig \
                             port:libxml2 \
                             port:libxslt \
                             port:mpg123 \
-                            port:ncurses \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
@@ -80,10 +79,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles                  skip_building_winemenubuilder.diff
-
-# Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=49624
-patchfiles-append           ntdll_Use_the_MacOS_file_handle_limit_workaround.diff
+patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -105,12 +101,10 @@ configure.args              --without-alsa \
                             --with-cms \
                             --with-coreaudio \
                             --with-cups \
-                            --with-curses \
                             --without-dbus \
                             --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --without-gcrypt \
                             --without-gettext \
                             --without-gettextpo \
                             --without-gphoto \
@@ -119,7 +113,6 @@ configure.args              --without-alsa \
                             --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
-                            --without-gtk3 \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
@@ -146,7 +139,6 @@ configure.args              --without-alsa \
                             --with-usb \
                             --without-v4l2 \
                             --without-vkd3d \
-                            --without-xattr \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
@@ -160,7 +152,6 @@ configure.args              --without-alsa \
                             --without-xshm \
                             --with-xslt \
                             --without-xxf86vm \
-                            --without-va \
                             --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
