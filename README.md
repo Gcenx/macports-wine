@@ -23,6 +23,9 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-5.0.0` Wine-Mono-5.0.0 (/opt/wine/mono)
 - `wine-mono-5.1.0` Wine-Mono-5.1.0 (/opt/wine/mono)
 - `Wineskin` Wineskin Winery-1.8.4.2
+- 'Mingw-w64' Updated to v8.0.0
+- 'i686-w64-mingw32-binutils' Updated to 2.35
+- 'x86_64-w64-mingw32-binutils' Updated to 2.35
 
 ## MacOSX.sdk contains the following subports;
 - `subport MacOSX10.14.sdk`
