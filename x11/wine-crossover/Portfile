@@ -254,6 +254,9 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
 # own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append          -Wl,-rpath,${prefix}/lib
 
+# GCC10 defaults to -fno-common this breaks old wine releases
+configure.env-append              CROSSCFLAGS=-fcommon
+
 configure.universal_args
 
 set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
