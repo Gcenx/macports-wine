@@ -17,19 +17,19 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/KhronosGroup/MoltenVK/releases
-version                     1.0.44
+version                     1.1.0
 
 # This needs to match the LunarG SDK version
-set VulkanSDK_version       1.2.148.0
+set VulkanSDK_version       1.2.154.0
 
 distname                    vulkansdk-macos-${VulkanSDK_version}
 use_dmg                     yes
 
 master_sites                https://sdk.lunarg.com/sdk/download/${VulkanSDK_version}/mac/
 
-checksums                   rmd160  3967cbed755e9f9ea2391b3b6fa8dc8058b41519 \
-                            sha256  54042a138f6497a3cf173a56449cb7310e9a9d4934c4ec3f65c7b0b3e43cb848 \
-                            size    223296311
+checksums                   rmd160  18697ec709f055d5dfeccafbfda339a6d7943638 \
+                            sha256  6a917523206aeb179e02ad93c1ea94988ec1af6c22cc7715d8e3f209772829f2 \
+                            size    290202207
 
 use_configure       no
 build {}
@@ -40,18 +40,6 @@ subport VulkanSDK {
     set my_name                 VulkanSDK
     dist_subdir                 MoltenVK
     version                     ${VulkanSDK_version}
-    
-    notes-append "
-        ************************************************************
-        In order for the vulkan loader within applications to find,
-        libMoltenVK.dylib we need to copy ${prefix}/share/vulkan
-        into each user's
-        ~/share directory;
-        
-        mkdir ~/.local
-        cp -R ${prefix}/share/vulkan ~/.local/share/
-        ************************************************************
-    "
 }
 
 destroot {
@@ -60,6 +48,7 @@ destroot {
         file delete -force ${destroot}${prefix}/bin
         file copy ${output_dir}/bin ${destroot}${prefix}
         file copy ${output_dir}/Frameworks/vulkan.framework ${destroot}${frameworks_dir}
+        file copy ${worksrcpath}/MoltenVK/MoltenVK.xcframework ${destroot}${frameworks_dir}
         file delete -force ${destroot}${prefix}/lib
         file copy ${output_dir}/lib ${destroot}${prefix}
         file delete -force ${destroot}${prefix}/include
@@ -69,10 +58,19 @@ destroot {
         reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json \
                                            ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json \
                                            ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+        reinplace "s|/tmp/macos-sdk-build/SPIRV-Cross/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/spirv-cross-c-shared.pc
+        reinplace "s|/tmp/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools-shared.pc
+        reinplace "s|/tmp/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools.pc
+    
     } else {
-        set output_dir ${worksrcpath}/MoltenVK/macOS
-        copy ${output_dir}/dynamic/libMoltenVK.dylib ${destroot}${prefix}/lib
-        copy ${output_dir}/framework/MoltenVK.framework ${destroot}${frameworks_dir}
+        set output_dir ${worksrcpath}/MoltenVK
+        file copy ${output_dir}/dylib/macOS/libMoltenVK.dylib ${destroot}${prefix}/lib
+        xinstall -d ${destroot}${prefix}/share/vulkan/icd.d
+        file copy ${output_dir}/dylib/macOS/MoltenVK_icd.json ${destroot}${prefix}/share/vulkan/icd.d
+        reinplace "s|./|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
+        file delete -force ${destroot}${prefix}/include
+        file copy ${output_dir}/include ${destroot}${prefix}
+        file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
     }
 }
 
@@ -86,4 +84,16 @@ platform darwin {
             return -code error "incompatible OS X version"
         }
     }
+    
+    notes-append "
+        ************************************************************
+        In order for vulkan loader within applications to find,
+        libMoltenVK.dylib we need to copy ${prefix}/share/vulkan
+        into each user's
+        ~/share directory;
+        
+        cp -R ${prefix}/share/vulkan ~/.local/share/
+        ************************************************************
+    "
+    
 }
