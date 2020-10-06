@@ -83,27 +83,36 @@ depends_build               port:bison \
                             port:pkgconfig
 
 # Required patch to compile crossover-wine source
-patchfiles                  patch_include_distversion.h.diff
+patchfiles                  PATCH-include_distversion.h.diff
 
 # Upgrade wine-gecko to the currently used version with loading from a global location (remove for CrossOver-20)
 patchfiles-append           0001-mshtml_Refactor_Gecko_loading_code.diff \
                             0002-mshtml_Support_loading_Gecko_from_global_location.diff \
-                            0003_mshtml_Update_to_Wine_Gecko2.47.1.diff
+                            0003-mshtml_Update_to_Wine_Gecko2.47.1.diff
 
 # Restore wineboot "wait" window
-patchfiles-append           Revert_HACK_Disable_the_wait_window_as_it_is_deemed_confusing.diff
+patchfiles-append           Revert_HACK-Disable_the_wait_window_as_it_is_deemed_confusing.diff
 
-# Disabled Quicktime
-patchfiles-append           configure_add_disable_quicktime.diff
+# Disable Quicktime
+patchfiles-append           PATCH-configure_add_disable_quicktime.diff
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles-append           skip_building_winemenubuilder.diff
+patchfiles-append           HACK-skip_building_winemenubuilder.diff
 
 # Allow overriding LD (remove for CrossOver-20)
-patchfiles-append           winegcc_Pass_through_-fuse-ld=_to_the_linker.diff
+patchfiles-append           PATCH-winegcc_Pass_through_-fuse-ld=_to_the_linker.diff
 
-# Patch CFBundleName to "Wine" & CFBundleIdentifier to "org.winehq.wine-crossover.wine"
-patchfiles-append           HACK_use_standard_name_plist.diff
+# Revert CrossOver HACK 10913 (wine_info.plist.in)
+patchfiles-append           Revert-Crossover_Hack_10913.diff
+
+# Use actual "USERS" Name not "crossover"
+patchfiles-append           Revert-Crossover_Hack_12735.diff
+
+# Revert CrossOver HACK 12791 (desktop symlink to desktop)
+patchfiles-append           Revert-CrossOver_Hack_12791.diff
+
+# Alter wineapploader to use wine32on64 when running Catalina or later, else use wine
+patchfiles-append           HACK-wineapploader.diff
 
 pre-configure {
     if {[variant_isset universal]} {

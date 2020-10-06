@@ -1,5 +1,5 @@
 Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers.
---- /dev/null	2013-12-07 10:15:02.000000000 -0600
+--- /dev/null	            2013-12-07 10:15:02.000000000 -0600
 +++ include/distversion.h	2013-12-07 10:14:51.000000000 -0600
 @@ -0,0 +1,12 @@
 +/* ---------------------------------------------------------------
