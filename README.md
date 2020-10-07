@@ -29,6 +29,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - 'x86_64-w64-mingw32-binutils' Updated to 2.35.1
 - `i686-w64-mingw32-gcc` Updated to 10.2.0
 - `X86_64-w64-mingw32-gcc` Updated to 10.2.0
+- `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
 
 ## MacOSX.sdk contains the following subports;
 - `subport MacOSX10.14.sdk`
