@@ -14,11 +14,12 @@ use_bzip2                   yes
 long_description            ${name} ${description}
 
 version                     2.47.1
+revision                    1
 distname                    wine-gecko-${version}
 set wine_gecko_distfile     ${distname}-x86.tar.bz2
 set wine_gecko64_distfile   ${distname}-x86_64.tar.bz2
 
-master_sites                http://dl.winehq.org/wine/wine-gecko/${version}/:winegecko /
+master_sites                https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
 
 distfiles                   ${wine_gecko_distfile}:winegecko \
                             ${wine_gecko64_distfile}:winegecko
@@ -31,9 +32,9 @@ checksums                   ${wine_gecko_distfile} \
                             sha256  06a00cedf391ee07bbca0b3282e5c8ad9d950446d50648d2ff417716816fd1ab \
                             size    45761076 \
                             ${wine_gecko64_distfile} \
-                            rmd160  f23ca1a776390044553e3e75a09fb1aad1c78af8 \
-                            sha256  ea5246e4c91d1aa1226658e1749b6e5d0e9353b52b14df79c4b93b6e61a3c59e \
-                            size    48443048
+                            rmd160  42a25c47aa5f0a39edd8f0352cdb64b34add173c \
+                            sha256  faf7a56e42fe60943e2074940f4c4ef55791747bca7f34f08fed7c185611a4fb \
+                            size    46392514
 
 use_configure               no
 build {}
