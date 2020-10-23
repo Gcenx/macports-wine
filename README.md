@@ -18,19 +18,19 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-devel` Wine-Devel-5.19
 - `wine-staging` Wine-Staging-5.19
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
-- `wine-gecko` Wine-Gecko-2.47.1 (/opt/wine/gecko)
-- `wine-mono` Wine-Mono-4.9.4 (/opt/wine/mono)
-- `wine-mono-5.0.0` Wine-Mono-5.0.0 (/opt/wine/mono)
-- `wine-mono-5.1.0` Wine-Mono-5.1.0 (/opt/wine/mono)
-- `wine-mono-5.1.1` Wine-Mono-5.1.1 (/opt/wine/mono)
+- `wine-gecko` Wine-Gecko-2.47.1 (Workaround added for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
+- `wine-mono` Wine-Mono-4.9.4
+- `wine-mono-5.0.0` Wine-Mono-5.0.1 (wine-mono-5.0.1 has bugfixes)
+- `wine-mono-5.1.0` Wine-Mono-5.1.0
+- `wine-mono-5.1.1` Wine-Mono-5.1.1
 - `Wineskin` Wineskin Winery-1.8.4.2
-- 'Mingw-w64' Updated to v8.0.0
-- 'i686-w64-mingw32-binutils' Updated to 2.35.1
-- 'x86_64-w64-mingw32-binutils' Updated to 2.35.1
+- `Mingw-w64` Updated to v8.0.0
+- `i686-w64-mingw32-binutils` Updated to 2.35.1
+- `x86_64-w64-mingw32-binutils` Updated to 2.35.1
 - `i686-w64-mingw32-gcc` Updated to 10.2.0
 - `X86_64-w64-mingw32-gcc` Updated to 10.2.0
 - `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
-- `librsvg` Downgrade pre-cargo version (10.14 and below)
+- `librsvg` Force pre-cargo version (10.14 and below)
 
 ## MacOSX.sdk contains the following subports;
 - `subport MacOSX10.14.sdk`
@@ -87,17 +87,6 @@ diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macpo
  # Directory under which MacPorts should install ports. This must be
  # where MacPorts itself is installed.
  prefix              	/opt/local
- -diff -u /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl
- --- /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl.orig     2019-09-21 16:25:24.000000000 -0700
- +++ /opt/local/libexec/macports/lib/port1.0/portconfigure.tcl          2019-09-21 16:26:20.000000000 -0700
- @@ -1477,6 +1477,7 @@
-                  append_to_environment_value configure $env_var -isysroot${configure.sdkroot}
-              }
-              append_to_environment_value configure "LDFLAGS" -Wl,-syslibroot,${configure.sdkroot}
- +            append_to_environment_value configure "LDFLAGS" -Wl,-w
-          }
-  
-          # add extra flags that are conditional on whether we're building universal
 ```
 Place a copy of the `MacOSX10.13.sdk` into `/Library/Developer/CommandLineTools/SDKs/` \
 Alternatively run `port install MacOSX10.13.sdk`
