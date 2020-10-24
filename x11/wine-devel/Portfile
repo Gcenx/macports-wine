@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     5.19
+version                     5.20
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  c916aac3605cc2e90d6bf7c1df032f2c8a1a5de4 \
-                            sha256  b00aad3c9341d99e90dd3ac077c470f53580fab8bd7b0f3a3c5a06753dee1d46 \
-                            size    40457643
+                            rmd160  73f6dab4d265cf0aa605e8226a8b1c2946199902 \
+                            sha256  5606f28f12d8f703015f48671f2c858c33679e12ae999dcf55a280cc714cd096 \
+                            size    40418030
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -105,7 +105,8 @@ configure.args              --without-alsa \
                             --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --with-gettext \
+                            --without-gcrypt \
+                            --without-gettext \
                             --without-gettextpo \
                             --without-gphoto \
                             --with-glu \
@@ -113,6 +114,7 @@ configure.args              --without-alsa \
                             --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
+                            --without-gtk3 \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
@@ -139,6 +141,7 @@ configure.args              --without-alsa \
                             --with-usb \
                             --without-v4l2 \
                             --without-vkd3d \
+                            --without-xattr \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
@@ -152,6 +155,7 @@ configure.args              --without-alsa \
                             --without-xshm \
                             --with-xslt \
                             --without-xxf86vm \
+                            --without-va \
                             --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
