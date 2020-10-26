@@ -74,9 +74,9 @@ From Wine-5.0 it's possbile to have a shared version of both gecko & mono, inste
 ## How to use on macOS High Sierra & macOS Mojave;
 Install macports as usual then apply the following patch.
 ```
-diff -u /opt/local/etc/macports/macports.conf.orig /opt/local/etc/macports/macports.conf
---- /opt/local/etc/macports/macports.conf.orig	                        2019-09-27 22:22:38.000000000 -0400
-+++ /opt/local/etc/macports/macports.conf	                            2019-09-27 22:22:14.000000000 -0400
+diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.conf
+--- /opt/local/etc/macports/macports.conf                        2019-09-27 22:22:38.000000000 -0400
++++ /opt/local/etc/macports/macports.conf	                 2019-09-27 22:22:14.000000000 -0400
 @@ -1,6 +1,9 @@
  # MacPorts system-wide configuration file.
  # Commented-out values are defaults unless otherwise noted.
