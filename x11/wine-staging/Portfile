@@ -134,7 +134,7 @@ configure.args              --without-alsa \
                             --without-inotify \
                             --with-jpeg \
                             --without-krb5 \
-                            --without-ldap \
+                            --with-ldap \
                             --with-mingw \
                             --with-mpg123 \
                             --without-netapi \
@@ -240,9 +240,9 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
-# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its
-# own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append          -Wl,-rpath,${prefix}/lib
+# Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
+# https://bugs.winehq.org/show_bug.cgi?id=49199
+configure.ldflags-append          -Wl,-rpath,@loader_path/../
 
 configure.universal_args
 

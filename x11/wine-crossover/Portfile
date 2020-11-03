@@ -1,6 +1,7 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
+PortGroup                   github 1.0
 PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
@@ -17,17 +18,17 @@ PortGroup                   active_variants 1.1
 name                        wine-crossover
 conflicts                   wine wine-stable wine-devel wine-staging
 set my_name                 wine
-version                     19.0.2
+
+github.setup                Gcenx winecx crossover-wine-19.0.2
 revision                    0
+
 license                     LGPL-2.1+
 categories                  x11
 maintainers                 {gcenx @gcenx}
 homepage                    https://www.codeweavers.com/products/more-information/source
 platforms                   darwin
-distname                    crossover-sources-${version}
+distname                    ${version}
 dist_subdir                 ${my_name}
-set wine_distfile           ${distname}${extract.suffix}
-worksrcdir                  sources/wine
 use_parallel_build          yes
 
 description                 A Windows API implementation (Wine 4.12.1 with CodeWeavers modifications for CrossOver)
@@ -43,16 +44,9 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                http://ftp.codeweavers.com/pub/crossover/source/:winesource
-
-extract.only                ${wine_distfile}
-
-distfiles                   ${wine_distfile}:winesource \
-
-checksums                   ${wine_distfile} \
-                            rmd160  2755a26d808af34ee2941a7cbb75cc7fc43b6d07 \
-                            sha256  4647594cf21fe926e619001f49e38e9da149b0c89b0b948a0a4abce2a94dbaac \
-                            size    138476045
+checksums                   rmd160  39ff32f3d988d7ff5811c08beb01379fdd9e949e \
+                            sha256  b7bb8423988da052e6ac05c805cb010a3a06b8b675e502e912ac108502eedcc2 \
+                            size    36477200
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -85,7 +79,7 @@ depends_build               port:bison \
 # Required patch to compile crossover-wine source
 patchfiles                  PATCH-include_distversion.h.diff
 
-# Upgrade wine-gecko to the currently used version with loading from a global location (remove for CrossOver-20)
+# Upgrade wine-gecko to the currently used version with loading from a global location (remove for wine-crossover-20)
 patchfiles-append           0001-mshtml_Refactor_Gecko_loading_code.diff \
                             0002-mshtml_Support_loading_Gecko_from_global_location.diff \
                             0003-mshtml_Update_to_Wine_Gecko2.47.1.diff
@@ -99,7 +93,7 @@ patchfiles-append           PATCH-configure_add_disable_quicktime.diff
 # Disable winemenubuilder, stops useless .desktop files
 patchfiles-append           HACK-skip_building_winemenubuilder.diff
 
-# Allow overriding LD (remove for CrossOver-20)
+# Allow overriding LD (remove for wine-crossover-20)
 patchfiles-append           PATCH-winegcc_Pass_through_-fuse-ld=_to_the_linker.diff
 
 # Revert CrossOver HACK 10913 (wine_info.plist.in)
@@ -139,8 +133,7 @@ configure.args              --without-alsa \
                             --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --without-gcrypt \
-                            --without-gettext \
+                            --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
                             --with-glu \
@@ -148,12 +141,11 @@ configure.args              --without-alsa \
                             --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
-                            --without-gtk3 \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
                             --without-krb5 \
-                            --without-ldap \
+                            --with-ldap \
                             --with-mingw \
                             --with-mpg123 \
                             --without-netapi \
@@ -174,7 +166,6 @@ configure.args              --without-alsa \
                             --with-unwind \
                             --without-v4l2 \
                             --without-vkd3d \
-                            --without-xattr \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
@@ -189,7 +180,6 @@ configure.args              --without-alsa \
                             --with-xslt \
                             --without-xxf86vm \
                             --with-zlib \
-                            --without-va \
                             --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
@@ -245,11 +235,9 @@ variant ffmpeg {
                                 port:gstreamer1-gst-libav
 
     configure.args-delete       --without-dbus \
-                                --without-gtk3 \
                                 --without-krb5
 
     configure.args-append       --with-dbus \
-                                --with-gtk3 \
                                 --with-krb5
     
     require_active_variants     port:FAudio wma
@@ -259,9 +247,9 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
 
-# Standard dlopen is used within wine since 5.6, wine(64) no longer finds libs on its
-# own so hardcode them https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append          -Wl,-rpath,${prefix}/lib
+# Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
+# https://bugs.winehq.org/show_bug.cgi?id=49199
+configure.ldflags-append          -Wl,-rpath,@loader_path/../
 
 # GCC10 defaults to -fno-common this breaks old wine releases
 configure.env-append              CROSSCFLAGS=-fcommon
