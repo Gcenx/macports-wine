@@ -4,7 +4,7 @@ PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               cmake 1.1
 
-github.setup            FNA-XNA FAudio 20.10
+github.setup            FNA-XNA FAudio 20.11
 revision                0
 
 # zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1/gstreamer1-gst-plugins-base
@@ -23,9 +23,9 @@ depends_lib-append      port:libsdl2 \
                         port:gstreamer1 \
                         port:gstreamer1-gst-plugins-base
 
-checksums               rmd160  947c12686a88280a053a99f59305ed92ff0374dc \
-                        sha256  f65f1e060318cbdeef493aea18e42f2814c35ef4d33f2c95747b00f00d544d6f \
-                        size    1133802
+checksums               rmd160  64c69fbf1ffe7529afddc2e9d7e955f4e7fb862c \
+                        sha256  d073be558e7818c85aa7e37e4475129ed881e2d9d1b57cb9da26cd59cbe38b05 \
+                        size    1133985
 
 # remove set deployment target and hard-coded RPATH setting
 patchfiles              patch-faudio-remove-deployment-target.diff
