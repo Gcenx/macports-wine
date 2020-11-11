@@ -14,7 +14,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `rust` Downgraded to 1.42.0 (Needed for 32Bit support)
 - `VulkanSDK` (Installs vulkansdk-macos-1.2.154.0)
 - `wine` Marked obsolete (swap to Winehq naming scheme)
-- `wine-stable` Wine-5.0.2
+- `wine-stable` Wine-5.0.3 (Upsteam patch for [Bugzilla 49774](https://bugs.winehq.org/show_bug.cgi?id=49774))
 - `wine-devel` Wine-Devel-5.21
 - `wine-staging` Wine-Staging-5.21
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)

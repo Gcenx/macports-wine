@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     5.0.2
+version                     5.0.3
 revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  61da25298395b0c15152edb21d1bfa4d5796d5dd \
-                            sha256  ec0f71eea6d7499058fd3cdd032f953526a6023e971989ed460738dcbca64450 \
-                            size    36705167
+                            rmd160  2af3db2eb5bfbf37e04da4138ab8cb2abdca9b03 \
+                            sha256  9cd7516dbfbce2ddc74e221970620da44b6e6f470551124e8fca012cb234be8d \
+                            size    36719333
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -82,10 +82,10 @@ depends_build               port:bison \
 # Disable winemenubuilder, stops useless .desktop files
 patchfiles                  HACK-skip_building_winemenubuilder.diff
 
-# Disable Quicktime
+# Disable Quicktime         Remove wine-stable-6.0
 patchfiles-append           configure_add_disable_quicktime.diff
 
-# https://bugs.winehq.org/show_bug.cgi?id=49774 (Regression, check again for Wine-Stable-5.0.3)
+# https://bugs.winehq.org/show_bug.cgi?id=49774 (Regression, remove wine-stable-6.0)
 patchfiles-append           winemac.drv_Dont_fail_GPU_detection_if_some_IOKit_properties_are_missing.diff \
                             winemac.drv_Print_error_when_no_GPUs_are_detected.diff
 
