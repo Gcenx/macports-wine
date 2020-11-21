@@ -33,7 +33,8 @@ patchfiles              patch-faudio-remove-deployment-target.diff
 configure.args          -DGSTREAMER=ON \
                         -DBUILD_UTILS=OFF \
                         -DBUILD_TESTS=ON \
-                        -DXNASONG=ON
+                        -DXNASONG=ON \
+                        -DCMAKE_INSTALL_INCLUDEDIR=include/FAudio
 
 variant wma description "Use gstreamer1-gst-libav for additional xWMA support - note license changes" {
     license                GPL-2+
