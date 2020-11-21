@@ -1,7 +1,7 @@
 prefix=@PREFIX@
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+includedir=${prefix}/include/FAudio
 
 Name: Faudio
 URL: https://github.com/FNA-XNA/FAudio
