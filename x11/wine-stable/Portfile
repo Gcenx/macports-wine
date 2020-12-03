@@ -70,7 +70,7 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:libunwind \
-                            port:wine-gecko \
+                            port:wine-gecko-2.47.1 \
                             port:wine-mono \
                             port:zlib
 
