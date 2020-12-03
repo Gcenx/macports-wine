@@ -4,7 +4,7 @@ PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               cmake 1.1
 
-github.setup            FNA-XNA FAudio 20.11
+github.setup            FNA-XNA FAudio 20.12
 revision                0
 
 # zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1/gstreamer1-gst-plugins-base
@@ -23,9 +23,9 @@ depends_lib-append      port:libsdl2 \
                         port:gstreamer1 \
                         port:gstreamer1-gst-plugins-base
 
-checksums               rmd160  64c69fbf1ffe7529afddc2e9d7e955f4e7fb862c \
-                        sha256  d073be558e7818c85aa7e37e4475129ed881e2d9d1b57cb9da26cd59cbe38b05 \
-                        size    1133985
+checksums               rmd160  a735305895754d503a71c03a71225513c0d55ddc \
+                        sha256  5599d4351b716e1dc8716b3ddd5855fddbf7a48f47558e04648a8a731cb39637 \
+                        size    1134780
 
 # remove set deployment target and hard-coded RPATH setting
 patchfiles              patch-faudio-remove-deployment-target.diff
@@ -50,14 +50,6 @@ variant ffmpeg requires wma description {Legacy compatibility variant} {}
 #    they can be re-enabled by toggling -DBUILD_UTILS=ON, and manually installed like so if desired
 #    file copy ${workpath}/build/facttool ${destroot}${prefix}/bin/
 #}
-
-# FAudio doesn't generate a pkgconfig configuration file, so add our own
-post-destroot {
-    file copy ${filespath}/faudio.pc ${workpath}/faudio.pc
-    reinplace s|@PREFIX@|${prefix}|g ${workpath}/faudio.pc
-    reinplace s|@VERSION@|${version}|g ${workpath}/faudio.pc
-    xinstall -m 644 ${workpath}/faudio.pc ${destroot}${prefix}/lib/pkgconfig/faudio.pc
-}
 
 test.run                 yes
 test.cmd                 ./faudio_tests
