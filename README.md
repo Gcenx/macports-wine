@@ -18,7 +18,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-devel` Wine-Devel-5.22
 - `wine-staging` Wine-Staging-5.22
 - `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
-- `wine-gecko` Wine-Gecko-2.47.1 (Workaround added for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
+- `wine-gecko` Wine-Gecko-2.47.2
+- `wine-gecko-2.47.1` (Workaround for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
 - `wine-mono` Wine-Mono-4.9.4
 - `wine-mono-5.0.0` Wine-Mono-5.0.1 (wine-mono-5.0.1 has bugfixes)
 - `wine-mono-5.1.0` Wine-Mono-5.1.0
