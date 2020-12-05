@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     5.22
+version                     6.0-rc1
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -26,7 +26,7 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set staging_version         ${version}
+set staging_version         6.0rc1
 set wine_staging_distfile   v${staging_version}${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  357b72b9740008f1287c74d184b7535b4d0ff5da \
-                            sha256  c04053b0ee8180fcc160861d35663fc218c956d604f798f5b6043cc77c60d03d \
-                            size    40461405 \
+                            rmd160  2e2604298a4cf41ece2185d3a721981d863e03be \
+                            sha256  fddde9b96c7aed602634d56fad40bec39daf5978661cfb7e2a992850db1f725f \
+                            size    40433938 \
                             ${wine_staging_distfile} \
-                            rmd160  cdcdffe677963dce0cb457b2a1cce11bc7c1cced \
-                            sha256  3f447949ca67933b2514effd46de864fedf7bd53d46a00af794f7d19775d84ce \
-                            size    10342905
+                            rmd160  72b20576dab49438238b8f0dc5dd3f301cb70755 \
+                            sha256  8de3866030ccd2e8387a3079dd543406c739850ab0fcc16e3bf66b55d2d230c6 \
+                            size    10331511
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -80,7 +80,7 @@ depends_lib                 port:fontconfig \
                             port:mpg123 \
                             port:openal-soft \
                             port:tiff \
-                            port:wine-gecko-2.47.1 \
+                            port:wine-gecko \
                             port:wine-mono-5.1.1
 
 depends_build               port:autoconf \
