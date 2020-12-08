@@ -79,7 +79,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles                  HACK-skip_building_winemenubuilder.diff
+#patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
