@@ -94,7 +94,7 @@ post-extract {
 }
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles                  HACK-skip_building_winemenubuilder.diff
+#patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
