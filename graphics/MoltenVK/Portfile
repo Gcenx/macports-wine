@@ -18,7 +18,7 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     v1.1.1
+version                     1.1.1
 
 subport MoltenVK {
     name                    MoltenVK
@@ -47,7 +47,7 @@ subport CX-MoltenVK {
 }
 
 # Placed here so VulkanSDK can override the url
-master_sites                https://github.com/Gcenx/MoltenVK/releases/download/${version}
+master_sites                https://github.com/Gcenx/MoltenVK/releases/download/v${version}
 
 subport VulkanSDK {
     name                    VulkanSDK
