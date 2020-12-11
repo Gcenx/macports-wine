@@ -98,6 +98,7 @@ destroot {
     } else {
         set output_dir ${workpath}/Package/Release/MoltenVK
         file copy ${output_dir}/dylib/macOS/libMoltenVK.dylib ${destroot}${prefix}/lib
+        system "cd ${destroot}${prefix}/lib && lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
         xinstall -d ${destroot}${prefix}/share/vulkan/icd.d
         file copy ${output_dir}/dylib/macOS/MoltenVK_icd.json ${destroot}${prefix}/share/vulkan/icd.d
         reinplace "s|./|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
