@@ -9,38 +9,72 @@ supported_archs             x86_64
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
 name                        MoltenVK
-conflicts                   VulkanSDK
+conflicts                   CX-MoltenVK VulkanSDK
 set my_name                 MoltenVK
+dist_subdir                 MoltenVK
 
 long_description            ${name} is an implementation of the high-performance, \
                             industry-standard Vulkan graphics and compute API, that \
                             runs on Apple's Metal graphics framework.
 
-# MoltenVK version from https://github.com/KhronosGroup/MoltenVK/releases
-version                     1.1.0
+# MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
+version                     v1.1.1
 
-# This needs to match the LunarG SDK version
-set VulkanSDK_version       1.2.154.0
+subport MoltenVK {
+    name                    MoltenVK
+    conflicts               CX-MoltenVK VulkanSDK
+    set my_name             MoltenVK
 
-distname                    vulkansdk-macos-${VulkanSDK_version}
-use_dmg                     yes
+    distname                macos.zip
+    distfiles               ${distname}
 
-master_sites                https://sdk.lunarg.com/sdk/download/${VulkanSDK_version}/mac/
+    checksums               rmd160  6e9a0e9475762a1d2f452b17c8915df0c00e7f83 \
+                            sha256  8aafb924394c77bb50f46e39db3d59b516a8158061da416eb61cff5cf576219b \
+                            size    23649362
+}
 
-checksums                   rmd160  18697ec709f055d5dfeccafbfda339a6d7943638 \
-                            sha256  6a917523206aeb179e02ad93c1ea94988ec1af6c22cc7715d8e3f209772829f2 \
-                            size    290202207
+subport CX-MoltenVK {
+    name                    CX-MoltenVK
+    conflicts               MoltenVK VulkanSDK
+    set my_name             CX-MoltenVK
 
-use_configure       no
-build {}
+    distname                macos_dxvk_patched.zip
+    distfiles               ${distname}
+
+    checksums               rmd160  209aaa9c1ca86b1cd97dd477050e5ee30722cfad \
+                            sha256  f128ed2464e9252627513dd3c272758ca51550e5456dbac8667bb86398d25b79 \
+                            size    23649691
+}
+
+# Placed here so VulkanSDK can override the url
+master_sites                https://github.com/Gcenx/MoltenVK/releases/download/${version}
 
 subport VulkanSDK {
-    name                        VulkanSDK
-    conflicts                   MoltenVK
-    set my_name                 VulkanSDK
-    dist_subdir                 MoltenVK
-    version                     ${VulkanSDK_version}
+    name                    VulkanSDK
+    conflicts               MoltenVK CX-MoltenVK
+    set my_name             VulkanSDK
+    dist_subdir             MoltenVK
+    version                 1.2.154.0
+    distname                vulkansdk-macos-${version}
+    use_dmg                 yes
+
+    master_sites            https://sdk.lunarg.com/sdk/download/${version}/mac/
+
+    checksums               rmd160  18697ec709f055d5dfeccafbfda339a6d7943638 \
+                            sha256  6a917523206aeb179e02ad93c1ea94988ec1af6c22cc7715d8e3f209772829f2 \
+                            size    290202207
 }
+
+if {${subport} ne {VulkanSDK}} {
+    # GitHub CL generated files are .zip files that extract to .tar
+    # Macports doesn't provie a way to handle this so do it manually
+    extract {
+    system "cd ${workpath} && uncompress -c ${distpath}/${distfiles} | tar xf -"
+    }
+}
+
+use_configure               no
+build                       {}
 
 destroot {
     if {${subport} eq {VulkanSDK}} {
@@ -58,12 +92,11 @@ destroot {
         reinplace "s|../../..|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json \
                                            ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_api_dump.json \
                                            ${destroot}${prefix}/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
-        reinplace "s|/tmp/macos-sdk-build/SPIRV-Cross/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/spirv-cross-c-shared.pc
-        reinplace "s|/tmp/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools-shared.pc
-        reinplace "s|/tmp/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools.pc
-    
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/SPIRV-Cross/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/spirv-cross-c-shared.pc
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools-shared.pc
+        reinplace "s|/Users/lunarg/Dev/macos-sdk-build/Glslang/build/install|${prefix}|g" ${destroot}${prefix}/lib/pkgconfig/SPIRV-Tools.pc
     } else {
-        set output_dir ${worksrcpath}/MoltenVK
+        set output_dir ${workpath}/Package/Release/MoltenVK
         file copy ${output_dir}/dylib/macOS/libMoltenVK.dylib ${destroot}${prefix}/lib
         xinstall -d ${destroot}${prefix}/share/vulkan/icd.d
         file copy ${output_dir}/dylib/macOS/MoltenVK_icd.json ${destroot}${prefix}/share/vulkan/icd.d
@@ -84,7 +117,6 @@ platform darwin {
             return -code error "incompatible OS X version"
         }
     }
-    
     notes-append "
         ************************************************************
         In order for vulkan loader within applications to find,
@@ -95,5 +127,4 @@ platform darwin {
         cp -R ${prefix}/share/vulkan ~/.local/share/
         ************************************************************
     "
-    
 }
