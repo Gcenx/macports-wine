@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     6.0-rc1
+version                     6.0-rc2
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  2e2604298a4cf41ece2185d3a721981d863e03be \
-                            sha256  fddde9b96c7aed602634d56fad40bec39daf5978661cfb7e2a992850db1f725f \
-                            size    40433938
+                            rmd160  0351d2a7ca5764d48b775a4485ff8c689510ad84 \
+                            sha256  bc81abd2410e779c8f6a608aebcc5b92c11ab80d57929b95aa7473494dc0f0ba \
+                            size    40434538
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -284,6 +284,7 @@ platform darwin {
     if {${os.major} >= 15 && [variant_isset universal]} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK \
+                                                CX-MoltenVK \
                                                 VulkanSDK
         lappend merger_configure_args(x86_64)   --with-vulkan \
                                                 ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
