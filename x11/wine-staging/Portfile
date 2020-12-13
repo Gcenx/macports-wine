@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.0-rc1
+version                     6.0-rc2
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -26,7 +26,7 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set staging_version         6.0rc1
+set staging_version         ${version}
 set wine_staging_distfile   v${staging_version}${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  2e2604298a4cf41ece2185d3a721981d863e03be \
-                            sha256  fddde9b96c7aed602634d56fad40bec39daf5978661cfb7e2a992850db1f725f \
-                            size    40433938 \
+                            rmd160  0351d2a7ca5764d48b775a4485ff8c689510ad84 \
+                            sha256  bc81abd2410e779c8f6a608aebcc5b92c11ab80d57929b95aa7473494dc0f0ba \
+                            size    40434538 \
                             ${wine_staging_distfile} \
-                            rmd160  72b20576dab49438238b8f0dc5dd3f301cb70755 \
-                            sha256  8de3866030ccd2e8387a3079dd543406c739850ab0fcc16e3bf66b55d2d230c6 \
-                            size    10331511
+                            rmd160  318af2cf14ac97f14906a92e7aa1f993eea3bbb0 \
+                            sha256  35b3790a7d8260cfc3e19c09b7868b46187c059b8c35d758934579e6344e710f \
+                            size    9815463
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
