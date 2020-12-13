@@ -100,6 +100,3 @@ Now follow from [How to use this repository](https://github.com/Gcenx/macports-w
 *I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.*
 <br>
 Just follow [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
-<br>
-Found this helpful?  
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/gcenx?locale.x=en_US)
