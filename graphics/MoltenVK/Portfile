@@ -54,15 +54,15 @@ subport VulkanSDK {
     conflicts               MoltenVK CX-MoltenVK
     set my_name             VulkanSDK
     dist_subdir             MoltenVK
-    version                 1.2.154.0
+    version                 1.2.162.0
     distname                vulkansdk-macos-${version}
     use_dmg                 yes
 
     master_sites            https://sdk.lunarg.com/sdk/download/${version}/mac/
 
-    checksums               rmd160  18697ec709f055d5dfeccafbfda339a6d7943638 \
-                            sha256  6a917523206aeb179e02ad93c1ea94988ec1af6c22cc7715d8e3f209772829f2 \
-                            size    290202207
+    checksums               sha256  d5d25d801eb83130db1e41fa6c09f125ba57e7503ae81553182ba7196f32a0a3 \
+                            rmd160  52c1b71294004da86bd28c6b14775a8004edf40f \
+                            size    317464227
 }
 
 if {${subport} ne {VulkanSDK}} {
