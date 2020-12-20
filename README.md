@@ -13,7 +13,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `MoltenVK` (v1.1.1)
 - `CX-MoltenVK` (MoltenVK v1.1.1 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
 - `rust` Downgraded to 1.42.0 (Needed for 32Bit support)
-- `VulkanSDK` (Installs vulkansdk-macos-1.2.154.0)
+- `VulkanSDK` (Installs vulkansdk-macos-1.2.162.0)
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` Wine-5.0.3 (Upsteam patch for [Bugzilla 49774](https://bugs.winehq.org/show_bug.cgi?id=49774))
 - `wine-devel` Wine-Devel-6.0-rc2
@@ -35,6 +35,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `librsvg` Force pre-cargo version (10.14 and below)
 
 ## MacOSX.sdk contains the following subports;
+- `subport MacOSX10.15.sdk` (MacOSX.sdk will install this SDK)
 - `subport MacOSX10.14.sdk`
 - `subport MacOSX10.13.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
 - `subport MacOSX10.12.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)

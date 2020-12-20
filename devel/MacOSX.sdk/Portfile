@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                MacOSX.sdk
-version             10.14
+version             10.15
 categories          devel
 platforms           macosx
 maintainers         {gcenx @gcenx}
@@ -11,6 +11,19 @@ maintainers         {gcenx @gcenx}
 license             Restrictive Nomirror
 
 homepage            https://developer.apple.com/macos/
+
+subport MacOSX10.15.sdk {
+    set macos_name      {macOS Catalina}
+    set xcode_vers      12
+    version             10.15
+    revision            0
+    
+    homepage            https://developer.apple.com/documentation/macos_release_notes/macos_catalina_10_15_release_notes
+    
+    checksums           rmd160  580ec054e9d38fe846ce597a0f775d3fc46526b5 \
+                        sha256  bb548125ebf5cf4ae6c80d226f40ad39e155564ca78bc00554a2e84074d0180e \
+                        size    41636648
+}
 
 subport MacOSX10.14.sdk {
     set macos_name      {macOS Mojave}
