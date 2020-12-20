@@ -18,7 +18,7 @@ subport MacOSX10.15.sdk {
     version             10.15
     revision            0
     
-    homepage            https://developer.apple.com/documentation/macos_release_notes/macos_catalina_10_15_release_notes
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-catalina-10_15-release-notes
     
     checksums           rmd160  580ec054e9d38fe846ce597a0f775d3fc46526b5 \
                         sha256  bb548125ebf5cf4ae6c80d226f40ad39e155564ca78bc00554a2e84074d0180e \
@@ -31,7 +31,7 @@ subport MacOSX10.14.sdk {
     version             10.14
     revision            0
     
-    homepage            https://developer.apple.com/documentation/macos_release_notes/macos_mojave_10_14_release_notes
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-mojave-10_14-release-notes
     
     checksums           rmd160  7684478f171e30842274fafb784b91a8e79485dd \
                         sha256  e0a9747ae9838aeac70430c005f9757587aa055c690383d91165cf7b4a80401d \
