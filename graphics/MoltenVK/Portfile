@@ -5,7 +5,12 @@ categories                  graphics
 maintainers                 openmaintainer
 license                     Apache-2
 
-supported_archs             x86_64
+if {${os.major} < 20} {
+    supported_archs             x86_64
+} else
+    supported_archs         x86_64 arm64
+}
+
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
 name                        MoltenVK
@@ -24,26 +29,28 @@ subport MoltenVK {
     name                    MoltenVK
     conflicts               CX-MoltenVK VulkanSDK
     set my_name             MoltenVK
-
-    distname                macos.zip
+    use_xz                  yes
+    extract.suffix          .tar.xz
+    distname                macos${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  6e9a0e9475762a1d2f452b17c8915df0c00e7f83 \
-                            sha256  8aafb924394c77bb50f46e39db3d59b516a8158061da416eb61cff5cf576219b \
-                            size    23649362
+    checksums               rmd160  a4d03556650e68b4dc9d5d249206fae8ce14ac56 \
+                            sha256  0a4a59898d7a4609f337540813d99178f5bbc89b17fce691a3526cbb7724a4c5 \
+                            size    9023336
 }
 
 subport CX-MoltenVK {
     name                    CX-MoltenVK
     conflicts               MoltenVK VulkanSDK
     set my_name             CX-MoltenVK
-
-    distname                macos_dxvk_patched.zip
+    use_xz                  yes
+    extract.suffix          .tar.xz
+    distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  209aaa9c1ca86b1cd97dd477050e5ee30722cfad \
-                            sha256  f128ed2464e9252627513dd3c272758ca51550e5456dbac8667bb86398d25b79 \
-                            size    23649691
+    checksums               rmd160  6fc1f73540de9f024ff2c76fe4b6fa23dd74f69c \
+                            sha256  cd118fbea26c3c4150359c77d033f4fee5f1de4d9625267be1638b51e260aec9 \
+                            size    9024360
 }
 
 # Placed here so VulkanSDK can override the url
@@ -63,14 +70,6 @@ subport VulkanSDK {
     checksums               sha256  d5d25d801eb83130db1e41fa6c09f125ba57e7503ae81553182ba7196f32a0a3 \
                             rmd160  52c1b71294004da86bd28c6b14775a8004edf40f \
                             size    317464227
-}
-
-if {${subport} ne {VulkanSDK}} {
-    # GitHub CL generated files are .zip files that extract to .tar
-    # Macports doesn't provie a way to handle this so do it manually
-    extract {
-    system "cd ${workpath} && uncompress -c ${distpath}/${distfiles} | tar xf -"
-    }
 }
 
 use_configure               no
@@ -98,7 +97,10 @@ destroot {
     } else {
         set output_dir ${workpath}/Package/Release/MoltenVK
         file copy ${output_dir}/dylib/macOS/libMoltenVK.dylib ${destroot}${prefix}/lib
-        system "cd ${destroot}${prefix}/lib && lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
+        if {${os.major} < 20} {
+            # Turn the dylib into a single arch for lower macOS versions
+            system "cd ${destroot}${prefix}/lib && lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
+        }
         xinstall -d ${destroot}${prefix}/share/vulkan/icd.d
         file copy ${output_dir}/dylib/macOS/MoltenVK_icd.json ${destroot}${prefix}/share/vulkan/icd.d
         reinplace "s|./|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
