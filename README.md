@@ -26,11 +26,6 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-5.1.0` Wine-Mono-5.1.0
 - `wine-mono-5.1.1` Wine-Mono-5.1.1
 - `Wineskin` Wineskin Winery-1.8.4.2
-- `Mingw-w64` Updated to v8.0.0
-- `i686-w64-mingw32-binutils` Updated to 2.35.1
-- `x86_64-w64-mingw32-binutils` Updated to 2.35.1
-- `i686-w64-mingw32-gcc` Updated to 10.2.0
-- `X86_64-w64-mingw32-gcc` Updated to 10.2.0
 - `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
 - `librsvg` Force pre-cargo version (10.14 and below)
 
