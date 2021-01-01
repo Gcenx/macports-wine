@@ -7,7 +7,7 @@ license                     Apache-2
 
 if {${os.major} < 20} {
     supported_archs             x86_64
-} else
+} else {
     supported_archs         x86_64 arm64
 }
 
