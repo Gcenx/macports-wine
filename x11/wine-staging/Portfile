@@ -96,6 +96,9 @@ post-extract {
 # Disable winemenubuilder, stops useless .desktop files
 #patchfiles                  HACK-skip_building_winemenubuilder.diff
 
+# Fix for build errors from gverm
+patchfiles                  staging_fix.diff
+
 pre-configure {
     if {[variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
