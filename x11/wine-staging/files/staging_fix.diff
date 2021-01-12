@@ -1,0 +1,37 @@
+diff --git dlls/ntdll/unix/sync.c dlls/ntdll/unix/sync.c
+index 455f4ffc365..15c8bcd7e8e 100644
+--- dlls/ntdll/unix/sync.c
++++ dlls/ntdll/unix/sync.c
+@@ -2138,7 +2138,7 @@ NTSTATUS WINAPI NtAlertThreadByThreadId( HANDLE tid )
+         {
+             pthread_rwlock_unlock( &teb_list_lock );
+ #ifdef __APPLE__
+-            semaphore_signal( &thread_data->tid_alert_sem );
++            semaphore_signal( thread_data->tid_alert_sem );
+             return STATUS_SUCCESS;
+ #else
+ #ifdef __linux__
+@@ -2213,7 +2213,7 @@ NTSTATUS WINAPI NtWaitForAlertByThreadId( const void *address, const LARGE_INTEG
+ 
+                 timespec.tv_sec = timeleft / (ULONGLONG)TICKSPERSEC;
+                 timespec.tv_nsec = (timeleft % TICKSPERSEC) * 100;
+-                ret = semaphore_timedwait( sem, &timespec );
++                ret = semaphore_timedwait( sem, timespec );
+             }
+             else
+                 ret = semaphore_wait( sem );
+diff --git dlls/ntdll/unix/unix_private.h dlls/ntdll/unix/unix_private.h
+index 2089feb3ce8..dee17e229e7 100644
+--- dlls/ntdll/unix/unix_private.h
++++ dlls/ntdll/unix/unix_private.h
+@@ -26,6 +26,10 @@
+ #include "unixlib.h"
+ #include "wine/list.h"
+ 
++#ifdef __APPLE__
++# include <mach/semaphore.h>
++#endif
++
+ #ifdef __i386__
+ static const enum cpu_type client_cpu = CPU_x86;
+ #elif defined(__x86_64__)
