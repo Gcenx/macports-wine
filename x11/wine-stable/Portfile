@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     5.0.3
+version                     6.0
 revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  2af3db2eb5bfbf37e04da4138ab8cb2abdca9b03 \
-                            sha256  9cd7516dbfbce2ddc74e221970620da44b6e6f470551124e8fca012cb234be8d \
-                            size    36719333
+                            rmd160  501a5ca707c604687e1057175106a4ee32c18660 \
+                            sha256  6748b6a8d7fb2113c3f89566c79be90e7e00c998bd8b9b300a8a33372ad32e34 \
+                            size    40436490
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -63,16 +63,15 @@ depends_lib                 port:fontconfig \
                             port:libiconv \
                             port:libpcap \
                             port:libpng \
+                            port:libusb \
+                            port:libunwind \
                             port:libxml2 \
                             port:libxslt \
                             port:mpg123 \
-                            port:ncurses \
                             port:openal-soft \
                             port:tiff \
-                            port:libunwind \
-                            port:wine-gecko-2.47.1 \
-                            port:wine-mono \
-                            port:zlib
+                            port:wine-gecko \
+                            port:wine-mono-5.1.1
 
 depends_build               port:bison \
                             port:flex \
@@ -80,14 +79,7 @@ depends_build               port:bison \
                             port:pkgconfig
 
 # Disable winemenubuilder, stops useless .desktop files
-patchfiles                  HACK-skip_building_winemenubuilder.diff
-
-# Disable Quicktime         Remove wine-stable-6.0
-patchfiles-append           configure_add_disable_quicktime.diff
-
-# https://bugs.winehq.org/show_bug.cgi?id=49774 (Regression, remove wine-stable-6.0)
-patchfiles-append           winemac.drv_Dont_fail_GPU_detection_if_some_IOKit_properties_are_missing.diff \
-                            winemac.drv_Print_error_when_no_GPUs_are_detected.diff
+#patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 pre-configure {
     if {[variant_isset universal]} {
@@ -109,7 +101,6 @@ configure.args              --without-alsa \
                             --with-cms \
                             --with-coreaudio \
                             --with-cups \
-                            --with-curses \
                             --without-dbus \
                             --with-faudio \
                             --with-fontconfig \
@@ -122,10 +113,10 @@ configure.args              --without-alsa \
                             --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
-                            --without-gtk3 \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
+                            --without-krb5 \
                             --with-ldap \
                             --with-mingw \
                             --with-mpg123 \
@@ -145,6 +136,7 @@ configure.args              --without-alsa \
                             --with-tiff \
                             --without-udev \
                             --with-unwind \
+                            --with-usb \
                             --without-v4l2 \
                             --without-vkd3d \
                             --without-xcomposite \
@@ -160,7 +152,6 @@ configure.args              --without-alsa \
                             --without-xshm \
                             --with-xslt \
                             --without-xxf86vm \
-                            --with-zlib \
                             --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
@@ -232,9 +223,6 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append          -Wl,-rpath,@loader_path/../
 
-# GCC10 defaults to -fno-common this breaks old wine releases
-configure.env-append              CROSSCFLAGS=-fcommon
-
 configure.universal_args
 
 set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
@@ -268,26 +256,18 @@ compiler.blacklist-append   {gcc-4.2 < 5600}
 # http://bugs.winehq.org/show_bug.cgi?id=28030
 compiler.blacklist-append   *llvm-gcc-4.2
 
-# clang < 3.1 fails to build wine with "error: invalid operand for instruction lretw"
-# http://bugs.winehq.org/show_bug.cgi?id=32872
-# clang < 3.2 have code generation problems:
-# http://llvm.org/bugs/show_bug.cgi?id=9707
-compiler.blacklist-append   {clang < 500}
+# wine requires clang >= 3.8
+compiler.blacklist-append   {clang < 800} \
+                            gcc-4.0 \
+                            gcc-4.2 \
+                            apple-gcc-4.2 \
+                            macports-clang-3.3 \
+                            macports-clang-3.4 \
+                            macports-clang-3.7
+compiler.fallback-append    macports-clang-5.0
 
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   macports-gcc-*
-
-if {[variant_isset universal]} {
-    # wine for 64-bit requires clang >= 3.8
-    compiler.blacklist-append   {clang < 800} \
-                                gcc-4.0 \
-                                gcc-4.2 \
-                                apple-gcc-4.2 \
-                                macports-clang-3.3 \
-                                macports-clang-3.4 \
-                                macports-clang-3.7
-    compiler.fallback-append    macports-clang-5.0
-}
 
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
@@ -320,6 +300,16 @@ platform darwin {
     # use the 10.13 or greater SDK so disable the option to avoid build errors
     if {${os.major} <= 16} {
         configure.args-append        ac_cv_header_Metal_Metal_h="no"
+    }
+    
+    # wine-5.9 and later ntdll requires "_fstatat" that's not avalible until the 10.10 SDK
+    # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
+    # While legacysupport does get wine(64) to compile, the resulting binary
+    # gets the following type of errors
+    # "preloader: Warning: failed to reserve range 00001000-00010000"
+    if {${os.major} <= 13 && ${configure.sdkroot} eq ""} {
+        depends_build-append        port:MacOSX10.11.sdk
+        configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     }
     
     notes {
