@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.0-rc6
+version                     6.0
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,9 +52,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  3f081e76d56e6ebecbe2ca314e4f746572848814 \
-                            sha256  04df6d555d6c54416a72d87fa83b50588485cede5088b2acfcd282f63c7f610a \
-                            size    40448151 \
+                            rmd160  501a5ca707c604687e1057175106a4ee32c18660 \
+                            sha256  6748b6a8d7fb2113c3f89566c79be90e7e00c998bd8b9b300a8a33372ad32e34 \
+                            size    40436490 \
                             ${wine_staging_distfile} \
                             rmd160  1ca10b4d9b46c4dbc1baa62de9d4e59b6be6a14d \
                             sha256  9ee8a6d9eefae3bca4a6550d5336edac96537e5da0c3669003d21f08b55cbd13 \
@@ -280,11 +280,7 @@ compiler.blacklist-append   {gcc-4.2 < 5600}
 # http://bugs.winehq.org/show_bug.cgi?id=28030
 compiler.blacklist-append   *llvm-gcc-4.2
 
-# clang < 3.1 fails to build wine with "error: invalid operand for instruction lretw"
-# http://bugs.winehq.org/show_bug.cgi?id=32872
-# clang < 3.2 have code generation problems:
-# http://llvm.org/bugs/show_bug.cgi?id=9707
-# wine for 64-bit requires clang >= 3.8
+# wine requires clang >= 3.8
 compiler.blacklist-append   {clang < 800} \
                             gcc-4.0 \
                             gcc-4.2 \
