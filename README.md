@@ -69,7 +69,7 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 ## `Wine-Mono` & `Wine-Gecko`?
 From Wine-5.0 it's possbile to have a shared version of both gecko & mono, instead of installing into each prefix the shared versions will be used.
 
-## How to use on macOS High Sierra & macOS Mojave;
+## How to use on macOS macOS Mojave;
 Install macports as usual then apply the following patch.
 ```
 diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.conf
