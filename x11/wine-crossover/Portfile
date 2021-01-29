@@ -20,7 +20,7 @@ conflicts                   wine wine-stable wine-devel wine-staging
 set my_name                 wine
 
 github.setup                Gcenx winecx crossover-wine-19.0.2
-revision                    0
+revision                    1
 
 license                     LGPL-2.1+
 categories                  x11
@@ -55,7 +55,7 @@ depends_lib                 port:fontconfig \
                             port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
-                            port:jpeg \
+                            path:include/turbojpeg.h:libjpeg-turbo \
                             port:lcms2 \
                             port:libiconv \
                             port:libpcap \
