@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     6.0
-revision                    1
+version                     6.1
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  501a5ca707c604687e1057175106a4ee32c18660 \
-                            sha256  6748b6a8d7fb2113c3f89566c79be90e7e00c998bd8b9b300a8a33372ad32e34 \
-                            size    40436490
+                            rmd160  c64c36f90b0bab1c60bee85f7d3ea91d23b7da44 \
+                            sha256  1c2966bc4a17f2a9edaebcaa05821eb315f77d053066259cd8354cedd2561361 \
+                            size    40491674
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -82,7 +82,7 @@ depends_build               port:bison \
 #patchfiles                  HACK-skip_building_winemenubuilder.diff
 
 pre-configure {
-    if {[variant_isset universal]} {
+    if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
@@ -241,7 +241,10 @@ if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
     default_variants-append     +universal
 }
 
-if {[variant_isset universal]} {
+if {![info exists universal_possible]} {
+    set universal_possible [expr {${os.universal_supported} && [llength ${configure.universal_archs}] >= 2}]
+}
+if {${universal_possible} && [variant_isset universal]} {
     supported_archs         i386 x86_64
 } elseif {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     supported_archs         x86_64
@@ -277,7 +280,7 @@ platform darwin {
 
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
-    if {${os.major} >= 15 && [variant_isset universal]} {
+    if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK \
                                                 CX-MoltenVK \
@@ -370,7 +373,7 @@ post-destroot {
         ${destroot}${docdir}
 }
 
-if {[variant_isset universal]} {
+if {${universal_possible} && [variant_isset universal]} {
     notes-append "
         \n
         Wine supports both 32-bit and 64-bit now. It is compatible with your\

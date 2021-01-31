@@ -45,7 +45,10 @@ distname            ${name}c-${version}-src
 
 patchfiles          patch-src-librustc-llvm-lib.diff
 
-if {![variant_isset universal]} {
+if {![info exists universal_possible]} {
+    set universal_possible [expr {${os.universal_supported} && [llength ${configure.universal_archs}] >= 2}]
+}
+if {!${universal_possible} || ![variant_isset universal]} {
     if {${build_arch} eq "i386"} {
         set architectures i686
     } else {
