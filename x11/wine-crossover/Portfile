@@ -109,7 +109,7 @@ patchfiles-append           Revert-CrossOver_Hack_12791.diff
 patchfiles-append           HACK-wineapploader.diff
 
 pre-configure {
-    if {[variant_isset universal]} {
+    if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
             file mkdir ${worksrcpath}-${arch}
         }
@@ -272,7 +272,10 @@ if {${build_arch} eq "x86_64" && ${os.major} <= 18} {
     default_variants-append     +universal
 }
 
-if {[variant_isset universal]} {
+if {![info exists universal_possible]} {
+    set universal_possible [expr {${os.universal_supported} && [llength ${configure.universal_archs}] >= 2}]
+}
+if {${universal_possible} && [variant_isset universal]} {
     supported_archs         i386 x86_64
 } elseif {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     supported_archs         x86_64
@@ -316,7 +319,7 @@ platform darwin {
 
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
-    if {${os.major} >= 15 && [variant_isset universal]} {
+    if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK \
                                                 CX-MoltenVK \
@@ -404,7 +407,7 @@ post-destroot {
         ${destroot}${docdir}
 }
 
-if {[variant_isset universal]} {
+if {${universal_possible} && [variant_isset universal]} {
     notes-append "
         \n
         Wine supports both 32-bit and 64-bit now. It is compatible with your\
