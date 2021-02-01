@@ -1,0 +1,27 @@
+From 40c994cddee41954053f80dde40f56107ddfcfd4 Mon Sep 17 00:00:00 2001
+From: Tom Schoonjans <Tom.Schoonjans@rfi.ac.uk>
+Date: Tue, 8 Sep 2020 12:45:42 +0100
+Subject: [PATCH] ptp_helper_post_install.sh: deal with none
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/620>
+---
+ libs/gst/helpers/ptp_helper_post_install.sh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git libs/gst/helpers/ptp_helper_post_install.sh libs/gst/helpers/ptp_helper_post_install.sh
+index eefe1c9d646..4370acd9562 100755
+--- libs/gst/helpers/ptp_helper_post_install.sh
++++ libs/gst/helpers/ptp_helper_post_install.sh
+@@ -20,6 +20,9 @@ case "$with_ptp_helper_permissions" in
+     echo "Calling $setcap cap_net_bind_service,cap_net_admin+ep $ptp_helper"
+     $setcap cap_net_bind_service,cap_net_admin+ep "$ptp_helper" || true
+     ;;
++  none)
++    echo "No perms/caps to set for $ptp_helper"
++    ;;
+   *)
+     echo "$0 ERROR: unexpected permissions value '$with_ptp_helper_permissions'";
+     exit 2;
+-- 
+GitLab
+

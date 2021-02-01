@@ -1,0 +1,186 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           meson 1.0
+PortGroup           compiler_blacklist_versions 1.0
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=636134
+PortGroup           muniversal 1.0
+
+name                gstreamer1-gst-plugins-base
+set my_name         gst-plugins-base
+# please only commit stable updates (even numbered releases)
+version             1.18.3
+description         This is gst-plugins, a set of plug-ins for GStreamer.
+long_description    ${description}
+maintainers         nomaintainer
+categories          gnome
+platforms           darwin
+license             LGPL-2+
+homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
+
+master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
+distname            ${my_name}-${version}
+
+use_xz              yes
+
+checksums           rmd160  6e2fe0b80b54102b06d40cae0741492a650a5c01 \
+                    sha256  dbfa20283848f0347a223dd8523dfb62e09e5220b21b1d157a8b0c8b67ba9f52 \
+                    size    3166548
+
+depends_build-append        port:pkgconfig \
+                            port:python38
+
+depends_lib-append          port:gstreamer1 \
+                            port:graphene \
+                            port:gobject-introspection \
+                            path:include/turbojpeg.h:libjpeg-turbo \
+                            port:libpng \
+                            port:libopus \
+                            port:orc \
+                            path:lib/pkgconfig/pango.pc:pango \
+                            port:zlib
+
+# python3 is used for multiple checks
+pre-configure {
+    file mkdir ${workpath}/bin
+    ln -s ${prefix}/bin/python3.8 ${workpath}/bin/python3
+    configure.env-append PATH=${workpath}/bin:$::env(PATH)
+}
+
+# Embedded systems are not our primary target, so disable OpenGL|ES support.
+configure.args-append       -Dexamples=disabled \
+                            -Dlibvisual=disabled \
+                            -Dalsa=disabled \
+                            -Dcdparanoia=disabled \
+                            -Dglx=disabled \
+                            -Dintrospection=enabled \
+                            -Dogg=disabled \
+                            -Dvorbis=disabled \
+                            -Dtheora=disabled \
+                            -Divorbis=disabled \
+                            -Dx=disabled \
+                            -Dxvideo=disabled \
+                            -Dcocoa=disabled \
+                            -Dopengl=disabled \
+                            -Dgles2=disabled \
+                            -Dxshm=disabled
+
+#gstbasetextoverlay.c:1511: error: 'for' loop initial declaration used outside C99 mode
+configure.cflags-append -std=c99
+
+#gst-libs/gst/gl/gstgldebug.h:28: error: redefinition of typedef ‘GstGLAsyncDebug’
+compiler.blacklist-append *gcc-3.* *gcc-4.* {clang < 212}
+
+platform darwin {
+    # graphene currently fails to build on 10.5 and earlier due to lack of an aligned memory alloc function
+    # the dependency on graphene is optional and is used only for the gl plugins gltransformation and glvideoflip
+    # which are disabled without it
+    if {${os.major} < 10 } {
+        depends_lib-delete port:graphene
+    }
+}
+
+variant x11 {
+    depends_lib-append      port:mesa \
+                            port:xorg-libX11 \
+                            port:xorg-libXext \
+                            port:xorg-libXv
+
+    configure.args-replace  -Dx=disabled \
+                            -Dx=enabled \
+                            -Dxshm=disabled \
+                            -Dxshm=enabled \
+                            -Dxvideo=disabled \
+                            -Dxvideo=enabled \
+                            -Dglx=disabled \
+                            -Dglx=enabled \
+                            -Dopengl=disabled \
+                            -Dopengl=enabled
+}
+
+# Prefer X11 implementation.
+default_variants +x11
+
+# Cocoa-GL
+# Only enable on OS X 10.9 or later, if the x11 variant is not enabled.
+# Requires ARC (automatic reference counting, a clang feature enabled by
+# -fobjc-arc), which was not supported when targeting the legacy fragile
+# Objective-C runtime used on 32-bit x86 until Xcode 7.3 / clang 3.9
+# (https://llvm.org/viewvc/llvm-project?view=revision&revision=250955).
+# If building universal or for i386 then ensure that a sufficiently recent
+# version of clang is used, since the Xcode clang may be too old.
+platform macosx {
+    if {![variant_isset x11] && ${os.major} >= 13} {
+        if {[variant_isset universal] || ${build_arch} eq "i386"} {
+            compiler.blacklist-append *gcc* {macports-clang-3.[0-8]} {clang < 703}
+        }
+        configure.args-replace  -Dcocoa=disabled \
+                                -Dcocoa=enabled \
+                                -Dopengl=disabled \
+                                -Dopengl=enabled
+    }
+}
+
+variant ogg description {Build with support for libogg, libvorbis, libtheora} {
+    depends_lib-append    port:libogg port:libvorbis port:libtheora
+    configure.args-replace  -Dogg=disabled \
+                            -Dogg=enabled \
+                            -Dvorbis=disabled \
+                            -Dvorbis=enabled \
+                            -Dtheora=disabled \
+                            -Dtheora=enabled
+}
+
+default_variants +ogg
+
+#
+# current cdparanoia port (cdparanoia III 10.2) appears to not be API compatible
+# with gst-plugins-base.  See #19843.
+# disable by default until this is rectified.
+#
+
+variant cdparanoia description {Enable (currently broken) cdparanoia plugin} {
+    depends_lib-append port:cdparanoia
+    configure.args-replace  -Dcdparanoia=disabled \
+                            -Dcdparanoia=enabled
+}
+
+
+#-fgcse (from -O2) causes build failures, but -O2 -fno-gcse doesn't seem to work
+if {[string match "*gcc-4.2" ${configure.compiler}]} {
+    lappend merger_configure_cflags(i386) -O1 -fexpensive-optimizations
+    if {![variant_isset universal] && ${build_arch} eq "i386"} {
+        configure.cflags-delete -O2
+        configure.cflags-append -O1 -fexpensive-optimizations
+    }
+}
+
+pre-activate {
+    # gstvideoaggregator was provied by gstreamer1-gst-plugins-bad in 1.14 but in 1.16.1 is now provided by gstreamer1-gst-plugins-base
+    if {![catch {set installed [lindex [registry_active gstreamer1-gst-plugins-bad] 0]}]} {
+        set _version [lindex $installed 1]
+        if {[vercmp $_version 1.15] < 0} {
+            registry_deactivate_composite gstreamer1-gst-plugins-bad "" [list ports_nodepcheck 1]
+        }
+    }
+}
+
+# gobject-introspection uses g-ir-scanner, which uses $CC from env
+if {[variant_isset universal]} {
+    foreach arch ${configure.universal_archs} {
+        lappend merger_build_env(${arch})  "CC=${configure.cc} -arch ${arch}"
+        lappend merger_destroot_env(${arch})  "CC=${configure.cc} -arch ${arch}"
+    }
+} else {
+    build.env-append       "CC=${configure.cc} ${configure.cc_archflags}"
+    destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
+}
+
+test.run            yes
+test.target         check
+
+livecheck.type      regex
+livecheck.name      ${my_name}
+livecheck.url       ${master_sites}
+livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

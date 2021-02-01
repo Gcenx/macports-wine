@@ -1,0 +1,174 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           meson 1.0
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=636134
+PortGroup           muniversal 1.0
+PortGroup           active_variants 1.1
+
+name                gstreamer1-gst-plugins-bad
+set my_name         gst-plugins-bad
+# please only commit stable updates (even numbered releases)
+version             1.18.3
+description         A set of plug-ins for GStreamer that need more quality.
+long_description    GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par compared \
+                    to the rest. They might be close to being good quality, but they're missing \
+                    something - be it a good code review, some documentation, a set of tests, a \
+                    real live maintainer, or some actual wide use.
+license             GPL LGPL
+maintainers         nomaintainer
+categories          gnome
+platforms           darwin
+homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
+master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
+distname            ${my_name}-${version}
+use_xz              yes
+
+checksums           rmd160  596e53acfbbcf2fd6aac71f85fd155e5e9ec6638 \
+                    sha256  b7e34b6b86272588fbd8b314dadfa6ceff895198cfb59e2950378e9e31ff22e0 \
+                    size    5637764
+
+depends_build-append        port:pkgconfig \
+                            port:python38
+
+depends_lib                 port:gstreamer1-gst-plugins-base \
+                            port:gobject-introspection \
+                            port:curl \
+                            port:faad2 \
+                            port:fluidsynth \
+                            port:lcms2 \
+                            port:libass \
+                            port:libdca \
+                            port:libde265 \
+                            port:libdvdread \
+                            port:libdvdnav \
+                            port:libexif \
+                            port:libmms \
+                            port:libmodplug \
+                            port:libmpcdec \
+                            port:libnice \
+                            port:librsvg \
+                            port:libssh2 \
+                            port:mesa \
+                            port:libGLU \
+                            port:nettle \
+                            port:openal-soft \
+                            port:openexr \
+                            port:openjpeg \
+                            port:orc \
+                            port:rtmpdump \
+                            port:soundtouch \
+                            port:spandsp-devel \
+                            port:neon \
+                            port:webp \
+                            port:x265
+
+# python3 is used for multiple checks
+pre-configure {
+    file mkdir ${workpath}/bin
+    ln -s ${prefix}/bin/python3.8 ${workpath}/bin/python3
+    configure.env-append PATH=${workpath}/bin:$::env(PATH)
+}
+
+#
+# could depend on tons for multimedia stuff +variants
+# the following ports are available but don't configure
+# and/or build correctly
+#
+# port:mjpegtools (mpeg2enc mplex build fails) need to disable mpeg2enc mplex explicitly in case mjpegtools is installed
+# port:faac has a restrictive license, disable faac plugin by default
+# port:libfdk-aac has a restrictive license, disable fdkaac plugin by default
+# plugin frei0r (no dependency, seqfaults on load)
+# port:opencv (opencv plugin fails to configure with opencv 3.0.0+, can't find opencv2/bgsegm.hpp, now opencv2/video/background_segm.hpp)
+# plugin opus is now contained in gstreamer1-gst-plugins-base, disable this version
+# plugin ipcpipeline fails to build
+
+# requires support for C11 (redefinition of typedef ‘GstTestHTTPSrc’ at elements/test_http_src.c:101)
+compiler.c_standard 2011
+
+configure.args-append       -Ddc1394=disabled \
+                            -Dexamples=disabled \
+                            -Dfaac=disabled \
+                            -Dfdk_aac=disabled \
+                            -Dfrei0r=disabled \
+                            -Dintrospection=enabled \
+                            -Dipcpipeline=disabled \
+                            -Dlv2=disabled \
+                            -Dmpeg2enc=disabled \
+                            -Dmplex=disabled \
+                            -Dopencv=disabled \
+                            -Dopus=disabled \
+                            -Dsrtp=disabled \
+                            -Dstatic=disabled \
+                            -Dhls-crypto=nettle \
+                            -Dapple_media=disabled
+
+# port:soundtouch (fails on autoreconf on darwin 8 & 9, see #27533) disable soundtouch on these platforms
+# plugin applemedia (Apple video) now only builds on darwin 14 and later due to use of
+# constant AVQueuedSampleBufferRenderingStatusFailed introduced in OSX 10.10
+# chromaprint 1.4+ requires libc++ (see #53072)
+# port:openal-soft build fails on 10.6 and presumably earlier
+
+platform darwin {
+    if {${os.major} < 11} {
+        depends_lib-delete      port:openal-soft
+        configure.args-append   -Dopenal=disabled
+    }
+    if {${os.major} < 10} {
+        depends_lib-delete      port:soundtouch port:x265
+        configure.args-append   -Dsoundtouch=disabled -Dx265=disabled
+    }
+    if {${configure.cxx_stdlib} eq "libstdc++"} {
+        configure.args-append   -Dchromaprint=disabled
+    } else {
+        depends_lib-append      port:chromaprint
+    }
+}
+
+configure.cppflags-append   "-L${prefix}/lib"
+configure.cflags-append     -std=c99 -funroll-loops -fstrict-aliasing
+configure.env-append        "HAVE_CXX=yes"
+
+variant faac description {Enable faac AAC plugin} {
+    depends_lib-append      port:faac
+    configure.args-delete   -Dfaac=disabled
+    notes-append "Use of the +faac variant may affect licensing due to the restrictive license of port faac itself."
+}
+
+variant fdkaac description {Enable fdkaac AAC plugin} {
+    depends_lib-append      port:libfdk-aac
+    configure.args-delete   -Dfdkaac=disabled
+    notes-append "Use of the +fdkaac variant may affect licensing due to the restrictive license of port libfdk-aac itself."
+}
+
+# Window system is provided by gstreamer1-gst-plugins-base, so sync up.
+variant x11 {
+    require_active_variants port:gstreamer1-gst-plugins-base x11
+}
+
+#default_variants +x11
+
+platform macosx {
+    if {![variant_isset x11] && ![variant_isset universal] && ${os.major} >= 13} {
+        # Apple_Media requires CGL, which can only be provided on newer platforms and without X11 enabled.
+        require_active_variants port:gstreamer1-gst-plugins-base {} x11
+        configure.args-replace  -Dapple_media=disabled \
+                                -Dapple_media=enabled
+    }
+}
+
+# gobject-introspection uses g-ir-scanner, which uses $CC from env
+if {[variant_isset universal]} {
+    foreach arch ${configure.universal_archs} {
+        lappend merger_build_env(${arch})  "CC=${configure.cc} -arch ${arch}"
+        lappend merger_destroot_env(${arch})  "CC=${configure.cc} -arch ${arch}"
+    }
+} else {
+    build.env-append       "CC=${configure.cc} ${configure.cc_archflags}"
+    destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
+}
+
+livecheck.type      regex
+livecheck.url       ${master_sites}
+livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
