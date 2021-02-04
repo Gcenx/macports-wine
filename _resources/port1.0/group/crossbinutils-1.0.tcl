@@ -143,6 +143,9 @@ proc crossbinutils.setup {target version} {
             ${worksrcpath}/bfd/configure                                             \
             ${worksrcpath}/opcodes/configure
 
+        reinplace -q "s|\$(libdir)/bfd-plugins|\"${prefix}/${crossbinutils.target}/host/lib/bfd-plugins\"|g" \
+            ${worksrcpath}/ld/Makefile.in
+
         reinplace -q "s|\$(libdir)|\"${prefix}/${crossbinutils.target}/host/lib\"|g" \
             ${worksrcpath}/libiberty/Makefile.in
         reinplace -q "s|/\$(MULTIOSDIR)||g" \
