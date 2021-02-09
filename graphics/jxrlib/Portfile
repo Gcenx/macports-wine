@@ -8,7 +8,7 @@ github.setup                glencoesoftware jxrlib 0.2.4 v
 name                        jxrlib
 categories                  graphics
 maintainers                 openmaintainer
-license                     Apache-2
+license                     BSD
 
 platforms                   darwin
 description                 Open source implementation of jpegxr
