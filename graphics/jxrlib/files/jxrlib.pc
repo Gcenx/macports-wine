@@ -1,0 +1,13 @@
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/jxrlib
+
+Name: jxrlib
+URL: https://github.com/glencoesoftware/jxrlib
+Description: A library for reading JPEG XR images.
+
+Version: @VERSION@
+Libs: -L${libdir} -ljpegxr -ljxrglue
+Lib.private: -lm
+Cflags: -I${includedir} -D__ANSI__ -DDISABLE_PERF_MEASUREMENT
