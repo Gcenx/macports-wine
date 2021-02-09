@@ -1,0 +1,36 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   github 1.0
+PortGroup                   cmake 1.1
+
+github.setup                glencoesoftware jxrlib 0.2.4 v
+name                        jxrlib
+categories                  graphics
+maintainers                 openmaintainer
+license                     Apache-2
+
+platforms                   darwin
+description                 Open source implementation of jpegxr
+long_description            ${description}
+
+depends_build-append        port:maven3 \
+                            port:swig
+
+checksums                   rmd160  c423688e2b69c31da70e0d01c72d5f5a8d674cbb \
+                            sha256  324af02e341bcb9e3b31a6d6892f47231f95f9f87ab4fe7645be619dcaf965a7 \
+                            size    7646008
+
+github.tarball_from         archive
+
+post-extract {
+    file copy ${filespath}/CMakeLists.txt ${worksrcpath}/CMakeLists.txt
+}
+
+# jxrlib doesn't generate a pkgconfig configuration file, so add our own
+post-destroot {
+    file copy ${filespath}/jxrlib.pc ${workpath}/jxrlib.pc
+    reinplace s|@PREFIX@|${prefix}|g ${workpath}/jxrlib.pc
+    reinplace s|@VERSION@|${version}|g ${workpath}/jxrlib.pc
+    xinstall -m 644 ${workpath}/jxrlib.pc ${destroot}${prefix}/lib/pkgconfig/jxrlib.pc
+}

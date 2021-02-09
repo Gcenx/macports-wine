@@ -5,29 +5,31 @@ The provided `wine-*` Ports compile on Mac OSX 10.8 and later, on MacOSX 10.8 di
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `cargo` Downgraded to 0.41.0 (Needed for 32Bit support)
-- `FAudio` FAudio-21.02
-- `gstreamer1-gst-plugins-ugly` 1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
+- `cargo` Downgraded to v0.41.0 (Needed for 32Bit support)
+- `FAudio` *(v21.02)*
+- `gstreamer1-gst-plugins-ugly` v1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
-- `MoltenVK` (v1.1.1)
+- `MoltenVK` *(v1.1.1)*
 - `CX-MoltenVK` (MoltenVK v1.1.1 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
-- `rust` Downgraded to 1.42.0 (Needed for 32Bit support)
-- `VulkanSDK` (Installs vulkansdk-macos-1.2.162.0)
+- `rust` Downgraded to v1.42.0 (Needed for 32Bit support)
+- `VulkanSDK` *(v1.2.162.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
-- `wine-stable` Wine-6.0
-- `wine-devel` Wine-Devel-6.1
-- `wine-staging` Wine-Staging-6.1
-- `wine-crossover` Wine-CrossOver-19.0.2 (patched to use `wine-gecko-2.47.1`)
-- `wine-gecko` Wine-Gecko-2.47.2
+- `wine-stable` *(v6.0)*
+- `wine-devel` *(v6.1)*
+- `wine-staging` *(v6.1)*
+- `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
+- `wine-gecko` *(v2.47.2)*
 - `wine-gecko-2.47.1` (Workaround for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
-- `wine-mono` Wine-Mono-4.9.4
-- `wine-mono-5.0.0` Wine-Mono-5.0.1 (wine-mono-5.0.1 has bugfixes)
-- `wine-mono-5.1.0` Wine-Mono-5.1.0
-- `wine-mono-5.1.1` Wine-Mono-5.1.1
-- `Wineskin` Wineskin Winery-1.8.4.2
+- `wine-mono` *(v4.9.4)*
+- `wine-mono-5.0.0` *(v5.0.1)*
+- `wine-mono-5.1.0` *(v5.1.0)*
+- `wine-mono-5.1.1` *(v5.1.1)*
+- `wine-mono-6.0.0` *(v6.0.0)*
+- `Wineskin` *(v1.8.4.2)*
 - `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
 - `librsvg` Force pre-cargo version (10.14 and below)
 - `pango` Added muniversal group as for some reason it's not building as universal anymore
+- `jxrlib` *(v0.2.4)*
 
 ## MacOSX.sdk contains the following subports;
 - `subport MacOSX10.15.sdk` (MacOSX.sdk will install this SDK)
