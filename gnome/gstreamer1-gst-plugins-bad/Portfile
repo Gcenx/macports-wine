@@ -30,7 +30,7 @@ checksums           rmd160  596e53acfbbcf2fd6aac71f85fd155e5e9ec6638 \
                     size    5637764
 
 depends_build-append        port:pkgconfig \
-                            port:python38
+                            port:python39
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:gobject-introspection \
@@ -67,7 +67,7 @@ depends_lib                 port:gstreamer1-gst-plugins-base \
 # python3 is used for multiple checks
 pre-configure {
     file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.8 ${workpath}/bin/python3
+    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
     configure.env-append PATH=${workpath}/bin:$::env(PATH)
 }
 

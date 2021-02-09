@@ -27,7 +27,7 @@ checksums           rmd160  430ae3b7e7f4fd0a905241d717e53c0700f4d942 \
                     sha256  ad20546bcd78ac1e7cf194666d73c4f33efeb62647d2b6af22993b540699e91c \
                     size    279384
 
-depends_build-append        port:python38 \
+depends_build-append        port:python39 \
                             port:pkgconfig \
                             port:nasm
 
@@ -38,7 +38,7 @@ depends_lib-append          port:gstreamer1-gst-plugins-base \
 # python3 is used for multiple checks
 pre-configure {
     file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.8 ${workpath}/bin/python3
+    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
     configure.env-append PATH=${workpath}/bin:$::env(PATH)
 }
 
