@@ -14,20 +14,21 @@ platforms                   darwin
 description                 Open source implementation of jpegxr
 long_description            ${description}
 
-depends_build-append        port:maven3 \
-                            port:swig
-
 checksums                   rmd160  c423688e2b69c31da70e0d01c72d5f5a8d674cbb \
                             sha256  324af02e341bcb9e3b31a6d6892f47231f95f9f87ab4fe7645be619dcaf965a7 \
                             size    7646008
 
 github.tarball_from         archive
 
+# make doesn't have a make install target
+# make also doesn't produce dylib
 post-extract {
     file copy ${filespath}/CMakeLists.txt ${worksrcpath}/CMakeLists.txt
 }
 
-# jxrlib doesn't generate a pkgconfig configuration file, so add our own
+# CMakeLists.txt doesn't use the provided jxrlib.pc.in file
+# instead of fixing the jxrlib.pc.in copy in our own
+# just reinplace for Macports install location
 post-destroot {
     file copy ${filespath}/jxrlib.pc ${workpath}/jxrlib.pc
     reinplace s|@PREFIX@|${prefix}|g ${workpath}/jxrlib.pc
