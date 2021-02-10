@@ -1,77 +1,104 @@
+# Copyright Mathieu Malaterre <malat@debian.org>
+# BSD (Same as jxrlib)
+# Based on https://jxrlib.codeplex.com/discussions/440294
+# and modified for vcpkg packaging
+# then modified for macports-wine
 cmake_minimum_required(VERSION 2.8)
-project(jxrlib C CXX)
+project(jxrlib C)
 
-set(JXRLIB_MAJOR 0)
-set(JXRLIB_MINOR 0)
+# Need shared libs for ABI
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-set(JXRLIB_LIB_VERSION ${JXRLIB_MAJOR}.${JXRLIB_MINOR}.0)
-set(JXRLIB_SO_VERSION ${JXRLIB_MAJOR})
+# Add a debug postfix
+set(CMAKE_DEBUG_POSTFIX "d")
 
-#find_package(JNI)
-#if (JNI_FOUND)
-#    message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
-#    message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
-#    message (STATUS "JAVA_INCLUDE_PATH=${JAVA_INCLUDE_PATH}")
-#    message (STATUS "JAVA_INCLUDE_PATH2=${JAVA_INCLUDE_PATH2}")
-#endif()
-#INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH})
-#INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH2})
+# helper macro to preserve original Makefile convention
+macro(JXR_MAKE_OBJ SET_NAME)
+  foreach(src ${SRC_${SET_NAME}})
+    list(APPEND OBJ_${SET_NAME} ${DIR_${SET_NAME}}/${src})
+  endforeach()
+endmacro()
+
+if(NOT MSVC)
+  add_definitions(-D__ANSI__)
+  add_compile_options(-Wno-error=implicit-function-declaration)
+endif()
 
 include(TestBigEndian)
 test_big_endian(ISBIGENDIAN)
 if(ISBIGENDIAN)
-  set(DEF_ENDIAN -D_BIG__ENDIAN_)
+  set(DEF_ENDIAN _BIG__ENDIAN_)
 endif()
 
-add_definitions(-D__ANSI__ -DDISABLE_PERF_MEASUREMENT ${DEF_ENDIAN})
+set(DIR_SYS image/sys)
+set(DIR_DEC image/decode)
+set(DIR_ENC image/encode)
+
+set(DIR_GLUE jxrgluelib)
+set(DIR_TEST jxrtestlib)
+set(DIR_EXEC jxrencoderdecoder)
+
+if(NOT JXRLIB_INSTALL_BIN_DIR)
+  set(JXRLIB_INSTALL_BIN_DIR "bin")
+endif()
+
+if(NOT JXRLIB_INSTALL_LIB_DIR)
+  set(JXRLIB_INSTALL_LIB_DIR "lib")
+endif()
+
+if(NOT JXRLIB_INSTALL_INCLUDE_DIR)
+  set(JXRLIB_INSTALL_INCLUDE_DIR "include/jxrlib")
+endif()
 
 include_directories(
   common/include
-  image/sys
-  jxrgluelib
-  jxrtestlib
+  ${DIR_SYS}
+  ${DIR_GLUE}
+  ${DIR_TEST}
 )
 
-# JXR Library
-file(GLOB jpegxr_SRC image/sys/*.c image/decode/*.c image/encode/*.c)
-file(GLOB jpegxr_HDR image/sys/*.h image/decode/*.h image/encode/*.h)
 
-add_library(jpegxr SHARED ${jpegxr_SRC} ${jpegxr_HDR})
-set_target_properties(jpegxr PROPERTIES VERSION ${JXRLIB_LIB_VERSION} SOVERSION ${JXRLIB_SO_VERSION})
+# JPEG-XR
+set(SRC_SYS adapthuff.c image.c strcodec.c strPredQuant.c strTransform.c perfTimerANSI.c)
+JXR_MAKE_OBJ(SYS)
+set(SRC_DEC decode.c postprocess.c segdec.c strdec.c strInvTransform.c strPredQuantDec.c JXRTranscode.c)
+JXR_MAKE_OBJ(DEC)
+set(SRC_ENC encode.c segenc.c strenc.c strFwdTransform.c strPredQuantEnc.c)
+JXR_MAKE_OBJ(ENC)
 
+add_library(jpegxr ${OBJ_ENC} ${OBJ_DEC} ${OBJ_SYS})
+set_property(TARGET jpegxr
+  PROPERTY COMPILE_DEFINITIONS DISABLE_PERF_MEASUREMENT ${DEF_ENDIAN}
+)
+set_target_properties(jpegxr PROPERTIES VERSION 0.@VERSION@ SOVERSION 0)
+set_property(TARGET jpegxr PROPERTY LINK_INTERFACE_LIBRARIES "")
 install(TARGETS jpegxr
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib${LIB_SUFFIX}
-  ARCHIVE DESTINATION lib${LIB_SUFFIX}
+  EXPORT JXRLibTargets
+  RUNTIME DESTINATION ${JXRLIB_INSTALL_BIN_DIR}
+  LIBRARY DESTINATION ${JXRLIB_INSTALL_LIB_DIR}
+  ARCHIVE DESTINATION ${JXRLIB_INSTALL_LIB_DIR}
 )
 
-# JXR-GLUE Library
-file(GLOB jxrglue_SRC jxrgluelib/*.c jxrtestlib/*.c)
-file(GLOB jxrglue_HDR jxrgluelib/*.h jxrtestlib/*.h)
+# JXR-GLUE
+set(SRC_GLUE JXRGlue.c JXRMeta.c JXRGluePFC.c JXRGlueJxr.c)
+JXR_MAKE_OBJ(GLUE)
+set(SRC_TEST JXRTest.c JXRTestBmp.c JXRTestHdr.c JXRTestPnm.c JXRTestTif.c JXRTestYUV.c)
+JXR_MAKE_OBJ(TEST)
 
-add_library(jxrglue SHARED ${jxrglue_SRC} ${jxrglue_HDR})
-set_target_properties(jxrglue PROPERTIES VERSION ${JXRLIB_LIB_VERSION} SOVERSION ${JXRLIB_SO_VERSION})
-target_link_libraries(jxrglue jpegxr m)
-
+add_library(jxrglue ${OBJ_GLUE} ${OBJ_TEST})
+set_property(TARGET jxrglue
+  PROPERTY COMPILE_DEFINITIONS DISABLE_PERF_MEASUREMENT ${DEF_ENDIAN}
+)
+set_target_properties(jxrglue PROPERTIES VERSION 0.@VERSION@ SOVERSION 0)
+set_property(TARGET jxrglue PROPERTY LINK_INTERFACE_LIBRARIES "")
 install(TARGETS jxrglue
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib${LIB_SUFFIX}
-  ARCHIVE DESTINATION lib${LIB_SUFFIX}
+  EXPORT JXRLibTargets
+  RUNTIME DESTINATION ${JXRLIB_INSTALL_BIN_DIR}
+  LIBRARY DESTINATION ${JXRLIB_INSTALL_LIB_DIR}
+  ARCHIVE DESTINATION ${JXRLIB_INSTALL_LIB_DIR}
 )
 
-# JXR-JAVA Library
-#file(GLOB jxrjava_SRC java/target/swig/JXR_wrap.cxx cpp/lib/*.cpp)
-#file(GLOB jxrjava_SRC cpp/lib/*.hpp)
-
-#add_library(jxrjava SHARED ${jxrjava_SRC} ${jxrjava_HDR})
-#set_target_properties(jxrjava PROPERTIES VERSION ${JXRLIB_LIB_VERSION} SOVERSION ${JXRLIB_SO_VERSION})
-#target_link_libraries(jxrjava jpegxr m)
-
-#install(TARGETS jxrjava
-#  RUNTIME DESTINATION bin
-#  LIBRARY DESTINATION lib${LIB_SUFFIX}
-#  ARCHIVE DESTINATION lib${LIB_SUFFIX}
-#)
+target_link_libraries(jxrglue jpegxr m)
 
 # JxrEncApp Executable
 add_executable(JxrEncApp jxrencoderdecoder/JxrEncApp.c)
@@ -83,10 +110,11 @@ add_executable(JxrDecApp jxrencoderdecoder/JxrDecApp.c)
 target_link_libraries(JxrDecApp jxrglue)
 install(TARGETS JxrDecApp RUNTIME DESTINATION bin)
 
-# Headers
-install(FILES jxrgluelib/JXRGlue.h jxrgluelib/JXRMeta.h jxrtestlib/JXRTest.h image/sys/windowsmediaphoto.h
-  DESTINATION include/jxrlib
+# install rules
+install(FILES jxrgluelib/JXRGlue.h jxrgluelib/JXRMeta.h jxrtestlib/JXRTest.h
+  image/sys/windowsmediaphoto.h
+  DESTINATION ${JXRLIB_INSTALL_INCLUDE_DIR} COMPONENT Headers
 )
-install(DIRECTORY common/include/ DESTINATION include/jxrlib
+install(DIRECTORY common/include/ DESTINATION ${JXRLIB_INSTALL_INCLUDE_DIR}
   FILES_MATCHING PATTERN "*.h"
 )
