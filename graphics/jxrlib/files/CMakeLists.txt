@@ -103,12 +103,12 @@ target_link_libraries(jxrglue jpegxr m)
 # JxrEncApp Executable
 add_executable(JxrEncApp jxrencoderdecoder/JxrEncApp.c)
 target_link_libraries(JxrEncApp jxrglue)
-install(TARGETS JxrEncApp RUNTIME DESTINATION bin)
+install(TARGETS JxrEncApp RUNTIME DESTINATION ${JXRLIB_INSTALL_BIN_DIR})
 
 # JxrDecApp Executable
 add_executable(JxrDecApp jxrencoderdecoder/JxrDecApp.c)
 target_link_libraries(JxrDecApp jxrglue)
-install(TARGETS JxrDecApp RUNTIME DESTINATION bin)
+install(TARGETS JxrDecApp RUNTIME DESTINATION ${JXRLIB_INSTALL_BIN_DIR})
 
 # install rules
 install(FILES jxrgluelib/JXRGlue.h jxrgluelib/JXRMeta.h jxrtestlib/JXRTest.h
