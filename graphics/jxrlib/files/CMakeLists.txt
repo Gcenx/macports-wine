@@ -27,7 +27,7 @@ endif()
 include(TestBigEndian)
 test_big_endian(ISBIGENDIAN)
 if(ISBIGENDIAN)
-  set(DEF_ENDIAN _BIG__ENDIAN_)
+  set(DEF_ENDIAN -D_BIG__ENDIAN_)
 endif()
 
 set(DIR_SYS image/sys)
