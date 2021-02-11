@@ -6,7 +6,7 @@ PortGroup                   cmake 1.1
 
 github.setup                4creators jxrlib 2019.10.9 v
 version                     1.1
-name                        jxrlib
+
 categories                  graphics
 maintainers                 openmaintainer
 license                     BSD
