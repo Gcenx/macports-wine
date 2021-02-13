@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.1
+version                     6.2
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  c64c36f90b0bab1c60bee85f7d3ea91d23b7da44 \
-                            sha256  1c2966bc4a17f2a9edaebcaa05821eb315f77d053066259cd8354cedd2561361 \
-                            size    40491674 \
+                            rmd160  dc8d8c8a2537fad4575da2a7973c09bd87e8dbf9 \
+                            sha256  e2c2dddeadff84be9057669789ce69e4c32f704d9b095cd9922e8b7b152493b0 \
+                            size    40561788 \
                             ${wine_staging_distfile} \
-                            rmd160  306148418ca9c857f9bda0744701f6bf08f8306a \
-                            sha256  f4de54fe026b920191db6c5001cfd563503d0fa3e2b191315311285019afddf4 \
-                            size    9855125
+                            rmd160  61416153689f48633a4f1f8f39a5511dc6f97004 \
+                            sha256  8ae73db67446d00ca7aef8c34c9a7336d6ca36893fa55f943e662cd1035844de \
+                            size    9820682
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -69,6 +69,7 @@ depends_lib                 port:fontconfig \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
                             path:include/turbojpeg.h:libjpeg-turbo \
+                            port:jxrlib \
                             port:lcms2 \
                             port:libiconv \
                             port:libpcap \
@@ -81,7 +82,7 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
-                            port:wine-mono-5.1.1
+                            port:wine-mono-6.0.0
 
 depends_build               port:autoconf \
                             port:bison \
@@ -133,6 +134,7 @@ configure.args              --without-alsa \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
+                            --with-jxrlib \
                             --without-krb5 \
                             --with-ldap \
                             --with-mingw \
