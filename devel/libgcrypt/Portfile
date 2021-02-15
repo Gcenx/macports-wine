@@ -64,6 +64,7 @@ use_parallel_build  yes
 post-patch {
         if {[variant_exists universal] && [variant_isset universal]} {
         reinplace "s/@LIBGCRYPT_CONFIG_HOST@/${os.arch}-apple-darwin${os.major}/" ${worksrcpath}/src/libgcrypt-config.in
+                                                                                  ${worksrcpath}/src/libgcrypt.pc.in
     }
 }
 
