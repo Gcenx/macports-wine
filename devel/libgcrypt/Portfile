@@ -2,6 +2,7 @@
 
 PortSystem      1.0
 PortGroup       compiler_blacklist_versions 1.0
+PortGroup       legacysupport 1.1
 PortGroup       muniversal 1.0
 
 name            libgcrypt
@@ -61,9 +62,8 @@ if {[string match "*clang*" ${configure.compiler}]} {
 use_parallel_build  yes
 
 post-patch {
-    if {${universal_possible} && [variant_isset universal]} {
-        reinplace "s/@LIBGCRYPT_CONFIG_HOST@/${os.arch}-apple-darwin${os.major}/" ${worksrcpath}/src/libgcrypt-config.in \
-                                                                                  ${worksrcpath}/src/libgcrypt.pc.in
+        if {[variant_exists universal] && [variant_isset universal]} {
+        reinplace "s/@LIBGCRYPT_CONFIG_HOST@/${os.arch}-apple-darwin${os.major}/" ${worksrcpath}/src/libgcrypt-config.in
     }
 }
 
