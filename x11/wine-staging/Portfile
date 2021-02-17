@@ -125,12 +125,10 @@ configure.args              --without-alsa \
                             --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
-                            --with-glu \
                             --with-gnutls \
                             --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
-                            --without-gtk3 \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
@@ -172,7 +170,6 @@ configure.args              --without-alsa \
                             --without-xshm \
                             --with-xslt \
                             --without-xxf86vm \
-                            --without-va \
                             --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
@@ -228,11 +225,9 @@ variant ffmpeg {
                                 port:gstreamer1-gst-libav
 
     configure.args-delete       --without-dbus \
-                                --without-gtk3 \
                                 --without-krb5
 
     configure.args-append       --with-dbus \
-                                --with-gtk3 \
                                 --with-krb5
     
     require_active_variants     port:FAudio wma
