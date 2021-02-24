@@ -9,8 +9,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `FAudio` *(v21.02)*
 - `gstreamer1-gst-plugins-ugly` v1.16.2 [(Added Derek Lesho patchs to fix wmv playback)](https://github.com/GloriousEggroll/proton-ge-custom/tree/proton-ge-5-MF/patches/gstreamer)
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
-- `MoltenVK` *(v1.1.1)*
-- `CX-MoltenVK` (MoltenVK v1.1.1 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
+- `MoltenVK` *(v1.1.2)*
+- `CX-MoltenVK` (MoltenVK v1.1.2 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
 - `rust` Downgraded to v1.42.0 (Needed for 32Bit support)
 - `VulkanSDK` *(v1.2.162.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)

@@ -16,14 +16,16 @@ description                 an implementation of Vulkan for Metal
 name                        MoltenVK
 conflicts                   CX-MoltenVK VulkanSDK
 set my_name                 MoltenVK
-dist_subdir                 MoltenVK
 
 long_description            ${name} is an implementation of the high-performance, \
                             industry-standard Vulkan graphics and compute API, that \
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     1.1.1
+version                     1.1.2
+
+# Avoid distfiles conflicting
+dist_subdir                 MoltenVK${version}
 
 subport MoltenVK {
     name                    MoltenVK
@@ -34,9 +36,9 @@ subport MoltenVK {
     distname                macos${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  a4d03556650e68b4dc9d5d249206fae8ce14ac56 \
-                            sha256  0a4a59898d7a4609f337540813d99178f5bbc89b17fce691a3526cbb7724a4c5 \
-                            size    9023336
+    checksums               rmd160  849bf62f8b8c187fbe68afd149e6badf150202f0 \
+                            sha256  dfc2ffb0f7edf569e4628ebb033e44c31622444a00cbc744dc2297b5e614fba9 \
+                            size    9160508
 }
 
 subport CX-MoltenVK {
@@ -48,9 +50,9 @@ subport CX-MoltenVK {
     distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  6fc1f73540de9f024ff2c76fe4b6fa23dd74f69c \
-                            sha256  cd118fbea26c3c4150359c77d033f4fee5f1de4d9625267be1638b51e260aec9 \
-                            size    9024360
+    checksums               rmd160  c40b43a352ab7154f09aea51d10d364fb0391199 \
+                            sha256  8d88a3a1b20d17943ace8f491f5f3e02e7d4e01b35e78ecdf45bc95d258ec9eb \
+                            size    9172064
 }
 
 # Placed here so VulkanSDK can override the url
