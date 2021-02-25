@@ -243,6 +243,9 @@ configure.ldflags-append          -Wl,-rpath,@loader_path/../
 
 configure.universal_args
 
+# wine-staging consistently uses C99 functions;
+configure.cflags-append           "-Wno-implicit-function-declaration"
+
 set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
 set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
@@ -251,7 +254,7 @@ set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
     build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-    destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    destroot.args-append        "dlldir=\\\${destroot}${prefix}/lib/wine64"
     configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
