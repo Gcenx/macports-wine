@@ -233,7 +233,7 @@ set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
     build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-    destroot.args-append        "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    destroot.args-append        "dlldir=\\\${destroot}${prefix}/lib/wine64"
     configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
