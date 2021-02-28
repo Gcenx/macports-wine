@@ -12,7 +12,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `MoltenVK` *(v1.1.2)*
 - `CX-MoltenVK` (MoltenVK v1.1.2 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
 - `rust` Downgraded to v1.42.0 (Needed for 32Bit support)
-- `VulkanSDK` *(v1.2.162.0)*
+- `VulkanSDK` *(v1.2.162.1)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0)*
 - `wine-devel` *(v6.3)*
