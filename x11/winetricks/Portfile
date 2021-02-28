@@ -10,7 +10,7 @@ checksums               rmd160  ef85e54fcf786169913f65cacbcd3b36d3a92300 \
                         size    690963
 
 categories              x11
-maintainers             {ryandesign @ryandesign} openmaintainer
+maintainers             {gcenx @gcenx}
 license                 LGPL-2.1+
 homepage                http://www.winetricks.org/
 platforms               darwin

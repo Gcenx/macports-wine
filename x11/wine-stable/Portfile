@@ -16,7 +16,7 @@ name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     6.0
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -80,6 +80,16 @@ depends_build               port:bison \
 
 # Disable winemenubuilder, stops useless .desktop files
 #patchfiles                  HACK-skip_building_winemenubuilder.diff
+
+# https://bugs.winehq.org/show_bug.cgi?id=50436
+patchfiles                  configure_FAudio_Uppercase.diff
+
+# Apple Silicon patches from upstream
+if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
+    patchfiles-append       M1_GPU.diff \
+                            Rosetta2.diff
+                            
+}
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
