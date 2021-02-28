@@ -56,9 +56,9 @@ checksums                   ${wine_distfile} \
                             sha256  8177bd4f32f720af0d98d762727a006c715ce6ed168b095cf76818eaa62d4cce \
                             size    40599491 \
                             ${wine_staging_distfile} \
-                            rmd160  61416153689f48633a4f1f8f39a5511dc6f97004 \
-                            sha256  8ae73db67446d00ca7aef8c34c9a7336d6ca36893fa55f943e662cd1035844de \
-                            size    9820682
+                            rmd160  967d1eb4f5399d0d8d17a0a0334d23e18ff43534 \
+                            sha256  c490127b2bbbe326923ad32a5b730dc4d7541a07085a9553929b64b52a556c58 \
+                            size    9796930
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -96,6 +96,9 @@ post-extract {
 
 # Disable winemenubuilder, stops useless .desktop files
 #patchfiles                  HACK-skip_building_winemenubuilder.diff
+
+# https://bugs.winehq.org/show_bug.cgi?id=50436
+patchfiles                  configure_FAudio_Uppercase.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
@@ -364,6 +367,18 @@ platform darwin {
     } elseif {${os.major} > 18} {
         notes-append {
         Only wine64 will be available on macOS 10.15 and above}
+    }
+}
+
+if {${os.major} >= 12} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} is currently broken."
+        return -code error "${name} @${version} is currently broken."
     }
 }
 

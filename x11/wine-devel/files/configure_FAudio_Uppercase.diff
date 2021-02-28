@@ -1,0 +1,49 @@
+--- configure.ac    2021-02-27 20:42:33.000000000 -0500
++++ configure.ac    2021-02-27 20:51:55.000000000 -0500
+@@ -1704,7 +1704,7 @@
+ dnl **** Check for FAudio ****
+ if test "x$with_faudio" != "xno"
+ then
+-    WINE_PACKAGE_FLAGS(FAUDIO,[faudio],[-lFAudio],,,
++    WINE_PACKAGE_FLAGS(FAUDIO,[Faudio],[-lFAudio],,,
+         [AC_CHECK_HEADERS([FAudio.h],
+             [WINE_CHECK_SONAME(FAudio,FAudioCreate,,,[$FAUDIO_LIBS],[[libFAudio*]])])
+              WINE_CHECK_LIB_FUNCS([FAudio_CommitOperationSet \
+
+--- configure	    2021-01-27 16:10:26.000000000 -0500
++++ configure	    2021-02-27 16:14:06.000000000 -0500
+@@ -2711,8 +2699,8 @@
+   SDL2_CFLAGS C compiler flags for sdl2, overriding pkg-config
+   SDL2_LIBS   Linker flags for sdl2, overriding pkg-config
+   FAUDIO_CFLAGS
+-              C compiler flags for faudio, overriding pkg-config
+-  FAUDIO_LIBS Linker flags for faudio, overriding pkg-config
++              C compiler flags for Faudio, overriding pkg-config
++  FAUDIO_LIBS Linker flags for Faudio, overriding pkg-config
+   CAPI20_CFLAGS
+               C compiler flags for capi20, overriding pkg-config
+   CAPI20_LIBS Linker flags for capi20, overriding pkg-config
+@@ -15016,19 +15004,19 @@
+ then
+     if ${FAUDIO_CFLAGS:+false} :; then :
+   if ${PKG_CONFIG+:} false; then :
+-  FAUDIO_CFLAGS=`$PKG_CONFIG --cflags faudio 2>/dev/null`
++  FAUDIO_CFLAGS=`$PKG_CONFIG --cflags Faudio 2>/dev/null`
+ fi
+ fi
+ 
+ if ${FAUDIO_LIBS:+false} :; then :
+   if ${PKG_CONFIG+:} false; then :
+-  FAUDIO_LIBS=`$PKG_CONFIG --libs faudio 2>/dev/null`
++  FAUDIO_LIBS=`$PKG_CONFIG --libs Faudio 2>/dev/null`
+ fi
+ fi
+ 
+ FAUDIO_LIBS=${FAUDIO_LIBS:-"-lFAudio"}
+-$as_echo "$as_me:${as_lineno-$LINENO}: faudio cflags: $FAUDIO_CFLAGS" >&5
+-$as_echo "$as_me:${as_lineno-$LINENO}: faudio libs: $FAUDIO_LIBS" >&5
++$as_echo "$as_me:${as_lineno-$LINENO}: Faudio cflags: $FAUDIO_CFLAGS" >&5
++$as_echo "$as_me:${as_lineno-$LINENO}: Faudio libs: $FAUDIO_LIBS" >&5
+ ac_save_CPPFLAGS=$CPPFLAGS
+ CPPFLAGS="$CPPFLAGS $FAUDIO_CFLAGS"
+ for ac_header in FAudio.h

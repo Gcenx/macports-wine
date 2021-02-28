@@ -15,8 +15,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `VulkanSDK` *(v1.2.162.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0)*
-- `wine-devel` *(v6.2)*
-- `wine-staging` *(v6.2)*
+- `wine-devel` *(v6.3)*
+- `wine-staging` *(v6.3 currently broken)*
 - `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
 - `wine-gecko` *(v2.47.2)*
 - `wine-gecko-2.47.1` (Workaround for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
@@ -26,6 +26,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-5.1.1` *(v5.1.1)*
 - `wine-mono-6.0.0` *(v6.0.0)*
 - `Wineskin` *(v1.8.4.2)*
+- `winetricks` *(20210206)* doesn't default to +zenity
 - `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
 - `librsvg` Force pre-cargo version (10.14 and below)
 - `pango` Added muniversal group as for some reason it's not building as universal anymore

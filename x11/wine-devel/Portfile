@@ -82,6 +82,9 @@ depends_build               port:bison \
 # Disable winemenubuilder, stops useless .desktop files
 #patchfiles                  HACK-skip_building_winemenubuilder.diff
 
+# https://bugs.winehq.org/show_bug.cgi?id=50436
+patchfiles                  configure_FAudio_Uppercase.diff
+
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
