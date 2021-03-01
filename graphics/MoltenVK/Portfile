@@ -24,9 +24,6 @@ long_description            ${name} is an implementation of the high-performance
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
 version                     1.1.2
 
-# Avoid distfiles conflicting
-dist_subdir                 MoltenVK${version}
-
 subport MoltenVK {
     name                    MoltenVK
     conflicts               CX-MoltenVK VulkanSDK
@@ -53,7 +50,28 @@ subport CX-MoltenVK {
     checksums               rmd160  c40b43a352ab7154f09aea51d10d364fb0391199 \
                             sha256  8d88a3a1b20d17943ace8f491f5f3e02e7d4e01b35e78ecdf45bc95d258ec9eb \
                             size    9172064
+
+    # The newer version of CX-MoltenVK crashes under Rosetta2 so force the working version
+    if { [exec sysctl -n sysctl.proc_translated] == "1" } {
+        version             1.1.0
+        epoch               1
+        checksums           rmd160  8d0ec63152153d59e759b508e6adfb20dea5f51a \
+                            sha256  d733649f4370e416db5649f5a8fe7575537c2a6f946c0a31eb06095a032c8ee9 \
+                            size    8298736
+        notes-append "
+            ************************************************************
+            
+            ${name} v${version} is forced for Apple Silicon devices
+            running under Rosetta2 for DXVK compatibility.
+            ${name} v1.1.1 & v1.1.2 cause DXVK to crash or lockup.
+            
+            ************************************************************
+        "
+    }
 }
+
+# Avoid distfiles conflicting
+dist_subdir                 MoltenVK${version}
 
 # Placed here so VulkanSDK can override the url
 master_sites                https://github.com/Gcenx/MoltenVK/releases/download/v${version}
