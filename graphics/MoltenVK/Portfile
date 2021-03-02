@@ -51,6 +51,7 @@ subport CX-MoltenVK {
                             sha256  8d88a3a1b20d17943ace8f491f5f3e02e7d4e01b35e78ecdf45bc95d258ec9eb \
                             size    9172064
 
+    if {${os.major} >= 20} {
     # The newer version of CX-MoltenVK crashes under Rosetta2 so force the working version
     if { [exec sysctl -n sysctl.proc_translated] == "1" } {
         version             1.1.0
@@ -67,6 +68,7 @@ subport CX-MoltenVK {
             
             ************************************************************
         "
+    }
     }
 }
 
