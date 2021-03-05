@@ -1,37 +1,40 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
-PortSystem          1.0
-PortGroup           meson 1.0
+PortSystem                  1.0
+PortGroup                   meson 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
-PortGroup           active_variants 1.1
+PortGroup                   muniversal 1.0
+PortGroup                   active_variants 1.1
 
-name                gstreamer1-gst-plugins-good
-set my_name         gst-plugins-good
+name                        gstreamer1-gst-plugins-good
+set my_name                 gst-plugins-good
 # please only commit stable updates (even numbered releases)
-version             1.18.3
-description         A set of good-quality plug-ins for GStreamer under GStreamer's preferred \
-                    license, LGPL.
-long_description    GStreamer Good Plug-ins is a set of plug-ins that GStreamer's developers \
-                    consider to have good quality code, correct functionality, and their \
-                    preferred license (LGPL for the plug-in code, LGPL or LGPL-compatible for \
-                    the supporting library).
-maintainers         nomaintainer
-categories          gnome
-license             LGPL-2+
-platforms           darwin
-homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
-master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
-use_xz              yes
-distname            ${my_name}-${version}
+version                     1.18.3
+description                 A set of good-quality plug-ins for GStreamer under GStreamer's preferred \
+                            license, LGPL.
+long_description            GStreamer Good Plug-ins is a set of plug-ins that GStreamer's developers \
+                            consider to have good quality code, correct functionality, and their \
+                            preferred license (LGPL for the plug-in code, LGPL or LGPL-compatible for \
+                            the supporting library).
+maintainers                 nomaintainer
+categories                  gnome
+license                     LGPL-2+
+platforms                   darwin
+homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+use_xz                      yes
+distname                    ${my_name}-${version}
 
-checksums           rmd160  bbdfe58d9d77eb31ee02c5b4a760e1b3d49a6f78 \
-                    sha256  9b3b8e05d4d6073bf929fb33e2d8f74dd81ff21fa5b50c3273c78dfa2ab9c5cb \
-                    size    3274940
+checksums                   rmd160  bbdfe58d9d77eb31ee02c5b4a760e1b3d49a6f78 \
+                            sha256  9b3b8e05d4d6073bf929fb33e2d8f74dd81ff21fa5b50c3273c78dfa2ab9c5cb \
+                            size    3274940
+
+set python_version          39
+set python_branch           3.9
 
 depends_build-append        port:pkgconfig \
-                            port:python39
+                            port:python${python_version}
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:aalib \
@@ -53,12 +56,8 @@ depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:twolame \
                             port:wavpack
 
-# python3 is used for multiple checks
-pre-configure {
-    file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
-    configure.env-append PATH=${workpath}/bin:$::env(PATH)
-}
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${python_branch}
 
 platform darwin {
     if {${os.major} < 11} {
@@ -143,8 +142,8 @@ variant qt description {Enable QT5 MAC windowing elements } {
 # <rdar://problem/9694837> - Fixed in Xcode 4.2 (clang 211.10.1)
 # blacklist compilers that don't support C11 typedef redefinition
 # gstflvmux.h:73: error: redefinition of typedef ‘GstFlvMuxPadClass’
-compiler.c_standard 2011
+compiler.c_standard         2011
 
-livecheck.type      regex
-livecheck.url       ${master_sites}
-livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
+livecheck.type              regex
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

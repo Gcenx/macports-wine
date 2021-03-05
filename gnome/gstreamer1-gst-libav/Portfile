@@ -1,46 +1,45 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
-PortSystem          1.0
-PortGroup           meson 1.0
+PortSystem                  1.0
+PortGroup                   meson 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
+PortGroup                   muniversal 1.0
 
-PortGroup           compiler_blacklist_versions 1.0
+PortGroup                   compiler_blacklist_versions 1.0
 
-name                gstreamer1-gst-libav
-set my_name         gst-libav
+name                        gstreamer1-gst-libav
+set my_name                 gst-libav
 # please only commit stable updates (even numbered releases)
-version             1.18.3
-description         This is gst-libav, a set of plug-ins for GStreamer.
-long_description    ${description}
-maintainers         nomaintainer
-categories          gnome
-license             GPL-2+
-platforms           darwin
-homepage            https://gstreamer.freedesktop.org/
-master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
-distname            ${my_name}-${version}
-use_xz              yes
+version                     1.18.3
+description                 This is gst-libav, a set of plug-ins for GStreamer.
+long_description            ${description}
+maintainers                 nomaintainer
+categories                  gnome
+license                     GPL-2+
+platforms                   darwin
+homepage                    https://gstreamer.freedesktop.org/
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+distname                    ${my_name}-${version}
+use_xz                      yes
 
-checksums           rmd160  430ae3b7e7f4fd0a905241d717e53c0700f4d942 \
-                    sha256  ad20546bcd78ac1e7cf194666d73c4f33efeb62647d2b6af22993b540699e91c \
-                    size    279384
+checksums                   rmd160  430ae3b7e7f4fd0a905241d717e53c0700f4d942 \
+                            sha256  ad20546bcd78ac1e7cf194666d73c4f33efeb62647d2b6af22993b540699e91c \
+                            size    279384
 
-depends_build-append        port:python39 \
-                            port:pkgconfig \
+set python_version          39
+set python_branch           3.9
+
+depends_build-append        port:pkgconfig \
+                            port:python${python_version} \
                             port:nasm
 
 depends_lib-append          port:gstreamer1-gst-plugins-base \
                             port:gobject-introspection \
                             port:ffmpeg
 
-# python3 is used for multiple checks
-pre-configure {
-    file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
-    configure.env-append PATH=${workpath}/bin:$::env(PATH)
-}
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${python_branch}
 
 if {[lsearch [get_canonical_archs] i386] != -1} {
     # clang-139 hits https://trac.macports.org/ticket/38141
@@ -63,6 +62,6 @@ if {[variant_isset universal]} {
     destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
 }
 
-livecheck.type      regex
-livecheck.url       ${master_sites}
-livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
+livecheck.type              regex
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

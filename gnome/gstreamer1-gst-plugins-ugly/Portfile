@@ -1,36 +1,39 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
-PortSystem          1.0
-PortGroup           meson 1.0
+PortSystem                  1.0
+PortGroup                   meson 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
+PortGroup                   muniversal 1.0
 
-name                gstreamer1-gst-plugins-ugly
-set my_name         gst-plugins-ugly
+name                        gstreamer1-gst-plugins-ugly
+set my_name                 gst-plugins-ugly
 # please only commit stable updates (even numbered releases)
-version             1.18.3
-description         A set of good-quality plug-ins for GStreamer that might pose distribution \
-                    problems.
-long_description    GStreamer Ugly Plug-ins is a set of plug-ins that have good quality and \
-                    correct functionality, but distributing them might pose problems. The \
-                    license on either the plug-ins or the supporting libraries might not be how \
-                    we'd like. The code might be widely known to present patent problems.
-maintainers         nomaintainer
-categories          gnome
-platforms           darwin
-homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
-master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
-distname            ${my_name}-${version}
-license             GPL-2+ LGPL-2+
-use_xz              yes
+version                     1.18.3
+description                 A set of good-quality plug-ins for GStreamer that might pose distribution \
+                            problems.
+long_description            GStreamer Ugly Plug-ins is a set of plug-ins that have good quality and \
+                            correct functionality, but distributing them might pose problems. The \
+                            license on either the plug-ins or the supporting libraries might not be how \
+                            we'd like. The code might be widely known to present patent problems.
+maintainers                 nomaintainer
+categories                  gnome
+platforms                   darwin
+homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+distname                    ${my_name}-${version}
+license                     GPL-2+ LGPL-2+
+use_xz                      yes
 
-checksums           rmd160  210e19fa20da72243ec28ab489ebfbf4692b216f \
-                    sha256  70f7429b25dd2f714eb18e80af61b1363b1f63019e16cd28e086e3a619eaa992 \
-                    size    508500
+checksums                   rmd160  210e19fa20da72243ec28ab489ebfbf4692b216f \
+                            sha256  70f7429b25dd2f714eb18e80af61b1363b1f63019e16cd28e086e3a619eaa992 \
+                            size    508500
+
+set python_version          39
+set python_branch           3.9
 
 depends_build-append        port:pkgconfig \
-                            port:python39
+                            port:python${python_version}
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:a52dec \
@@ -39,17 +42,13 @@ depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:libmpeg2 \
                             port:x264
 
-# python3 is used for multiple checks
-pre-configure {
-    file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
-    configure.env-append PATH=${workpath}/bin:$::env(PATH)
-}
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${python_branch}
 
 configure.args-append       -Dstatic=enabled
 
 configure.cflags-append     -funroll-loops -fstrict-aliasing
 
-livecheck.type      regex
-livecheck.url       ${master_sites}
-livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
+livecheck.type              regex
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

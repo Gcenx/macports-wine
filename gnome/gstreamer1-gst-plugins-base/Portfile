@@ -1,35 +1,38 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
-PortSystem          1.0
-PortGroup           meson 1.0
-PortGroup           compiler_blacklist_versions 1.0
+PortSystem                  1.0
+PortGroup                   meson 1.0
+PortGroup                   compiler_blacklist_versions 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
+PortGroup                   muniversal 1.0
 
-name                gstreamer1-gst-plugins-base
-set my_name         gst-plugins-base
+name                        gstreamer1-gst-plugins-base
+set my_name                 gst-plugins-base
 # please only commit stable updates (even numbered releases)
-version             1.18.3
-description         This is gst-plugins, a set of plug-ins for GStreamer.
-long_description    ${description}
-maintainers         nomaintainer
-categories          gnome
-platforms           darwin
-license             LGPL-2+
-homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
+version                     1.18.3
+description                 This is gst-plugins, a set of plug-ins for GStreamer.
+long_description            ${description}
+maintainers                 nomaintainer
+categories                  gnome
+platforms                   darwin
+license                     LGPL-2+
+homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
 
-master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
-distname            ${my_name}-${version}
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+distname                    ${my_name}-${version}
 
-use_xz              yes
+use_xz                      yes
 
-checksums           rmd160  6e2fe0b80b54102b06d40cae0741492a650a5c01 \
-                    sha256  dbfa20283848f0347a223dd8523dfb62e09e5220b21b1d157a8b0c8b67ba9f52 \
-                    size    3166548
+checksums                   rmd160  6e2fe0b80b54102b06d40cae0741492a650a5c01 \
+                            sha256  dbfa20283848f0347a223dd8523dfb62e09e5220b21b1d157a8b0c8b67ba9f52 \
+                            size    3166548
+
+set python_version          39
+set python_branch           3.9
 
 depends_build-append        port:pkgconfig \
-                            port:python39
+                            port:python${python_version}
 
 depends_lib-append          port:gstreamer1 \
                             port:graphene \
@@ -41,12 +44,8 @@ depends_lib-append          port:gstreamer1 \
                             path:lib/pkgconfig/pango.pc:pango \
                             port:zlib
 
-# python3 is used for multiple checks
-pre-configure {
-    file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
-    configure.env-append PATH=${workpath}/bin:$::env(PATH)
-}
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${python_branch}
 
 # Embedded systems are not our primary target, so disable OpenGL|ES support.
 configure.args-append       -Dexamples=disabled \
@@ -177,10 +176,10 @@ if {[variant_isset universal]} {
     destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
 }
 
-test.run            yes
-test.target         check
+test.run                    yes
+test.target                 check
 
-livecheck.type      regex
-livecheck.name      ${my_name}
-livecheck.url       ${master_sites}
-livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
+livecheck.type              regex
+livecheck.name              ${my_name}
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

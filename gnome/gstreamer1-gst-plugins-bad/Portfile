@@ -1,36 +1,39 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
-PortSystem          1.0
-PortGroup           meson 1.0
+PortSystem                  1.0
+PortGroup                   meson 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
-PortGroup           active_variants 1.1
+PortGroup                   muniversal 1.0
+PortGroup                   active_variants 1.1
 
-name                gstreamer1-gst-plugins-bad
-set my_name         gst-plugins-bad
+name                        gstreamer1-gst-plugins-bad
+set my_name                 gst-plugins-bad
 # please only commit stable updates (even numbered releases)
-version             1.18.3
-description         A set of plug-ins for GStreamer that need more quality.
-long_description    GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par compared \
-                    to the rest. They might be close to being good quality, but they're missing \
-                    something - be it a good code review, some documentation, a set of tests, a \
-                    real live maintainer, or some actual wide use.
-license             GPL LGPL
-maintainers         nomaintainer
-categories          gnome
-platforms           darwin
-homepage            https://gstreamer.freedesktop.org/modules/${my_name}.html
-master_sites        https://gstreamer.freedesktop.org/src/${my_name}/
-distname            ${my_name}-${version}
-use_xz              yes
+version                     1.18.3
+description                 A set of plug-ins for GStreamer that need more quality.
+long_description            GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par compared \
+                            to the rest. They might be close to being good quality, but they're missing \
+                            something - be it a good code review, some documentation, a set of tests, a \
+                            real live maintainer, or some actual wide use.
+license                     GPL LGPL
+maintainers                 nomaintainer
+categories                  gnome
+platforms                   darwin
+homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+distname                    ${my_name}-${version}
+use_xz                      yes
 
-checksums           rmd160  596e53acfbbcf2fd6aac71f85fd155e5e9ec6638 \
-                    sha256  b7e34b6b86272588fbd8b314dadfa6ceff895198cfb59e2950378e9e31ff22e0 \
-                    size    5637764
+checksums                   rmd160  596e53acfbbcf2fd6aac71f85fd155e5e9ec6638 \
+                            sha256  b7e34b6b86272588fbd8b314dadfa6ceff895198cfb59e2950378e9e31ff22e0 \
+                            size    5637764
+
+set python_version          39
+set python_branch           3.9
 
 depends_build-append        port:pkgconfig \
-                            port:python39
+                            port:python${python_version}
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:gobject-introspection \
@@ -64,12 +67,8 @@ depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:webp \
                             port:x265
 
-# python3 is used for multiple checks
-pre-configure {
-    file mkdir ${workpath}/bin
-    ln -s ${prefix}/bin/python3.9 ${workpath}/bin/python3
-    configure.env-append PATH=${workpath}/bin:$::env(PATH)
-}
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${python_branch}
 
 #
 # could depend on tons for multimedia stuff +variants
@@ -169,6 +168,6 @@ if {[variant_isset universal]} {
     destroot.env-append    "CC=${configure.cc} ${configure.cc_archflags}"
 }
 
-livecheck.type      regex
-livecheck.url       ${master_sites}
-livecheck.regex     "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
+livecheck.type              regex
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
