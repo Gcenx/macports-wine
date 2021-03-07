@@ -51,24 +51,25 @@ subport CX-MoltenVK {
                             sha256  8d88a3a1b20d17943ace8f491f5f3e02e7d4e01b35e78ecdf45bc95d258ec9eb \
                             size    9172064
 
+    # Macports freaks about sysctl.proc_translated on Mojave so only check on Big Sur
     if {${os.major} >= 20} {
-    # The newer version of CX-MoltenVK crashes under Rosetta2 so force the working version
-    if { [exec sysctl -n sysctl.proc_translated] == "1" } {
-        version             1.1.0
-        epoch               1
-        checksums           rmd160  8d0ec63152153d59e759b508e6adfb20dea5f51a \
+        # The newer version of CX-MoltenVK crashes under Rosetta2 so force the working version
+        if { [exec sysctl -n sysctl.proc_translated] == "1" } {
+            version         1.1.0
+            epoch           1
+            checksums       rmd160  8d0ec63152153d59e759b508e6adfb20dea5f51a \
                             sha256  d733649f4370e416db5649f5a8fe7575537c2a6f946c0a31eb06095a032c8ee9 \
                             size    8298736
-        notes-append "
-            ************************************************************
+            notes-append "
+                ************************************************************
             
-            ${name} v${version} is forced for Apple Silicon devices
-            running under Rosetta2 for DXVK compatibility.
-            ${name} v1.1.1 & v1.1.2 cause DXVK to crash or lockup.
+                ${name} v${version} is forced for Apple Silicon devices
+                running under Rosetta2 for DXVK compatibility.
+                ${name} v1.1.1 & v1.1.2 cause DXVK to crash or lockup.
             
-            ************************************************************
-        "
-    }
+                ************************************************************
+            "
+        }
     }
 }
 
