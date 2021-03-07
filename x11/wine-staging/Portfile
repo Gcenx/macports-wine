@@ -100,6 +100,9 @@ post-extract {
 # https://bugs.winehq.org/show_bug.cgi?id=50436
 patchfiles                  configure_FAudio_Uppercase.diff
 
+# https://github.com/wine-staging/wine-staging/commit/a2ca43d98b3a45ae3bd66e8c71090b42e18c9bdd
+patchfiles-append           missing_headers.diff
+
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
@@ -367,18 +370,6 @@ platform darwin {
     } elseif {${os.major} > 18} {
         notes-append {
         Only wine64 will be available on macOS 10.15 and above}
-    }
-}
-
-if {${os.major} >= 12} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} @${version} is currently broken."
-        return -code error "${name} @${version} is currently broken."
     }
 }
 
