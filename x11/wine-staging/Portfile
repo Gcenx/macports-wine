@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.3
+version                     6.4
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  be1c05df1bca60e9c687bf1fefdbe1dd8720b42a \
-                            sha256  8177bd4f32f720af0d98d762727a006c715ce6ed168b095cf76818eaa62d4cce \
-                            size    40599491 \
+                            rmd160  82ca1d04f989361ca474b2613cfce38ee273dd23 \
+                            sha256  0f92296117a699423f20f299688391dbcaf7911e33de597487ed581d02f34e04 \
+                            size    40690438 \
                             ${wine_staging_distfile} \
-                            rmd160  967d1eb4f5399d0d8d17a0a0334d23e18ff43534 \
-                            sha256  c490127b2bbbe326923ad32a5b730dc4d7541a07085a9553929b64b52a556c58 \
-                            size    9796930
+                            rmd160  aa0bbdafed263a5511ade64df3091d35d6a41fa6 \
+                            sha256  849daae53c114e85e5c3d5af13ae6dfd9b9bb46cf64f1c275e683212c5c5942e \
+                            size    9778866
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -99,9 +99,6 @@ post-extract {
 
 # https://bugs.winehq.org/show_bug.cgi?id=50436
 patchfiles                  configure_FAudio_Uppercase.diff
-
-# https://github.com/wine-staging/wine-staging/commit/a2ca43d98b3a45ae3bd66e8c71090b42e18c9bdd
-patchfiles-append           missing_headers.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
