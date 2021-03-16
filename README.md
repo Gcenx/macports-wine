@@ -26,8 +26,6 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-6.0.0` *(v6.0.0)*
 - `Wineskin` *(v1.8.4.2)*
 - `winetricks` *(20210206)* doesn't default to +zenity
-- `ffmpeg` & `ffmpeg-devel` Remove ld64 as a dependence
-- `librsvg` Force pre-cargo version (10.14 and below)
 - `pango` Added muniversal group as for some reason it's not building as universal anymore
 - `jxrlib` *(v1.1)*
 
