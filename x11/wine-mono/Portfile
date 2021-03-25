@@ -11,61 +11,72 @@ description                 Wine's built-in replacement for Microsoft's .NET Fra
 name                        wine-mono
 set my_name                 wine-mono
 
-subport wine-mono-6.0.0 {
-    version                 6.0.0
-    revision                0
+subport wine-mono-6.1.0 {
+    version         6.1.0
+    revision        0
     
-    checksums               rmd160  0ca3bdd05b78594ac928cbefd77e9e7e4ad164e2 \
-                            sha256  3a101983af16aa2652262fff9c6b5365b884866a9d3c65ee6de0c6c1f300134c \
-                            size    45485748
-    use_xz                  yes
-    distname                wine-mono-${version}-x86
+    checksums       rmd160  63fa5b910a6ab56e9cca050153bb3a2474cb17ca \
+                    sha256  94383aa097fd780eed3f913cfb0fcfff9a165ff51ca11eaaae02e6a6a94ff4e3 \
+                    size    45683944
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
+subport wine-mono-6.0.0 {
+    version         6.0.0
+    revision        0
+    
+    checksums       rmd160  0ca3bdd05b78594ac928cbefd77e9e7e4ad164e2 \
+                    sha256  3a101983af16aa2652262fff9c6b5365b884866a9d3c65ee6de0c6c1f300134c \
+                    size    45485748
+    use_xz          yes
+    distname        wine-mono-${version}-x86
 }
 
 subport wine-mono-5.1.1 {
-    version                 5.1.1
-    revision                0
+    version         5.1.1
+    revision        0
     
-    checksums               rmd160  9f3b7597ee1d71d9adb656033fea173b964ebd6e \
-                            sha256  b17ac815afbf5eef768c4e8d50800be02af75c8b230d668e239bad99616caa82 \
-                            size    44710604
-    use_xz                  yes
-    distname                wine-mono-${version}-x86
+    checksums       rmd160  9f3b7597ee1d71d9adb656033fea173b964ebd6e \
+                    sha256  b17ac815afbf5eef768c4e8d50800be02af75c8b230d668e239bad99616caa82 \
+                    size    44710604
+    use_xz          yes
+    distname        wine-mono-${version}-x86
 }
 
 subport wine-mono-5.1.0 {
-    version                 5.1.0
-    revision                0
+    version         5.1.0
+    revision        0
     
-    checksums               rmd160  2196f9176b8c6cad2e0bde328613af9080a78dff \
-                            sha256  7c69355566055121669f7e416e44185a5ccceb4312d0c19587d2303e63b6b63f \
-                            size    41627164
-    use_xz                  yes
-    distname                wine-mono-${version}-x86
+    checksums       rmd160  2196f9176b8c6cad2e0bde328613af9080a78dff \
+                    sha256  7c69355566055121669f7e416e44185a5ccceb4312d0c19587d2303e63b6b63f \
+                    size    41627164
+    use_xz          yes
+    distname        wine-mono-${version}-x86
 }
 
 subport wine-mono-5.0.0 {
-    version                 5.0.1
-    revision                1
-    checksums               rmd160  700512e7bbb71c21b283e5a2f518c2fc248cd6ff \
-                            sha256  c899f176cbb7b1c411abbc103e17ae05702df21a502534c6f71c891ebde7b604 \
-                            size    38986060
-    use_xz                  yes
-    distname                wine-mono-${version}-x86
+    version         5.0.1
+    revision        1
+    checksums       rmd160  700512e7bbb71c21b283e5a2f518c2fc248cd6ff \
+                    sha256  c899f176cbb7b1c411abbc103e17ae05702df21a502534c6f71c891ebde7b604 \
+                    size    38986060
+    use_xz          yes
+    distname        wine-mono-${version}-x86
     
     # wine-mon-5.0.0 had regressions that wine-mono-5.0.1 resolved but wine looks for wine-mono-5.0.0
     post-destroot {
-                            file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-5.0.0
+    file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-5.0.0
     }
 }
 
 if {${subport} eq ${name}} {
-    version                 4.9.4
-    revision                0
-    checksums               rmd160  b3a85e8f857666c8f58c40b158059fa2815f4c0f \
-                            sha256  df97cdb904a583a1f92ce17d9d4793aed063ebc9bb139b6d1989b22a534c7b63 \
-                            size    91218178
-    distname                wine-mono-bin-${version}
+    version         4.9.4
+    revision        0
+    checksums       rmd160  b3a85e8f857666c8f58c40b158059fa2815f4c0f \
+                    sha256  df97cdb904a583a1f92ce17d9d4793aed063ebc9bb139b6d1989b22a534c7b63 \
+                    size    91218178
+    distname        wine-mono-bin-${version}
 }
 
 set wine-mono_distfile      ${distname}${extract.suffix}
