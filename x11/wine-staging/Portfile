@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.4
+version                     6.5
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  82ca1d04f989361ca474b2613cfce38ee273dd23 \
-                            sha256  0f92296117a699423f20f299688391dbcaf7911e33de597487ed581d02f34e04 \
-                            size    40690438 \
+                            rmd160  259a22bc43561c1c0df1c43a38ac93ade573038b \
+                            sha256  0c96c21928ed1da381cfc4da3c6a85412fe1d836eee8a5fd6e307b9a42de046b \
+                            size    40822463 \
                             ${wine_staging_distfile} \
-                            rmd160  aa0bbdafed263a5511ade64df3091d35d6a41fa6 \
-                            sha256  849daae53c114e85e5c3d5af13ae6dfd9b9bb46cf64f1c275e683212c5c5942e \
-                            size    9778866
+                            rmd160  f6eaa06d1792e42de19f761e412c73ef2d027d98 \
+                            sha256  965b96a5058d3b4403bafb46993a959b92a2eb7a896f1070368db795e32aeb10 \
+                            size    9743825
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -99,6 +99,9 @@ post-extract {
 
 # https://bugs.winehq.org/show_bug.cgi?id=50436
 patchfiles                  configure_FAudio_Uppercase.diff
+
+# https://bugs.winehq.org/show_bug.cgi?id=34166#c103
+patchfiles-append           noflicker.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
