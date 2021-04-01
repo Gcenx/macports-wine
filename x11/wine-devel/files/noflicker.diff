@@ -1,7 +1,7 @@
-diff --git dlls/winemac.drv/macdrv.h dlls/winemac.drv/macdrv.h
+diff --git a/dlls/winemac.drv/macdrv.h b/dlls/winemac.drv/macdrv.h
 index a7c0b4cac87..be119c50d48 100644
---- dlls/winemac.drv/macdrv.h
-+++ dlls/winemac.drv/macdrv.h
+--- a/dlls/winemac.drv/macdrv.h
++++ b/dlls/winemac.drv/macdrv.h
 @@ -41,6 +41,7 @@
  extern BOOL allow_software_rendering DECLSPEC_HIDDEN;
  extern BOOL disable_window_decorations DECLSPEC_HIDDEN;
@@ -10,10 +10,10 @@ index a7c0b4cac87..be119c50d48 100644
  
  
  extern const char* debugstr_cf(CFTypeRef t) DECLSPEC_HIDDEN;
-diff --git dlls/winemac.drv/macdrv_main.c dlls/winemac.drv/macdrv_main.c
+diff --git a/dlls/winemac.drv/macdrv_main.c b/dlls/winemac.drv/macdrv_main.c
 index 694a46b11e6..02e86987d83 100644
---- dlls/winemac.drv/macdrv_main.c
-+++ dlls/winemac.drv/macdrv_main.c
+--- a/dlls/winemac.drv/macdrv_main.c
++++ b/dlls/winemac.drv/macdrv_main.c
 @@ -63,6 +63,7 @@ int gl_surface_mode = GL_SURFACE_IN_FRONT_OPAQUE;
  int retina_enabled = FALSE;
  HMODULE macdrv_module = 0;
@@ -32,10 +32,10 @@ index 694a46b11e6..02e86987d83 100644
      /* Don't use appkey.  The DPI and monitor sizes should be consistent for all
         processes in the prefix. */
      if (!get_config_key(hkey, NULL, "RetinaMode", buffer, sizeof(buffer)))
-diff --git dlls/winemac.drv/opengl.c dlls/winemac.drv/opengl.c
+diff --git a/dlls/winemac.drv/opengl.c b/dlls/winemac.drv/opengl.c
 index 9f02e93d376..f3d4e2850e7 100644
---- dlls/winemac.drv/opengl.c
-+++ dlls/winemac.drv/opengl.c
+--- a/dlls/winemac.drv/opengl.c
++++ b/dlls/winemac.drv/opengl.c
 @@ -1477,7 +1477,7 @@ static BOOL create_context(struct wgl_context *context, CGLContextObj share, uns
          attribs[n++] = pf->samples;
      }

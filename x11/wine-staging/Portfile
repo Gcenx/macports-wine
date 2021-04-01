@@ -16,7 +16,7 @@ name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
 version                     6.5
-revision                    0
+revision                    1
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -94,14 +94,17 @@ post-extract {
     system -W /bin "${workpath}/wine-staging-${staging_version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
-# Disable winemenubuilder, stops useless .desktop files
-#patchfiles                  HACK-skip_building_winemenubuilder.diff
+patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=50436
 patchfiles                  configure_FAudio_Uppercase.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
+
+# https://bugs.winehq.org/show_bug.cgi?id=50867
+# Remove wine-6.6
+patchfiles-append           PATCH-Bugzilla_50867.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
