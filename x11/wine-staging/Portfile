@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.5
-revision                    1
+version                     6.6
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  259a22bc43561c1c0df1c43a38ac93ade573038b \
-                            sha256  0c96c21928ed1da381cfc4da3c6a85412fe1d836eee8a5fd6e307b9a42de046b \
-                            size    40822463 \
+                            rmd160  04851726437b263203e9a28b505ecb3109a283e4 \
+                            sha256  8ee41236d5f4dd2d91e487d5f3f025a23856f8527dcf1d708c027d1eabe6b961 \
+                            size    40864634 \
                             ${wine_staging_distfile} \
-                            rmd160  f6eaa06d1792e42de19f761e412c73ef2d027d98 \
-                            sha256  965b96a5058d3b4403bafb46993a959b92a2eb7a896f1070368db795e32aeb10 \
-                            size    9743825
+                            rmd160  bb68de266a2db35d828f36f6b374a253e94b64c0 \
+                            sha256  c3fbcce35388b917981d72533d7d66ccc57b2b1e5af01435af0cb9b054744206 \
+                            size    9756871
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -82,7 +82,7 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
-                            port:wine-mono-6.0.0
+                            port:wine-mono-6.1.1
 
 depends_build               port:autoconf \
                             port:bison \
@@ -96,15 +96,8 @@ post-extract {
 
 patch.pre_args              -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=50436
-patchfiles                  configure_FAudio_Uppercase.diff
-
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
-
-# https://bugs.winehq.org/show_bug.cgi?id=50867
-# Remove wine-6.6
-patchfiles-append           PATCH-Bugzilla_50867.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
