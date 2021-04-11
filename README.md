@@ -6,7 +6,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
 - `cargo` Downgraded to v0.41.0 (Needed for 32Bit support)
-- `FAudio` *(v21.03.05)*
+- `FAudio` *(v21.04)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK` *(v1.1.2)*
 - `CX-MoltenVK` (MoltenVK v1.1.2 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
@@ -24,6 +24,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-5.1.0` *(v5.1.0)*
 - `wine-mono-5.1.1` *(v5.1.1)*
 - `wine-mono-6.0.0` *(v6.0.0)*
+- `wine-mono-6.1.1` *(v6.1.1)*
 - `Wineskin` *(v1.8.4.2)*
 - `winetricks` *(20210206)* doesn't default to +zenity
 - `pango` Added muniversal group as for some reason it's not building as universal anymore
