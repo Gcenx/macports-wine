@@ -67,7 +67,7 @@ This will install `wine-staging` with wow64 support, x11 support and all possibl
 ## `Wine-Mono` & `Wine-Gecko`?
 From Wine-5.0 it's possbile to have a shared version of both gecko & mono, instead of installing into each prefix the shared versions will be used.
 
-## How to use on macOS macOS Mojave;
+## How to use on macOS Mojave;
 Install macports as usual then apply the following patch.
 ```
 diff -u /opt/local/etc/macports/macports.conf /opt/local/etc/macports/macports.conf
@@ -89,7 +89,7 @@ Alternatively run `port install MacOSX10.13.sdk`
 <br>
 Now follow from [How to use this repository](https://github.com/Gcenx/macports-wine-devel#how-to-use-this-repository) section
 
-## macOS Catalina & later;
+## How to use on macOS macOS Catalina & later;
 `wine-stable`, `wine-crossover`, `wine-devel` & `wine-staging` will only build wine64 on macOS Catalina\
 *I'll lightly add a custom clang-8 Portfile eventually that's required to build `wine-crossover` with wine32on64 support along with some needed patches.*
 <br>
