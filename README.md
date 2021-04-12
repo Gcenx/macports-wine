@@ -5,12 +5,10 @@ The provided `wine-*` Ports compile on Mac OSX 10.8 and later, on MacOSX 10.8 di
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `cargo` Downgraded to v0.41.0 (Needed for 32Bit support)
 - `FAudio` *(v21.04)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK` *(v1.1.2)*
 - `CX-MoltenVK` (MoltenVK v1.1.2 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
-- `rust` Downgraded to v1.42.0 (Needed for 32Bit support)
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0)*
