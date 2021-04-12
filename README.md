@@ -25,7 +25,6 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `wine-mono-6.1.1` *(v6.1.1)*
 - `Wineskin` *(v1.8.4.2)*
 - `winetricks` *(20210206)* doesn't default to +zenity
-- `pango` Added muniversal group as for some reason it's not building as universal anymore
 - `jxrlib` *(v1.1)*
 
 ## MacOSX.sdk contains the following subports;
