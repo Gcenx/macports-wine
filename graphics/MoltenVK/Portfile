@@ -22,7 +22,7 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     1.1.2
+version                     1.1.3
 
 subport MoltenVK {
     name                    MoltenVK
@@ -33,9 +33,9 @@ subport MoltenVK {
     distname                macos${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  849bf62f8b8c187fbe68afd149e6badf150202f0 \
-                            sha256  dfc2ffb0f7edf569e4628ebb033e44c31622444a00cbc744dc2297b5e614fba9 \
-                            size    9160508
+    checksums               rmd160  bd6757e73fa20cc825df66735d3defccbaa28588 \
+                            sha256  74de478c07eb657ae232e140d35d005da45122366b7f46a3cdcb293b6610d63d \
+                            size    8919664
 }
 
 subport CX-MoltenVK {
@@ -47,9 +47,9 @@ subport CX-MoltenVK {
     distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  c40b43a352ab7154f09aea51d10d364fb0391199 \
-                            sha256  8d88a3a1b20d17943ace8f491f5f3e02e7d4e01b35e78ecdf45bc95d258ec9eb \
-                            size    9172064
+    checksums               rmd160  8b6b3b5d9e9ba103000326e9d8eaa2ab8c8ececb \
+                            sha256  cda789a6b976cb1954a3a3c99089ac00b6f58f6e4ba83e375b7bf1f649a3d0e1 \
+                            size    8931448
 
     # Macports freaks about sysctl.proc_translated on Mojave so only check on Big Sur
     if {${os.major} >= 20} {

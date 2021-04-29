@@ -7,8 +7,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 ## This repository contains;
 - `FAudio` *(v21.04)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
-- `MoltenVK` *(v1.1.2)*
-- `CX-MoltenVK` (MoltenVK v1.1.2 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
+- `MoltenVK` *(v1.1.3)*
+- `CX-MoltenVK` (MoltenVK v1.1.3 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0)*
