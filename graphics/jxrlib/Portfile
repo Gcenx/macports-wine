@@ -21,19 +21,10 @@ checksums                   rmd160  8d33229579aa1915e765ed3d28e950b26b9184e8 \
 
 github.tarball_from         archive
 
-# jxrlib v1.1 doesn't have a make 'install' target
-# make also doesn't produce dylib
-post-extract {
-    file copy ${filespath}/CMakeLists.txt ${worksrcpath}/CMakeLists.txt
-    reinplace s|@VERSION@|${version}|g ${worksrcpath}/CMakeLists.txt
-}
+patch.pre_args              -p1
 
-# CMakeLists.txt doesn't install the provided jxrlib.pc.in file
-# instead of fixing the jxrlib.pc.in to work with CMakeLists.txt copy
-# in our own and reinplace the Macports install location & version
-post-destroot {
-    file copy ${filespath}/jxrlib.pc ${workpath}/jxrlib.pc
-    reinplace s|@PREFIX@|${prefix}|g ${workpath}/jxrlib.pc
-    reinplace s|@VERSION@|${version}|g ${workpath}/jxrlib.pc
-    xinstall -m 644 ${workpath}/jxrlib.pc ${destroot}${prefix}/lib/pkgconfig/jxrlib.pc
+patchfiles                  0001-Add-ability-to-build-using-cmake.patch
+
+post-patch {
+        reinplace s|@VERSION@|${version}|g ${worksrcpath}/CMakeLists.txt
 }
