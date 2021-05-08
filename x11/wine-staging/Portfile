@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.7
+version                     6.8
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  bd1e219ac33fefdd09c02d874771e300366c5edf \
-                            sha256  fd73931c89fee536c53c9c1cf6a860ced0400b93de6284fd8e0b62b18c50e5e5 \
-                            size    40953013 \
+                            rmd160  dab645cb700ee5a0915fa28feabc129f53f609e7 \
+                            sha256  d0208944564acf5a14357117f34ed386e18709d28239f43377d639421c16b153 \
+                            size    40979772 \
                             ${wine_staging_distfile} \
-                            rmd160  b9cb6b910a5eb70d7a7c2911fe572e7cbe7ffe7c \
-                            sha256  e539bde0f7ffcb9f70c5474f0f397bdbbc3b48a1922d2abf0a32dc2d6f994694 \
-                            size    9722531
+                            rmd160  8e4bc9662b2ffee8964d62808698ab949301c653 \
+                            sha256  a93460f673e32d9903325b4276491fc30529af7828486ca8ed6dca83b2fc566a \
+                            size    9709006
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -241,22 +241,18 @@ if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
 
 # Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append          -Wl,-rpath,@loader_path/../
+configure.ldflags-append          -Wl,-rpath,@loader_path/../../
 
 configure.universal_args
 
 # wine-staging consistently uses C99 functions;
 configure.cflags-append           "-Wno-implicit-function-declaration"
 
-set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
 set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
 if {${build_arch} eq "x86_64" && ${os.major} >= 19} {
     macosx_deployment_target    "10.14"
-    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-    destroot.args-append        "dlldir=\\\${destroot}${prefix}/lib/wine64"
     configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
