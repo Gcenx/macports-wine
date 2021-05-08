@@ -5,7 +5,7 @@ The provided `wine-*` Ports compile on Mac OSX 10.8 and later, on MacOSX 10.8 di
 MoltenVK minimum requirement was lowered from 10.12 to 10.11
 
 ## This repository contains;
-- `FAudio` *(v21.04)*
+- `FAudio` *(v21.05)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK` *(v1.1.3)*
 - `CX-MoltenVK` (MoltenVK v1.1.3 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
