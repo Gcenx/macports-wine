@@ -245,9 +245,6 @@ configure.ldflags-append          -Wl,-rpath,@loader_path/../../
 
 configure.universal_args
 
-# wine-staging consistently uses C99 functions;
-configure.cflags-append           "-Wno-implicit-function-declaration"
-
 set merger_configure_args(x86_64) "--enable-win64"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
