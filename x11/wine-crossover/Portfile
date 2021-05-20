@@ -68,7 +68,6 @@ depends_lib                 port:fontconfig \
                             port:tiff \
                             port:libunwind \
                             port:wine-gecko-2.47.1 \
-                            port:wine-mono \
                             port:zlib
 
 depends_build               port:bison \
