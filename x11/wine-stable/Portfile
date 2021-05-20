@@ -85,6 +85,7 @@ depends_build               port:bison \
 patchfiles                  configure_FAudio_Uppercase.diff
 
 # Apple Silicon patches from upstream
+# Remove wine-stable-6.0.1
 if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
     patchfiles-append       M1_GPU.diff \
                             Rosetta2.diff
@@ -93,6 +94,10 @@ if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
+
+# Fixes cross compilation with GCC 11
+# Remove wine-stable-6.0.2
+patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {

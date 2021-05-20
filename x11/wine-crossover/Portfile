@@ -111,10 +111,15 @@ patchfiles-append           HACK-wineapploader.diff
 patchfiles-append           configure_FAudio_Uppercase.diff
 
 # Apple Silicon patches from upstream
+# Remove wine-crossover-20.0.4
 if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
     patchfiles-append       Rosetta2.diff \
                             M1_GPU.diff
 }
+
+# Fixes cross compilation with GCC 11
+# Re-check for wine-crossover-21.0.0
+patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {

@@ -99,6 +99,10 @@ patch.pre_args              -p1
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
 
+# Fixes cross compilation with GCC 11
+# Remove wine-staging-6.9
+patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
+
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
