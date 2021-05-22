@@ -42,14 +42,15 @@ subport CX-MoltenVK {
     name                    CX-MoltenVK
     conflicts               MoltenVK VulkanSDK
     set my_name             CX-MoltenVK
+    revision                1
     use_xz                  yes
     extract.suffix          .tar.xz
     distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  8b6b3b5d9e9ba103000326e9d8eaa2ab8c8ececb \
-                            sha256  cda789a6b976cb1954a3a3c99089ac00b6f58f6e4ba83e375b7bf1f649a3d0e1 \
-                            size    8931448
+    checksums               rmd160  21b64ef29695c0400d4ff81bb768b47b8db75082 \
+                            sha256  cfcf0bdfdf70fb4fb280a2a870ac3ff780ca0eec7d94c9bf93956ff7ac31ce85 \
+                            size    8907452
 
     # Macports freaks about sysctl.proc_translated on Mojave so only check on Big Sur
     if {${os.major} >= 20} {
