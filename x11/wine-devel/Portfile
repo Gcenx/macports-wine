@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     6.8
+version                     6.9
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  dab645cb700ee5a0915fa28feabc129f53f609e7 \
-                            sha256  d0208944564acf5a14357117f34ed386e18709d28239f43377d639421c16b153 \
-                            size    40979772
+                            rmd160  60a188b4794a49789d7f886ee3f0e6e775f2fac2 \
+                            sha256  8e4098680e6cfcc65a9c081468771f10c5016c297d39a4dd373dcd5a16c4b583 \
+                            size    41096628
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -83,10 +83,6 @@ patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
-
-# Fixes cross compilation with GCC 11
-# Remove wine-devel-6.9
-patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {

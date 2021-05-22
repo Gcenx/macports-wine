@@ -1,8 +1,8 @@
 # macports-wine
 The current macports-ports versions of `MoltenVK`, `wine`, `wine-devel` & `wine-crossover` are not fully updated and are missing additinal required dependencies.
 <br>
-The provided `wine-*` Ports compile on Mac OSX 10.8 and later, on MacOSX 10.8 distfiles won't download but it seems that macports will handle this directly soon.\
-MoltenVK minimum requirement was lowered from 10.12 to 10.11
+The provided `wine-*` Ports compile on Mac OSX 10.8 and later.\
+MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 
 ## This repository contains;
 - `FAudio` *(v21.05)*
@@ -12,7 +12,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0)*
-- `wine-devel` *(v6.8)*
+- `wine-devel` *(v6.9)*
 - `wine-staging` *(v6.8)*
 - `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
 - `wine-gecko` *(v2.47.2)*
