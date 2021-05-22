@@ -76,7 +76,7 @@ subport CX-MoltenVK {
 }
 
 # Avoid distfiles conflicting
-dist_subdir                 MoltenVK${version}_revision
+dist_subdir                 MoltenVK${version}_${revision}
 
 # Placed here so VulkanSDK can override the url
 master_sites                https://github.com/Gcenx/MoltenVK/releases/download/v${version}
