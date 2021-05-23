@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.8
+version                     6.9
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  dab645cb700ee5a0915fa28feabc129f53f609e7 \
-                            sha256  d0208944564acf5a14357117f34ed386e18709d28239f43377d639421c16b153 \
-                            size    40979772 \
+                            rmd160  60a188b4794a49789d7f886ee3f0e6e775f2fac2 \
+                            sha256  8e4098680e6cfcc65a9c081468771f10c5016c297d39a4dd373dcd5a16c4b583 \
+                            size    41096628 \
                             ${wine_staging_distfile} \
-                            rmd160  8e4bc9662b2ffee8964d62808698ab949301c653 \
-                            sha256  a93460f673e32d9903325b4276491fc30529af7828486ca8ed6dca83b2fc566a \
-                            size    9709006
+                            rmd160  6859717ba196ab7c4614ea72a6d7c4717017c6cd \
+                            sha256  e6d66bde51ccab97adb2ea968e8713e64e28f427abfafa7e4b64fceb3a69e211 \
+                            size    9687986
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -98,10 +98,6 @@ patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
-
-# Fixes cross compilation with GCC 11
-# Remove wine-staging-6.9
-patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
