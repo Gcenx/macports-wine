@@ -22,10 +22,13 @@ depends_lib-append  port:${mingw_target}-headers
 #                   port:cloog
 #                   port:ppl
 
-patchfiles-append   notparallel-install-headers.patch
+patchfiles-append   PATCH-notparallel-install-headers.patch
 
 # Fixes libgomp compile
-patchfiles-append   0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+patchfiles-append   PATCH-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+
+# Fix ARM64
+patchfiles-append   PATCH-ARM64.patch
 
 configure.args-replace \
                     --enable-multilib \
