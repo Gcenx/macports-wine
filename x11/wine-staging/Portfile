@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.9
+version                     6.10
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -52,13 +52,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  60a188b4794a49789d7f886ee3f0e6e775f2fac2 \
-                            sha256  8e4098680e6cfcc65a9c081468771f10c5016c297d39a4dd373dcd5a16c4b583 \
-                            size    41096628 \
+                            rmd160  78ce855b3e5b20d1857bb7ddb2315de38b3aa5ae \
+                            sha256  1dd98cab235593dbca19d1420311f14f2621b898549fc6197647dd208dd5615a \
+                            size    41151270 \
                             ${wine_staging_distfile} \
-                            rmd160  6859717ba196ab7c4614ea72a6d7c4717017c6cd \
-                            sha256  e6d66bde51ccab97adb2ea968e8713e64e28f427abfafa7e4b64fceb3a69e211 \
-                            size    9687986
+                            rmd160  75b709da337ca13c68c29e0c5e5e1bf20004e3e9 \
+                            sha256  fe3fbea8b31eab63c5aec0418041e012dc3f7fc7951b8df97e42d542041f01df \
+                            size    9673740
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -82,7 +82,7 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
-                            port:wine-mono-6.1.1
+                            port:wine-mono-6.2.0
 
 depends_build               port:autoconf \
                             port:bison \
