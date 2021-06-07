@@ -11,7 +11,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 - `CX-MoltenVK` (MoltenVK v1.1.3 with DXVK patches from [cdavis5e](https://github.com/cdavis5e))
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
-- `wine-stable` *(v6.0)*
+- `wine-stable` *(v6.0.1)*
 - `wine-devel` *(v6.10)*
 - `wine-staging` *(v6.10)*
 - `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
