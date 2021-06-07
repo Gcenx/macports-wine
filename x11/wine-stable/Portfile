@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     6.0
-revision                    2
+version                     6.0.1
+revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -47,9 +47,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  501a5ca707c604687e1057175106a4ee32c18660 \
-                            sha256  6748b6a8d7fb2113c3f89566c79be90e7e00c998bd8b9b300a8a33372ad32e34 \
-                            size    40436490
+                            rmd160  bb856473d4e06d17e6b682b60548424e5f817944 \
+                            sha256  8586f6ce129b7d0f194e3dd56fd94e0005711a2df68acb115e61771f6eeb1391 \
+                            size    40500006
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -78,26 +78,15 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
-# Disable winemenubuilder, stops useless .desktop files
-#patchfiles                  HACK-skip_building_winemenubuilder.diff
-
 # https://bugs.winehq.org/show_bug.cgi?id=50436
-patchfiles                  configure_FAudio_Uppercase.diff
-
-# Apple Silicon patches from upstream
-# Remove wine-stable-6.0.1
-if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
-    patchfiles-append       M1_GPU.diff \
-                            Rosetta2.diff
-                            
-}
+patchfiles                  patch-configure_FAudio_Uppercase.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           noflicker.diff
+patchfiles-append           patch-noflicker.diff
 
 # Fixes cross compilation with GCC 11
 # Remove wine-stable-6.0.2
-patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
+patchfiles-append           patch-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
