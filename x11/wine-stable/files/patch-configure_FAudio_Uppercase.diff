@@ -1,5 +1,5 @@
---- configure.ac    2021-02-27 20:42:33.000000000 -0500
-+++ configure.ac    2021-02-27 20:51:55.000000000 -0500
+--- a/configure.ac    2021-02-27 20:42:33.000000000 -0500
++++ b/configure.ac    2021-02-27 20:51:55.000000000 -0500
 @@ -1704,7 +1704,7 @@
  dnl **** Check for FAudio ****
  if test "x$with_faudio" != "xno"
@@ -10,8 +10,8 @@
              [WINE_CHECK_SONAME(FAudio,FAudioCreate,,,[$FAUDIO_LIBS],[[libFAudio*]])])
               WINE_CHECK_LIB_FUNCS([FAudio_CommitOperationSet \
 
---- configure	    2021-01-27 16:10:26.000000000 -0500
-+++ configure	    2021-02-27 16:14:06.000000000 -0500
+--- a/configure	    2021-01-27 16:10:26.000000000 -0500
++++ b/configure	    2021-02-27 16:14:06.000000000 -0500
 @@ -2711,8 +2699,8 @@
    SDL2_CFLAGS C compiler flags for sdl2, overriding pkg-config
    SDL2_LIBS   Linker flags for sdl2, overriding pkg-config
