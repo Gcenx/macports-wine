@@ -78,6 +78,8 @@ depends_build               port:bison \
                             port:mingw-w64 \
                             port:pkgconfig
 
+patch.pre_args              -p1
+
 # https://bugs.winehq.org/show_bug.cgi?id=50436
 patchfiles                  patch-configure_FAudio_Uppercase.diff
 
