@@ -92,7 +92,8 @@ if {${subport} eq ${name}} {
 
 set wine-mono_distfile      ${distname}${extract.suffix}
 
-master_sites                https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono /
+master_sites                http://dl.winehq.org/wine/wine-mono/${version}/:mono \
+                            https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${version}/:mono
 
 distfiles                   ${wine-mono_distfile}:mono
 
