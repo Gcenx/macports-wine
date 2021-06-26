@@ -11,7 +11,7 @@
      <string>6.0</string>
      <key>CFBundleName</key>
 -    <string>CrossOver-Hosted Application</string><!-- CrossOver Hack 10913 -->
-+    <string>Wine/string>
++    <string>Wine</string>
      <key>CFBundlePackageType</key>
      <string>APPL</string>
      <key>CFBundleShortVersionString</key>
