@@ -49,7 +49,22 @@ subport wine-gecko-2.47.1 {
     set wine_gecko_distfile     ${distname}-x86.tar.bz2
     set wine_gecko64_distfile   ${distname}-x86_64.tar.bz2
     
-    master_sites                https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
+    # GitHub requires TLS v1.2
+    if {${os.major} >= 14} {
+        master_sites                https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
+    } else {
+        depends_build-append        port:curl
+        
+        fetch {
+                # Manually download the file(s) if they don't exist
+                if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko_distfile} ]} {
+                    system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko_distfile}"
+                }
+                if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_gecko64_distfile} ]} {
+                    system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko64_distfile}"
+                }
+        }
+    }
     
     distfiles                   ${wine_gecko_distfile}:winegecko \
                                 ${wine_gecko64_distfile}:winegecko
