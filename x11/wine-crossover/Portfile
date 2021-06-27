@@ -44,9 +44,23 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-checksums                   rmd160  39ff32f3d988d7ff5811c08beb01379fdd9e949e \
-                            sha256  b7bb8423988da052e6ac05c805cb010a3a06b8b675e502e912ac108502eedcc2 \
-                            size    36477200
+# GitHub requires TLS v1.2
+if {${os.major} >= 14} {
+    github.tarball_from         archive
+} else {
+    depends_build-append        port:curl
+    
+    fetch {
+            # Manually download the file(s) if they don't exist
+            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${github.version}.tar.gz ]} {
+                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/${github.author}/${github.project}/archive/refs/tags/${github.version}.tar.gz"
+            }
+    }
+}
+
+checksums                   rmd160  270963d5135a56006dd3bfc584e97ee19f8c4d7a \
+                            sha256  d08a501b8de030eaca2bd8be9ae425c30b4c9df7ae80ede5e194de91e7c8c441 \
+                            size    36482892
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
