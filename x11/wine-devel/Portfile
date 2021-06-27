@@ -40,7 +40,19 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-master_sites                https://github.com/wine-mirror/wine/archive/:winesource
+# GitHub requires TLS v1.2
+if {${os.major} >= 14} {
+    master_sites                https://github.com/wine-mirror/wine/archive/:winesource
+} else {
+    depends_build-append        port:curl
+    
+    fetch {
+            # Manually download the file(s) if they don't exist
+            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_distfile} ]} {
+                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/wine-mirror/wine/archive/${wine_distfile}"
+            }
+    }
+}
 
 extract.only                ${wine_distfile}
 
