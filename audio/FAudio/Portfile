@@ -17,15 +17,29 @@ long_description        an XAudio reimplementation that focuses solely on develo
                         fully accurate DirectX Audio runtime libraries for the FNA project,\
                         including XAudio2, X3DAudio, XAPO, and XACT3.
 
+# GitHub requires TLS v1.2
+if {${os.major} >= 14} {
+    github.tarball_from         archive
+} else {
+    depends_build-append        port:curl
+    
+    fetch {
+            # Manually download the file(s) if they don't exist
+            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${github.project}-${github.version}.tar.gz ]} {
+                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -Lo ${github.project}-${github.version}.tar.gz https://github.com/${github.author}/${github.project}/archive/refs/tags/${github.version}.tar.gz"
+            }
+    }
+}
+
 depends_build-append    port:pkgconfig
 
 depends_lib-append      port:libsdl2 \
                         port:gstreamer1 \
                         port:gstreamer1-gst-plugins-base
 
-checksums               rmd160  5f3502b4c1909404b4145d1d24016b9a30992f74 \
-                        sha256  6cb4f4e0dc8d7c73333e7a8b3fb17f03b315ef862355eb2b1710356193b72a2c \
-                        size    1139381
+checksums               rmd160  30481d370dbfc1cf9247fc4cf4d576e489aee2e7 \
+                        sha256  7385980a6a80529f240e3731ece4f66f38919a2a0cba799d608eb2ee08e10335 \
+                        size    1139272
 
 # remove set deployment target and hard-coded RPATH setting
 #patchfiles              patch-faudio-remove-deployment-target.diff
