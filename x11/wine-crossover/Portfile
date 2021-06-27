@@ -119,7 +119,7 @@ if {${build_arch} eq "x86_64" && ${os.major} >= 20} {
 
 # Fixes cross compilation with GCC 11
 # Re-check for wine-crossover-21.0.0
-patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
+#patchfiles-append           PATCH-msvcrt_Add_sincos_to_importlib.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
