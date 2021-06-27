@@ -159,7 +159,19 @@ use_bzip2                   yes
 
 distname                    MacOSX${version}
 
-master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
+# GitHub requires TLS v1.2
+if {${os.major} >= 14} {
+    master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
+} else {
+    depends_build-append        port:curl
+    
+    fetch {
+            # Manually download the file(s) if they don't exist
+            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/MacOSX${version}.tar.bz2 ]} {
+                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/MacOSX${version}.tar.bz2"
+            }
+    }
+}
 
 build {}
 
