@@ -273,25 +273,10 @@ if {${universal_possible} && [variant_isset universal]} {
     supported_archs         i386
 }
 
-# error: Xcode 3.x cannot build 16-bit code correctly
-compiler.blacklist-append   {gcc-4.2 < 5600}
-
-# llvm-gcc-4.2 doesn't respect force_align_arg_pointer; wine builds but fails to run
-# http://bugs.winehq.org/show_bug.cgi?id=28030
-compiler.blacklist-append   *llvm-gcc-4.2
-
 # wine requires clang >= 3.8
-compiler.blacklist-append   {clang < 800} \
-                            gcc-4.0 \
-                            gcc-4.2 \
-                            apple-gcc-4.2 \
-                            macports-clang-3.3 \
-                            macports-clang-3.4 \
-                            macports-clang-3.7
-compiler.fallback-append    macports-clang-5.0
-
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
-compiler.blacklist-append   macports-gcc-*
+compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
+compiler.fallback-append    macports-clang-5.0
 
 platform darwin {
     # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
