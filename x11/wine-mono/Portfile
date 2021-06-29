@@ -68,7 +68,7 @@ subport wine-mono-5.1.0 {
 
 subport wine-mono-5.0.0 {
     version         5.0.1
-    revision        1
+    revision        0
     checksums       rmd160  700512e7bbb71c21b283e5a2f518c2fc248cd6ff \
                     sha256  c899f176cbb7b1c411abbc103e17ae05702df21a502534c6f71c891ebde7b604 \
                     size    38986060
