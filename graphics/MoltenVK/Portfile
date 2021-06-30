@@ -22,7 +22,7 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     1.1.3
+version                     1.1.4
 
 subport MoltenVK {
     name                    MoltenVK
@@ -34,24 +34,24 @@ subport MoltenVK {
     distname                macos${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  bd6757e73fa20cc825df66735d3defccbaa28588 \
-                            sha256  74de478c07eb657ae232e140d35d005da45122366b7f46a3cdcb293b6610d63d \
-                            size    8919664
+    checksums               rmd160  2188c935ef18b1041d9fe35dffd4c93f78290bf0 \
+                            sha256  5236594dcd488b4d37192c2bf11546538d527faa77ebc7f26bf5bad45d50a957 \
+                            size    8842772
 }
 
 subport CX-MoltenVK {
     name                    CX-MoltenVK
     conflicts               MoltenVK VulkanSDK
     set my_name             CX-MoltenVK
-    revision                1
+    revision                0
     use_xz                  yes
     extract.suffix          .tar.xz
     distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  21b64ef29695c0400d4ff81bb768b47b8db75082 \
-                            sha256  cfcf0bdfdf70fb4fb280a2a870ac3ff780ca0eec7d94c9bf93956ff7ac31ce85 \
-                            size    8907452
+    checksums               rmd160  623ebca5480278b3cddf79b2b21b828fe8345af2 \
+                            sha256  70c601ba7772aa124ce5a3c35bd6dc25d4bb923c51c6282fa107d72ffc977f3c \
+                            size    8838988
 }
 
 # Avoid distfiles conflicting
@@ -105,11 +105,6 @@ destroot {
             # Turn the dylib into a single arch for lower macOS versions
             system "cd ${destroot}${prefix}/lib && lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
         }
-        xinstall -d ${destroot}${prefix}/share/vulkan/icd.d
-        file copy ${output_dir}/dylib/macOS/MoltenVK_icd.json ${destroot}${prefix}/share/vulkan/icd.d
-        reinplace "s|./|${prefix}|g" ${destroot}${prefix}/share/vulkan/icd.d/MoltenVK_icd.json
-        file delete -force ${destroot}${prefix}/include
-        file copy ${output_dir}/include ${destroot}${prefix}
         file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
     }
 }
@@ -124,14 +119,4 @@ platform darwin {
             return -code error "incompatible OS X version"
         }
     }
-    notes-append "
-        ************************************************************
-        In order for vulkan loader within applications to find,
-        libMoltenVK.dylib we need to copy ${prefix}/share/vulkan
-        into each user's
-        ~/share directory;
-        
-        cp -R ${prefix}/share/vulkan ~/.local/share/
-        ************************************************************
-    "
 }
