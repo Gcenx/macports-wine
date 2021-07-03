@@ -42,7 +42,7 @@ checksums               rmd160  ac4d1772f5d2f248d1e97cbcabbfdf687170ecdc \
                         size    1148544
 
 # remove set deployment target and hard-coded RPATH setting
-#patchfiles              patch-faudio-remove-deployment-target.diff
+patchfiles              patch-faudio-remove-deployment-target.diff
 
 configure.args          -DGSTREAMER=ON \
                         -DBUILD_UTILS=OFF \

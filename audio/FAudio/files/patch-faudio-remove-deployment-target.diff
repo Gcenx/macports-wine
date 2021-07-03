@@ -2,7 +2,7 @@ diff --git CMakeLists.txt.orig CMakeLists.txt
 index db377dd..6d596b1 100644
 --- CMakeLists.txt.orig
 +++ CMakeLists.txt
-@@ -52,8 +52,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+@@ -53,8 +53,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
  
  # Platform Flags
  if(APPLE)
