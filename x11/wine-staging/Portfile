@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.11
+version                     6.12
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -26,7 +26,7 @@ platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
-set staging_version         ${version}
+set staging_version         ${version}.1
 set wine_staging_distfile   v${staging_version}${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
@@ -67,13 +67,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  335aeef88628075fb0e5e95e0f0e3cd999c8de06 \
-                            sha256  cb5eeec1121b3e37f173e09fcc7a6162c8592d65f3dbe9c82a656f4a507b7c40 \
-                            size    41210147 \
+                            rmd160  fbcb85f849274b8cfb44feb50a070c51539f9d86 \
+                            sha256  21eec4c4d574c7151c33b58c1ab6a3470cdcdc7f44bd2bbaa05956c4108b531d \
+                            size    41317318 \
                             ${wine_staging_distfile} \
-                            rmd160  683c4b2971c014daf2de1e366e0f8cb8aaaeefc5 \
-                            sha256  5c61ecb17ed0cb689c68e20f2d881d163adf3fb332882402d8b5762afa46e7b0 \
-                            size    9672754
+                            rmd160  4cf7593a2a555a45808a751b9b95202d8d4ee9b5 \
+                            sha256  af5151a99f878512037f482974813fb20cef59d072acf190f48b06c23b2167c3 \
+                            size    9658943
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -108,11 +108,6 @@ depends_build               port:autoconf \
 post-extract {
     system -W /bin "${workpath}/wine-staging-${staging_version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
-
-patch.pre_args              -p1
-
-# https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           noflicker.diff
 
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
