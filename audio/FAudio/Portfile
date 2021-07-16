@@ -18,7 +18,7 @@ long_description        an XAudio reimplementation that focuses solely on develo
                         including XAudio2, X3DAudio, XAPO, and XACT3.
 
 # GitHub requires TLS v1.2
-if {${os.major} >= 14} {
+if {${os.major} > 15} {
     github.tarball_from         archive
 } else {
     depends_build-append        port:curl

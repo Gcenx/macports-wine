@@ -50,7 +50,7 @@ subport wine-gecko-2.47.1 {
     set wine_gecko64_distfile   ${distname}-x86_64.tar.bz2
     
     # GitHub requires TLS v1.2
-    if {${os.major} >= 14} {
+    if {${os.major} > 15} {
         master_sites                https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
     } else {
         depends_build-append        port:curl

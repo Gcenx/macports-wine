@@ -160,7 +160,7 @@ use_bzip2                   yes
 distname                    MacOSX${version}
 
 # GitHub requires TLS v1.2
-if {${os.major} >= 14} {
+if {${os.major} > 15} {
     master_sites                https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
 } else {
     depends_build-append        port:curl
