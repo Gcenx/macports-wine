@@ -45,7 +45,7 @@ long_description            Wine is a compatibility layer capable of running \
                             integrate Windows applications into your desktop.
 
 # GitHub requires TLS v1.2
-if {${os.major} >= 14} {
+if {${os.major} > 15} {
     github.tarball_from         archive
 } else {
     depends_build-append        port:curl
