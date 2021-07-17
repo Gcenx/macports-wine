@@ -105,6 +105,8 @@ depends_build               port:autoconf \
                             port:mingw-w64 \
                             port:pkgconfig
 
+patch.pre_args              -p1
+
 post-extract {
     system -W /bin "${workpath}/wine-staging-${staging_version}/patches/patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
@@ -339,16 +341,30 @@ platform darwin {
 
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
-
-    # Even using MacOSX10.11.sdk wine-preloader has issue reserve memory causing crashes
+    
+    # From Wine-6.5
+    # https://github.com/wine-mirror/wine/commit/6b15f4d614fd33ec2c81b377fe6609f2bb7bfa6c
     if {${os.major} < 12} {
+        configure.args-replace  --with-opencl --without-opencl
+    }
+    
+    # https://trac.macports.org/ticket/61721
+    if {${os.major} < 11} {
+        compiler.whitelist          macports-clang-5.0
+        depends_build-append        port:libmacho
+        configure.ldflags-append    -lmacho
+        patchfiles-append           patch-wine-SnowLeopard.diff
+    }
+    
+    # Even using MacOSX10.11.sdk wine-preloader has issue reserve memory causing crashes
+    if {${os.major} < 10} {
         known_fail yes
         archive_sites
         distfiles
         depends_build
         depends_lib
         pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+            ui_error "${name} @${version} requires Mac OS X 10.6 or later."
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {
