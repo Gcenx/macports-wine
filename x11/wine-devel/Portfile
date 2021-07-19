@@ -337,6 +337,10 @@ platform darwin {
         depends_build-append        port:libmacho
         configure.ldflags-append    -lmacho
         patchfiles-append           patch-wine-SnowLeopard.diff
+        
+        # Features don't exist in IOKit until 10.7
+        # https://github.com/wine-mirror/wine/commit/eea87600d21adcd910f72f1cdaf698451884f582
+        patchfiles-append           system.diff
     }
     
     # Even using MacOSX10.11.sdk wine-preloader has issue reserve memory causing crashes
