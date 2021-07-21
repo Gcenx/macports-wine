@@ -12,8 +12,8 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0.1)*
-- `wine-devel` *(v6.12)*
-- `wine-staging` *(v6.12.1)*
+- `wine-devel` *(v6.13)*
+- `wine-staging` *(v6.13)*
 - `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
 - `wine-gecko` *(v2.47.2)*
 - `wine-gecko-2.47.1` (Workaround for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
