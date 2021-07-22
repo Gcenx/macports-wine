@@ -59,9 +59,9 @@ index 27acd85..abe0c64 100644
  #ifdef IP_HDRINCL
      MAP_OPTION( IP_HDRINCL ),
 @@ -3457,7 +3465,9 @@
- {
-     int fd;
      int woptval;
+     struct linger linger;
+     struct timeval tval;
 +#if MAC_OS_X_VERSION_MAX_ALLOWED > 1070
      struct ip_mreq_source mreq_source;
 +#endif
