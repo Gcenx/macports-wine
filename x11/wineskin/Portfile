@@ -4,7 +4,7 @@ PortGroup           github 1.0
 name                wineskin
 version             1.8.4.2
 
-revision            0
+revision            1
 categories          x11
 maintainers         {gcenx @gcenx} openmaintainer
 license             LGPL-2.1
@@ -21,21 +21,26 @@ extract.suffix      .txz
 
 master_sites        https://github.com/Gcenx/WineskinServer/releases/download/V${version}/
 
-checksums           rmd160  f06859eab113197cf1880919657826e661c404a0 \
-                    sha256  6e2515a541a0166e2b4d6eacc8122f004512d08c90bd7bcd3c474509c4d1dc0c \
-                    size    766456
+checksums           rmd160  deda6f3312048eb9ddf26cde8427cbbb5e04ad2b \
+                    sha256  c20483f096bad16e45d3779d1f92672ebdc05269e3e6cd317ae77135469cbf1d \
+                    size    858720
 
 use_configure       no
 build {}
 
-if {${os.major} < 13} {
+notes {
+    Currently ${name} has a bug where it won't created a needed directory\
+    You need to manually create ~/Applications/Wineskin to avoid this bug
+}
+
+if {${os.major} < 17} {
     known_fail yes
     archive_sites
     distfiles
     depends_build
     depends_lib
     pre-fetch {
-        ui_error "${name} @${version} requires Mac OS X 10.9 or later."
+        ui_error "${name} @${version} requires Mac OS X 10.13 or later."
         return -code error "incompatible Mac OS X version"
     }
 }
