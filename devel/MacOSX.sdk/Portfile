@@ -218,4 +218,17 @@ if {[llength ${supported_archs}] > 1} {
     variant_set universal
 }
 
+# MacOSX10.11.SDK and later SDKs won't be useful below 10.8
+if {${os.major} < 12} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+        return -code error "incompatible Mac OS X version"
+    }
+}
+
 livecheck.type      none
