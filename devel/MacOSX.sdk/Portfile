@@ -114,6 +114,11 @@ subport MacOSX10.11.sdk {
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarFoundation.framework
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/CalendarAgent.framework
         }
+        
+        # This don't exist past macOS 10.14
+        if {${os.major} >= 19} {
+            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
+        }
     }
 }
 
