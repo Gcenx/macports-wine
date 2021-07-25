@@ -304,21 +304,15 @@ platform darwin {
         configure.args-append                   --without-vulkan
     }
     
-    # Support GPU initialization via Metal since Wine-4.15, however the 10.11, 10.12 SDKs,
-    # don't support registryID in MTLDevice protocol, it's recomended to
-    # use the 10.13 or greater SDK so disable the option to avoid build errors
-    if {${os.major} <= 16} {
-        configure.args-append        ac_cv_header_Metal_Metal_h="no"
-    }
-    
-    # wine-5.9 and later ntdll requires "_fstatat" that's not avalible until the 10.10 SDK
+    # ntdll requires "_fstatat" that's not avalible until the 10.10 SDK, since wine-5.9
     # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
-    # While legacysupport does get wine(64) to compile, the resulting binary
-    # gets the following type of errors
-    # "preloader: Warning: failed to reserve range 00001000-00010000"
-    if {${os.major} <= 13 && ${configure.sdkroot} eq ""} {
+    if {${os.major} == 12 || ${os.major} == 13} {
         depends_build-append        port:MacOSX10.11.sdk
         configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+        
+        # Support GPU initialization via Metal, since wine-4.15
+        # https://github.com/wine-mirror/wine/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
+        configure.args-append       ac_cv_header_Metal_Metal_h=
     }
     
     notes {
