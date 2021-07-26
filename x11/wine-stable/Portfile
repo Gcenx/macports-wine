@@ -129,7 +129,6 @@ configure.args              --without-alsa \
                             --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
-                            --with-glu \
                             --with-gnutls \
                             --without-gsm \
                             --without-gssapi \
