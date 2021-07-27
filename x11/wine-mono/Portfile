@@ -11,6 +11,17 @@ description                 Wine's built-in replacement for Microsoft's .NET Fra
 name                        wine-mono
 set my_name                 wine-mono
 
+subport wine-mono-6.3.0 {
+    version         6.3.0
+    revision        0
+    
+    checksums       rmd160  d4a7fc86326c952f50618b475db2c1ade1eab4c8 \
+                    sha256  eb67426ff60ed6395b70437e838883ee08b6189cad84faf036b1a4d7366a34e2 \
+                    size    44392520
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
 subport wine-mono-6.2.0 {
     version         6.2.0
     revision        0

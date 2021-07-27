@@ -24,6 +24,7 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 - `wine-mono-6.0.0` *(v6.0.0)*
 - `wine-mono-6.1.1` *(v6.1.1)*
 - `wine-mono-6.2.0` *(v6.2.0)*
+- `wine-mono-6.3.0` *(v6.3.0)*
 - `Wineskin` *(v1.8.4.2)*
 - `winetricks` *(20210206)* doesn't default to +zenity
 - `jxrlib` *(v1.1)*
