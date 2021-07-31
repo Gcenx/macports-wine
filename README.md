@@ -12,19 +12,12 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 - `VulkanSDK` *(v1.2.170.0)*
 - `wine` Marked obsolete (swap to Winehq naming scheme)
 - `wine-stable` *(v6.0.1)*
-- `wine-devel` *(v6.13)*
-- `wine-staging` *(v6.13)*
+- `wine-devel` *(v6.14)*
+- `wine-staging` *(v6.14)*
 - `wine-crossover` *(v19.0.2 patched to use `wine-gecko-2.47.1`)*
 - `wine-gecko` *(v2.47.2)*
 - `wine-gecko-2.47.1` (Workaround for [Bugzilla 49940](https://bugs.winehq.org/show_bug.cgi?id=49940))
-- `wine-mono` *(v4.9.4)*
-- `wine-mono-5.0.0` *(v5.0.1)*
-- `wine-mono-5.1.0` *(v5.1.0)*
-- `wine-mono-5.1.1` *(v5.1.1)*
-- `wine-mono-6.0.0` *(v6.0.0)*
-- `wine-mono-6.1.1` *(v6.1.1)*
-- `wine-mono-6.2.0` *(v6.2.0)*
-- `wine-mono-6.3.0` *(v6.3.0)*
+- `wine-mono` *(6.3.0)*
 - `Wineskin` *(v1.8.4.2)*
 - `winetricks` *(20210206)* doesn't default to +zenity
 - `jxrlib` *(v1.1)*
@@ -35,6 +28,15 @@ MoltenVK minimum requirement was lowered from 10.12 to 10.11.
 - `subport MacOSX10.13.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
 - `subport MacOSX10.12.sdk` (Add QuickTime.framework from MacOSX10.11.sdk)
 - `subport MacOSX10.11.sdk`
+
+## wine-mono containts the following subports;
+- `wine-mono-6.2.0` *(v6.2.2)*
+- `wine-mono-6.1.1` *(v6.1.1)*
+- `wine-mono-6.0.0` *(v6.0.0)*
+- `wine-mono-5.1.1` *(v5.1.1)*
+- `wine-mono-5.1.0` *(v5.1.0)*
+- `wine-mono-5.0.0` *(v5.0.1)*
+- `wine-mono-4.9.4` *(v4.9.4)*
 
 ## How to use this repository
 To use this repository download/git clone into your home directory and edit then follow\
