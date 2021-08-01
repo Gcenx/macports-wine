@@ -31,4 +31,4 @@ Alternatively run `port install MacOSX10.13.sdk`
 `wine-stable`, `wine-devel` & `wine-staging` will only provide wine64.
 
 ### Project history
-You can find the prior commit history via [master]https://github.com/Gcenx/macports-wine/tree/master)
+You can find the prior commit history via [master](https://github.com/Gcenx/macports-wine/tree/master)
