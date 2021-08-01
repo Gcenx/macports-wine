@@ -34,7 +34,8 @@ subport wine-mono-6.2.0 {
 
     # wine-mono-6.2.0 had regressions that wine-mono-6.2.2 resolved but wine looks for wine-mono-6.2.0
     post-destroot {
-    file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-6.2.0
+        file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-6.2.0
+    }
 }
 
 subport wine-mono-6.1.1 {
@@ -92,7 +93,7 @@ subport wine-mono-5.0.0 {
     
     # wine-mono-5.0.0 had regressions that wine-mono-5.0.1 resolved but wine looks for wine-mono-5.0.0
     post-destroot {
-    file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-5.0.0
+        file rename ${destroot}/opt/wine/mono/wine-mono-${version} ${destroot}/opt/wine/mono/wine-mono-5.0.0
     }
 }
 
