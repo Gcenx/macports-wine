@@ -3,6 +3,7 @@
 PortSystem                  1.0
 PortGroup                   obsolete 1.0
 name                        wine-crossover
-version                     crossover-wine-19.0.2
-revision                    2
+version                     20.0.4
+revision                    0
+epoch                       1
 homepage                    https://www.macports.org
