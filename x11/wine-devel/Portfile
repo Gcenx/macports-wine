@@ -96,6 +96,12 @@ patch.pre_args              -p1
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
 
+configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
+                                                                    fallocate \
+                                                                    gethostbyaddr_r \
+                                                                    gethostbyname_r \
+                                                                    sched_setaffinity
+
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {

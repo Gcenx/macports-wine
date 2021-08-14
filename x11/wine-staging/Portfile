@@ -109,6 +109,12 @@ post-extract {
     system -W ${workpath}/wine-staging-${staging_version}/patches "sh patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
 
+configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
+                                                                    fallocate \
+                                                                    gethostbyaddr_r \
+                                                                    gethostbyname_r \
+                                                                    sched_setaffinity
+
 pre-configure {
     if {[variant_exists universal] && [variant_isset universal]} {
         foreach arch ${universal_archs_to_use} {
