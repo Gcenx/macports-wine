@@ -16,7 +16,7 @@ name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
 version                     6.15
-revision                    0
+revision                    1
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -108,6 +108,12 @@ depends_build               port:autoconf \
 post-extract {
     system -W ${workpath}/wine-staging-${staging_version}/patches "sh patchinstall.sh DESTDIR=${worksrcpath} --all"
 }
+
+patch.pre_args              -p1
+
+# https://source.winehq.org/git/wine.git/commit/e2db7ef7f47b667962f533691aa1ef0246264076
+# Remove wine-6.16
+patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
@@ -249,10 +255,6 @@ variant ffmpeg {
                                 --with-krb5
     
     require_active_variants     port:FAudio wma
-}
-
-if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
-    default_variants        +x11
 }
 
 # Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
