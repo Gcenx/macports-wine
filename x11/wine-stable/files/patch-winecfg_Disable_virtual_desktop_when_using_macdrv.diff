@@ -1,3 +1,43 @@
+From d47be63faec9670454b137fa8d8de5f732e76202 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Mon, 29 Mar 2021 16:00:58 +0200
+Subject: [PATCH] explorer: Store the graphics driver basename instead of the
+ full path.
+
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ programs/explorer/desktop.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/programs/explorer/desktop.c b/programs/explorer/desktop.c
+index f525c23d819..94d178880a8 100644
+--- a/programs/explorer/desktop.c
++++ b/programs/explorer/desktop.c
+@@ -857,11 +857,7 @@ static HMODULE load_graphics_driver( const WCHAR *driver, const GUID *guid )
+         name = next;
+     }
+ 
+-    if (module)
+-    {
+-        GetModuleFileNameW( module, buffer, MAX_PATH );
+-        TRACE( "display %s driver %s\n", debugstr_guid(guid), debugstr_w(buffer) );
+-    }
++    TRACE( "display %s driver %s\n", debugstr_guid(guid), debugstr_w(libname) );
+ 
+     swprintf( key, ARRAY_SIZE(key), device_keyW, guid->Data1, guid->Data2, guid->Data3,
+               guid->Data4[0], guid->Data4[1], guid->Data4[2], guid->Data4[3],
+@@ -872,7 +868,7 @@ static HMODULE load_graphics_driver( const WCHAR *driver, const GUID *guid )
+     {
+         if (module || null_driver)
+             RegSetValueExW( hkey, graphics_driverW, 0, REG_SZ,
+-                            (BYTE *)buffer, (lstrlenW(buffer) + 1) * sizeof(WCHAR) );
++                            (BYTE *)libname, (lstrlenW(libname) + 1) * sizeof(WCHAR) );
+         else
+             RegSetValueExA( hkey, "DriverError", 0, REG_SZ, (BYTE *)error, strlen(error) + 1 );
+         RegCloseKey( hkey );
+--
+2.20.1
+
 From e2db7ef7f47b667962f533691aa1ef0246264076 Mon Sep 17 00:00:00 2001
 From: Gijs Vermeulen <gijsvrm@gmail.com>
 Date: Wed, 18 Aug 2021 14:06:35 +0200
@@ -61,3 +101,5 @@ index fbc6716e94e..34b194d04a6 100644
  
      buf = get_reg_key(config_key, keypath("X11 Driver"), "GrabFullscreen", "N");
      if (IS_OPTION_TRUE(*buf))
+--
+2.20.1

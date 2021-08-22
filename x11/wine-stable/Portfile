@@ -16,7 +16,7 @@ name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     6.0.1
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -102,6 +102,8 @@ patchfiles-append           patch-noflicker.diff
 # Remove wine-stable-6.0.2
 patchfiles-append           patch-msvcrt_Add_sincos_to_importlib.diff
 
+# Disable Virtual Desktop checkbox when using winemac.drv
+# https://source.winehq.org/git/wine.git/commit/d47be63faec9670454b137fa8d8de5f732e76202
 # https://source.winehq.org/git/wine.git/commit/e2db7ef7f47b667962f533691aa1ef0246264076
 patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
 
