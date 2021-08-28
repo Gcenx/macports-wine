@@ -8,8 +8,8 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK`/`CX-MoltenVK` *(v1.1.4)*
 - `wine-stable` *(v6.0.1)*
-- `wine-devel` *(v6.14)*
-- `wine-staging` *(v6.14)*
+- `wine-devel` *(v6.16)*
+- `wine-staging` *(v6.16)*
 - `winetricks` *(20210206)* doesn't default to +zenity
 
 ## How to use this repository

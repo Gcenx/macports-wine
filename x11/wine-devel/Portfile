@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     6.15
-revision                    1
+version                     6.16
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -59,9 +59,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  eb3f574f65a78d0cf3b2dd5844ebd51e448b23f4 \
-                            sha256  b4c163b3bd9a0a0ba46e32b9b9306eb5675b3bdde46a47831d073e6203f46d5b \
-                            size    41447439
+                            rmd160  fad03e9da4933d88d0f5f60b989dbaa5c482a581 \
+                            sha256  b6595b22bcfa2124b61a3124e3cfc526d509c11bdd16e89003b588102fc43ac0 \
+                            size    41487158
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -96,9 +96,8 @@ patch.pre_args              -p1
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
 
-# https://source.winehq.org/git/wine.git/commit/e2db7ef7f47b667962f533691aa1ef0246264076
-# Remove wine-6.16
-patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
+# https://bugs.winehq.org/show_bug.cgi?id=51479
+patchfiles-append           Bugzilla_51479.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \

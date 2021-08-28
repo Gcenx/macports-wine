@@ -1,0 +1,37 @@
+From: Torge Matthies <openglfreak@googlemail.com>
+Subject: [PATCH] wineusb.sys: Remove device from the device list on PDO removal
+Message-Id: <20210802165919.388827-1-openglfreak@googlemail.com>
+Date: Mon,  2 Aug 2021 18:59:19 +0200
+
+Fixes a crash when shutting down a prefix.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=51479
+Signed-off-by: Torge Matthies <openglfreak@googlemail.com>
+---
+ dlls/wineusb.sys/wineusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/dlls/wineusb.sys/wineusb.c b/dlls/wineusb.sys/wineusb.c
+index fae297915fc..28a36b9f380 100644
+--- a/dlls/wineusb.sys/wineusb.c
++++ b/dlls/wineusb.sys/wineusb.c
+@@ -413,12 +413,15 @@ static NTSTATUS pdo_pnp(DEVICE_OBJECT *device_obj, IRP *irp)
+             break;
+ 
+         case IRP_MN_REMOVE_DEVICE:
++            EnterCriticalSection(&wineusb_cs);
+             remove_pending_irps(device);
+ 
+             libusb_unref_device(device->libusb_device);
+             libusb_close(device->handle);
+ 
++            list_remove(&device->entry);
+             IoDeleteDevice(device->device_obj);
++            LeaveCriticalSection(&wineusb_cs);
+             ret = STATUS_SUCCESS;
+             break;
+ 
+
+-- 
+2.32.0
+

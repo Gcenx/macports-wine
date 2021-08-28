@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.15
-revision                    1
+version                     6.16
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -67,13 +67,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  eb3f574f65a78d0cf3b2dd5844ebd51e448b23f4 \
-                            sha256  b4c163b3bd9a0a0ba46e32b9b9306eb5675b3bdde46a47831d073e6203f46d5b \
-                            size    41447439 \
+                            rmd160  fad03e9da4933d88d0f5f60b989dbaa5c482a581 \
+                            sha256  b6595b22bcfa2124b61a3124e3cfc526d509c11bdd16e89003b588102fc43ac0 \
+                            size    41487158 \
                             ${wine_staging_distfile} \
-                            rmd160  7c5fee2cb9d9cae92ea3eec25de121c966ce75b6 \
-                            sha256  8eab77df53dac69cc6ffd2df94e4b53f4312806649e2a27ea97082047fe7dd61 \
-                            size    9654539
+                            rmd160  112076a2c7089e52f2f28b274c4f244093fd963e \
+                            sha256  5b5b57b3419192b4b83f22774cade770fb33ffb415e62a7374703e3b5720f836 \
+                            size    9655388
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -111,9 +111,8 @@ post-extract {
 
 patch.pre_args              -p1
 
-# https://source.winehq.org/git/wine.git/commit/e2db7ef7f47b667962f533691aa1ef0246264076
-# Remove wine-6.16
-patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
+# https://bugs.winehq.org/show_bug.cgi?id=51479
+patchfiles-append           Bugzilla_51479.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
