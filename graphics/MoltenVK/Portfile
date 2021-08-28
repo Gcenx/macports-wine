@@ -14,7 +14,7 @@ if {${os.major} < 20} {
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
 name                        MoltenVK
-conflicts                   CX-MoltenVK VulkanSDK
+conflicts                   MoltenVK-DXVK VulkanSDK
 set my_name                 MoltenVK
 
 long_description            ${name} is an implementation of the high-performance, \
@@ -26,7 +26,7 @@ version                     1.1.4
 
 subport MoltenVK {
     name                    MoltenVK
-    conflicts               CX-MoltenVK VulkanSDK
+    conflicts               MoltenVK-DXVK VulkanSDK
     set my_name             MoltenVK
     revision                0
     use_xz                  yes
@@ -39,10 +39,10 @@ subport MoltenVK {
                             size    8842772
 }
 
-subport CX-MoltenVK {
-    name                    CX-MoltenVK
+subport MoltenVK-DXVK {
+    name                    MoltenVK-DXVK
     conflicts               MoltenVK VulkanSDK
-    set my_name             CX-MoltenVK
+    set my_name             MoltenVK-DXVK
     revision                0
     use_xz                  yes
     extract.suffix          .tar.xz
@@ -62,7 +62,7 @@ master_sites                https://github.com/Gcenx/MoltenVK/releases/download/
 
 subport VulkanSDK {
     name                    VulkanSDK
-    conflicts               MoltenVK CX-MoltenVK
+    conflicts               MoltenVK MoltenVK-DXVK
     set my_name             VulkanSDK
     dist_subdir             MoltenVK
     version                 1.2.170.0
