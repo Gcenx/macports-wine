@@ -6,7 +6,7 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `FAudio` *(v21.08)*
 - `jxrlib` *(v1.1)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
-- `MoltenVK`/`CX-MoltenVK` *(v1.1.4)*
+- `MoltenVK`/`MoltenVK-DXVK` *(v1.1.4)*
 - `wine-stable` *(v6.0.1)*
 - `wine-devel` *(v6.16)*
 - `wine-staging` *(v6.16)*
