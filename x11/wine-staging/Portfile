@@ -111,9 +111,6 @@ post-extract {
 
 patch.pre_args              -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=51479
-patchfiles-append           Bugzilla_51479.diff
-
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
                                                                     gethostbyaddr_r \
