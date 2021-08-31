@@ -22,7 +22,7 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     1.1.4
+version                     1.1.5
 
 subport MoltenVK {
     name                    MoltenVK
@@ -34,9 +34,9 @@ subport MoltenVK {
     distname                macos${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  2188c935ef18b1041d9fe35dffd4c93f78290bf0 \
-                            sha256  5236594dcd488b4d37192c2bf11546538d527faa77ebc7f26bf5bad45d50a957 \
-                            size    8842772
+    checksums               rmd160  6f536392292a6632b1c3731320e727bd50a2c772 \
+                            sha256  792686d3aec705cf5d9ab8ec3261939fc2bbf813ea4c1a4ae00575d3ccc3189c \
+                            size    8894336
 }
 
 subport MoltenVK-DXVK {
@@ -49,9 +49,9 @@ subport MoltenVK-DXVK {
     distname                macos_dxvk_patched${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  623ebca5480278b3cddf79b2b21b828fe8345af2 \
-                            sha256  70c601ba7772aa124ce5a3c35bd6dc25d4bb923c51c6282fa107d72ffc977f3c \
-                            size    8838988
+    checksums               rmd160  f1c48c9f4e00ecc300a1ecc038848d7fdfe313d3 \
+                            sha256  0df5a63f1c503a279d0747cf00c9b35f554a13a3a83cc99796aa689889873e85 \
+                            size    8917296
 }
 
 # Avoid distfiles conflicting
