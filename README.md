@@ -3,10 +3,10 @@ The current versions of `MoltenVK`, `wine` & `wine-devel` provided by macports a
 The provided Ports *should* compile on Mac OSX 10.8 and later.
 
 ## This repository contains;
-- `FAudio` *(v21.08)*
+- `FAudio` *(v21.09)*
 - `jxrlib` *(v1.1)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
-- `MoltenVK`/`MoltenVK-DXVK` *(v1.1.4)*
+- `MoltenVK`/`MoltenVK-DXVK` *(v1.1.5)*
 - `wine-stable` *(v6.0.1)*
 - `wine-devel` *(v6.16)*
 - `wine-staging` *(v6.16)*
