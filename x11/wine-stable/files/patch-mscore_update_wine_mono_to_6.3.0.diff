@@ -1,0 +1,56 @@
+From 451a54bc7a77b8b816f28ad1c615745e650586ae Mon Sep 17 00:00:00 2001
+From: Esme Povirk <esme@codeweavers.com>
+Date: Mon, 26 Jul 2021 10:41:59 -0500
+Subject: [PATCH] mscoree: Update Wine Mono to 6.3.0.
+
+Signed-off-by: Esme Povirk <esme@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/appwiz.cpl/addons.c       | 4 ++--
+ dlls/mscoree/mscoree_private.h | 2 +-
+ dlls/mscoree/tests/comtest.c   | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/dlls/appwiz.cpl/addons.c b/dlls/appwiz.cpl/addons.c
+index cfc51155f57..b2e726422da 100644
+--- a/dlls/appwiz.cpl/addons.c
++++ b/dlls/appwiz.cpl/addons.c
+@@ -57,10 +57,10 @@ WINE_DEFAULT_DEBUG_CHANNEL(appwizcpl);
+ #define GECKO_SHA "???"
+ #endif
+ 
+-#define MONO_VERSION "5.1.1"
++#define MONO_VERSION "6.3.0"
+ #if defined(__i386__) || defined(__x86_64__)
+ #define MONO_ARCH "x86"
+-#define MONO_SHA "74541265b9385842bc22bba2bb4b90bf1d3fd8b4788b6676140700bebacb9227"
++#define MONO_SHA "a5f02d32a0283692a4a625f541cfbbb451883128474c5c80362385317cd099f0"
+ #else
+ #define MONO_ARCH ""
+ #define MONO_SHA "???"
+diff --git a/dlls/mscoree/mscoree_private.h b/dlls/mscoree/mscoree_private.h
+index c9edc2d68d0..da587285cfe 100644
+--- a/dlls/mscoree/mscoree_private.h
++++ b/dlls/mscoree/mscoree_private.h
+@@ -45,7 +45,7 @@ extern HRESULT assembly_get_runtime_version(ASSEMBLY *assembly, LPSTR *version)
+ extern HRESULT assembly_get_vtable_fixups(ASSEMBLY *assembly, VTableFixup **fixups, DWORD *count) DECLSPEC_HIDDEN;
+ extern HRESULT assembly_get_native_entrypoint(ASSEMBLY *assembly, NativeEntryPointFunc *func) DECLSPEC_HIDDEN;
+ 
+-#define WINE_MONO_VERSION "5.1.1"
++#define WINE_MONO_VERSION "6.3.0"
+ 
+ /* Mono embedding */
+ typedef struct _MonoDomain MonoDomain;
+diff --git a/dlls/mscoree/tests/comtest.c b/dlls/mscoree/tests/comtest.c
+index 4b2183bac3a..6c0d081cbd3 100644
+--- a/dlls/mscoree/tests/comtest.c
++++ b/dlls/mscoree/tests/comtest.c
+@@ -195,7 +195,7 @@ static void run_registry_test(run_type run)
+         ok(hr == S_OK, "Got %x\n", hr);
+         ok(i == 42, "Expected 42, got %d\n", i);
+         hr = ITest_QueryInterface(test, &IID_ITest2, (void**)&unk);
+-        todo_wine ok(hr == S_OK, "ITest_QueryInterface returned %x\n", hr);
++        ok(hr == S_OK, "ITest_QueryInterface returned %x\n", hr);
+         if (hr == S_OK) IUnknown_Release(unk);
+         ITest_Release(test);
+     }

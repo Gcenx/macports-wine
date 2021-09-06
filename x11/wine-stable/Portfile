@@ -16,7 +16,7 @@ name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     6.0.1
-revision                    2
+revision                    3
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -83,7 +83,7 @@ depends_lib                 port:fontconfig \
                             port:openal-soft \
                             port:tiff \
                             port:wine-gecko \
-                            port:wine-mono-5.1.1
+                            port:wine
 
 depends_build               port:bison \
                             port:flex \
@@ -106,6 +106,10 @@ patchfiles-append           patch-msvcrt_Add_sincos_to_importlib.diff
 # https://source.winehq.org/git/wine.git/commit/d47be63faec9670454b137fa8d8de5f732e76202
 # https://source.winehq.org/git/wine.git/commit/e2db7ef7f47b667962f533691aa1ef0246264076
 patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
+
+# Bump wine-mono to 6.3.0
+# https://source.winehq.org/git/wine.git/commit/451a54bc7a77b8b816f28ad1c615745e650586ae
+patchfiles-append           patch-mscore_update_wine_mono_to_6.3.0.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
