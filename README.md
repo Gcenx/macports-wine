@@ -10,7 +10,7 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `wine-stable` *(v6.0.1)*
 - `wine-devel` *(v6.16)*
 - `wine-staging` *(v6.16)*
-- `winetricks` *(20210206)* doesn't default to +zenity
+- `winetricks` *(20210206)*
 
 ## How to use this repository
 After installing macports you will need a modern version of `git`\
