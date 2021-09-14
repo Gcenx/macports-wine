@@ -5,16 +5,12 @@ categories                  graphics
 maintainers                 openmaintainer
 license                     Apache-2
 
-if {${os.major} < 20} {
-    supported_archs             x86_64
-} else {
-    supported_archs         x86_64 arm64
-}
+supported_archs             amd64 x86_64
 
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
 name                        MoltenVK
-conflicts                   MoltenVK-DXVK VulkanSDK
+conflicts                   MoltenVK-CX MoltenVK-DXVK VulkanSDK
 set my_name                 MoltenVK
 
 long_description            ${name} is an implementation of the high-performance, \
@@ -26,7 +22,7 @@ version                     1.1.5
 
 subport MoltenVK {
     name                    MoltenVK
-    conflicts               MoltenVK-DXVK VulkanSDK
+    conflicts               MoltenVK-CX MoltenVK-DXVK VulkanSDK
     set my_name             MoltenVK
     revision                0
     use_xz                  yes
@@ -39,9 +35,26 @@ subport MoltenVK {
                             size    8894336
 }
 
+# Useful for avoiding the annoying "GPU lost" issue when using DXVK
+subport MoltenVK-CX {
+    name                    MoltenVK-CX
+    conflicts               MoltenVK MoltenVK-DXVK VulkanSDK
+    set my_name             MoltenVK-CX
+    version                 1.1.3
+    revision                0
+    use_xz                  yes
+    extract.suffix          .tar.xz
+    distname                macos_cx21${extract.suffix}
+    distfiles               ${distname}
+
+    checksums               rmd160  7bfc2dd9486aa463587e0f224f3c00e3cc9abf7b \
+                            sha256  60ec242207f2d139600d66c6ded65e942f8e50de54d7159de185479ca56e543c \
+                            size    8500388
+}
+
 subport MoltenVK-DXVK {
     name                    MoltenVK-DXVK
-    conflicts               MoltenVK VulkanSDK
+    conflicts               MoltenVK MoltenVK-CX VulkanSDK
     set my_name             MoltenVK-DXVK
     revision                0
     use_xz                  yes
@@ -62,7 +75,7 @@ master_sites                https://github.com/Gcenx/MoltenVK/releases/download/
 
 subport VulkanSDK {
     name                    VulkanSDK
-    conflicts               MoltenVK MoltenVK-DXVK
+    conflicts               MoltenVK MoltenVK-CX MoltenVK-DXVK
     set my_name             VulkanSDK
     dist_subdir             MoltenVK
     version                 1.2.170.0
