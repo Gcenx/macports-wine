@@ -1,0 +1,52 @@
+From 4940d2ada276a5c6e9f855177ef54ce23490d36e Mon Sep 17 00:00:00 2001
+From: Gijs Vermeulen <gijsvrm@gmail.com>
+Date: Thu, 17 Jun 2021 22:46:29 +0200
+Subject: [PATCH] secur32: Default to building with GnuTLS support on macOS, if
+ present.
+
+Signed-off-by: Gijs Vermeulen <gijsvrm@gmail.com>
+Signed-off-by: Hans Leidekker <hans@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/secur32/schannel_gnutls.c | 4 ++--
+ dlls/secur32/schannel_macosx.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/dlls/secur32/schannel_gnutls.c b/dlls/secur32/schannel_gnutls.c
+index 93868d10b3bf..031249246448 100644
+--- a/dlls/secur32/schannel_gnutls.c
++++ b/dlls/secur32/schannel_gnutls.c
+@@ -47,7 +47,7 @@
+ #include "wine/debug.h"
+ #include "wine/unicode.h"
+ 
+-#if defined(SONAME_LIBGNUTLS) && !defined(HAVE_SECURITY_SECURITY_H)
++#if defined(SONAME_LIBGNUTLS)
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(secur32);
+ WINE_DECLARE_DEBUG_CHANNEL(winediag);
+@@ -1122,4 +1122,4 @@ NTSTATUS CDECL __wine_init_unix_lib( HMODULE module, DWORD reason, const void *p
+     return STATUS_SUCCESS;
+ }
+ 
+-#endif /* SONAME_LIBGNUTLS && !HAVE_SECURITY_SECURITY_H */
++#endif /* SONAME_LIBGNUTLS */
+diff --git a/dlls/secur32/schannel_macosx.c b/dlls/secur32/schannel_macosx.c
+index f4f84557dfe3..d7453a448166 100644
+--- a/dlls/secur32/schannel_macosx.c
++++ b/dlls/secur32/schannel_macosx.c
+@@ -47,7 +47,7 @@
+ #include "secur32_priv.h"
+ #include "wine/debug.h"
+ 
+-#ifdef HAVE_SECURITY_SECURITY_H
++#if defined(HAVE_SECURITY_SECURITY_H) && !defined(SONAME_LIBGNUTLS)
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(secur32);
+ 
+@@ -1290,4 +1290,4 @@ NTSTATUS CDECL __wine_init_unix_lib( HMODULE module, DWORD reason, const void *p
+     return STATUS_SUCCESS;
+ }
+ 
+-#endif /* HAVE_SECURITY_SECURITY_H */
++#endif /* HAVE_SECURITY_SECURITY_H && !SONAME_LIBGNUTLS */

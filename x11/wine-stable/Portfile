@@ -16,7 +16,7 @@ name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     6.0.1
-revision                    4
+revision                    5
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -110,6 +110,10 @@ patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_mac
 # Bump wine-mono to 6.4.0
 # https://github.com/wine-mirror/wine/commit/e6513521ff8b81ba838bb96d10fb20c64c1c2306
 patchfiles-append           patch-mscore_update_wine_mono.diff
+
+# secur32: Default to building with GnuTLS support
+# https://github.com/wine-mirror/wine/commit/4940d2ada276a5c6e9f855177ef54ce23490d36e
+patchfiles-append           patch-secur32_default_to_gnutls.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
