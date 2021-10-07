@@ -1,4 +1,4 @@
-From 4940d2ada276a5c6e9f855177ef54ce23490d36e Mon Sep 17 00:00:00 2001
+From 033dfd30d5224c5c24cdcb2633c803324c979f35 Mon Sep 17 00:00:00 2001
 From: Gijs Vermeulen <gijsvrm@gmail.com>
 Date: Thu, 17 Jun 2021 22:46:29 +0200
 Subject: [PATCH] secur32: Default to building with GnuTLS support on macOS, if
@@ -7,16 +7,20 @@ Subject: [PATCH] secur32: Default to building with GnuTLS support on macOS, if
 Signed-off-by: Gijs Vermeulen <gijsvrm@gmail.com>
 Signed-off-by: Hans Leidekker <hans@codeweavers.com>
 Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+(cherry picked from commit 4940d2ada276a5c6e9f855177ef54ce23490d36e)
+Conflicts:
+    dlls/secur32/schannel_gnutls.c
+Signed-off-by: Michael Stefaniuc <mstefani@winehq.org>
 ---
  dlls/secur32/schannel_gnutls.c | 4 ++--
  dlls/secur32/schannel_macosx.c | 4 ++--
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/dlls/secur32/schannel_gnutls.c b/dlls/secur32/schannel_gnutls.c
-index 93868d10b3bf..031249246448 100644
+index 784c1ffe6e8..21e6ac7eae3 100644
 --- a/dlls/secur32/schannel_gnutls.c
 +++ b/dlls/secur32/schannel_gnutls.c
-@@ -47,7 +47,7 @@
+@@ -42,7 +42,7 @@
  #include "wine/debug.h"
  #include "wine/unicode.h"
  
@@ -25,17 +29,17 @@ index 93868d10b3bf..031249246448 100644
  
  WINE_DEFAULT_DEBUG_CHANNEL(secur32);
  WINE_DECLARE_DEBUG_CHANNEL(winediag);
-@@ -1122,4 +1122,4 @@ NTSTATUS CDECL __wine_init_unix_lib( HMODULE module, DWORD reason, const void *p
-     return STATUS_SUCCESS;
+@@ -1098,4 +1098,4 @@ void schan_imp_deinit(void)
+     libgnutls_handle = NULL;
  }
  
 -#endif /* SONAME_LIBGNUTLS && !HAVE_SECURITY_SECURITY_H */
 +#endif /* SONAME_LIBGNUTLS */
 diff --git a/dlls/secur32/schannel_macosx.c b/dlls/secur32/schannel_macosx.c
-index f4f84557dfe3..d7453a448166 100644
+index d725c9d22c2..ba589274b62 100644
 --- a/dlls/secur32/schannel_macosx.c
 +++ b/dlls/secur32/schannel_macosx.c
-@@ -47,7 +47,7 @@
+@@ -39,7 +39,7 @@
  #include "secur32_priv.h"
  #include "wine/debug.h"
  
@@ -44,9 +48,11 @@ index f4f84557dfe3..d7453a448166 100644
  
  WINE_DEFAULT_DEBUG_CHANNEL(secur32);
  
-@@ -1290,4 +1290,4 @@ NTSTATUS CDECL __wine_init_unix_lib( HMODULE module, DWORD reason, const void *p
-     return STATUS_SUCCESS;
+@@ -1242,4 +1242,4 @@ void schan_imp_deinit(void)
+     TRACE("()\n");
  }
  
 -#endif /* HAVE_SECURITY_SECURITY_H */
 +#endif /* HAVE_SECURITY_SECURITY_H && !SONAME_LIBGNUTLS */
+--
+2.31.1

@@ -98,20 +98,23 @@ patchfiles                  patch-configure_FAudio_Uppercase.diff
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           patch-noflicker.diff
 
+# Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
+# Bump wine-mono to 6.4.0
+# https://github.com/wine-mirror/wine/commit/e6513521ff8b81ba838bb96d10fb20c64c1c2306
+patchfiles-append           patch-mscore_update_wine_mono.diff
+
 # Fixes cross compilation with GCC 11
 # Remove wine-stable-6.0.2
 patchfiles-append           patch-msvcrt_Add_sincos_to_importlib.diff
 
 # Disable Virtual Desktop checkbox when using winemac.drv
+# Remove wine-stable-6.0.2
 # https://github.com/wine-mirror/wine/commit/d47be63faec9670454b137fa8d8de5f732e76202
 # https://github.com/wine-mirror/wine/commit/e2db7ef7f47b667962f533691aa1ef0246264076
 patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
 
-# Bump wine-mono to 6.4.0
-# https://github.com/wine-mirror/wine/commit/e6513521ff8b81ba838bb96d10fb20c64c1c2306
-patchfiles-append           patch-mscore_update_wine_mono.diff
-
 # secur32: Default to building with GnuTLS support
+# Remove wine-stable-6.0.2
 # https://github.com/wine-mirror/wine/commit/4940d2ada276a5c6e9f855177ef54ce23490d36e
 patchfiles-append           patch-secur32_default_to_gnutls.diff
 
