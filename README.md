@@ -8,8 +8,8 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK`/`MoltenVK-DXVK` *(v1.1.5)*
 - `wine-stable` *(v6.0.1)*
-- `wine-devel` *(v6.18)*
-- `wine-staging` *(v6.18)*
+- `wine-devel` *(v6.19)*
+- `wine-staging` *(v6.19)*
 - `winetricks` *(20210206)*
 
 ## How to use this repository
