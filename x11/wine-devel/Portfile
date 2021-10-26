@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     6.19
+version                     6.20
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -59,30 +59,21 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  4b56131272125166a2bcc09dd97fd53895955711 \
-                            sha256  3938b68abcce83a81bf3f35f96ea3f52195a0d3b04511f6f53c353366b4d9f02 \
-                            size    41763756
+                            rmd160  484c1e4d341fdcee13d67116dfad4aaf7a4c6cff \
+                            sha256  2fda5744c8e348706d26604635da40439a07395b0d1b6a6e3db71e889a9d042c \
+                            size    44653087
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
                             port:freetype \
-                            port:FAudio \
                             port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
-                            path:include/turbojpeg.h:libjpeg-turbo \
-                            port:jxrlib \
-                            port:lcms2 \
                             port:libiconv \
                             port:libpcap \
-                            port:libpng \
                             port:libusb \
                             port:libunwind \
-                            port:libxml2 \
-                            port:libxslt \
-                            port:mpg123 \
                             port:openal-soft \
-                            port:tiff \
                             port:wine-gecko \
                             port:wine-mono
 
@@ -95,6 +86,9 @@ patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           noflicker.diff
+
+# Avoids destroot conflict (msvcrt defines size_t & macosx.sdk also defines size_t)
+patchfiles-append           0001-mpg123-Don-t-include-strings.h-on-macOS.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
@@ -119,28 +113,22 @@ configure.install           ${worksrcpath}/tools/install-sh
 
 configure.args              --without-alsa \
                             --without-capi \
-                            --with-cms \
                             --with-coreaudio \
                             --with-cups \
                             --without-dbus \
-                            --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
                             --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
                             --with-gnutls \
-                            --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
                             --without-hal \
                             --without-inotify \
-                            --with-jpeg \
-                            --with-jxrlib \
                             --without-krb5 \
                             --with-ldap \
                             --with-mingw \
-                            --with-mpg123 \
                             --without-netapi \
                             --with-openal \
                             --with-opencl \
@@ -148,13 +136,11 @@ configure.args              --without-alsa \
                             --without-osmesa \
                             --without-oss \
                             --with-pcap \
-                            --with-png \
                             --with-pthread \
                             --without-pulse \
                             --without-quicktime \
                             --without-sane \
                             --with-sdl \
-                            --with-tiff \
                             --without-udev \
                             --with-unwind \
                             --with-usb \
@@ -166,12 +152,10 @@ configure.args              --without-alsa \
                             --without-xinerama \
                             --without-xinput \
                             --without-xinput2 \
-                            --with-xml \
                             --without-xrandr \
                             --without-xrender \
                             --without-xshape \
                             --without-xshm \
-                            --with-xslt \
                             --without-xxf86vm \
                             --without-x
 
@@ -218,22 +202,6 @@ variant x11 {
                                 --with-x \
                                 --x-include=${prefix}/include \
                                 --x-lib=${prefix}/lib
-}
-
-# ffmpeg takes forever to build plus would cause a license change
-variant ffmpeg {
-    depends_lib-append          port:gstreamer1-gst-plugins-good \
-                                port:gstreamer1-gst-plugins-bad \
-                                port:gstreamer1-gst-plugins-ugly \
-                                port:gstreamer1-gst-libav
-
-    configure.args-delete       --without-dbus \
-                                --without-krb5
-
-    configure.args-append       --with-dbus \
-                                --with-krb5
-    
-    require_active_variants     port:FAudio wma
 }
 
 # Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs

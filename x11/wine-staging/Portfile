@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.19
+version                     6.20
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -67,35 +67,25 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  4b56131272125166a2bcc09dd97fd53895955711 \
-                            sha256  3938b68abcce83a81bf3f35f96ea3f52195a0d3b04511f6f53c353366b4d9f02 \
-                            size    41763756 \
+                            rmd160  484c1e4d341fdcee13d67116dfad4aaf7a4c6cff \
+                            sha256  2fda5744c8e348706d26604635da40439a07395b0d1b6a6e3db71e889a9d042c \
+                            size    44653087 \
                             ${wine_staging_distfile} \
-                            rmd160  afe26b609c90bfc6db2db7762f226763e53f126b \
-                            sha256  47158842c938f68d9097965135321892515bb7f133c88be469c91f845f942ac3 \
-                            size    9690585
+                            rmd160  fe0e3bdaec4a41850137c5c4d6d5d51a9fe9f133 \
+                            sha256  360fd304a0f4c12e3aa149dde0bc3ac7a2c8787740e1f228bd13158f855166ea \
+                            size    9643278
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
                             port:freetype \
-                            port:FAudio \
-                            port:libgcrypt \
                             port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
-                            path:include/turbojpeg.h:libjpeg-turbo \
-                            port:jxrlib \
-                            port:lcms2 \
                             port:libiconv \
                             port:libpcap \
-                            port:libpng \
                             port:libusb \
                             port:libunwind \
-                            port:libxml2 \
-                            port:libxslt \
-                            port:mpg123 \
                             port:openal-soft \
-                            port:tiff \
                             port:wine-gecko \
                             port:wine-mono
 
@@ -110,6 +100,9 @@ post-extract {
 }
 
 patch.pre_args              -p1
+
+# Avoids destroot conflict (msvcrt defines size_t & macosx.sdk also defines size_t)
+patchfiles-append           0001-mpg123-Don-t-include-strings.h-on-macOS.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
@@ -134,29 +127,23 @@ configure.install           ${worksrcpath}/tools/install-sh
 
 configure.args              --without-alsa \
                             --without-capi \
-                            --with-cms \
                             --with-coreaudio \
                             --with-cups \
                             --without-dbus \
-                            --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
-                            --with-gcrypt \
                             --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
                             --with-gnutls \
-                            --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
-                            --with-jxrlib \
                             --without-krb5 \
                             --with-ldap \
                             --with-mingw \
-                            --with-mpg123 \
                             --without-netapi \
                             --with-openal \
                             --with-opencl \
@@ -164,13 +151,11 @@ configure.args              --without-alsa \
                             --without-osmesa \
                             --without-oss \
                             --with-pcap \
-                            --with-png \
                             --with-pthread \
                             --without-pulse \
                             --without-quicktime \
                             --without-sane \
                             --with-sdl \
-                            --with-tiff \
                             --without-udev \
                             --with-unwind \
                             --with-usb \
@@ -183,12 +168,10 @@ configure.args              --without-alsa \
                             --without-xinerama \
                             --without-xinput \
                             --without-xinput2 \
-                            --with-xml \
                             --without-xrandr \
                             --without-xrender \
                             --without-xshape \
                             --without-xshm \
-                            --with-xslt \
                             --without-xxf86vm \
                             --without-x
 
@@ -235,22 +218,6 @@ variant x11 {
                                 --with-x \
                                 --x-include=${prefix}/include \
                                 --x-lib=${prefix}/lib
-}
-
-# ffmpeg takes forever to build plus would cause a license change
-variant ffmpeg {
-    depends_lib-append          port:gstreamer1-gst-plugins-good \
-                                port:gstreamer1-gst-plugins-bad \
-                                port:gstreamer1-gst-plugins-ugly \
-                                port:gstreamer1-gst-libav
-
-    configure.args-delete       --without-dbus \
-                                --without-krb5
-
-    configure.args-append       --with-dbus \
-                                --with-krb5
-    
-    require_active_variants     port:FAudio wma
 }
 
 # Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs

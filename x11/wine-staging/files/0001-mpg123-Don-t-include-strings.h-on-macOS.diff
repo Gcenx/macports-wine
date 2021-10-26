@@ -1,0 +1,28 @@
+From 30b90a3cd4d592daa06a6138be497a2d53705250 Mon Sep 17 00:00:00 2001
+From: Dean M Greer <gcenx83@gmail.com>
+Date: Sun, 24 Oct 2021 22:06:51 -0400
+Subject: [PATCH] mpg123: Don't include strings.h on macOS
+
+---
+ libs/mpg123/src/compat/compat.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libs/mpg123/src/compat/compat.h b/libs/mpg123/src/compat/compat.h
+index 3e81919e3f0..4a24b8463e8 100644
+--- a/libs/mpg123/src/compat/compat.h
++++ b/libs/mpg123/src/compat/compat.h
+@@ -70,9 +70,11 @@
+ #ifdef HAVE_STRING_H
+ #include <string.h>
+ #endif
++#if !defined(__APPLE__)
+ #ifdef HAVE_STRINGS_H
+ #include <strings.h>
+ #endif
++#endif
+ 
+ #ifdef OS2
+ #include <float.h>
+-- 
+2.21.1 (Apple Git-122.3)
+
