@@ -15,8 +15,8 @@ PortGroup                   active_variants 1.1
 name                        wine-stable
 conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     6.0.1
-revision                    5
+version                     6.0.2
+revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -59,9 +59,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  bb856473d4e06d17e6b682b60548424e5f817944 \
-                            sha256  8586f6ce129b7d0f194e3dd56fd94e0005711a2df68acb115e61771f6eeb1391 \
-                            size    40500006
+                            rmd160  0f5f00cd0a71de0c46f7e4140dcd23e45cb2b5f6 \
+                            sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
+                            size    40522571
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -92,9 +92,6 @@ depends_build               port:bison \
 
 patch.pre_args              -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=50436
-patchfiles                  patch-configure_FAudio_Uppercase.diff
-
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           patch-noflicker.diff
 
@@ -102,21 +99,6 @@ patchfiles-append           patch-noflicker.diff
 # Bump wine-mono to 6.4.0
 # https://github.com/wine-mirror/wine/commit/e6513521ff8b81ba838bb96d10fb20c64c1c2306
 patchfiles-append           patch-mscore_update_wine_mono.diff
-
-# Fixes cross compilation with GCC 11
-# Remove wine-stable-6.0.2
-patchfiles-append           patch-msvcrt_Add_sincos_to_importlib.diff
-
-# Disable Virtual Desktop checkbox when using winemac.drv
-# Remove wine-stable-6.0.2
-# https://github.com/wine-mirror/wine/commit/d47be63faec9670454b137fa8d8de5f732e76202
-# https://github.com/wine-mirror/wine/commit/e2db7ef7f47b667962f533691aa1ef0246264076
-patchfiles-append           patch-winecfg_Disable_virtual_desktop_when_using_macdrv.diff
-
-# secur32: Default to building with GnuTLS support
-# Remove wine-stable-6.0.2
-# https://github.com/wine-mirror/wine/commit/4940d2ada276a5c6e9f855177ef54ce23490d36e
-patchfiles-append           patch-secur32_default_to_gnutls.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
