@@ -1,0 +1,40 @@
+From 981306c1f01112719850439a74e13693dfa6d3a4 Mon Sep 17 00:00:00 2001
+From: Dmitry Timoshkov <dmitry@baikal.ru>
+Date: Fri, 22 Oct 2021 23:46:02 +0300
+Subject: [PATCH] mpg123: Fix compilation with clang.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+clang -c -o libs/mpg123/src/compat/compat.cross.o ../wine.src/libs/mpg123/src/compat/compat.c -Ilibs/mpg123 \
+  -I../wine.src/libs/mpg123 -Iinclude -I../wine.src/include -I../wine.src/include/msvcrt \
+  -I../wine.src/libs/mpg123/src -I../wine.src/libs/mpg123/src/compat \
+  -I../wine.src/libs/mpg123/src/libmpg123 -DOPT_GENERIC_DITHER -DREAL_IS_FLOAT -DNO_CATCHSIGNAL \
+  -D_UCRT -D__WINE_PE_BUILD -target x86_64-windows -fno-strict-aliasing -Wno-pragma-pack -Wno-format \
+  -mcx16 -gdwarf-2 -gstrict-dwarf -g -O2
+In file included from ../wine.src/libs/mpg123/src/compat/compat.c:15:
+../wine.src/libs/mpg123/src/compat/compat.h:74:10: fatal error: 'strings.h' file not found
+         ^~~~~~~~~~~
+1 error generated.
+make: *** [Makefile:216382: libs/mpg123/src/compat/compat.cross.o] Error 1
+
+Signed-off-by: Dmitry Timoshkov <dmitry@baikal.ru>
+Signed-off-by: Martin Storsjö <martin@martin.st>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ libs/mpg123/config.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libs/mpg123/config.h b/libs/mpg123/config.h
+index 77986b2a5139..c0ad79f0ebf4 100644
+--- a/libs/mpg123/config.h
++++ b/libs/mpg123/config.h
+@@ -219,7 +219,7 @@
+ #define HAVE_STRERROR 1
+ 
+ /* Define to 1 if you have the <strings.h> header file. */
+-#define HAVE_STRINGS_H 1
++/* #undef HAVE_STRINGS_H 1 */
+ 
+ /* Define to 1 if you have the <string.h> header file. */
+ #define HAVE_STRING_H 1
