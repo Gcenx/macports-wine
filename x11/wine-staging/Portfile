@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     6.20
+version                     6.21
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -67,9 +67,9 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  484c1e4d341fdcee13d67116dfad4aaf7a4c6cff \
-                            sha256  2fda5744c8e348706d26604635da40439a07395b0d1b6a6e3db71e889a9d042c \
-                            size    44653087 \
+                            rmd160  10f2918e78fb45764fe50d2340ab4f95da082688 \
+                            sha256  3c229b745d1a3002b248a0cafa49f74b810fe542ba03416c6a9ba9924349f8a3 \
+                            size    44747615 \
                             ${wine_staging_distfile} \
                             rmd160  fe0e3bdaec4a41850137c5c4d6d5d51a9fe9f133 \
                             sha256  360fd304a0f4c12e3aa149dde0bc3ac7a2c8787740e1f228bd13158f855166ea \
@@ -101,10 +101,6 @@ post-extract {
 }
 
 patch.pre_args              -p1
-
-# Remove wine-6.21
-# https://github.com/wine-mirror/wine/commit/981306c1f01112719850439a74e13693dfa6d3a4
-patchfiles-append           patch-mpg123-Fix_compilation_with_clang.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
