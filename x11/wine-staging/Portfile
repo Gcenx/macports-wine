@@ -71,9 +71,9 @@ checksums                   ${wine_distfile} \
                             sha256  3c229b745d1a3002b248a0cafa49f74b810fe542ba03416c6a9ba9924349f8a3 \
                             size    44747615 \
                             ${wine_staging_distfile} \
-                            rmd160  fe0e3bdaec4a41850137c5c4d6d5d51a9fe9f133 \
-                            sha256  360fd304a0f4c12e3aa149dde0bc3ac7a2c8787740e1f228bd13158f855166ea \
-                            size    9643278
+                            rmd160  869d0d51cf1b6884edd2f89dc2cb8db11973b583 \
+                            sha256  df986de7d6ce6536c18bba4dbeab05e2bd199cfa73e3194fd6c805cdc6d51dfd \
+                            size    9627829
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
