@@ -1,7 +1,7 @@
-diff --git CMakeLists.txt.orig CMakeLists.txt
+diff --git a/CMakeLists.txt.orig b/CMakeLists.txt
 index db377dd..6d596b1 100644
---- CMakeLists.txt.orig
-+++ CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -53,8 +53,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
  
  # Platform Flags
