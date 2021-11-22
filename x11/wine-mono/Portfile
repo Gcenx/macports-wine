@@ -12,6 +12,17 @@ name                        wine-mono
 set my_name                 wine-mono
 
 if {${subport} eq ${name}} {
+    version         7.0.0
+    revision        0
+    
+    checksums       rmd160  96f7316927cef5ea35197389e425c54b0dccc3fb \
+                    sha256  2a047893f047b4f0f5b480f1947b7dda546cee3fec080beb105bf5759c563cd3 \
+                    size    45085800
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
+subport wine-mono-6.4.0 {
     version         6.4.0
     revision        0
     
