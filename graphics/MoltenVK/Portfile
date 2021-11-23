@@ -5,7 +5,7 @@ categories                  graphics
 maintainers                 openmaintainer
 license                     Apache-2
 
-supported_archs             amd64 x86_64
+supported_archs             arm64 x86_64
 
 platforms                   darwin
 description                 an implementation of Vulkan for Metal
