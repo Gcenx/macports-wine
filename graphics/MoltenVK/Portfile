@@ -56,15 +56,15 @@ subport MoltenVK-DXVK {
     name                    MoltenVK-DXVK
     conflicts               MoltenVK MoltenVK-CX VulkanSDK
     set my_name             MoltenVK-DXVK
-    revision                0
+    revision                1
     use_xz                  yes
     extract.suffix          .tar.xz
-    distname                macos_dxvk_patched-${version}${extract.suffix}
+    distname                macos_dxvk_patched-${version}_${revision}${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  b5cfcd4c586e11ded27f89249298e671512ab8e1 \
-                            sha256  f211973258812982d21c8ac5e21c1746287e18d560de3db3f7eacdaf761686d9 \
-                            size    9176884
+    checksums               rmd160  3b1f14b4244188641a9edba204dee1c172d31839 \
+                            sha256  059f1a8b532de831233917435bb401d88343e038c91f8fd9f87828c223f63963 \
+                            size    9156212
 }
 
 # Avoid distfiles conflicting
