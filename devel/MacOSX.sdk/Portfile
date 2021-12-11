@@ -206,6 +206,7 @@ if {${subport} == "MacOSX11.0.sdk" || ${subport} == "MacOSX11.1.sdk" || ${subpor
 if {${os.major} > 15} {
 } else {
     depends_fetch-append        port:curl
+    epends_skip_archcheck-append curl
     
     fetch {
             # Manually download the file(s) if they don't exist

@@ -54,6 +54,7 @@ subport wine-gecko-2.47.1 {
         master_sites                https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
     } else {
         depends_fetch-append        port:curl
+        epends_skip_archcheck-append curl
         
         fetch {
                 # Manually download the file(s) if they don't exist
