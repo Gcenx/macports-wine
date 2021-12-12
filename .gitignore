@@ -7,5 +7,4 @@ Portfile~
 *.tcl~
 *.diff~
 *.patch~
-
-.DS_Store
+*.DS_Store
