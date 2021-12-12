@@ -20,7 +20,7 @@ if {${os.major} > 15} {
     github.tarball_from         archive
 } else {
     depends_fetch-append        port:curl
-    epends_skip_archcheck-append curl
+    depends_skip_archcheck-append curl
     
     fetch {
             # Manually download the file(s) if they don't exist
