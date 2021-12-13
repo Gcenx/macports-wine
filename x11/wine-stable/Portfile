@@ -97,8 +97,8 @@ patch.pre_args              -p1
 patchfiles-append           patch-noflicker.diff
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
-# Bump wine-mono to 6.4.0
-# https://github.com/wine-mirror/wine/commit/e6513521ff8b81ba838bb96d10fb20c64c1c2306
+# Bump wine-mono to 7.0.0
+# https://github.com/wine-mirror/wine/commit/97d6cfd7059fbe55fdd24a04e8d9133848328d4e
 patchfiles-append           patch-mscore_update_wine_mono.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
