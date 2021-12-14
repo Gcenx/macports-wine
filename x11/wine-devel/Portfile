@@ -287,14 +287,15 @@ platform darwin {
         DPI under the Graphics tab in winecfg.}
 
     # Even using MacOSX10.11.sdk wine-preloader has issue reserve memory causing crashes
-    if {${os.major} < 12} {
+    # https://bugs.winehq.org/show_bug.cgi?id=52216
+    if {${os.major} < 15} {
         known_fail yes
         archive_sites
         distfiles
         depends_build
         depends_lib
         pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+            ui_error "${name} @${version} requires Mac OS X 10.11 or later due to bug 52216."
             return -code error "incompatible Mac OS X version"
         }
     } elseif {${os.major} > 18} {
