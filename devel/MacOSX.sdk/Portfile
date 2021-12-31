@@ -21,37 +21,9 @@ subport MacOSX11.3.sdk {
     
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
     
-    checksums           rmd160  a6d0cb420553d458803d5b114f7947b0b7cd91bf \
-                        sha256  cd4f08a75577145b8f05245a2975f7c81401d75e9535dcffbb879ee1deefcbf4 \
-                        size    51233540
-}
-
-subport MacOSX11.1.sdk {
-    set macos_name      {macOS Big Sur}
-    set xcode_vers      12.3
-    version             11.1
-    revision            0
-    supported_archs     arm64 x86_64
-    
-    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_1-release-notes
-    
-    checksums           rmd160  dd2e70ef42c1690ca2f9da8d4fd03f7f893c118f \
-                        sha256  68797baaacb52f56f713400de306a58a7ca00b05c3dc6d58f0a8283bcac721f8 \
-                        size    49424560
-}
-
-subport MacOSX11.0.sdk {
-    set macos_name      {macOS Big Sur}
-    set xcode_vers      12.2
-    version             11.0
-    revision            0
-    supported_archs     x86_64
-    
-    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-release-notes/
-    
-    checksums           rmd160  475efde229932511cb4309532a05a04b3a09d979 \
-                        sha256  d3feee3ef9c6016b526e1901013f264467bb927865a03422a9cb925991cc9783 \
-                        size    53747760
+    checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
+                        sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
+                        size    75910500
 }
 
 subport MacOSX10.15.sdk {
@@ -190,17 +162,10 @@ use_configure               no
 
 destroot.violate_mtree      yes
 
-if {${subport} == "MacOSX11.0.sdk" || ${subport} == "MacOSX11.1.sdk" || ${subport} == "MacOSX11.3.sdk"} {
-    use_xz                  yes
-    distname                MacOSX${version}.sdk
-    extract.suffix          .tar.xz
-    master_sites            https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/
-} else {
-    use_bzip2               yes
-    distname                MacOSX${version}
-    extract.suffix          .tar.bz2
-    master_sites            https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
-}
+use_bzip2               yes
+distname                MacOSX${version}
+extract.suffix          .tar.bz2
+master_sites            https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
 
 # GitHub requires TLS v1.2
 if {${os.major} > 15} {
