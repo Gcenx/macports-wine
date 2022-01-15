@@ -15,7 +15,7 @@ PortGroup                   active_variants 1.1
 name                        wine-staging
 conflicts                   wine wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     7.0-rc5
+version                     7.0-rc6
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -68,13 +68,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  a820afc93461e7c05fb5e3905c1538d20501e8a0 \
-                            sha256  a7d15ef708b3e4a11af17143feb7ebfed52ba7f338e787a469850edc85bcd6be \
-                            size    44986573 \
+                            rmd160  60ccdce94258e52cff79787068b7dd806c72d308 \
+                            sha256  c3255057a4ae1ad667ab38a9fd8d8851425ced7738b256542a6d8592b0b0c758 \
+                            size    44995281 \
                             ${wine_staging_distfile} \
-                            rmd160  a5e32b6e6e92bd3752f25356ee354adf0cefb6e0 \
-                            sha256  df00729d057da201ab4cd0cc348d3ce13b8c790aac1d1093796ca0f90f8e8727 \
-                            size    9613299
+                            rmd160  da41d9e44d4e60cb7c942425255344482c7444c7 \
+                            sha256  ea3069210075dbb4672b342190b7f6b85fe0c5d607e21427d9709f7c8c3bf2d6 \
+                            size    9614205
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
