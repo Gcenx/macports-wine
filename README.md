@@ -7,10 +7,10 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `jxrlib` *(v1.1)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK`/`MoltenVK-DXVK` *(v1.1.6)*
-- `wine-stable` *(v6.0.2)*
-- `wine-devel` *(v7.0-rc6)*
-- `wine-staging` *(v7.0-rc6)*
-- `winetricks` *(20210206)*
+- `wine-stable-legacy` *(v6.0.2)*
+- `wine-stable` *(v7.0.0)*
+- `wine-devel` *(v7.0)*
+- `wine-staging` *(v7.0)*
 
 ## How to use this repository
 After installing macports you will need a modern version of `git`\

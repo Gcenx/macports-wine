@@ -6,9 +6,9 @@ PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
-# clock_gettime & fstatat
+# fstatat
 legacysupport.use_static yes
-legacysupport.newest_darwin_requires_legacy 15
+legacysupport.newest_darwin_requires_legacy 13
 
 # Please keep the wine-stable, wine-stable-legacy, wine-devel, wine-staging and wine-crossover ports as similar as possible.
 
@@ -17,12 +17,12 @@ legacysupport.newest_darwin_requires_legacy 15
 # https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
 # see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
-name                        wine-stable
-conflicts                   wine wine-stable-legacy wine-devel wine-staging wine-crossover
+name                        wine-stable-legacy
+conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     7.0
+version                     6.0.2
 revision                    0
-set branch                  [lindex [split ${version} .] 0].x
+set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
 
@@ -68,25 +68,31 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  3e16bacce3d92a457966b770ea4a1286d98531e2 \
-                            sha256  c101a6c1cc486aaca6d97a0b91368a42c6bebaeb4d6951e9b2dc82afa4673378 \
-                            size    44990807
+                            rmd160  0f5f00cd0a71de0c46f7e4140dcd23e45cb2b5f6 \
+                            sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
+                            size    40522571
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
                             port:freetype \
+                            port:FAudio \
                             port:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
                             port:gstreamer1-gst-plugins-good \
+                            path:include/turbojpeg.h:libjpeg-turbo \
+                            port:lcms2 \
                             port:libiconv \
                             port:libpcap \
-                            port:libsdl2 \
+                            port:libpng \
                             port:libusb \
                             port:libunwind \
+                            port:libxml2 \
+                            port:libxslt \
+                            port:mpg123 \
                             port:openal-soft \
-                            port:wine-gecko \
-                            port:wine-mono
+                            port:tiff \
+                            port:wine-gecko
 
 depends_build               port:bison \
                             port:flex \
@@ -97,16 +103,6 @@ patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           patch-noflicker.diff
-
-# https://bugs.winehq.org/show_bug.cgi?id=52354
-# revert "winemac.drv: Enable layer-backed views."
-if {${os.major} < 18} {
-    patchfiles-append       0001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
-                            0002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
-                            0003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
-                            0004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
-                            0005-Revert-winemac.drv-Enable-layer-backed-views.diff
-}
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
@@ -131,21 +127,27 @@ configure.install           ${worksrcpath}/tools/install-sh
 
 configure.args              --without-alsa \
                             --without-capi \
+                            --with-cms \
                             --with-coreaudio \
                             --with-cups \
                             --without-dbus \
+                            --with-faudio \
                             --with-fontconfig \
                             --with-freetype \
                             --with-gettext \
                             --without-gettextpo \
                             --without-gphoto \
                             --with-gnutls \
+                            --without-gsm \
                             --without-gssapi \
                             --with-gstreamer \
+                            --without-hal \
                             --without-inotify \
+                            --with-jpeg \
                             --without-krb5 \
                             --with-ldap \
                             --with-mingw \
+                            --with-mpg123 \
                             --without-netapi \
                             --with-openal \
                             --with-opencl \
@@ -153,10 +155,13 @@ configure.args              --without-alsa \
                             --without-osmesa \
                             --without-oss \
                             --with-pcap \
+                            --with-png \
                             --with-pthread \
                             --without-pulse \
+                            --without-quicktime \
                             --without-sane \
                             --with-sdl \
+                            --with-tiff \
                             --without-udev \
                             --with-unwind \
                             --with-usb \
@@ -168,10 +173,12 @@ configure.args              --without-alsa \
                             --without-xinerama \
                             --without-xinput \
                             --without-xinput2 \
+                            --with-xml \
                             --without-xrandr \
                             --without-xrender \
                             --without-xshape \
                             --without-xshm \
+                            --with-xslt \
                             --without-xxf86vm \
                             --without-x
 
@@ -226,7 +233,9 @@ configure.ldflags-append          -Wl,-rpath,${prefix}/lib
 
 configure.universal_args
 
-set merger_configure_args(x86_64) "--enable-win64"
+set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
+set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
 set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
 
 if {[llength ${supported_archs}] > 1} {
@@ -237,7 +246,9 @@ if {${universal_possible} && ![variant_isset universal] && ${os.major} <= 18} {
     supported_archs         i386
 } elseif {!${universal_possible} && ${os.major} >= 18} {
     macosx_deployment_target    "10.14"
-    configure.args-append       "--enable-win64"
+    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
+    destroot.args-append        "dlldir=\\\${destroot}${prefix}/lib/wine64"
+    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
 }
 
 # wine requires clang >= 3.8
@@ -271,16 +282,7 @@ platform darwin {
     } else {
         configure.args-append                   --without-vulkan
     }
-    
-    if {${os.major} == 12 || ${os.major} == 13} {
-        depends_build-append        port:MacOSX10.11.sdk
-        configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-        
-        # Support GPU initialization via Metal, since wine-4.15
-        # https://github.com/wine-mirror/wine/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-        configure.args-append       ac_cv_header_Metal_Metal_h=
-    }
-    
+
     notes {
         When using the Mac Driver, it might be useful to enable RetinaMode\
         when you're using a high DPI monitor. To do that, open up Wine's\

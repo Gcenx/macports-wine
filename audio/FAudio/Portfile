@@ -4,6 +4,7 @@ PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               cmake 1.1
 
+# FAudio-22.01 is the last version with the gstreamer backend, keep at this version for pre-wine-6.20
 github.setup            FNA-XNA FAudio 22.01
 revision                0
 
@@ -58,9 +59,6 @@ variant wma description "Use gstreamer1-gst-libav for additional xWMA support - 
     license                GPL-2+
     depends_lib-append     port:gstreamer1-gst-libav
 }
-
-# This legacy compatibility variant can be removed after August 2021.
-variant ffmpeg requires wma description {Legacy compatibility variant} {}
 
 #pre-destroot {
 #    there are some utilities to consider, but the facttool segfaulted when I tried to open an audio engine
