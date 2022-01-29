@@ -272,6 +272,18 @@ platform darwin {
     configure.args-delete                       --with-fontconfig
     configure.args-append                       --without-fontconfig
     
+    # https://trac.macports.org/ticket/64548
+    if {${os.major} < 14 {
+        depends_lib-delete                          port:openal-soft
+        configure.args-delete                       --with-openal
+        configure.args-append                       --without-openal
+
+        notes-append "
+            \n
+            openal-soft support disabled see https://trac.macports.org/ticket/64548
+        "
+    }
+    
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
