@@ -99,13 +99,18 @@ patch.pre_args              -p1
 patchfiles-append           noflicker.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=52354
-# revert "winemac.drv: Enable layer-backed views."
+# revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
 if {${os.major} < 18} {
     patchfiles-append       0001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
                             0002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
                             0003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
                             0004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
                             0005-Revert-winemac.drv-Enable-layer-backed-views.diff
+                            
+    notes-append "
+        \n
+        Reverts have been applied for Bug 52354, \"winemac.drv not functional on non metal GPUs\"
+    "
 }
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
