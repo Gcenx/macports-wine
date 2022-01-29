@@ -4,6 +4,6 @@ PortSystem                  1.0
 PortGroup                   obsolete 1.0
 name                        wine
 version                     4.0.4
-revision                    0
+revision                    2
 homepage                    https://www.macports.org
 replaced_by                 wine-stable
