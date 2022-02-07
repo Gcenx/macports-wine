@@ -1,0 +1,34 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   meson 1.0
+
+name                        orc
+version                     0.4.32
+revision                    1
+description                 Orc - The Oil Runtime Compiler
+long_description            Orc is a library and set of tools for compiling \
+                            and executing very simple programs that operate on arrays of data.
+maintainers                 {gcenx @gcenx}
+categories                  devel
+platforms                   darwin
+license                     BSD
+homepage                    https://gstreamer.freedesktop.org/modules/orc.html
+master_sites                https://gstreamer.freedesktop.org/src/orc/
+
+use_xz                      yes
+
+checksums                   rmd160  ce932fd372795226899c47b681455efefe448180 \
+                            sha256  a66e3d8f2b7e65178d786a01ef61f2a0a0b4d0b8370de7ce134ba73da4af18f0 \
+                            size    180340
+
+test.run                    yes
+
+# Orc feature options       -Dorce-test=disabled
+
+# Common feature options
+configure.args-append       -Dbenchmarks=disabled \
+                            -Dexamples=disabled \
+                            -Dgtk_doc=disabled \
+                            -Dtests=disabled \
+                            -Dtools=enabled

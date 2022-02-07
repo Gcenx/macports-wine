@@ -1,0 +1,109 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   meson 1.0
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=636134
+PortGroup                   muniversal 1.0
+
+name                        gstreamer1-gst-plugins-base
+set my_name                 gst-plugins-base
+# please only commit stable updates (even numbered releases)
+version                     1.18.5
+description                 This is gst-plugins, a set of plug-ins for GStreamer.
+long_description            ${description}
+maintainers                 {gcenx @gcenx}
+categories                  gnome
+platforms                   darwin
+license                     LGPL-2+
+homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
+distname                    ${my_name}-${version}
+use_xz                      yes
+
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+
+checksums                   rmd160  f98b07eeb1c7640069bddd32c06c79f613d9b104 \
+                            sha256  960b7af4585700db0fdd5b843554e11e2564fed9e061f591fae88a7be6446fa3 \
+                            size    3176212
+
+set py_ver                  3.9
+set py_ver_nodot            [string map {. {}} ${py_ver}]
+
+depends_build-append        port:pkgconfig \
+                            port:python${py_ver_nodot}
+
+depends_lib-append          port:gstreamer1 \
+                            port:graphene \
+                            port:orc \
+                            port:libogg \
+                            port:zlib
+
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${py_ver}
+
+# OpenGL integration library options
+#configure.args-append
+
+# Feature option for opengl plugin and integration library
+configure.args-append       -Dgl=disabled
+
+# Feature options for plugins with no external deps
+configure.args-append       -Dadder=enabled \
+                            -Dapp=enabled \
+                            -Daudioconvert=enabled \
+                            -Daudiomixer=enabled \
+                            -Daudiorate=enabled \
+                            -Daudioresample=enabled \
+                            -Daudiotestsrc=disabled \
+                            -Dcompositor=enabled \
+                            -Dencoding=enabled \
+                            -Dgio=enabled \
+                            -Dgio-typefinder=enabled \
+                            -Doverlaycomposition=enabled \
+                            -Dpbtypes=enabled \
+                            -Dplayback=enabled \
+                            -Drawparse=enabled \
+                            -Dsubparse=enabled \
+                            -Dtcp=disabled \
+                            -Dtypefind=enabled \
+                            -Dvideoconvert=enabled \
+                            -Dvideorate=enabled \
+                            -Dvideoscale=enabled \
+                            -Dvideotestsrc=disabled \
+                            -Dvolume=enabled
+
+# Feature options for plugins with external deps
+configure.args-append       -Dalsa=disabled \
+                            -Dcdparanoia=disabled \
+                            -Dlibvisual=disabled \
+                            -Dogg=enabled \
+                            -Dopus=disabled \
+                            -Dpango=disabled \
+                            -Dtheora=disabled \
+                            -Dtremor=disabled \
+                            -Dvorbis=disabled \
+                            -Dx11=disabled \
+                            -Dxshm=disabled \
+                            -Dxvideo=disabled
+
+# Common feature options
+configure.args-append       -Dexamples=disabled \
+                            -Dtests=disabled \
+                            -Dtools=disabled \
+                            -Dintrospection=disabled \
+                            -Dnls=disabled \
+                            -Dorc=enabled \
+                            -Dgobject-cast-checks=disabled \
+                            -Dglib-asserts=disabled \
+                            -Dglib-checks=disabled
+
+# Common options
+configure.args-append       -Ddoc=disabled
+
+test.run                    yes
+test.target                 check
+
+livecheck.type              regex
+livecheck.name              ${my_name}
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"

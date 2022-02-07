@@ -1,0 +1,46 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   meson 1.0
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=636134
+PortGroup                   muniversal 1.0
+
+name                        gstreamer1-gst-libav
+set my_name                 gst-libav
+# please only commit stable updates (even numbered releases)
+version                     1.18.5
+description                 This is gst-libav, a set of plug-ins for GStreamer.
+long_description            ${description}
+maintainers                 {gcenx @gcenx}
+categories                  gnome
+platforms                   darwin
+license                     GPL-2+
+homepage                    https://gstreamer.freedesktop.org/
+distname                    ${my_name}-${version}
+use_xz                      yes
+
+master_sites                https://gstreamer.freedesktop.org/src/${my_name}/
+
+checksums                   rmd160  831d0bdd2e156007364591cb7c70b1d001d85e24 \
+                            sha256  822e008a910e9dd13aedbdd8dc63fedef4040c0ee2e927bab3112e9de693a548 \
+                            size    285416
+
+set py_ver                  3.9
+set py_ver_nodot            [string map {. {}} ${py_ver}]
+
+depends_build-append        port:pkgconfig \
+                            port:python${py_ver_nodot} \
+                            port:nasm
+
+depends_lib-append          port:gstreamer1-gst-plugins-base \
+                            port:ffmpeg
+
+configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
+configure.python            ${prefix}/bin/python${py_ver}
+
+configure.args-append       -Ddoc=disabled
+
+livecheck.type              regex
+livecheck.url               ${master_sites}
+livecheck.regex             "${my_name}-(\\d+\\\.\\d*\[02468\](?:\\.\\d+)*)${extract.suffix}"
