@@ -18,7 +18,7 @@ long_description            ${name} is an implementation of the high-performance
                             runs on Apple's Metal graphics framework.
 
 # MoltenVK version from https://github.com/Gcenx/MoltenVK/releases
-version                     1.1.6
+version                     1.1.7
 
 subport MoltenVK {
     name                    MoltenVK
@@ -30,9 +30,9 @@ subport MoltenVK {
     distname                macos-${version}${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  995023832d778a7298d8b1ab9fb1afd0bbd24ec7 \
-                            sha256  0ea92557314e961efaadde3b005f63576874b32769c2fe9b672e8ee2440fa0f3 \
-                            size    9172156
+    checksums               rmd160  e9011f0e07bada7c63955251c154b7769f419379 \
+                            sha256  f75c4997ccc79edd882aa82353f6df2725964a7f4e5549b0a52ade8da0843b3f \
+                            size    9326080
 }
 
 subport MoltenVK-CX {
@@ -55,15 +55,15 @@ subport MoltenVK-DXVK {
     name                    MoltenVK-DXVK
     conflicts               MoltenVK MoltenVK-CX VulkanSDK
     set my_name             MoltenVK-DXVK
-    revision                2
+    revision                0
     use_xz                  yes
     extract.suffix          .tar.xz
-    distname                macos_dxvk_patched-${version}_${revision}${extract.suffix}
+    distname                macos_dxvk_patched-${version}${extract.suffix}
     distfiles               ${distname}
 
-    checksums               rmd160  d7457224d1669782a0ea3dce69bef0ec675bf033 \
-                            sha256  5f01842bfdc010a828f8b8914b619364d16566c8febae753db366811178c4a15 \
-                            size    9160020
+    checksums               rmd160  aba6ef31a36047a75f5e64a1bae19294a8a1c689 \
+                            sha256  4034680235fce17e806704087b8b122b13eab791c26656497168f217d5ebc5bf \
+                            size    9194684
 }
 
 # Keep all distfiles in one subdirectory
