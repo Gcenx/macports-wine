@@ -5,6 +5,7 @@ PortGroup                   github 1.0
 PortGroup                   cmake 1.1
 
 github.setup                4creators jxrlib 2019.10.9 v
+github.tarball_from         archive
 version                     1.1
 
 categories                  graphics
@@ -15,18 +16,16 @@ platforms                   darwin
 description                 Open source implementation of jpegxr
 long_description            ${description}
 
-# GitHub requires TLS v1.2
-if {${os.major} > 15} {
-    github.tarball_from         archive
-} else {
-    depends_fetch-append        port:curl
+# Workaround TLS v1.2 requirements
+if {${os.major} <= 15} {
+    depends_fetch-append    port:curl
     depends_skip_archcheck-append curl
-    
+
     fetch {
-            # Manually download the file(s) if they don't exist
-            if {![file exists ${distpath}/${github.project}-${github.version}.tar.gz ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${github.project}-${github.version}.tar.gz https://github.com/${github.author}/${github.project}/archive/refs/tags/${github.tag_prefix}${github.version}.tar.gz"
-            }
+        # Manually download the file(s) if they don't exist
+        if {![file exists ${distpath}/${github.project}-${github.version}${extract.suffix} ]} {
+            system -W ${distpath} "${prefix}/bin/curl -Lo ${github.project}-${github.version}${extract.suffix} https://github.com/${github.author}/${github.project}/${github.tarball_from}/refs/tags/${github.tag_prefix}${github.version}${extract.suffix}"
+        }
     }
 }
 

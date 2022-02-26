@@ -48,22 +48,22 @@ subport wine-gecko-2.47.1 {
     set wine_gecko_distfile     ${distname}-x86.tar.bz2
     set wine_gecko64_distfile   ${distname}-x86_64.tar.bz2
 
-    # GitHub requires TLS v1.2
-    if {${os.major} > 15} {
-        master_sites            https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
-    } else {
+    master_sites            https://github.com/Gcenx/macports-wine/releases/download/${version}/:winegecko
+
+    # Workaround TLS v1.2 requirements
+    if {${os.major} <= 15} {
         depends_fetch-append    port:curl
         depends_skip_archcheck-append \
                                 curl
 
         fetch {
-                # Manually download the file(s) if they don't exist
-                if {![file exists ${distpath}/${wine_gecko_distfile} ]} {
-                    system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${wine_gecko_distfile} https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko_distfile}"
-                }
-                if {![file exists ${distpath}/${wine_gecko64_distfile} ]} {
-                    system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${wine_gecko64_distfile} https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko64_distfile}"
-                }
+        # Manually download the file(s) if they don't exist
+            if {![file exists ${distpath}/${wine_gecko_distfile} ]} {
+                system "${prefix}/bin/curl -Lo ${distpath}/${wine_gecko_distfile} https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko_distfile}"
+            }
+            if {![file exists ${distpath}/${wine_gecko64_distfile} ]} {
+                system "${prefix}/bin/curl -Lo ${distpath}/${wine_gecko64_distfile} https://github.com/Gcenx/macports-wine/releases/download/${version}/${wine_gecko64_distfile}"
+            }
         }
     }
 
