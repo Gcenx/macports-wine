@@ -284,8 +284,7 @@ platform darwin {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
         depends_skip_archcheck-append           MoltenVK \
                                                 MoltenVK-CX \
-                                                MoltenVK-DXVK \
-                                                VulkanSDK
+                                                MoltenVK-DXVK
         lappend merger_configure_args(x86_64)   --with-vulkan \
                                                 ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
                                                 ac_cv_lib_soname_vulkan=
