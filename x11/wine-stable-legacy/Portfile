@@ -312,14 +312,55 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
-    if {${os.major} < 12} {
+    if { ${os.major } eq 11 } {
+        notes-append "
+            \n
+            ${name} @${version} will have issues launching some things as wine-preloader\
+            was designed for OS X 10.7 and not OS X 10.6
+        "
+    }
+
+    if {${os.major} eq 10} {
+        # https://trac.macports.org/ticket/61721
+        compiler.whitelist          macports-clang-5.0
+        depends_build-append        port:libmacho
+        configure.ldflags-append    -lmacho
+        patchfiles-append           patch-wine-SnowLeopard.diff
+
+        # https://github.com/wine-mirror/wine/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
+        # "-no_new_main" is needed for preloader, since wine-4.0-rc1
+        require_active_variants     port:ld64 ld64_274
+
+        # https://github.com/wine-mirror/wine/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
+        # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
+        reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
+
+        # https://github.com/wine-mirror/wine/commit/eea87600d21adcd910f72f1cdaf698451884f582
+        # Features don't exist in IOKit until 10.7, since wine-4.21
+        patchfiles-append           0001-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
+
+        configure.sdk_version   10.7
+        if {${configure.sdkroot} eq ""} {
+            pre-fetch {
+                error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
+            }
+        }
+
+        notes-append "
+            \n
+            ${name} @${version} will have issues launching some things as wine-preloader\
+            was designed for OS X 10.7 and not OS X 10.6
+        "
+    }
+
+    if {${os.major} < 10} {
         known_fail yes
         archive_sites
         distfiles
         depends_build
         depends_lib
         pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+            ui_error "${name} @${version} requires Mac OS X 10.6 or later."
             return -code error "incompatible Mac OS X version"
         }
     }
@@ -368,5 +409,4 @@ if {${universal_possible} && [variant_isset universal]} {
     "
 }
 
-livecheck.type              regex
-livecheck.regex             {"/announce/([^"]+)"}
+livecheck.type              none
