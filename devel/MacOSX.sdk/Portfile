@@ -15,7 +15,7 @@ license                 Restrictive Nomirror
 
 homepage                https://developer.apple.com/macos/
 
-dist_subdir
+dist_subdir             MacOSX.sdk
 use_bzip2               yes
 
 subport MacOSX11.3.sdk {
