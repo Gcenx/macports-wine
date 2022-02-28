@@ -29,7 +29,7 @@ if {${os.major} <= 15} {
     fetch {
         # Manually download the file(s) if they don't exist
         if {![file exists ${distpath}/${github.project}-${github.version}${extract.suffix} ]} {
-            system "${prefix}/bin/curl -Lo ${distpath}/${github.project}-${github.version}${extract.suffix} https://github.com/${github.author}/${github.project}/archive/refs/tags/${github.version}${extract.suffix}"
+            system -W ${distpath} "${prefix}/bin/curl -Lo ${github.project}-${github.version}${extract.suffix} https://github.com/${github.author}/${github.project}/${github.tarball_from}/refs/tags/${github.version}${extract.suffix}"
         }
     }
 }
