@@ -1,9 +1,12 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            alexey-lysiuk macos-sdk 11.3
+github.tarball_from     releases
 
 name                    MacOSX.sdk
-version                 11.3
 categories              devel
 platforms               macosx
 maintainers             {gcenx @gcenx}
@@ -11,6 +14,9 @@ maintainers             {gcenx @gcenx}
 license                 Restrictive Nomirror
 
 homepage                https://developer.apple.com/macos/
+
+dist_subdir
+use_bzip2               yes
 
 subport MacOSX11.3.sdk {
     set macos_name      {macOS Big Sur}
@@ -153,7 +159,7 @@ subport QuickTime.framework {
                         size    36006642
 }
 
-# Earlier SDKs contain binaries not .tbd stubs causing rev-upgrade to believe the installed SDKs are broken
+# Earlier SDKs contain binaries not .tbd stubs causing rev-upgrade to incorrectly believe the installed SDKs are broken
 
 set sdk_dir             ${prefix}/Developer/SDKs
 set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
@@ -162,22 +168,18 @@ use_configure           no
 
 destroot.violate_mtree  yes
 
-use_bzip2               yes
+# Placed here so we can override the version
 distname                MacOSX${version}
-extract.suffix          .tar.bz2
-master_sites            https://github.com/alexey-lysiuk/macos-sdk/releases/download/${version}/
+master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
 
 # Workaround TLS v1.2 requirements
 if {${os.major} <= 15} {
-    depends_fetch-append \
-                        port:curl
-    depends_skip_archcheck-append \
-                        curl
-
+    depends_fetch-append port:curl
+    depends_skip_archcheck-append curl
     fetch {
         # Manually download the file(s) if they don't exist
         if {![file exists ${distpath}/${distname}${extract.suffix} ]} {
-            system "${prefix}/bin/curl -Lo ${distpath}/${distname}${extract.suffix} ${master_sites}/${distname}${extract.suffix}"
+            system -W ${distpath} "${prefix}/bin/curl -Lo ${distname}${extract.suffix} ${master_sites}/${distname}${extract.suffix}"
         }
     }
 }
@@ -199,7 +201,7 @@ if {${subport} eq "QuickTime.framework"} {
 } elseif {${subport} eq ${name}} {
     revision            0
     description         latest macOS SDK
-    long_description    This port installs a link to the latest macOS SDK.
+    long_description    This port installs a symlink to the latest macOS SDK.
     distfiles
     supported_archs     noarch
     depends_run-append  port:MacOSX${version}.sdk
