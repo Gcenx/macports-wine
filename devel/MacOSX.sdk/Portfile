@@ -244,5 +244,3 @@ if {${os.major} < 12} {
         return -code error "incompatible Mac OS X version"
     }
 }
-
-livecheck.type      none
