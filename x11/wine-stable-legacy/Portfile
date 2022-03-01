@@ -87,7 +87,6 @@ depends_lib                 port:fontconfig \
                             port:libpcap \
                             port:libpng \
                             port:libusb \
-                            port:libunwind \
                             port:libxml2 \
                             port:libxslt \
                             port:mpg123 \

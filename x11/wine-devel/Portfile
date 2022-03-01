@@ -84,7 +84,6 @@ depends_lib                 port:fontconfig \
                             port:libpcap \
                             port:libsdl2 \
                             port:libusb \
-                            port:libunwind \
                             port:openal-soft \
                             port:wine-gecko \
                             port:wine-mono
