@@ -3,7 +3,7 @@
 PortSystem                  1.0
 PortGroup                   github 1.0
 
-github.setup                gcenx MoltenVK 1.1.7 v
+github.setup                gcenx MoltenVK 1.1.8 v
 github.tarball_from         releases
 
 categories                  graphics
@@ -27,9 +27,9 @@ if {${subport} eq ${name}} {
     revision                0
 
     distname                macos-${version}
-    checksums               rmd160  e9011f0e07bada7c63955251c154b7769f419379 \
-                            sha256  f75c4997ccc79edd882aa82353f6df2725964a7f4e5549b0a52ade8da0843b3f \
-                            size    9326080
+    checksums               rmd160  58c82ca7464b7652b992b1706bab34802e45f68f \
+                            sha256  cda4878b7e1b278a27a7b7b65c71e8d212f97a98b92fb9db614eacf4052565bd \
+                            size    9324092
 }
 
 subport ${name}-CX {
@@ -48,9 +48,9 @@ subport ${name}-DXVK {
     revision                0
 
     distname                macos_dxvk_patched-${version}
-    checksums               rmd160  aba6ef31a36047a75f5e64a1bae19294a8a1c689 \
-                            sha256  4034680235fce17e806704087b8b122b13eab791c26656497168f217d5ebc5bf \
-                            size    9194684
+    checksums               rmd160  80c2fe044f5a885158904ccd86c1e62fd72d7971 \
+                            sha256  52d9967d7dffd583105e6100d35b344a6e36f96a111b472cebf2da530023dad9 \
+                            size    9324576
 }
 
 # Placed here we can override the version
