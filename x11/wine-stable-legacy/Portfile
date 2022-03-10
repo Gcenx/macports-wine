@@ -311,7 +311,7 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
-    if { ${os.major } eq 11 } {
+    if { ${os.major} eq 11 } {
         notes-append "
             \n
             ${name} @${version} will have issues launching some things as wine-preloader\
