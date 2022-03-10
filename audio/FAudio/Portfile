@@ -20,7 +20,7 @@ long_description        an XAudio reimplementation that focuses solely on develo
                         including XAudio2, X3DAudio, XAPO, and XACT3.
 
 # Workaround TLS v1.2 requirements
-if {${os.major} <= 15} {
+if {${os.major} < 19} {
     depends_fetch-append \
                         port:curl
     depends_skip_archcheck-append \

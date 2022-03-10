@@ -54,7 +54,7 @@ master_sites                https://github.com/wine-mirror/wine/archive/:winesou
                             https://github.com/wine-staging/wine-staging/archive/:stagingsource
 
 # Workaround TLS v1.2 requirements
-if {${os.major} <= 15} {
+if {${os.major} < 19} {
     depends_fetch-append    port:curl
     depends_skip_archcheck-append \
                             curl
