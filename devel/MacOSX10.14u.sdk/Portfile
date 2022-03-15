@@ -1,0 +1,86 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+
+name                        MacOSX10.14u.sdk
+version                     1.0
+categories                  devel
+platforms                   macosx
+maintainers                 {gcenx @gcenx}
+
+license                     Restrictive Nomirror
+
+homepage                    https://developer.apple.com/macos/
+
+set sdk_dir                 ${prefix}/Developer/SDKs
+set sdk_dir2                /Library/Developer/CommandLineTools/SDKs
+use_configure               no
+destroot.violate_mtree      yes
+
+distname                    CLTools_Executables
+extract.suffix              pkg
+
+distfiles                   ${distname}.${extract.suffix}
+
+checksums                   rmd160  8cd648ba0ed42f5bd0a973ee5b445dc01cbf3ce9 \
+                            sha256  d838087fb0d414a50fe4e0748b927bb148b5e8fa93fd5fdb2ae835068d42f8b7 \
+                            size    177616317
+
+master_sites                http://swcdn.apple.com/content/downloads/41/57/061-26573-A_JMOA8GZGDR/lj8yrtu8dgs40fw9k8f5fkoviwkp0og6vs
+
+extract {}
+
+pre-build {
+    if {![file exists /usr/include ]} {
+        system -W ${distpath} "pkgutil --expand-ful CLTools_Executables.pkg ${workpath}/temp"
+        system -W ${workpath}/temp "chmod 755 Payload"
+
+        elevateToRoot "installer"
+        system -W ${workpath}/temp/Payload/Library/Developer/CommandLineTools/Packages "installer -pkg macOS_SDK_headers_for_macOS_10.14.pkg -target /"
+    }
+}
+
+build {
+    xinstall -d ${workpath}/${name}
+    xinstall -m 644 ${filespath}/SDKSettings.json ${workpath}/${name}/SDKSettings.json
+    xinstall -m 644 ${filespath}/Entitlements.plist ${workpath}/${name}/Entitlements.plist
+    xinstall -m 644 ${filespath}/SDKSettings.plist ${workpath}/${name}/SDKSettings.plist
+    ln -s /usr ${workpath}/${name}/usr
+    ln -s /System ${workpath}/${name}/System
+    ln -s /Library ${workpath}/${name}/Library
+}
+
+pre-destroot {
+    xinstall -d ${destroot}${sdk_dir}
+    xinstall -d ${destroot}${sdk_dir2}
+}
+
+description         ${name}
+long_description    This port installs the ${name}.
+destroot {
+    move ${workpath}/${name} ${destroot}${sdk_dir}
+
+    # Check if the SDK exits before adding a symlink
+    # can't use ${developer_dir}/SDKs as that could return Xcode
+    if {![file exists ${sdk_dir2}/${name} ]} {
+        ln -sf ${sdk_dir}/${name} ${destroot}${sdk_dir2}/${name}
+    }
+}
+
+if {${os.major} != 18} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} requires MacOS 10.14."
+        return -code error "incompatible Mac OS X version"
+    }
+}
+
+variant universal {}
+default_variants +universal
+variant_set universal
+
+livecheck.type      none
