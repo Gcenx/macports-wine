@@ -15,7 +15,8 @@ license                 Restrictive Nomirror
 
 homepage                https://developer.apple.com/macos/
 
-default dist_subdir     MacOSX.sdk
+dist_subdir             MacOSX.sdk
+use_bzip2               yes
 
 subport MacOSX11.3.sdk {
     set macos_name      {macOS Big Sur}
