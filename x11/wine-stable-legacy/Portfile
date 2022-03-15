@@ -311,20 +311,17 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
 
-    if { ${os.major} eq 11 } {
-        notes-append "
-            \n
-            ${name} @${version} will have issues launching some things as wine-preloader\
-            was designed for OS X 10.7 and not OS X 10.6
-        "
-    }
-
     if {${os.major} eq 10} {
         # https://trac.macports.org/ticket/61721
         compiler.whitelist          macports-clang-5.0
         depends_build-append        port:libmacho
         configure.ldflags-append    -lmacho
         patchfiles-append           patch-wine-SnowLeopard.diff
+
+        # still fails to compile on buildbots
+        depends_lib-delete                          port:openal-soft
+        configure.args-delete                       --with-openal
+        configure.args-append                       --without-openal
 
         # https://github.com/wine-mirror/wine/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
         # "-no_new_main" is needed for preloader, since wine-4.0-rc1
