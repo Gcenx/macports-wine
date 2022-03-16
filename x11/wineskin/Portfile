@@ -6,7 +6,7 @@ version             1.8.4.2
 
 revision            1
 categories          x11
-maintainers         {gcenx @gcenx} openmaintainer
+maintainers         {@gcenx}
 license             LGPL-2.1
 platforms           darwin
 description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS/Mac OS X.

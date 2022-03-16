@@ -12,7 +12,7 @@ set my_name                 gst-plugins-base
 version                     1.18.5
 description                 This is gst-plugins, a set of plug-ins for GStreamer.
 long_description            ${description}
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 categories                  gnome
 platforms                   darwin
 license                     LGPL-2+

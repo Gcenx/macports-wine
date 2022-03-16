@@ -16,7 +16,7 @@ long_description            GStreamer Good Plug-ins is a set of plug-ins that GS
                             consider to have good quality code, correct functionality, and their \
                             preferred license (LGPL for the plug-in code, LGPL or LGPL-compatible for \
                             the supporting library).
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 categories                  gnome
 platforms                   darwin
 license                     LGPL-2+

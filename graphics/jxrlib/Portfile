@@ -9,7 +9,7 @@ github.tarball_from         archive
 version                     1.1
 
 categories                  graphics
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 license                     BSD
 
 platforms                   darwin

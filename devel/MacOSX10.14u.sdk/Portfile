@@ -6,7 +6,7 @@ name                        MacOSX10.14u.sdk
 version                     1.0
 categories                  devel
 platforms                   macosx
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 
 license                     Restrictive Nomirror
 

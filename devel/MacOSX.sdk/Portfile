@@ -9,7 +9,7 @@ github.tarball_from     releases
 name                    MacOSX.sdk
 categories              devel
 platforms               macosx
-maintainers             {gcenx @gcenx}
+maintainers             {@gcenx}
 
 license                 Restrictive Nomirror
 

@@ -7,7 +7,7 @@ github.setup                gcenx MoltenVK 1.1.8 v
 github.tarball_from         releases
 
 categories                  graphics
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 platforms                   macosx
 license                     Apache-2
 

@@ -13,7 +13,7 @@ revision                0
 license                 LGPL-2+
 categories              audio
 platforms               darwin
-maintainers             {gcenx @gcenx} openmaintainer
+maintainers             {@gcenx}
 description             XAudio reimplementation
 long_description        an XAudio reimplementation that focuses solely on developing \
                         fully accurate DirectX Audio runtime libraries for the FNA project,\

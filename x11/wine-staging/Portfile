@@ -28,7 +28,7 @@ categories                  x11
 
 # arm64 compile of wine requires mingw-w64-clang but will only support arm64 Windows binaries
 supported_archs             i386 x86_64
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
 platforms                   darwin
 distname                    ${my_name}-${version}
