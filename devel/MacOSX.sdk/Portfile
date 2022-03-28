@@ -24,9 +24,9 @@ subport MacOSX11.3.sdk {
     version             11.3
     revision            0
     supported_archs     arm64 x86_64
-    
+
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
-    
+
     checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
                         sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
                         size    75910500
@@ -38,9 +38,9 @@ subport MacOSX10.15.sdk {
     version             10.15
     revision            0
     supported_archs     x86_64
-    
+
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-catalina-10_15-release-notes
-    
+
     checksums           rmd160  580ec054e9d38fe846ce597a0f775d3fc46526b5 \
                         sha256  bb548125ebf5cf4ae6c80d226f40ad39e155564ca78bc00554a2e84074d0180e \
                         size    41636648
@@ -52,9 +52,9 @@ subport MacOSX10.14.sdk {
     version             10.14
     revision            0
     supported_archs     x86_64
-    
+
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-mojave-10_14-release-notes
-    
+
     checksums           rmd160  7684478f171e30842274fafb784b91a8e79485dd \
                         sha256  e0a9747ae9838aeac70430c005f9757587aa055c690383d91165cf7b4a80401d \
                         size    31704241
@@ -66,17 +66,17 @@ subport MacOSX10.13.sdk {
     version             10.13
     revision            0
     supported_archs     i386 x86_64
-    
+
     homepage            https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13/
-    
+
     checksums           rmd160  255ee173939065c9d1b7433f287163cdd00e0033 \
                         sha256  27943fb63c35e262b2da1cb4cc60d7427702a40caf20ec15c9d773919c6e409b \
                         size    32183283
-    
+
     variant quicktime description "Remove stub and install QuickTime.framework from MacOSX10.11.SDK" {
         depends_lib-append              port:QuickTime.framework
         depends_skip_archcheck-append   QuickTime.framework
-        
+
         post-destroot {
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
             ln -sf ${frameworks_dir}/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
@@ -90,17 +90,17 @@ subport MacOSX10.12.sdk {
     version             10.12
     revision            0
     supported_archs     i386 x86_64
-    
+
     homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_12Notes
-    
+
     checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
                         sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
                         size    36301027
-    
+
     variant quicktime description "Remove stub and install QuickTime.framework from MacOSX10.11.SDK" {
         depends_lib-append              port:QuickTime.framework
         depends_skip_archcheck-append   QuickTime.framework
-        
+
         post-destroot {
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
             ln -sf ${frameworks_dir}/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
@@ -123,13 +123,13 @@ subport MacOSX10.11.sdk {
     version             10.11
     revision            0
     supported_archs     i386 x86_64
-    
+
     homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_11Notes
-    
+
     checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
-    
+
     post-destroot {
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
@@ -137,7 +137,7 @@ subport MacOSX10.11.sdk {
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
         file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
-        
+
         # iTunesAccess.framework contains a binary not a .tbd stub causing rev-upgrade to believe iTunesAccess.framework is broken
         if {${os.major} > 18} {
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
@@ -150,10 +150,10 @@ subport QuickTime.framework {
     set xcode_vers      7.3
     version             10.11
     revision            0
-    
+
     # Can't set archs i386 or macports will refuse to install on 64Bit only versions of macOS
     #supported_archs     i386
-    
+
     checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
@@ -194,7 +194,7 @@ pre-destroot {
 if {${subport} eq "QuickTime.framework"} {
     description         QuickTime is an extensible multimedia framework developed by Apple Inc.
     long_description    ${description}
-    
+
     destroot {
         move ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${frameworks_dir}
     }
@@ -212,12 +212,12 @@ if {${subport} eq "QuickTime.framework"} {
     set macos_version   [lindex [split ${version} -] 0]
     set macos_build     [lindex [split ${version} -] 1]
     set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
-    
+
     description         ${macos_name} v${macos_version} (${macos_build}) SDK
     long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
     destroot {
         move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
-        
+
         # Check if the SDK exits before adding a symlink
         # can't use ${developer_dir}/SDKs as that could return Xcode
         if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
@@ -227,6 +227,7 @@ if {${subport} eq "QuickTime.framework"} {
 }
 
 if {[llength ${supported_archs}] > 1} {
+    configure.universal_archs {*}${supported_archs}
     variant universal {}
     default_variants +universal
     variant_set universal
