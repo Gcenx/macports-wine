@@ -21,7 +21,7 @@ name                        wine-stable
 conflicts                   wine wine-stable-legacy wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     7.0
-revision                    1
+revision                    2
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -99,8 +99,8 @@ patch.pre_args              -p1
 patchfiles-append           patch-noflicker.diff
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
-# Bump wine-mono to 7.1.1
-# https://github.com/wine-mirror/wine/commit/17b34ca8ad8f4e2f81d69a0849699d5aa0853888
+# Bump wine-mono to 7.2.0
+# https://github.com/wine-mirror/wine/commit/1f8eb4a9c28417ee98f90aa8a5a95177088d082a
 patchfiles-append           patch-mscore_update_wine_mono.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=52354
