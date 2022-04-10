@@ -3,7 +3,7 @@
 PortSystem                  1.0
 PortGroup                   github 1.0
 
-github.setup                gcenx MoltenVK 1.1.8 v
+github.setup                gcenx MoltenVK 1.1.9 v
 github.tarball_from         releases
 
 categories                  graphics
@@ -27,9 +27,9 @@ if {${subport} eq ${name}} {
     revision                0
 
     distname                macos-${version}
-    checksums               rmd160  58c82ca7464b7652b992b1706bab34802e45f68f \
-                            sha256  cda4878b7e1b278a27a7b7b65c71e8d212f97a98b92fb9db614eacf4052565bd \
-                            size    9324092
+    checksums               rmd160  eab38aecdd4ccc03bf83ce868f899757821fc7ab \
+                            sha256  d49c00d303e3a0fe3c30d84173a446efc5d69ad723e59022aae2878c341648dc \
+                            size    9325280
 }
 
 subport ${name}-CX {
@@ -47,7 +47,7 @@ subport ${name}-DXVK {
     conflicts               MoltenVK MoltenVK-CX
     revision                0
 
-    distname                macos_dxvk_patched-${version}
+    distname                macos_dxvk_patched-1.1.8
     checksums               rmd160  80c2fe044f5a885158904ccd86c1e62fd72d7971 \
                             sha256  52d9967d7dffd583105e6100d35b344a6e36f96a111b472cebf2da530023dad9 \
                             size    9324576
