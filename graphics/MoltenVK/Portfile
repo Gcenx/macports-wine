@@ -23,7 +23,7 @@ dist_subdir                 MoltenVK
 use_xz                      yes
 
 if {${subport} eq ${name}} {
-    conflicts               MoltenVK-CX MoltenVK-DXVK
+    conflicts               MoltenVK-CX
     revision                0
 
     distname                macos-${version}
@@ -43,14 +43,10 @@ subport ${name}-CX {
                             size    8500388
 }
 
+# subport is no longer required, keep around for a couple of MoltenVK versions to ensure everyone is moved over
 subport ${name}-DXVK {
-    conflicts               MoltenVK MoltenVK-CX
-    revision                0
-
-    distname                macos_dxvk_patched-1.1.8
-    checksums               rmd160  80c2fe044f5a885158904ccd86c1e62fd72d7971 \
-                            sha256  52d9967d7dffd583105e6100d35b344a6e36f96a111b472cebf2da530023dad9 \
-                            size    9324576
+    revision                1
+    replaced_by             MoltenVK
 }
 
 # Placed here we can override the version
