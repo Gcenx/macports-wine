@@ -7,7 +7,6 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `jxrlib` *(v1.1)*
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `MoltenVK` *(v1.1.9)*
-- `MoltenVK-DXVK` *(v1.1.8)*
 - `wine-stable-legacy` *(v6.0.3)*
 - `wine-stable` *(v7.0.0)*
 - `wine-devel` *(v7.6)*
