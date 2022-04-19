@@ -343,6 +343,8 @@ if {${os.endian} eq "big"} {
     }
 }
 
+destroot.target install-lib
+
 post-destroot {
     # Add custom tool for easy launching explorer
     xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
