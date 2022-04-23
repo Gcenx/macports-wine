@@ -121,6 +121,14 @@ if {${os.major} < 18} {
 # Older versions of macOS have expired certs, this allows using macports curl certs
 patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
 
+# back-ported from wine-7.4 to avoid needing a VKD3D Portfile
+# https://github.com/wine-mirror/wine/commit/97db56ab6146733141b3afc90252c061b1ec37dd
+patchfiles-append           vkd3d.diff
+
+post-patch {
+    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+}
+
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
                                                                     gethostbyaddr_r \
@@ -174,7 +182,6 @@ configure.args              --without-alsa \
                             --with-unwind \
                             --with-usb \
                             --without-v4l2 \
-                            --without-vkd3d \
                             --without-xcomposite \
                             --without-xcursor \
                             --without-xfixes \
