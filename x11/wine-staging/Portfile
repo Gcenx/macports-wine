@@ -112,8 +112,8 @@ post-extract {
 
 patch.pre_args              -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=52354
 # revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
+# https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 18} {
     patchfiles-append       0001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
                             0002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
@@ -125,6 +125,13 @@ if {${os.major} < 18} {
         \n
         Reverts have been applied for Bug 52354, \"winemac.drv not functional on non metal GPUs\"
     "
+}
+
+# Older versions of macOS have expired certs, this allows using macports curl certs
+patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
+
+post-patch {
+    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \

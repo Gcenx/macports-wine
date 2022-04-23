@@ -21,7 +21,7 @@ name                        wine-stable-legacy
 conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     6.0.3
-revision                    0
+revision                    1
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -103,6 +103,13 @@ patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append           patch-noflicker.diff
+
+# Older versions of macOS have expired certs, this allows using macports curl certs
+patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
+
+post-patch {
+    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+}
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \

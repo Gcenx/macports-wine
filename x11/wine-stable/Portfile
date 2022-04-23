@@ -21,7 +21,7 @@ name                        wine-stable
 conflicts                   wine wine-stable-legacy wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     7.0
-revision                    2
+revision                    3
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -103,8 +103,8 @@ patchfiles-append           patch-noflicker.diff
 # https://github.com/wine-mirror/wine/commit/1f8eb4a9c28417ee98f90aa8a5a95177088d082a
 patchfiles-append           patch-mscore_update_wine_mono.diff
 
-# https://bugs.winehq.org/show_bug.cgi?id=52354
 # revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
+# https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 18} {
     patchfiles-append       0001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
                             0002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
@@ -117,6 +117,9 @@ if {${os.major} < 18} {
         Reverts have been applied for Bug 52354, \"winemac.drv not functional on non metal GPUs\"
     "
 }
+
+# Older versions of macOS have expired certs, this allows using macports curl certs
+patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
