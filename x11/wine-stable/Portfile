@@ -124,8 +124,8 @@ patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
 # back-ported from wine-7.4 to avoid needing a VKD3D Portfile
 # https://github.com/wine-mirror/wine/commit/97db56ab6146733141b3afc90252c061b1ec37dd
 # https://github.com/wine-mirror/wine/commit/6a062afb75c1e026614403312f2e13207e359634
-patchfiles-append           vkd3d.diff \
-                            vkd3d_part_2.diff
+#patchfiles-append           vkd3d.diff \
+#                            vkd3d_part_2.diff
 
 post-patch {
     reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
