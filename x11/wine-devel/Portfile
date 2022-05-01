@@ -270,9 +270,7 @@ platform darwin {
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        depends_skip_archcheck-append           MoltenVK \
-                                                MoltenVK-CX \
-                                                MoltenVK-DXVK
+        depends_skip_archcheck-append           MoltenVK
         lappend merger_configure_args(x86_64)   --with-vulkan \
                                                 ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
                                                 ac_cv_lib_soname_vulkan=
