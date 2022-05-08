@@ -89,9 +89,11 @@ depends_lib                 port:fontconfig \
                             port:wine-mono
 
 depends_build               port:bison \
+                            port:cctools \
                             port:flex \
                             port:mingw-w64 \
-                            port:pkgconfig
+                            port:pkgconfig \
+                            port:ld64
 
 patch.pre_args              -p1
 

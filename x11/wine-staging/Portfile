@@ -102,9 +102,11 @@ depends_lib                 port:fontconfig \
 
 depends_build               port:autoconf \
                             port:bison \
+                            port:cctools \
                             port:flex \
                             port:mingw-w64 \
-                            port:pkgconfig
+                            port:pkgconfig \
+                            port:ld64
 
 post-extract {
     system -W ${workpath}/wine-staging-${staging_version}/patches "sh patchinstall.sh DESTDIR=${worksrcpath} --all"
