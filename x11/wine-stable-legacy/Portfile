@@ -20,8 +20,8 @@ legacysupport.newest_darwin_requires_legacy 13
 name                        wine-stable-legacy
 conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     6.0.3
-revision                    1
+version                     6.0.4
+revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -69,9 +69,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  440af3e81e32128e6e255225d3ff1ec829fa5fff \
-                            sha256  3d8dd79b4d7ed336ab93d538ea0d0e610c9112d01ee3657cb6175799fbbcfc49 \
-                            size    40525753
+                            rmd160  c136de5fe6a7e3b5620ecd0afb272d165c1d9ec6 \
+                            sha256  ca50376e3f7200493214daa5f7fd1145bfc9dd085c4814e4d502d4723e7b52a6 \
+                            size    40532584
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -273,18 +273,6 @@ platform darwin {
     depends_lib-delete                          port:fontconfig
     configure.args-delete                       --with-fontconfig
     configure.args-append                       --without-fontconfig
-
-    # https://trac.macports.org/ticket/64548
-    if {${os.major} < 14} {
-        depends_lib-delete                          port:openal-soft
-        configure.args-delete                       --with-openal
-        configure.args-append                       --without-openal
-
-        notes-append "
-            \n
-            openal-soft support disabled see https://trac.macports.org/ticket/64548
-        "
-    }
 
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
