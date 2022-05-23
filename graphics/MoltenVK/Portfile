@@ -24,17 +24,17 @@ use_xz                      yes
 
 if {${subport} eq ${name}} {
     conflicts               MoltenVK-CX
-    revision                0
+    revision                1
 
-    distname                macos-${version}
-    checksums               rmd160  eab38aecdd4ccc03bf83ce868f899757821fc7ab \
-                            sha256  d49c00d303e3a0fe3c30d84173a446efc5d69ad723e59022aae2878c341648dc \
-                            size    9325280
+    distname                macos-${version}-g2ebb72e
+    checksums               rmd160  c525259f620fdd2004691521f8bf6b91dcd61dc0 \
+                            sha256  c6ac4e748fa1aaf44be170a32139d4aad5b4c802195cdbffc1ec5758f557a47b \
+                            size    9354112
 }
 
 subport ${name}-CX {
     github.setup            gcenx MoltenVK 1.1.3 v
-    conflicts               MoltenVK MoltenVK-DXVK
+    conflicts               MoltenVK
     revision                0
 
     distname                macos_cx21
