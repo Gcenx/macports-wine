@@ -37,3 +37,15 @@ destroot {
     copy ${filespath}/setup_dxvk.sh ${destroot}${prefix}/bin/setup_dxvk.sh
     reinplace s|@@PREFIX@@|${prefix}|g ${destroot}${prefix}/bin/setup_dxvk.sh
 }
+
+platform darwin {
+    if {${os.major} < 15} {
+        archive_sites
+        distfiles
+        depends_build
+        pre-fetch {
+            ui_error "${subport} @${version} requires OS X El Capitan or later"
+            return -code error "incompatible OS X version"
+        }
+    }
+}
