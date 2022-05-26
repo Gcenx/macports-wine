@@ -1,6 +1,11 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        gcenx DXVK-macOS 1.10.1 v
+github.tarball_from releases
+
 categories          cross
 maintainers         {@gcenx}
 license             zlib
@@ -8,35 +13,38 @@ license             zlib
 supported_archs     noarch
 description         Vulkan-based implementation of D3D10 and D3D11 for macOS / Wine, MingW version
 long_description    ${description}
+
 name                x86_64-w64-mingw32-dxvk
-set my_name         x86_64-w64-mingw32-dxvk
+dist_subdir         x86_64-w64-mingw32-dxvk
 
 if {${subport} eq ${name}} {
-    version         1.10.1
     revision        0
-    
+    distname        dxvk-macOS-${version}
     checksums       rmd160  2d530f04f587b51e092a2658c90f09199e2f33f3 \
                     sha256  8832e0fadfcbb624cacbd2916f3774c97d303b29c0e24708b6195008ba090c99 \
                     size    2842826
 }
 
-distname            dxvk-macOS-${version}${extract.suffix}
+# Placed here so we can override the version
+master_sites        https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/v${version}
 
-master_sites        https://github.com/Gcenx/DXVK-macOS/releases/download/v${version}
-
-distfiles           ${distname}
-extract.only        ${distname}
-
-use_configure               no
+extract.only        ${distname}${extract.suffix}
+use_configure       no
 build {}
 
 destroot {
-    file mkdir ${destroot}${prefix}/share/wine/dxvk
-    copy ${workpath}/dxvk-macOS-${version}/x64 ${destroot}${prefix}/share/wine/dxvk
-    copy ${workpath}/dxvk-macOS-${version}/setup_dxvk.sh ${destroot}${prefix}/share/wine/dxvk/setup_dxvk.sh
-    copy ${filespath}/setup_dxvk.sh ${destroot}${prefix}/bin/setup_dxvk.sh
-    reinplace s|@@PREFIX@@|${prefix}|g ${destroot}${prefix}/bin/setup_dxvk.sh
+    copy ${filespath}/setup_dxvk.sh ${workpath}/setup_dxvk.sh
+    reinplace s|@@PREFIX@@|${prefix}|g ${workpath}/setup_dxvk.sh
+    xinstall -m 0755 -d ${destroot}${prefix}/share/wine/dxvk/x64
+    xinstall -m 0644 {*}[glob ${workpath}/${distname}/x64/*] ${destroot}${prefix}/share/wine/dxvk/x64
+    xinstall -m 0644 ${workpath}/${distname}/setup_dxvk.sh ${destroot}${prefix}/share/wine/dxvk/setup_dxvk.sh
+    xinstall -m 0644 ${workpath}/setup_dxvk.sh ${destroot}${prefix}/bin/setup_dxvk.sh
 }
+
+notes "
+Use setup_dxvk.sh to install the ${github.project} dlls into place.
+Running \"setup_dxvk.sh install\" will symlink the dlls into the WINEPREFIX.
+"
 
 platform darwin {
     if {${os.major} < 15} {
