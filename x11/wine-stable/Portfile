@@ -21,7 +21,7 @@ name                        wine-stable
 conflicts                   wine wine-stable-legacy wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     7.0
-revision                    3
+revision                    4
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
