@@ -18,7 +18,7 @@ name                x86_64-w64-mingw32-dxvk
 dist_subdir         x86_64-w64-mingw32-dxvk
 
 if {${subport} eq ${name}} {
-    revision        0
+    revision        1
     distname        dxvk-macOS-${version}
     checksums       rmd160  2d530f04f587b51e092a2658c90f09199e2f33f3 \
                     sha256  8832e0fadfcbb624cacbd2916f3774c97d303b29c0e24708b6195008ba090c99 \
