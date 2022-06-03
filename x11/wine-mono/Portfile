@@ -17,6 +17,17 @@ name                wine-mono
 set my_name         wine-mono
 
 if {${subport} eq ${name}} {
+    version         7.3.0
+    revision        0
+    
+    checksums       rmd160  47b94e94273c0fc6b6e5710fb3bfd3fcfb4de752 \
+                    sha256  60314f255031b2f4dc49f22eacfcd2b3b8b2b491120d703b4b62cc1fef0f9bdd \
+                    size    43557004
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
+subport wine-mono-7.2.0 {
     version         7.2.0
     revision        0
     
@@ -164,7 +175,7 @@ master_sites        http://dl.winehq.org/wine/wine-mono/${version}/:mono \
 distfiles           ${wine-mono_distfile}:mono
 extract.only        ${wine-mono_distfile}
 
-use_configure               no
+use_configure       no
 build {}
 
 destroot {
