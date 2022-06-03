@@ -43,7 +43,7 @@ destroot {
 
 notes "
 Use setup_dxvk.sh to install the ${github.project} dlls into place.
-Running \"setup_dxvk.sh install\" will symlink the dlls into the WINEPREFIX.
+Running \"setup_dxvk.sh install\" will install the dlls into the WINEPREFIX.
 "
 
 platform darwin {
