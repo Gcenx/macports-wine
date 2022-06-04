@@ -20,7 +20,7 @@ legacysupport.newest_darwin_requires_legacy 13
 name                        wine-devel
 conflicts                   wine wine-stable-legacy wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     7.9
+version                     7.10
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -69,9 +69,9 @@ extract.only                ${wine_distfile}
 distfiles                   ${wine_distfile}:winesource
 
 checksums                   ${wine_distfile} \
-                            rmd160  1bedaa462f02d31a22148f52c29dd4c52a6d8f46 \
-                            sha256  c69e0776eb1b03e4f469f94b26f0fc2606e579e9f6751842cef2f326cfbd9cd5 \
-                            size    45926626
+                            rmd160  9cfa8d43a68f53e42c2b0fb9713e62bc95e555df \
+                            sha256  a34963195bae03e6db4f654a5a4bab0f7686931a94a80df3f1ee20172fef3407 \
+                            size    46188904
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
@@ -98,7 +98,7 @@ depends_build               port:bison \
 patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           noflicker.diff
+patchfiles-append           0001-winemac.drv-No-Flicker-patch.diff
 
 # revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
 # https://bugs.winehq.org/show_bug.cgi?id=52354
