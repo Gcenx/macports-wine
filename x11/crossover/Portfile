@@ -49,6 +49,10 @@ build {
     # Can't remove Sparkle.framework so remove the update url
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
 
+    # Fix for macOS Ventura
+    delete ${workpath}/CrossOver.app/Contents/Resources/libcxsetupbase.py
+    xinstall -m 0644 ${filespath}/libcxsetupbase.py ${workpath}/CrossOver.app/Contents/Resources/libcxsetupbase.py
+    
     # Fix vkd3d-compiler (rev-upgrade)
     system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin \
         "install_name_tool -change /opt/cxoffice/lib64/libvkd3d-shader.1.dylib @rpath/libvkd3d-shader.1.dylib ./vkd3d-compiler"
