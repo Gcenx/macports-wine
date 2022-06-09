@@ -24,12 +24,12 @@ use_xz                      yes
 
 if {${subport} eq ${name}} {
     conflicts               MoltenVK-CX
-    revision                1
+    revision                2
 
-    distname                macos-${version}-pr1594
-    checksums               rmd160  aee4c901634022790194133fcd93c2c5ed022e2f \
-                            sha256  3aa89cc8e43451870db455dd6911429640288ff93af9fe3b524a8b4296e316f5 \
-                            size    9397720
+    distname                macos-${version}-ga909822
+    checksums               rmd160  385db5ed6a3dfb510879dcdcbd4f750ed3168a75 \
+                            sha256  e5830f206d2fb7d62df7de10e2426ceef4537868ec26f6fb03462bfe4850eaa1 \
+                            size    9384688
 }
 
 subport ${name}-CX {
