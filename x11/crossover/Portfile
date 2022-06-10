@@ -79,11 +79,11 @@ variant mod description {Update DXVK & MoltenVK} {
         delete ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
         xinstall -m 0644 ${filespath}/CrossOver.icns ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
 
-        # Add options to cxbottle.conf template
-        system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf \
-        && echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf \
-        && echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf \
-        && echo DXVK_HUD=devinfo,fps,version >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf" \
+        # Add required MoltenVK env options to cxbottle.conf template
+        system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        system "echo DXVK_HUD=devinfo,fps,version >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
 
         # Use port:MoltenVK
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
