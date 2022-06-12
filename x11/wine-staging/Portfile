@@ -53,23 +53,6 @@ long_description            Wine is a compatibility layer capable of running \
 master_sites                https://github.com/wine-mirror/wine/archive/:winesource \
                             https://github.com/wine-staging/wine-staging/archive/:stagingsource
 
-# Workaround TLS v1.2 requirements
-if {${os.major} < 19} {
-    depends_fetch-append    port:curl
-    depends_skip_archcheck-append \
-                            curl
-
-    fetch {
-        # Manually download the file(s) if they don't exist
-        if {![file exists ${distpath}/${wine_distfile} ]} {
-            system -W ${distpath} "${prefix}/bin/curl -Lo ${wine_distfile} https://github.com/wine-mirror/wine/archive/refs/tags/${wine_distfile}"
-        }
-        if {![file exists ${distpath}/${wine_staging_distfile} ]} {
-            system -W ${distpath} "${prefix}/bin/curl -Lo ${wine_staging_distfile} https://github.com/wine-staging/wine-staging/archive/refs/tags/${wine_staging_distfile}"
-        }
-    }
-}
-
 extract.only                ${wine_distfile} \
                             ${wine_staging_distfile}
 

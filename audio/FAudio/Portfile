@@ -19,21 +19,6 @@ long_description        an XAudio reimplementation that focuses solely on develo
                         fully accurate DirectX Audio runtime libraries for the FNA project,\
                         including XAudio2, X3DAudio, XAPO, and XACT3.
 
-# Workaround TLS v1.2 requirements
-if {${os.major} < 19} {
-    depends_fetch-append \
-                        port:curl
-    depends_skip_archcheck-append \
-                        curl
-
-    fetch {
-        # Manually download the file(s) if they don't exist
-        if {![file exists ${distpath}/${github.project}-${github.version}${extract.suffix} ]} {
-            system -W ${distpath} "${prefix}/bin/curl -Lo ${github.project}-${github.version}${extract.suffix} https://github.com/${github.author}/${github.project}/${github.tarball_from}/refs/tags/${github.version}${extract.suffix}"
-        }
-    }
-}
-
 depends_build-append    port:pkgconfig
 
 depends_lib-append      port:libsdl2 \
@@ -45,7 +30,7 @@ checksums               rmd160  1c058bc4b50fa1cce599987c7fdc649df25567bd \
                         size    1117366
 
 # Always use git patches
-patch.pre_args              -p1
+patch.pre_args          -p1
 
 # Remove hard-coded deployment target
 patchfiles              patch-faudio-remove-deployment-target.diff
@@ -57,8 +42,8 @@ configure.args          -DGSTREAMER=ON \
                         -DCMAKE_INSTALL_INCLUDEDIR=include/FAudio
 
 variant wma description "Use gstreamer1-gst-libav for additional xWMA support - note license changes" {
-    license                GPL-2+
-    depends_lib-append     port:gstreamer1-gst-libav
+    license             GPL-2+
+    depends_lib-append  port:gstreamer1-gst-libav
 }
 
 #pre-destroot {

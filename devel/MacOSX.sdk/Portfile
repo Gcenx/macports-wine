@@ -172,18 +172,6 @@ destroot.violate_mtree  yes
 distname                MacOSX${version}
 master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
 
-# Workaround TLS v1.2 requirements
-if {${os.major} < 19} {
-    depends_fetch-append port:curl
-    depends_skip_archcheck-append curl
-    fetch {
-        # Manually download the file(s) if they don't exist
-        if {![file exists ${distpath}/${distname}${extract.suffix} ]} {
-            system -W ${distpath} "${prefix}/bin/curl -Lo ${distname}${extract.suffix} ${master_sites}/${distname}${extract.suffix}"
-        }
-    }
-}
-
 build {}
 
 pre-destroot {
