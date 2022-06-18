@@ -9,8 +9,8 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `MoltenVK` *(v1.1.10-ga909822)*
 - `wine-stable-legacy` *(v6.0.4)*
 - `wine-stable` *(v7.0.0)*
-- `wine-devel` *(v7.10)*
-- `wine-staging` *(v7.10)*
+- `wine-devel` *(v7.11)*
+- `wine-staging` *(v7.11)*
 
 ## How to use this repository
 After installing macports you will need a modern version of `git`\

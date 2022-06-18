@@ -20,7 +20,7 @@ legacysupport.newest_darwin_requires_legacy 13
 name                        wine-staging
 conflicts                   wine wine-stable-legacy wine-stable wine-devel wine-crossover
 set my_name                 wine
-version                     7.10
+version                     7.11
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -60,13 +60,13 @@ distfiles                   ${wine_distfile}:winesource \
                             ${wine_staging_distfile}:stagingsource
 
 checksums                   ${wine_distfile} \
-                            rmd160  9cfa8d43a68f53e42c2b0fb9713e62bc95e555df \
-                            sha256  a34963195bae03e6db4f654a5a4bab0f7686931a94a80df3f1ee20172fef3407 \
-                            size    46188904 \
+                            rmd160  771e165c6a16a949fd0dce67fb1cbeff76c78c72 \
+                            sha256  f0d1181a709f82d738221a56db603a84814783992add124d325b685fa713ae2a \
+                            size    46264913 \
                             ${wine_staging_distfile} \
-                            rmd160  5229d57df28be3f8811eaec339a8f6f60b47df28 \
-                            sha256  06b728072f6fe251f8db7552c78a567cbbd9cd394734e6ff77c90e2613d27baa \
-                            size    9646352
+                            rmd160  851f43524310c2797acb32e9f2d34734cd1c177e \
+                            sha256  f706e242dcd5d687e636f670415c313059fd76680c7909b7aa3d1848f14700ca \
+                            size    9643832
 
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:fontconfig \
