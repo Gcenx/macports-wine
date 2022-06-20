@@ -87,8 +87,8 @@ patch.pre_args              -p1
 patchfiles-append           patch-noflicker.diff
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
-# Bump wine-mono to 7.2.0
-# https://github.com/wine-mirror/wine/commit/1f8eb4a9c28417ee98f90aa8a5a95177088d082a
+# Bump wine-mono to 7.3.0
+# https://github.com/wine-mirror/wine/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
 patchfiles-append           patch-mscore_update_wine_mono.diff
 
 # revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
