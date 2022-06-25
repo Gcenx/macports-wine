@@ -17,8 +17,7 @@ long_description            GStreamer Good Plug-ins is a set of plug-ins that GS
                             preferred license (LGPL for the plug-in code, LGPL or LGPL-compatible for \
                             the supporting library).
 maintainers                 {@gcenx}
-categories                  gnome
-platforms                   darwin
+categories                  multimedia
 license                     LGPL-2+
 homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
 distname                    ${my_name}-${version}
@@ -30,7 +29,7 @@ checksums                   rmd160  a8fcdd1f4cb903fdb14c084f13b3f0ff0cfec085 \
                             sha256  3aaeeea7765fbf8801acce4a503a9b05f73f04e8a35352e9d00232cfd555796b \
                             size    3294052
 
-set py_ver                  3.9
+set py_ver                  3.10
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 
 depends_build-append        port:pkgconfig \

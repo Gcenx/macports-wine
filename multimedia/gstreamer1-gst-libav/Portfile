@@ -13,8 +13,7 @@ version                     1.18.5
 description                 This is gst-libav, a set of plug-ins for GStreamer.
 long_description            ${description}
 maintainers                 {@gcenx}
-categories                  gnome
-platforms                   darwin
+categories                  multimedia
 license                     GPL-2+
 homepage                    https://gstreamer.freedesktop.org/
 distname                    ${my_name}-${version}
@@ -26,7 +25,7 @@ checksums                   rmd160  831d0bdd2e156007364591cb7c70b1d001d85e24 \
                             sha256  822e008a910e9dd13aedbdd8dc63fedef4040c0ee2e927bab3112e9de693a548 \
                             size    285416
 
-set py_ver                  3.9
+set py_ver                  3.10
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 
 depends_build-append        port:pkgconfig \

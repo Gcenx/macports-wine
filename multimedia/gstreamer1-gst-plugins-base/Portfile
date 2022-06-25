@@ -13,8 +13,7 @@ version                     1.18.5
 description                 This is gst-plugins, a set of plug-ins for GStreamer.
 long_description            ${description}
 maintainers                 {@gcenx}
-categories                  gnome
-platforms                   darwin
+categories                  multimedia
 license                     LGPL-2+
 homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
 distname                    ${my_name}-${version}
@@ -26,7 +25,7 @@ checksums                   rmd160  f98b07eeb1c7640069bddd32c06c79f613d9b104 \
                             sha256  960b7af4585700db0fdd5b843554e11e2564fed9e061f591fae88a7be6446fa3 \
                             size    3176212
 
-set py_ver                  3.9
+set py_ver                  3.10
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 
 depends_build-append        port:pkgconfig \

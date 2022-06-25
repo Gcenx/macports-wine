@@ -14,8 +14,7 @@ description                 GStreamer is a library for constructing graphs of me
 long_description            The applications it supports range from simple Ogg/Vorbis playback, audio/video \
                             streaming to complex audio (mixing) and video (non-linear editing) processing.
 maintainers                 {@gcenx}
-categories                  gnome
-platforms                   darwin
+categories                  multimedia
 license                     LGPL-2+
 homepage                    https://${my_name}.freedesktop.org/
 distname                    ${my_name}-${version}
@@ -27,7 +26,7 @@ checksums                   rmd160  5a9bb876ad24998d11baf2e61d5ab058f0385dd5 \
                             sha256  55862232a63459bbf56abebde3085ca9aec211b478e891dacea4d6df8cafe80a \
                             size    2710712
 
-set py_ver                  3.9
+set py_ver                  3.10
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 
 depends_build-append        port:bison \

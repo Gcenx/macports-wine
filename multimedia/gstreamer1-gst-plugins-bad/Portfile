@@ -16,8 +16,7 @@ long_description            GStreamer Bad Plug-ins is a set of plug-ins that are
                             something - be it a good code review, some documentation, a set of tests, a \
                             real live maintainer, or some actual wide use.
 maintainers                 {@gcenx}
-categories                  gnome
-platforms                   darwin
+categories                  multimedia
 license                     GPL LGPL
 homepage                    https://gstreamer.freedesktop.org/modules/${my_name}.html
 distname                    ${my_name}-${version}
@@ -29,7 +28,7 @@ checksums                   rmd160  b7a024264eba9a915e2c73a0532e5092a58b8d9a \
                             sha256  a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e \
                             size    5649536
 
-set py_ver                  3.9
+set py_ver                  3.10
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 
 depends_build-append        port:gettext \
