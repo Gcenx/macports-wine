@@ -18,7 +18,7 @@ legacysupport.newest_darwin_requires_legacy 13
 # see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
 name                        wine-stable
-conflicts                   wine wine-stable-legacy wine-devel wine-staging wine-crossover
+conflicts                   wine wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     7.0
 revision                    4
