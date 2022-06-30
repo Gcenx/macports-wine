@@ -86,9 +86,13 @@ variant mod description {Update DXVK & MoltenVK} {
         xinstall -m 0644 ${filespath}/CrossOver.icns ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
 
         # Add required MoltenVK env options to cxbottle.conf template
-        system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        ## Required by DXVK for Apple/NVidia GPUs (better FPS than CPU Emulation)
         system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        ## Required by DXVK for AMD500/Intel GPUs
+        system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        ## Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
         system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+        ## My preferred DXVK HUD configuration
         system "echo DXVK_HUD=devinfo,fps,version >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
 
         # Use port:MoltenVK
