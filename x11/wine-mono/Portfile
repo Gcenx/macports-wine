@@ -6,7 +6,6 @@ maintainers         {@gcenx}
 license             GPL, LGPL2.1, MPL
 
 supported_archs     noarch
-platforms           darwin
 description         Wine's built-in replacement for Microsoft's .NET Framework
 long_description    ${subport} is a package containing Mono and other projects, \
                     intended as a replacement for the .NET runtime and class \
