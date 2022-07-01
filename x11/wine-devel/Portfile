@@ -255,6 +255,38 @@ if {${os.major} == 12 || ${os.major} == 13} {
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
+subport wine-staging {
+    name \
+        wine-staging
+    conflicts \
+        wine-stable wine-devel
+
+    set staging_version \
+        ${version}
+    set wine_staging_distfile \
+        v${staging_version}${extract.suffix}
+
+    master_sites-append \
+        https://github.com/wine-staging/wine-staging/archive/:stagingsource
+
+    distfiles-append \
+        ${wine_staging_distfile}:stagingsource
+
+    checksums-append \
+        ${wine_staging_distfile} \
+        rmd160  851f43524310c2797acb32e9f2d34734cd1c177e \
+        sha256  f706e242dcd5d687e636f670415c313059fd76680c7909b7aa3d1848f14700ca \
+        size    9643832
+
+    depends_build-append \
+        port:autoconf
+
+    post-extract {
+    system -W ${workpath}/wine-staging-${staging_version}/patches \
+        "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W winemac.drv-no-flicker-patch"
+    }
+}
+
 if {${os.major} < 12} {
     known_fail yes
     archive_sites
