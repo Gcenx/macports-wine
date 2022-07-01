@@ -1,7 +1,7 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
-PortGroup                   muniversal 1.0
+PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
@@ -10,15 +10,10 @@ PortGroup                   legacysupport 1.1
 legacysupport.use_static yes
 legacysupport.newest_darwin_requires_legacy 13
 
-# Please keep the wine-stable, wine-stable-legacy, wine-devel, wine-staging and wine-crossover ports as similar as possible.
-
-# When updating the version of wine, update wine_gecko and wine_mono to compatible versions
-# as referenced in the source code. Check here by replacing X.Y with the version:
-# https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
-# see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
+# Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
 name                        wine-devel
-conflicts                   wine wine-stable wine-staging wine-crossover
+conflicts                   wine-stable wine-staging
 set my_name                 wine
 version                     7.11
 revision                    0
@@ -30,217 +25,229 @@ categories                  x11
 supported_archs             i386 x86_64
 maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
-platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 worksrcdir                  wine-${distname}
 use_parallel_build          yes
 
-description                 A Windows API implementation
+description \
+    A Windows API implementation
 
-long_description            Wine is a compatibility layer capable of running \
-                            Windows applications. \
-                            Instead of simulating internal Windows logic like \
-                            a virtual machine or emulator, Wine translates \
-                            Windows API calls into POSIX calls on-the-fly, \
-                            eliminating the performance and memory penalties \
-                            of other methods and allowing you to cleanly \
-                            integrate Windows applications into your desktop.
+long_description \
+    Wine is a compatibility layer capable of running \
+    Windows applications. \
+    Instead of simulating internal Windows logic like \
+    a virtual machine or emulator, Wine translates \
+    Windows API calls into POSIX calls on-the-fly, \
+    eliminating the performance and memory penalties \
+    of other methods and allowing you to cleanly \
+    integrate Windows applications into your desktop.
 
-master_sites                https://github.com/wine-mirror/wine/archive/:winesource
+master_sites \
+    https://github.com/wine-mirror/wine/archive/:winesource
 
-extract.only                ${wine_distfile}
+distfiles \
+    ${wine_distfile}:winesource
 
-distfiles                   ${wine_distfile}:winesource
+checksums \
+    ${wine_distfile} \
+    rmd160  771e165c6a16a949fd0dce67fb1cbeff76c78c72 \
+    sha256  f0d1181a709f82d738221a56db603a84814783992add124d325b685fa713ae2a \
+    size    46264913
 
-checksums                   ${wine_distfile} \
-                            rmd160  771e165c6a16a949fd0dce67fb1cbeff76c78c72 \
-                            sha256  f0d1181a709f82d738221a56db603a84814783992add124d325b685fa713ae2a \
-                            size    46264913
+depends_build \
+    port:bison \
+    port:cctools \
+    port:flex \
+    port:gettext \
+    port:ld64 \
+    port:mingw-w64 \
+    port:pkgconfig
 
-# Note: Most of the X11 libs are dlopen()'d
-depends_lib                 port:fontconfig \
-                            port:freetype \
-                            port:gnutls \
-                            port:gstreamer1 \
-                            port:gstreamer1-gst-plugins-base \
-                            port:gstreamer1-gst-plugins-good \
-                            port:libiconv \
-                            port:libpcap \
-                            port:libsdl2 \
-                            port:libusb \
-                            port:openal-soft \
-                            port:wine-gecko \
-                            port:wine-mono
+depends_lib \
+    port:freetype \
+    port:gnutls \
+    port:gstreamer1 \
+    port:gstreamer1-gst-plugins-base \
+    port:gstreamer1-gst-plugins-good \
+    port:libpcap \
+    port:libsdl2 \
+    port:libusb \
+    port:openal-soft
 
-depends_build               port:bison \
-                            port:cctools \
-                            port:flex \
-                            port:mingw-w64 \
-                            port:pkgconfig \
-                            port:ld64
+depends_run \
+    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
+    port:wine-gecko \
+    port:wine-mono
 
-patch.pre_args              -p1
+patch.pre_args \
+    -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           0001-winemac.drv-No-Flicker-patch.diff
+patchfiles-append \
+    0001-winemac.drv-No-Flicker-patch.diff
+
+# Older versions of macOS have expired certs, this allows using macports curl certs
+patchfiles-append \
+    0002-crypt32-expand-cert-search-paths.diff
 
 # revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
 # https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 18} {
-    patchfiles-append       0001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
-                            0002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
-                            0003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
-                            0004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
-                            0005-Revert-winemac.drv-Enable-layer-backed-views.diff
-                            
+    patchfiles-append \
+        1001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
+        1002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
+        1003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
+        1004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
+        1005-Revert-winemac.drv-Enable-layer-backed-views.diff
+
     notes-append "
         \n
         Reverts have been applied for Bug 52354, \"winemac.drv not functional on non metal GPUs\"
     "
 }
 
-# Older versions of macOS have expired certs, this allows using macports curl certs
-patchfiles-append           1000-crypt32-expand-cert-search-paths.diff
-
 post-patch {
     reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
-configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
-                                                                    fallocate \
-                                                                    gethostbyaddr_r \
-                                                                    gethostbyname_r \
-                                                                    sched_setaffinity
-
-pre-configure {
-    if {[variant_exists universal] && [variant_isset universal]} {
-        foreach arch ${universal_archs_to_use} {
-            file mkdir ${worksrcpath}-${arch}
-        }
-
-        configure.cmd ${worksrcpath}/configure
-    }
-}
+configure.checks.implicit_function_declaration.whitelist-append \
+    __clear_cache \
+    fallocate \
+    gethostbyaddr_r \
+    gethostbyname_r \
+    sched_setaffinity
 
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # http://bugs.winehq.org/show_bug.cgi?id=35310
-configure.install           ${worksrcpath}/tools/install-sh
+configure.install \
+    ${worksrcpath}/tools/install-sh
 
-configure.args              --without-alsa \
-                            --without-capi \
-                            --with-coreaudio \
-                            --with-cups \
-                            --without-dbus \
-                            --with-fontconfig \
-                            --with-freetype \
-                            --with-gettext \
-                            --without-gettextpo \
-                            --without-gphoto \
-                            --with-gnutls \
-                            --without-gssapi \
-                            --with-gstreamer \
-                            --without-inotify \
-                            --without-krb5 \
-                            --with-ldap \
-                            --with-mingw \
-                            --without-netapi \
-                            --with-openal \
-                            --with-opencl \
-                            --with-opengl \
-                            --without-osmesa \
-                            --without-oss \
-                            --with-pcap \
-                            --with-pthread \
-                            --without-pulse \
-                            --without-sane \
-                            --with-sdl \
-                            --without-udev \
-                            --with-unwind \
-                            --with-usb \
-                            --without-v4l2 \
-                            --without-vkd3d \
-                            --without-xcomposite \
-                            --without-xcursor \
-                            --without-xfixes \
-                            --without-xinerama \
-                            --without-xinput \
-                            --without-xinput2 \
-                            --without-xrandr \
-                            --without-xrender \
-                            --without-xshape \
-                            --without-xshm \
-                            --without-xxf86vm \
-                            --without-x
+configure.args \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --with-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --with-openal \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --with-usb \
+    --without-v4l2 \
+    --without-x
 
 # Wine has a native macOS driver since 1.5.26 so X11 is optional
 variant x11 {
-    depends_lib-append          port:libGLU \
-                                port:mesa \
-                                port:xorg-libX11 \
-                                port:xorg-libXcomposite \
-                                port:xorg-libXcursor \
-                                port:xorg-libXext \
-                                port:xorg-libXi \
-                                port:xorg-libXinerama \
-                                port:xorg-libXrandr \
-                                port:xorg-libXxf86vm \
-                                port:xorg-libsm \
-                                port:xorg-xorgproto \
-                                port:xrender
+    depends_lib-append \
+        port:libGLU \
+        port:mesa \
+        port:xorg-libX11 \
+        port:xorg-libXcomposite \
+        port:xorg-libXcursor \
+        port:xorg-libXext \
+        port:xorg-libXi \
+        port:xorg-libXinerama \
+        port:xorg-libXrandr \
+        port:xorg-libXxf86vm \
+        port:xorg-libsm \
+        port:xorg-xorgproto \
+        port:xrender
 
-    configure.args-delete       --without-osmesa \
-                                --without-xcomposite \
-                                --without-xcursor \
-                                --without-xfixes \
-                                --without-xinerama \
-                                --without-xinput \
-                                --without-xinput2 \
-                                --without-xrandr \
-                                --without-xrender \
-                                --without-xshape \
-                                --without-xxf86vm \
-                                --without-x
+    configure.args-delete \
+        --without-x
 
-    configure.args-append       --with-osmesa \
-                                --with-xcomposite \
-                                --with-xcursor \
-                                --with-xfixes \
-                                --with-xinerama \
-                                --with-xinput \
-                                --with-xinput2 \
-                                --with-xrandr \
-                                --with-xrender \
-                                --with-xshape \
-                                --with-xxf86vm \
-                                --with-x \
-                                --x-include=${prefix}/include \
-                                --x-lib=${prefix}/lib
+    configure.args-append \
+        --with-osmesa \
+        --with-xcomposite \
+        --with-xcursor \
+        --with-xfixes \
+        --with-xinerama \
+        --with-xinput \
+        --with-xinput2 \
+        --with-xrandr \
+        --with-xrender \
+        --with-xshape \
+        --with-xxf86vm \
+        --with-x \
+        --x-include=${prefix}/include \
+        --x-lib=${prefix}/lib
 }
 
 # Workaround weirdness with i386 GSTREAMER_CFLAGS not always getting set from pkgconfig
-configure.args-append           GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
+configure.args.i386-append \
+    GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
 # Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append          -Wl,-rpath,${prefix}/lib
+configure.ldflags-append \
+    -Wl,-rpath,${prefix}/lib
 
-configure.universal_args
+configure.args.i386-append \
+    --without-vulkan
 
-set merger_configure_args(x86_64) "--enable-win64"
-set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
+configure.args.x86_64-append \
+    --enable-win64
 
 if {[llength ${supported_archs}] > 1} {
     default_variants +universal
 }
 
+if {${universal_possible} && [variant_isset universal]} {
+    configure.args.i386-append \
+        --with-wine64=${workpath}/${worksrcdir}-x86_64
+}
+
 if {${universal_possible} && ![variant_isset universal] && ${os.major} <= 18} {
-    supported_archs         i386
+    supported_archs          i386
 } elseif {!${universal_possible} && ${os.major} >= 18} {
-    macosx_deployment_target    "10.14"
-    configure.args-append       "--enable-win64"
+    macosx_deployment_target 10.14
+}
+
+# Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
+# it uses Metal it only works on 64-bit
+if {${os.major} >= 15} {
+    depends_lib-append \
+        path:lib/libMoltenVK.dylib:MoltenVK
+
+    depends_skip_archcheck-append \
+        MoltenVK
+
+    configure.args.x86_64-append \
+        --with-vulkan \
+        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
+        ac_cv_lib_soname_vulkan=
+}
+
+if {${os.major} == 12 || ${os.major} == 13} {
+    depends_build-append        port:MacOSX10.11.sdk
+    configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+    
+    # Support GPU initialization via Metal, since wine-4.15 (rev-upgrade)
+    # https://github.com/wine-mirror/wine/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
+    configure.args-append       ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8
@@ -248,63 +255,15 @@ if {${universal_possible} && ![variant_isset universal] && ${os.major} <= 18} {
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
-platform darwin {
-    # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
-    depends_lib-delete                          port:fontconfig
-    configure.args-delete                       --with-fontconfig
-    configure.args-append                       --without-fontconfig
-
-    # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
-    # it uses Metal it only works on 64-bit
-    if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
-        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        depends_skip_archcheck-append           MoltenVK
-        lappend merger_configure_args(x86_64)   --with-vulkan \
-                                                ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-                                                ac_cv_lib_soname_vulkan=
-        lappend merger_configure_args(i386)     --without-vulkan
-    } elseif {${os.major} >= 19} {
-        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        configure.args-append                   --with-vulkan \
-                                                ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-                                                ac_cv_lib_soname_vulkan=
-    } else {
-        configure.args-append                   --without-vulkan
-    }
-    
-    if {${os.major} == 12 || ${os.major} == 13} {
-        depends_build-append        port:MacOSX10.11.sdk
-        configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-        
-        # Support GPU initialization via Metal, since wine-4.15
-        # https://github.com/wine-mirror/wine/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-        configure.args-append       ac_cv_header_Metal_Metal_h=
-    }
-    
-    notes {
-        When using the Mac Driver, it might be useful to enable RetinaMode\
-        when you're using a high DPI monitor. To do that, open up Wine's\
-        Registry Editor:
-
-          wine regedit
-
-        and then navigate to:
-
-          [HKEY_CURRENT_USER\Software\Wine\Mac Driver]
-
-        and then set "RetinaMode" to "y". You may also want to adjust your\
-        DPI under the Graphics tab in winecfg.}
-
-    if {${os.major} < 12} {
-        known_fail yes
-        archive_sites
-        distfiles
-        depends_build
-        depends_lib
-        pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.8 or later."
-            return -code error "incompatible Mac OS X version"
-        }
+if {${os.major} < 12} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} requires Mac OS X 10.8 or later."
+        return -code error "incompatible Mac OS X version"
     }
 }
 
@@ -353,5 +312,6 @@ if {${universal_possible} && [variant_isset universal]} {
     "
 }
 
+livecheck.url               ${homepage}
 livecheck.type              regex
 livecheck.regex             {"/announce/([^"]+)"}
