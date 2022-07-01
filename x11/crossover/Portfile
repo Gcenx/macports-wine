@@ -38,6 +38,7 @@ checksums               rmd160  1707937446006d44611dac97f4efca137ebdf755 \
 
 use_configure           no
 
+# VKD3D oppertunisicly linked to Macports ncurses.
 depends_lib             port:ncurses
 
 build {
@@ -74,11 +75,12 @@ build {
         "install_name_tool -add_rpath @loader_path/../ ./d3d12.dll.so"
 }
 
-variant mod description {Update DXVK & MoltenVK} {
-    depends_lib-append  port:MoltenVK \
-                        port:wine-gecko \
-                        port:wine-mono-7.0.0 \
-                        port:x86_64-w64-mingw32-dxvk
+variant mod description {Replace DXVK & MoltenVK} {
+    depends_lib-append  \
+        port:MoltenVK \
+        port:wine-gecko \
+        port:wine-mono-7.0.0 \
+        port:x86_64-w64-mingw32-dxvk
 
     post-build {
         # Replace icon
