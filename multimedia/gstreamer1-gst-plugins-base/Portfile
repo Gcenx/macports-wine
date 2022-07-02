@@ -25,20 +25,12 @@ checksums                   rmd160  f98b07eeb1c7640069bddd32c06c79f613d9b104 \
                             sha256  960b7af4585700db0fdd5b843554e11e2564fed9e061f591fae88a7be6446fa3 \
                             size    3176212
 
-set py_ver                  3.10
-set py_ver_nodot            [string map {. {}} ${py_ver}]
-
-depends_build-append        port:pkgconfig \
-                            port:python${py_ver_nodot}
+depends_build-append        port:pkgconfig
 
 depends_lib-append          port:gstreamer1 \
-                            port:graphene \
                             port:orc \
                             port:libogg \
                             port:zlib
-
-configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
-configure.python            ${prefix}/bin/python${py_ver}
 
 # OpenGL integration library options
 #configure.args-append

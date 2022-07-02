@@ -29,19 +29,11 @@ checksums                   rmd160  45452f4fc293792413e678c2951651daaba81616 \
                             sha256  df32803e98f8a9979373fa2ca7e05e62f977b1097576d3a80619d9f5c69f66d9 \
                             size    513780
 
-set py_ver                  3.10
-set py_ver_nodot            [string map {. {}} ${py_ver}]
-
-depends_build-append        port:pkgconfig \
-                            port:python${py_ver_nodot}
+depends_build-append        port:pkgconfig
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:libmpeg2 \
                             port:x264
-
-configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
-configure.python            ${prefix}/bin/python${py_ver}
-
 
 # Feature options for plugins without external deps
 configure.args-append       -Dasfdemux=enabled \

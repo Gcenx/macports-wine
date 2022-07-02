@@ -29,19 +29,11 @@ checksums                   rmd160  a8fcdd1f4cb903fdb14c084f13b3f0ff0cfec085 \
                             sha256  3aaeeea7765fbf8801acce4a503a9b05f73f04e8a35352e9d00232cfd555796b \
                             size    3294052
 
-set py_ver                  3.10
-set py_ver_nodot            [string map {. {}} ${py_ver}]
-
-depends_build-append        port:pkgconfig \
-                            port:python${py_ver_nodot}
+depends_build-append        port:pkgconfig
 
 depends_lib                 port:gstreamer1-gst-plugins-base \
                             port:mpg123 \
                             port:orc
-
-configure.env-append        PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
-configure.python            ${prefix}/bin/python${py_ver}
-
 
 # Feature options for plugins without external deps
 configure.args-append       -Dalpha=enabled \
