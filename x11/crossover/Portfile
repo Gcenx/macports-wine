@@ -8,7 +8,6 @@ version                 21.2.0
 revision                0
 
 categories              x11
-platforms               darwin
 license                 Commercial
 maintainers             {@gcenx}
 
@@ -75,9 +74,10 @@ build {
         "install_name_tool -add_rpath @loader_path/../ ./d3d12.dll.so"
 }
 
-variant mod description {Replace DXVK & MoltenVK} {
+variant mod description {Replace DXVK, MoltenVK, SDL2, wine-gecko & wine-mono} {
     depends_lib-append  \
         port:MoltenVK \
+        port:libsdl2 \
         port:wine-gecko \
         port:wine-mono-7.0.0 \
         port:x86_64-w64-mingw32-dxvk
@@ -100,6 +100,11 @@ variant mod description {Replace DXVK & MoltenVK} {
         # Use port:MoltenVK
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
         ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+
+        # Use port:libsdl2
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
+        ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
         # Use port:wine-gecko
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
