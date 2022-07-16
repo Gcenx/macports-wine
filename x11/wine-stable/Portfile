@@ -3,7 +3,6 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
-PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
 # ntdll requires "_fstatat", since wine-5.9
@@ -16,8 +15,8 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    5
-set branch                  [lindex [split ${version} .] 0].x
+revision                    6
+set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
 
@@ -29,7 +28,6 @@ distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 worksrcdir                  wine-${distname}
-use_parallel_build          yes
 
 description \
     A Windows API implementation
@@ -94,11 +92,17 @@ patchfiles-append \
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
 # Bump wine-mono to 7.3.0
-# https://github.com/wine-mirror/wine/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
+# https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
 patchfiles-append \
     0003-mscore_update_wine_mono.diff
 
-# revert "winemac.drv: Enable layer-backed views.", macOS Mojave and later officially require a Metal GPU
+# Keep in sync with default wine-gecko Portfile (to avoid orphaned ports)
+# Bump wine-gecko to 2.47.3
+# https://gitlab.winehq.org/wine/wine/-/commit/05b9bc2161bc2729e6ffe5b28fbcda9fcb9c64aa
+patchfiles-append \
+    0004-mshtml_update_wine_gecko.diff
+
+# layer backed views only work on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 18} {
     patchfiles-append \
@@ -107,11 +111,6 @@ if {${os.major} < 18} {
         1003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
         1004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
         1005-Revert-winemac.drv-Enable-layer-backed-views.diff
-
-    notes-append "
-        \n
-        Reverts have been applied for Bug 52354, \"winemac.drv not functional on non metal GPUs\"
-    "
 }
 
 post-patch {
@@ -165,7 +164,7 @@ configure.args \
     --without-v4l2 \
     --without-x
 
-# Wine has a native macOS driver since 1.5.26 so X11 is optional
+# wine has a native display driver, since wine-1.5.26
 variant x11 {
     depends_lib-append \
         port:libGLU \
@@ -206,34 +205,28 @@ variant x11 {
 configure.args.i386-append \
     GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
-# Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
+# Standard dlopen is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
 configure.args.i386-append \
+    --with-wine64=${workpath}/${worksrcdir}-x86_64 \
     --without-vulkan
 
 configure.args.x86_64-append \
     --enable-win64
 
 if {[llength ${supported_archs}] > 1} {
-    default_variants +universal
+    variant_set universal
 }
 
-if {${universal_possible} && [variant_isset universal]} {
-    configure.args.i386-append \
-        --with-wine64=${workpath}/${worksrcdir}-x86_64
-}
-
-if {${universal_possible} && ![variant_isset universal] && ${os.major} <= 18} {
-    supported_archs          i386
-} elseif {!${universal_possible} && ${os.major} >= 18} {
+# Avoid weird linker errors with Xcode 10 and later
+if {!${universal_possible} && ${os.major} >= 18} {
     macosx_deployment_target 10.14
 }
 
-# Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
-# it uses Metal it only works on 64-bit
+# Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
     depends_lib-append \
         path:lib/libMoltenVK.dylib:MoltenVK
@@ -251,8 +244,9 @@ if {${os.major} == 12 || ${os.major} == 13} {
     depends_build-append        port:MacOSX10.11.sdk
     configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     
-    # Support GPU initialization via Metal, since wine-4.15 (rev-upgrade)
-    # https://github.com/wine-mirror/wine/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
+    # Need to disable metal GPU support or rev-upgrade will cry
+    # Support GPU initialization via Metal, since wine-4.15
+    # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
     configure.args-append       ac_cv_header_Metal_Metal_h=
 }
 

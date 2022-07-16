@@ -1,0 +1,55 @@
+From 05b9bc2161bc2729e6ffe5b28fbcda9fcb9c64aa Mon Sep 17 00:00:00 2001
+From: Jacek Caban <jacek@codeweavers.com>
+Date: Tue, 12 Jul 2022 18:14:33 +0200
+Subject: [PATCH] mshtml: Wine Gecko 2.47.3 release.
+
+- Enabled accessibility support.
+- Restored a few XPCOM interfaces.
+- Python compatibility fixes.
+---
+ dlls/appwiz.cpl/addons.c | 6 +++---
+ dlls/mshtml/nsiface.idl  | 3 ++-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/dlls/appwiz.cpl/addons.c b/dlls/appwiz.cpl/addons.c
+index 021f5484af93..cdc5141bd330 100644
+--- a/dlls/appwiz.cpl/addons.c
++++ b/dlls/appwiz.cpl/addons.c
+@@ -46,13 +46,13 @@
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(appwizcpl);
+ 
+-#define GECKO_VERSION "2.47.2"
++#define GECKO_VERSION "2.47.3"
+ #ifdef __i386__
+ #define GECKO_ARCH "x86"
+-#define GECKO_SHA "e520ce7336cd420cd09c91337d87e74bb420300fd5cbc6f724c1802766b6a61d"
++#define GECKO_SHA "e5b9b06d3ce355646a8d2e72e044e37e1e0c8d18464eb1985adcd187a7f48e01"
+ #elif defined(__x86_64__)
+ #define GECKO_ARCH "x86_64"
+-#define GECKO_SHA "0596761024823ff3c21f13e1cd5cd3e89dccc698294d62974d8930aeda86ce45"
++#define GECKO_SHA "a53ee954392b6d1fe3d68545f6e4e2a97afbc8dc8b03a8b443349545ce139675"
+ #else
+ #define GECKO_ARCH ""
+ #define GECKO_SHA "???"
+diff --git a/dlls/mshtml/nsiface.idl b/dlls/mshtml/nsiface.idl
+index 2ecd8d938549..cad48f725c6a 100644
+--- a/dlls/mshtml/nsiface.idl
++++ b/dlls/mshtml/nsiface.idl
+@@ -25,7 +25,7 @@
+ 
+ #pragma makedep header
+ 
+-cpp_quote("#define GECKO_VERSION \"2.47.2\"")
++cpp_quote("#define GECKO_VERSION \"2.47.3\"")
+ cpp_quote("#define GECKO_VERSION_STRING \"Wine Gecko \" GECKO_VERSION")
+ 
+ import "wtypes.idl";
+@@ -4287,6 +4287,7 @@ interface nsIXMLHttpRequest : nsISupports
+     nsresult SetOnreadystatechange(JSContext*cx, int /*JS::HandleValue*/ aOnreadystatechange);
+     nsresult GetMozAnon(bool *aMozAnon);
+     nsresult GetMozSystem(bool *aMozSystem);
++    nsresult GetResponseBuffer(void *buffer, uint32_t buffer_size, uint32_t *_retval);
+ }
+ 
+ cpp_quote("DEFINE_GUID(IID_nsCycleCollectionISupports, 0xc61eac14,0x5f7a,0x4481,0x96,0x5e,0x7e,0xaa,0x6e,0xff,0xa8,0x5f);")
