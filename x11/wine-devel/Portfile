@@ -199,7 +199,7 @@ configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
 configure.args.i386-append \
-    --with-wine64=${workpath}/${worksrcdir}-x86_64
+    --with-wine64=${workpath}/${worksrcdir}-x86_64 \
     --without-vulkan
 
 configure.args.x86_64-append \
