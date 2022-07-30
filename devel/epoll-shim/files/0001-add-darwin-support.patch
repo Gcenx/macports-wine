@@ -1,0 +1,64 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 744c9e8..1f05a57 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -50,7 +50,7 @@ add_library(${_namespace}::epoll-shim-interpose ALIAS epoll-shim-interpose)\n")
+   include(GNUInstallDirs)
+ 
+   set(CMAKE_INSTALL_PKGCONFIGDIR
+-      "libdata/pkgconfig"
++      "lib/pkgconfig"
+       CACHE PATH "Installation directory for pkgconfig (.pc) files")
+   mark_as_advanced(CMAKE_INSTALL_PKGCONFIGDIR)
+   set(CMAKE_INSTALL_CMAKEBASEDIR
+diff --git a/include/sys/timerfd.h b/include/sys/timerfd.h
+index 504c4bc..33ea813 100644
+--- a/include/sys/timerfd.h
++++ b/include/sys/timerfd.h
+@@ -14,7 +14,14 @@ extern "C" {
+ #define TFD_TIMER_ABSTIME 1
+ #define TFD_TIMER_CANCEL_ON_SET (1 << 1)
+ 
++#ifdef __APPLE__
++struct itimerspec {
++    struct timespec it_interval;
++    struct timespec it_value;
++};
++#else
+ struct itimerspec;
++#endif
+ 
+ int timerfd_create(int, int);
+ int timerfd_settime(int, int, struct itimerspec const *, struct itimerspec *);
+diff --git a/src/compat_itimerspec.h b/src/compat_itimerspec.h
+index 67662bd..64eadf1 100644
+--- a/src/compat_itimerspec.h
++++ b/src/compat_itimerspec.h
+@@ -3,12 +3,8 @@
+ 
+ #ifdef COMPAT_ENABLE_ITIMERSPEC
+ 
+-#include <time.h>
++#include <sys/timerfd.h>
+ 
+-struct itimerspec {
+-	struct timespec it_interval;
+-	struct timespec it_value;
+-};
+ #endif
+ 
+ #endif
+diff --git a/test/epoll-test.c b/test/epoll-test.c
+index 54cd3d6..ca451ba 100644
+--- a/test/epoll-test.c
++++ b/test/epoll-test.c
+@@ -343,7 +343,9 @@ ATF_TC_BODY_FD_LEAKCHECK(epoll__event_size, tc)
+ 	struct epoll_event event;
+ 	// this check works on 32bit _and_ 64bit, since
+ 	// sizeof(epoll_event) == sizeof(uint32_t) + sizeof(uint64_t)
++#ifdef __x86_64__
+ 	ATF_REQUIRE(sizeof(event) == 12);
++#endif
+ }
+ 
+ ATF_TC_WITHOUT_HEAD(epoll__recursive_register);
