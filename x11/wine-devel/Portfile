@@ -69,7 +69,6 @@ depends_lib \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     port:gstreamer1-gst-plugins-good \
-    port:libinotify \
     port:libpcap \
     port:libsdl2 \
     port:openal-soft
@@ -132,7 +131,7 @@ configure.args \
     --with-gnutls \
     --without-gssapi \
     --with-gstreamer \
-    --with-inotify \
+    --without-inotify \
     --without-krb5 \
     --with-ldap \
     --with-mingw \
