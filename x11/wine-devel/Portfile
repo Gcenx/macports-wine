@@ -270,9 +270,12 @@ subport wine-staging {
     depends_build-append \
         port:autoconf
 
+    # Apply staging before applying patches inherited from wine-devel
+    # macOS doesn't support eventfd so disable to avoid terminal spam
+    # winemac.drv-no-flicker-patch is disabled as inherited from wine-devel
     post-extract {
-    system -W ${workpath}/wine-staging-${staging_version}/patches \
-        "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
+        system -W ${workpath}/wine-staging-${staging_version}/patches \
+            "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
 }
 
