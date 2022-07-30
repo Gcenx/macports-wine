@@ -272,7 +272,7 @@ subport wine-staging {
 
     post-extract {
     system -W ${workpath}/wine-staging-${staging_version}/patches \
-        "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W winemac.drv-no-flicker-patch"
+        "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
 }
 
