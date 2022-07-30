@@ -15,7 +15,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    7
+revision                    8
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -72,7 +72,6 @@ depends_lib \
     port:libinotify \
     port:libpcap \
     port:libsdl2 \
-    port:libusb \
     port:openal-soft
 
 depends_run \
@@ -161,7 +160,7 @@ configure.args \
     --with-sdl \
     --without-udev \
     --with-unwind \
-    --with-usb \
+    --without-usb \
     --without-v4l2 \
     --without-vkd3d \
     --without-x
@@ -256,6 +255,12 @@ if {${os.major} == 12 || ${os.major} == 13} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
+
+variant usb description {Build ${name} with USB support} {
+    depends_lib-append port:libusb
+    configure.args-delete --wthout-usb
+    configure.args-append --with-usb
+}
 
 if {${os.major} < 12} {
     known_fail yes

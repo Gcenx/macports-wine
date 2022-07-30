@@ -15,7 +15,7 @@ name                        wine-devel
 conflicts                   wine-stable wine-staging
 set my_name                 wine
 version                     7.14
-revision                    0
+revision                    1
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -72,7 +72,6 @@ depends_lib \
     port:libinotify \
     port:libpcap \
     port:libsdl2 \
-    port:libusb \
     port:openal-soft
 
 depends_run \
@@ -149,7 +148,7 @@ configure.args \
     --with-sdl \
     --without-udev \
     --with-unwind \
-    --with-usb \
+    --without-usb \
     --without-v4l2 \
     --without-x
 
@@ -277,6 +276,12 @@ subport wine-staging {
         system -W ${workpath}/wine-staging-${staging_version}/patches \
             "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
+}
+
+variant usb description {Build ${name} with USB support} {
+    depends_lib-append port:libusb
+    configure.args-delete --wthout-usb
+    configure.args-append --with-usb
 }
 
 if {${os.major} < 12} {
