@@ -15,7 +15,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    6
+revision                    7
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -69,6 +69,7 @@ depends_lib \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     port:gstreamer1-gst-plugins-good \
+    port:libinotify \
     port:libpcap \
     port:libsdl2 \
     port:libusb \
@@ -86,7 +87,7 @@ patch.pre_args \
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
 
-# Older versions of macOS have expired certs, this allows using macports curl certs
+# Older versions of macOS have expired certs, this allows wine to use curl-ca-bundle.crt
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
@@ -102,7 +103,7 @@ patchfiles-append \
 patchfiles-append \
     0004-mshtml_update_wine_gecko.diff
 
-# layer backed views only work on macOS Mojave and later, since wine-6.17
+# layer backed views only works on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 18} {
     patchfiles-append \
@@ -144,7 +145,7 @@ configure.args \
     --with-gnutls \
     --without-gssapi \
     --with-gstreamer \
-    --without-inotify \
+    --with-inotify \
     --without-krb5 \
     --with-ldap \
     --with-mingw \
@@ -162,6 +163,7 @@ configure.args \
     --with-unwind \
     --with-usb \
     --without-v4l2 \
+    --without-vkd3d \
     --without-x
 
 # wine has a native display driver, since wine-1.5.26
@@ -201,8 +203,8 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
-# Workaround weirdness with i386 GSTREAMER_CFLAGS not always getting set from pkgconfig
-configure.args.i386-append \
+# Workaround weirdness with GSTREAMER_CFLAGS not always getting set from pkgconfig
+configure.args-append \
     GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
@@ -222,7 +224,7 @@ if {[llength ${supported_archs}] > 1} {
 }
 
 # Avoid weird linker errors with Xcode 10 and later
-if {!${universal_possible} && ${os.major} >= 18} {
+if {${os.major} > 18} {
     macosx_deployment_target 10.14
 }
 
