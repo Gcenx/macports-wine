@@ -14,8 +14,8 @@ legacysupport.newest_darwin_requires_legacy 13
 name                        wine-devel
 conflicts                   wine-stable wine-staging
 set my_name                 wine
-version                     7.13
-revision                    1
+version                     7.14
+revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
@@ -50,9 +50,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  b33f0178561930d8cdfd41d251ca7b5d2ab8cc50 \
-    sha256  27d93d0cea1a15715562c754e40d5b41ac68ec982bae4be673aaa31dc0bd14b6 \
-    size    46743663
+    rmd160  58b9bced98a93a7876f031193264844973c5ad83 \
+    sha256  64486908d7a246a9a93582dce5c7e8f240e11d4567eeb6edd218fb89cb5165c5 \
+    size    46814731
 
 depends_build \
     port:bison \
@@ -263,9 +263,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  32859b40589637ba796a8d1c2512b995e7cff258 \
-        sha256  fdaa88f4323526ef37f222777dad7449debc52a962cad9f40d07ad72f71b96b3 \
-        size    9644182
+        rmd160  99a5546ffd054db7e187a00a1c4ff2899265a316 \
+        sha256  b59a85c4098147b2c37e3ce9b962eaf692e99c2a68dd6d133808362d2d0aa227 \
+        size    9644603
 
     depends_build-append \
         port:autoconf
