@@ -1,7 +1,7 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
-PortGroup                   muniversal 1.0
+PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
@@ -9,13 +9,6 @@ PortGroup                   legacysupport 1.1
 # ntdll requires "_fstatat", since wine-5.9
 legacysupport.use_static yes
 legacysupport.newest_darwin_requires_legacy 13
-
-# Please keep the wine-stable, wine-stable-legacy, wine-devel, wine-staging and wine-crossover ports as similar as possible.
-
-# When updating the version of wine, update wine_gecko and wine_mono to compatible versions
-# as referenced in the source code. Check here by replacing X.Y with the version:
-# https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
-# see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
 
 name                        wine-stable-legacy
 conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
@@ -28,14 +21,12 @@ categories                  x11
 
 # arm64 compile of wine requires mingw-w64-clang but will only support arm64 Windows binaries
 supported_archs             i386 x86_64
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
-platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 worksrcdir                  wine-${distname}
-use_parallel_build          yes
 
 description                 A Windows API implementation
 
@@ -48,22 +39,7 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-# GitHub requires TLS v1.2
-if {${os.major} > 15} {
-    master_sites                https://github.com/wine-mirror/wine/archive/:winesource
-} else {
-    depends_fetch-append        port:curl
-    depends_skip_archcheck-append curl
-    
-    fetch {
-            # Manually download the file(s) if they don't exist
-            if {![file exists ${distpath}/${wine_distfile} ]} {
-                system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${wine_distfile} https://github.com/wine-mirror/wine/archive/${wine_distfile}"
-            }
-    }
-}
-
-extract.only                ${wine_distfile}
+master_sites                https://github.com/wine-mirror/wine/archive/:winesource
 
 distfiles                   ${wine_distfile}:winesource
 
@@ -72,9 +48,13 @@ checksums                   ${wine_distfile} \
                             sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
                             size    40522571
 
+depends_build               port:bison \
+                            port:flex \
+                            port:mingw-w64 \
+                            port:pkgconfig
+
 # Note: Most of the X11 libs are dlopen()'d
-depends_lib                 port:fontconfig \
-                            port:freetype \
+depends_lib                 port:freetype \
                             port:FAudio \
                             port:gnutls \
                             port:gstreamer1 \
@@ -91,18 +71,15 @@ depends_lib                 port:fontconfig \
                             port:libxslt \
                             port:mpg123 \
                             port:openal-soft \
-                            port:tiff \
-                            port:wine-gecko
+                            port:tiff
 
-depends_build               port:bison \
-                            port:flex \
-                            port:mingw-w64 \
-                            port:pkgconfig
+depends_run                 port:wine-gecko \
+                            port:wine-mono-5.1.1
 
 patch.pre_args              -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           patch-noflicker.diff
+patchfiles-append           0001-winemac.drv-No-Flicker-patch.diff
 
 configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
                                                                     fallocate \
@@ -110,19 +87,9 @@ configure.checks.implicit_function_declaration.whitelist-append     __clear_cach
                                                                     gethostbyname_r \
                                                                     sched_setaffinity
 
-pre-configure {
-    if {[variant_exists universal] && [variant_isset universal]} {
-        foreach arch ${universal_archs_to_use} {
-            file mkdir ${worksrcpath}-${arch}
-        }
-
-        configure.cmd ${worksrcpath}/configure
-    }
-}
-
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
-# http://bugs.winehq.org/show_bug.cgi?id=35310
+# https://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install           ${worksrcpath}/tools/install-sh
 
 configure.args              --without-alsa \
@@ -132,7 +99,7 @@ configure.args              --without-alsa \
                             --with-cups \
                             --without-dbus \
                             --with-faudio \
-                            --with-fontconfig \
+                            --without-fontconfig \
                             --with-freetype \
                             --with-gettext \
                             --without-gettextpo \
@@ -152,7 +119,6 @@ configure.args              --without-alsa \
                             --with-openal \
                             --with-opencl \
                             --with-opengl \
-                            --without-osmesa \
                             --without-oss \
                             --with-pcap \
                             --with-png \
@@ -166,23 +132,13 @@ configure.args              --without-alsa \
                             --with-unwind \
                             --with-usb \
                             --without-v4l2 \
+                            --without-vulkan \
                             --without-vkd3d \
-                            --without-xcomposite \
-                            --without-xcursor \
-                            --without-xfixes \
-                            --without-xinerama \
-                            --without-xinput \
-                            --without-xinput2 \
                             --with-xml \
-                            --without-xrandr \
-                            --without-xrender \
-                            --without-xshape \
-                            --without-xshm \
                             --with-xslt \
-                            --without-xxf86vm \
                             --without-x
 
-# Wine has a native macOS driver since 1.5.26 so X11 is optional
+# wine has a native display driver, since wine-1.5.26
 variant x11 {
     depends_lib-append          port:libGLU \
                                 port:mesa \
@@ -198,18 +154,7 @@ variant x11 {
                                 port:xorg-xorgproto \
                                 port:xrender
 
-    configure.args-delete       --without-osmesa \
-                                --without-xcomposite \
-                                --without-xcursor \
-                                --without-xfixes \
-                                --without-xinerama \
-                                --without-xinput \
-                                --without-xinput2 \
-                                --without-xrandr \
-                                --without-xrender \
-                                --without-xshape \
-                                --without-xxf86vm \
-                                --without-x
+    configure.args-delete       --without-x
 
     configure.args-append       --with-osmesa \
                                 --with-xcomposite \
@@ -221,6 +166,7 @@ variant x11 {
                                 --with-xrandr \
                                 --with-xrender \
                                 --with-xshape \
+                                --with-xshm \
                                 --with-xxf86vm \
                                 --with-x \
                                 --x-include=${prefix}/include \
@@ -230,28 +176,27 @@ variant x11 {
 # Workaround weirdness with i386 GSTREAMER_CFLAGS not always getting set from pkgconfig
 configure.args-append           GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
-# Standard dlopen is used within wine since 5.6, wine(64) no longer finds dylibs
+# Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append          -Wl,-rpath,${prefix}/lib
 
-configure.universal_args
-
-set merger_build_args(x86_64)     "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-set merger_destroot_args(x86_64)  "dlldir=\\\\\${libdir}/wine64"
-set merger_configure_args(x86_64) "--enable-win64 --libdir=${prefix}/lib"
-set merger_configure_args(i386)   --with-wine64=${workpath}/${worksrcdir}-x86_64
+configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
+build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
+destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
 
 if {[llength ${supported_archs}] > 1} {
     default_variants +universal
 }
 
-if {${universal_possible} && ![variant_isset universal] && ${os.major} <= 18} {
-    supported_archs         i386
-} elseif {!${universal_possible} && ${os.major} >= 18} {
-    macosx_deployment_target    "10.14"
-    build.args-append           "dlldir=\\\\\${destroot}${prefix}/lib/wine64"
-    destroot.args-append        "dlldir=\\\${destroot}${prefix}/lib/wine64"
-    configure.args-append       "--enable-win64 --libdir=${prefix}/lib"
+if {${universal_possible} && [variant_isset universal]} {
+    configure.args.i386-append  --with-wine64=${workpath}/${worksrcdir}-x86_64
+} elseif {${universal_possible} && ![variant_isset universal]} {
+    supported_archs             i386
+}
+
+# Avoid weird linker errors with Xcode 10 and later
+if {${os.major} > 18} {
+    macosx_deployment_target    10.14
 }
 
 # wine requires clang >= 3.8
@@ -260,42 +205,14 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
 platform darwin {
-    # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
-    depends_lib-delete                          port:fontconfig
-    configure.args-delete                       --with-fontconfig
-    configure.args-append                       --without-fontconfig
-
-    # https://trac.macports.org/ticket/64548
-    if {${os.major} < 14} {
-        depends_lib-delete                          port:openal-soft
-        configure.args-delete                       --with-openal
-        configure.args-append                       --without-openal
-
-        notes-append "
-            \n
-            openal-soft support disabled see https://trac.macports.org/ticket/64548
-        "
-    }
-
-    # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
-    # it uses Metal it only works on 64-bit
-    if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
+    # Vulkan is supported on macOS through MoltenVK, since wine-3.13
+    if {${os.major} >= 15} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        depends_skip_archcheck-append           MoltenVK \
-                                                MoltenVK-CX \
-                                                MoltenVK-DXVK \
-                                                VulkanSDK
-        lappend merger_configure_args(x86_64)   --with-vulkan \
+        depends_skip_archcheck-append           MoltenVK
+        configure.args.x86_64-delete            --without-vulkan
+        configure.args.x86_64-append            --with-vulkan \
                                                 ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
                                                 ac_cv_lib_soname_vulkan=
-        lappend merger_configure_args(i386)     --without-vulkan
-    } elseif {${os.major} >= 19} {
-        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        configure.args-append                   --with-vulkan \
-                                                ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-                                                ac_cv_lib_soname_vulkan=
-    } else {
-        configure.args-append                   --without-vulkan
     }
 
     notes {
@@ -316,20 +233,20 @@ platform darwin {
         # https://trac.macports.org/ticket/61721
         compiler.whitelist          macports-clang-5.0
         depends_build-append        port:libmacho
-        configure.ldflags-append    -lmacho
-        patchfiles-append           patch-wine-SnowLeopard.diff
+        configure.ldflags-append    ${prefix}/lib/libmacho.a
+        patchfiles-append           1001-wine-SnowLeopard.diff
 
-        # https://github.com/wine-mirror/wine/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
+        # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
         # "-no_new_main" is needed for preloader, since wine-4.0-rc1
         require_active_variants     port:ld64 ld64_274
 
-        # https://github.com/wine-mirror/wine/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
+        # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
         # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
         reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
 
-        # https://github.com/wine-mirror/wine/commit/eea87600d21adcd910f72f1cdaf698451884f582
+        # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
         # Features don't exist in IOKit until 10.7, since wine-4.21
-        patchfiles-append           0001-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
+        patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
 
         configure.sdk_version   10.7
         if {${configure.sdkroot} eq ""} {
