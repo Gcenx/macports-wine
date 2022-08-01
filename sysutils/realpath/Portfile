@@ -7,14 +7,15 @@ PortGroup                   muniversal 1.1
 github.setup                mojotx realpath 1.0.4 v
 fetch.type                  git
 
-categories                  graphics
+categories                  sysutils
 maintainers                 {@gcenx}
 license                     MIT
+installs_libs               no
 
 description                 Lightweight alternative to GNU coreutils "realpath" binary for macOS
 long_description            ${description}
 
-use_configure no
+use_configure               no
 
 destroot {
     copy ${worksrcpath}/realpath ${destroot}${prefix}/bin/realpath
