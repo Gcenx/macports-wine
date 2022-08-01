@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        gcenx DXVK-macOS 1.10.1 v
+github.setup        gcenx DXVK-macOS 1.10.2 v
 github.tarball_from releases
 
 categories          cross
@@ -17,18 +17,11 @@ long_description    ${description}
 name                x86_64-w64-mingw32-dxvk
 dist_subdir         x86_64-w64-mingw32-dxvk
 
-if {${subport} eq ${name}} {
-    revision        1
-    distname        dxvk-macOS-${version}
-    checksums       rmd160  2d530f04f587b51e092a2658c90f09199e2f33f3 \
-                    sha256  8832e0fadfcbb624cacbd2916f3774c97d303b29c0e24708b6195008ba090c99 \
-                    size    2842826
-}
+distname            dxvk-macOS-async-${version}
+checksums           rmd160  c38f8919f82c522d44e3068df9254e3c43c8688d \
+                    sha256  58ea0bc7bb0ab88656ca871f6d05c7a53a010972d8abfb7db04843cf1c0a998a \
+                    size    2900946
 
-# Placed here so we can override the version
-master_sites        https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/v${version}
-
-extract.only        ${distname}${extract.suffix}
 use_configure       no
 build {}
 
