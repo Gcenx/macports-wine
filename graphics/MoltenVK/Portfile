@@ -3,7 +3,7 @@
 PortSystem                  1.0
 PortGroup                   github 1.0
 
-github.setup                The-Wineskin-Project MoltenVK 1.1.10 v
+github.setup                The-Wineskin-Project MoltenVK 1.1.11 v
 github.tarball_from         releases
 
 categories                  graphics
@@ -24,12 +24,12 @@ use_xz                      yes
 
 if {${subport} eq ${name}} {
     conflicts               MoltenVK-CX
-    revision                2
+    revision                0
 
-    distname                macos-${version}-ga909822
-    checksums               rmd160  385db5ed6a3dfb510879dcdcbd4f750ed3168a75 \
-                            sha256  e5830f206d2fb7d62df7de10e2426ceef4537868ec26f6fb03462bfe4850eaa1 \
-                            size    9384688
+    distname                macos-${version}
+    checksums               rmd160  29fc76f4ab2d1b31befc093b93522e9847e6209b \
+                            sha256  32bb33164776f7ff7a5fb2e741cac6576fb708586fdf29699501a6d31ffc16e2 \
+                            size    9399076
 }
 
 subport ${name}-CX {
