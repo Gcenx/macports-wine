@@ -60,6 +60,7 @@ depends_lib                 port:freetype \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
                             port:gstreamer1-gst-plugins-good \
+                            port:gstreamer1-gst-libav \
                             path:include/turbojpeg.h:libjpeg-turbo \
                             port:lcms2 \
                             port:libiconv \
