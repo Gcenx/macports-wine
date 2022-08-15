@@ -65,7 +65,7 @@ depends_build \
 
 depends_lib \
     port:freetype \
-    port:gnutls \
+    path:lib/pkgconfig/gnutls.pc:gnutls \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     port:gstreamer1-gst-plugins-good \
