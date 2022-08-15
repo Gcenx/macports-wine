@@ -56,7 +56,7 @@ depends_build               port:bison \
 # Note: Most of the X11 libs are dlopen()'d
 depends_lib                 port:freetype \
                             port:FAudio \
-                            port:gnutls \
+                            path:lib/pkgconfig/gnutls.pc:gnutls \
                             port:gstreamer1 \
                             port:gstreamer1-gst-plugins-base \
                             port:gstreamer1-gst-plugins-good \
