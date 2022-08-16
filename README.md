@@ -1,5 +1,5 @@
 # macports-wine
-The current versions of `MoltenVK`, `wine` & `wine-devel` provided by macports are not fully updated and/or require additinal dependencies.\
+The current versions of `wine`, `wine-devel` & `wine-crossover` provided by macports are extreamly outdated and missing many required dependencies.\
 The provided Ports *should* compile on Mac OSX 10.8 and later.
 
 ## This repository contains;
