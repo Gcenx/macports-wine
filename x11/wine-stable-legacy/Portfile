@@ -7,8 +7,10 @@ PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
 # ntdll requires "_fstatat", since wine-5.9
-legacysupport.use_static yes
 legacysupport.newest_darwin_requires_legacy 13
+
+# Must be statically linked or -preloader breaks 
+legacysupport.use_static yes
 
 name                        wine-stable-legacy
 conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
@@ -234,8 +236,10 @@ platform darwin {
         # https://trac.macports.org/ticket/61721
         compiler.whitelist          macports-clang-5.0
         depends_build-append        port:libmacho
-        configure.ldflags-append    ${prefix}/lib/libmacho.a
         patchfiles-append           1001-wine-SnowLeopard.diff
+
+        # Must be statically linked or -preloader breaks
+        configure.ldflags-append    ${prefix}/lib/libmacho.a
 
         # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
         # "-no_new_main" is needed for preloader, since wine-4.0-rc1
@@ -249,6 +253,7 @@ platform darwin {
         # Features don't exist in IOKit until 10.7, since wine-4.21
         patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
 
+        # Using the 10.7 SDK to avoid even more reverts
         configure.sdk_version   10.7
         if {${configure.sdkroot} eq ""} {
             pre-fetch {
