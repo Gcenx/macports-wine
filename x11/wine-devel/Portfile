@@ -6,8 +6,10 @@ PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   legacysupport 1.1
 
 # ntdll requires "_fstatat", since wine-5.9
-legacysupport.use_static yes
 legacysupport.newest_darwin_requires_legacy 13
+
+legacysupport.use_static yes
+Must be statically linked or -preloader breaks
 
 # Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
