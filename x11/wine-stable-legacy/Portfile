@@ -31,158 +31,176 @@ dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 worksrcdir                  wine-${distname}
 
-description                 A Windows API implementation
+description \
+    A Windows API implementation
 
-long_description            Wine is a compatibility layer capable of running \
-                            Windows applications. \
-                            Instead of simulating internal Windows logic like \
-                            a virtual machine or emulator, Wine translates \
-                            Windows API calls into POSIX calls on-the-fly, \
-                            eliminating the performance and memory penalties \
-                            of other methods and allowing you to cleanly \
-                            integrate Windows applications into your desktop.
+long_description \
+    Wine is a compatibility layer capable of running \
+    Windows applications. \
+    Instead of simulating internal Windows logic like \
+    a virtual machine or emulator, Wine translates \
+    Windows API calls into POSIX calls on-the-fly, \
+    eliminating the performance and memory penalties \
+    of other methods and allowing you to cleanly \
+    integrate Windows applications into your desktop.
 
-master_sites                https://github.com/wine-mirror/wine/archive/:winesource
+master_sites \
+    https://github.com/wine-mirror/wine/archive/:winesource
 
-distfiles                   ${wine_distfile}:winesource
+distfiles \
+    ${wine_distfile}:winesource
 
-checksums                   ${wine_distfile} \
-                            rmd160  0f5f00cd0a71de0c46f7e4140dcd23e45cb2b5f6 \
-                            sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
-                            size    40522571
+checksums \
+    ${wine_distfile} \
+    rmd160  0f5f00cd0a71de0c46f7e4140dcd23e45cb2b5f6 \
+    sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
+    size    40522571
 
-depends_build               port:bison \
-                            port:flex \
-                            port:mingw-w64 \
-                            port:pkgconfig
+depends_build \
+    port:bison \
+    port:flex \
+    port:mingw-w64 \
+    port:pkgconfig
 
 # Note: Most of the X11 libs are dlopen()'d
-depends_lib                 port:freetype \
-                            port:FAudio \
-                            path:lib/pkgconfig/gnutls.pc:gnutls \
-                            port:gstreamer1 \
-                            port:gstreamer1-gst-plugins-base \
-                            port:gstreamer1-gst-plugins-good \
-                            port:gstreamer1-gst-libav \
-                            path:include/turbojpeg.h:libjpeg-turbo \
-                            port:lcms2 \
-                            port:libiconv \
-                            port:libpcap \
-                            port:libpng \
-                            port:libusb \
-                            port:libunwind \
-                            port:libxml2 \
-                            port:libxslt \
-                            port:mpg123 \
-                            port:openal-soft \
-                            port:tiff
+depends_lib \
+    port:freetype \
+    port:FAudio \
+    path:lib/pkgconfig/gnutls.pc:gnutls \
+    port:gstreamer1 \
+    port:gstreamer1-gst-plugins-base \
+    port:gstreamer1-gst-plugins-good \
+    port:gstreamer1-gst-libav \
+    path:include/turbojpeg.h:libjpeg-turbo \
+    port:lcms2 \
+    port:libiconv \
+    port:libpcap \
+    port:libpng \
+    port:libusb \
+    port:libunwind \
+    port:libxml2 \
+    port:libxslt \
+    port:mpg123 \
+    port:openal-soft \
+    port:tiff
 
-depends_run                 port:wine-gecko \
-                            port:wine-mono-5.1.1
+depends_run \
+    port:wine-gecko \
+    port:wine-mono-5.1.1
 
-patch.pre_args              -p1
+patch.pre_args \
+    -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
-patchfiles-append           0001-winemac.drv-No-Flicker-patch.diff
+patchfiles-append \
+    0001-winemac.drv-No-Flicker-patch.diff
 
-configure.checks.implicit_function_declaration.whitelist-append     __clear_cache \
-                                                                    fallocate \
-                                                                    gethostbyaddr_r \
-                                                                    gethostbyname_r \
-                                                                    sched_setaffinity
+configure.checks.implicit_function_declaration.whitelist-append \
+    __clear_cache \
+    fallocate \
+    gethostbyaddr_r \
+    gethostbyname_r \
+    sched_setaffinity
 
 # Wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # https://bugs.winehq.org/show_bug.cgi?id=35310
-configure.install           ${worksrcpath}/tools/install-sh
+configure.install \
+    ${worksrcpath}/tools/install-sh
 
-configure.args              --without-alsa \
-                            --without-capi \
-                            --with-cms \
-                            --with-coreaudio \
-                            --with-cups \
-                            --without-dbus \
-                            --with-faudio \
-                            --without-fontconfig \
-                            --with-freetype \
-                            --with-gettext \
-                            --without-gettextpo \
-                            --without-gphoto \
-                            --with-gnutls \
-                            --without-gsm \
-                            --without-gssapi \
-                            --with-gstreamer \
-                            --without-hal \
-                            --without-inotify \
-                            --with-jpeg \
-                            --without-krb5 \
-                            --with-ldap \
-                            --with-mingw \
-                            --with-mpg123 \
-                            --without-netapi \
-                            --with-openal \
-                            --with-opencl \
-                            --with-opengl \
-                            --without-oss \
-                            --with-pcap \
-                            --with-png \
-                            --with-pthread \
-                            --without-pulse \
-                            --without-quicktime \
-                            --without-sane \
-                            --with-sdl \
-                            --with-tiff \
-                            --without-udev \
-                            --with-unwind \
-                            --with-usb \
-                            --without-v4l2 \
-                            --without-vulkan \
-                            --without-vkd3d \
-                            --with-xml \
-                            --with-xslt \
-                            --without-x
+configure.args \
+    --without-alsa \
+    --without-capi \
+    --with-cms \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --with-faudio \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gsm \
+    --without-gssapi \
+    --with-gstreamer \
+    --without-hal \
+    --without-inotify \
+    --with-jpeg \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --with-mpg123 \
+    --without-netapi \
+    --with-openal \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-png \
+    --with-pthread \
+    --without-pulse \
+    --without-quicktime \
+    --without-sane \
+    --with-sdl \
+    --with-tiff \
+    --without-udev \
+    --with-unwind \
+    --with-usb \
+    --without-v4l2 \
+    --without-vulkan \
+    --without-vkd3d \
+    --with-xml \
+    --with-xslt \
+    --without-x
 
 # wine has a native display driver, since wine-1.5.26
 variant x11 {
-    depends_lib-append          port:libGLU \
-                                port:mesa \
-                                port:xorg-libX11 \
-                                port:xorg-libXcomposite \
-                                port:xorg-libXcursor \
-                                port:xorg-libXext \
-                                port:xorg-libXi \
-                                port:xorg-libXinerama \
-                                port:xorg-libXrandr \
-                                port:xorg-libXxf86vm \
-                                port:xorg-libsm \
-                                port:xorg-xorgproto \
-                                port:xrender
+    depends_lib-append \
+        port:libGLU \
+        port:mesa \
+        port:xorg-libX11 \
+        port:xorg-libXcomposite \
+        port:xorg-libXcursor \
+        port:xorg-libXext \
+        port:xorg-libXi \
+        port:xorg-libXinerama \
+        port:xorg-libXrandr \
+        port:xorg-libXxf86vm \
+        port:xorg-libsm \
+        port:xorg-xorgproto \
+        port:xrender
 
-    configure.args-delete       --without-x
+    configure.args-delete \
+        --without-x
 
-    configure.args-append       --with-osmesa \
-                                --with-xcomposite \
-                                --with-xcursor \
-                                --with-xfixes \
-                                --with-xinerama \
-                                --with-xinput \
-                                --with-xinput2 \
-                                --with-xrandr \
-                                --with-xrender \
-                                --with-xshape \
-                                --with-xshm \
-                                --with-xxf86vm \
-                                --with-x \
-                                --x-include=${prefix}/include \
-                                --x-lib=${prefix}/lib
+    configure.args-append \
+        --with-osmesa \
+        --with-xcomposite \
+        --with-xcursor \
+        --with-xfixes \
+        --with-xinerama \
+        --with-xinput \
+        --with-xinput2 \
+        --with-xrandr \
+        --with-xrender \
+        --with-xshape \
+        --with-xshm \
+        --with-xxf86vm \
+        --with-x \
+        --x-include=${prefix}/include \
+        --x-lib=${prefix}/lib
 }
 
 # Workaround weirdness with i386 GSTREAMER_CFLAGS not always getting set from pkgconfig
-configure.args-append           GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
+configure.args-append \
+    GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append          -Wl,-rpath,${prefix}/lib
+configure.ldflags-append \
+    -Wl,-rpath,${prefix}/lib
 
 configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
 build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
