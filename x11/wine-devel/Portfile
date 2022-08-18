@@ -9,8 +9,8 @@ PortGroup                   legacysupport 1.1
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
+# Must be statically linked or -preloader breaks
 legacysupport.use_static yes
-Must be statically linked or -preloader breaks
 
 # Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
@@ -234,7 +234,7 @@ if {${os.major} == 12 || ${os.major} == 13} {
     depends_build-append        port:MacOSX10.11.sdk
     configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     
-    # Need to disable metal GPU support or rev-upgrade will cry
+    # Avoid linking Metal or rev-upgrade will cry
     # Support GPU initialization via Metal, since wine-4.15
     # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
     configure.args-append       ac_cv_header_Metal_Metal_h=
@@ -273,7 +273,7 @@ subport wine-staging {
 
     # Running "patchinstall.sh" before patchesfiles that get inherited from wine-devel
     # "eventfd_synchronization" is disabled as macOS doesn't support eventfd
-    # "winemac.drv-no-flicker-patch" is disabled as the patch inherited from wine-devel
+    # "winemac.drv-no-flicker-patch" is disabled as the patch gets inherited from wine-devel
     post-extract {
         system -W ${workpath}/wine-staging-${staging_version}/patches \
             "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
