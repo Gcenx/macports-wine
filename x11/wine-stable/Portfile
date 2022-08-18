@@ -9,8 +9,8 @@ PortGroup                   legacysupport 1.1
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
+# Must be statically linked or -preloader breaks
 legacysupport.use_static yes
-Must be statically linked or -preloader breaks
 
 # Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
