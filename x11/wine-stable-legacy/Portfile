@@ -15,7 +15,7 @@ legacysupport.use_static yes
 name                        wine-stable-legacy
 conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     6.0.2
+version                     6.0.4
 revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -51,9 +51,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  0f5f00cd0a71de0c46f7e4140dcd23e45cb2b5f6 \
-    sha256  345dba573ba928e5a65cf35901661a86df2dd6136e81530bc865f177dc66d9b2 \
-    size    40522571
+    rmd160  c136de5fe6a7e3b5620ecd0afb272d165c1d9ec6 \
+    sha256  ca50376e3f7200493214daa5f7fd1145bfc9dd085c4814e4d502d4723e7b52a6 \
+    size    40532584
 
 depends_build \
     port:bison \
@@ -237,7 +237,7 @@ if {${os.major} >= 15} {
         ac_cv_lib_soname_vulkan=
 }
 
-if {${os.major} = 10} {
+if {${os.major} == 10} {
     # https://trac.macports.org/ticket/61721
     compiler.whitelist          macports-clang-5.0
     depends_build-append        port:libmacho
