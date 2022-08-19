@@ -85,6 +85,7 @@ depends_lib \
     port:tiff
 
 depends_run \
+    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:wine-gecko \
     port:wine-mono-5.1.1
 
@@ -94,6 +95,14 @@ patch.pre_args \
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
+
+# Older versions of macOS have expired certs, this allows wine to use curl-ca-bundle.crt
+patchfiles-append \
+    0002-crypt32-expand-cert-search-paths.diff
+
+post-patch {
+    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+}
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
