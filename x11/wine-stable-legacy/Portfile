@@ -3,7 +3,6 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
-PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
 # ntdll requires "fstatat", since wine-5.9
@@ -58,11 +57,13 @@ checksums \
 
 depends_build \
     port:bison \
+    port:cctools \
     port:flex \
+    port:gettext \
+    port:ld64 \
     port:mingw-w64 \
     port:pkgconfig
 
-# Note: Most of the X11 libs are dlopen()'d
 depends_lib \
     port:freetype \
     port:FAudio \
@@ -76,7 +77,6 @@ depends_lib \
     port:libiconv \
     port:libpcap \
     port:libpng \
-    port:libusb \
     port:libunwind \
     port:libxml2 \
     port:libxslt \
@@ -147,9 +147,8 @@ configure.args \
     --with-tiff \
     --without-udev \
     --with-unwind \
-    --with-usb \
+    --without-usb \
     --without-v4l2 \
-    --without-vulkan \
     --without-vkd3d \
     --with-xml \
     --with-xslt \
@@ -202,6 +201,9 @@ configure.args-append \
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
+configure.args.i386-append \
+    --without-vulkan
+
 configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
 build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
 destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
@@ -221,82 +223,76 @@ if {${os.major} > 18} {
     macosx_deployment_target    10.14
 }
 
+# Vulkan is supported on macOS through MoltenVK, since wine-3.13
+if {${os.major} >= 15} {
+    depends_lib-append \
+        path:lib/libMoltenVK.dylib:MoltenVK
+
+    depends_skip_archcheck-append \
+        MoltenVK
+
+    configure.args.x86_64-append \
+        --with-vulkan \
+        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
+        ac_cv_lib_soname_vulkan=
+}
+
+if {${os.major} = 10} {
+    # https://trac.macports.org/ticket/61721
+    compiler.whitelist          macports-clang-5.0
+    depends_build-append        port:libmacho
+    patchfiles-append           1001-wine-SnowLeopard.diff
+
+    # Must be statically linked or -preloader breaks
+    configure.ldflags-append    ${prefix}/lib/libmacho.a
+
+    # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
+    # "-no_new_main" is needed for preloader, since wine-4.0-rc1
+    require_active_variants     port:ld64 ld64_274
+
+    # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
+    # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
+    reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
+
+    # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
+    # Features don't exist in IOKit until 10.7, since wine-4.21
+    patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
+
+    # Using the 10.7 SDK to avoid even more reverts
+    configure.sdk_version   10.7
+    if {${configure.sdkroot} eq ""} {
+        pre-fetch {
+            error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
+        }
+    }
+
+    notes-append "
+            \n
+            ${name} @${version} will have issues launching some things as wine-preloader\
+            was designed for OS X 10.7 and not OS X 10.6
+    "
+}
+
 # wine requires clang >= 3.8
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
-platform darwin {
-    # Vulkan is supported on macOS through MoltenVK, since wine-3.13
-    if {${os.major} >= 15} {
-        depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        depends_skip_archcheck-append           MoltenVK
-        configure.args.x86_64-delete            --without-vulkan
-        configure.args.x86_64-append            --with-vulkan \
-                                                ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-                                                ac_cv_lib_soname_vulkan=
-    }
+variant usb description {Build ${name} with USB support} {
+    depends_lib-append port:libusb
+    configure.args-delete --without-usb
+    configure.args-append --with-usb
+}
 
-    notes {
-        When using the Mac Driver, it might be useful to enable RetinaMode\
-        when you're using a high DPI monitor. To do that, open up Wine's\
-        Registry Editor:
-
-          wine regedit
-
-        and then navigate to:
-
-          [HKEY_CURRENT_USER\Software\Wine\Mac Driver]
-
-        and then set "RetinaMode" to "y". You may also want to adjust your\
-        DPI under the Graphics tab in winecfg.}
-
-    if {${os.major} = 10} {
-        # https://trac.macports.org/ticket/61721
-        compiler.whitelist          macports-clang-5.0
-        depends_build-append        port:libmacho
-        patchfiles-append           1001-wine-SnowLeopard.diff
-
-        # Must be statically linked or -preloader breaks
-        configure.ldflags-append    ${prefix}/lib/libmacho.a
-
-        # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
-        # "-no_new_main" is needed for preloader, since wine-4.0-rc1
-        require_active_variants     port:ld64 ld64_274
-
-        # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
-        # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
-        reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
-
-        # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-        # Features don't exist in IOKit until 10.7, since wine-4.21
-        patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
-
-        # Using the 10.7 SDK to avoid even more reverts
-        configure.sdk_version   10.7
-        if {${configure.sdkroot} eq ""} {
-            pre-fetch {
-                error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
-            }
-        }
-
-        notes-append "
-            \n
-            ${name} @${version} will have issues launching some things as wine-preloader\
-            was designed for OS X 10.7 and not OS X 10.6
-        "
-    }
-
-    if {${os.major} < 10} {
-        known_fail yes
-        archive_sites
-        distfiles
-        depends_build
-        depends_lib
-        pre-fetch {
-            ui_error "${name} @${version} requires Mac OS X 10.6 or later."
-            return -code error "incompatible Mac OS X version"
-        }
+if {${os.major} < 10} {
+    known_fail yes
+    archive_sites
+    distfiles
+    depends_build
+    depends_lib
+    pre-fetch {
+        ui_error "${name} @${version} requires Mac OS X 10.6 or later."
+        return -code error "incompatible Mac OS X version"
     }
 }
 
@@ -311,6 +307,8 @@ if {${os.endian} eq "big"} {
         return -code error "incompatible processor"
     }
 }
+
+destroot.target install-lib
 
 post-destroot {
     # Add custom tool for easy launching explorer
