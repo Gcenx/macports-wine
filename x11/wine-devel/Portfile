@@ -282,7 +282,7 @@ subport wine-staging {
 
 variant usb description {Build ${name} with USB support} {
     depends_lib-append port:libusb
-    configure.args-delete --wthout-usb
+    configure.args-delete --without-usb
     configure.args-append --with-usb
 }
 
