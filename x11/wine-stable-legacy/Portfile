@@ -3,6 +3,7 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
 # ntdll requires "fstatat", since wine-5.9
@@ -261,7 +262,9 @@ if {${os.major} == 10} {
 
     # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
     # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
-    reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
+    pre-configure {
+        reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
+    }
 
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
     # Features don't exist in IOKit until 10.7, since wine-4.21
