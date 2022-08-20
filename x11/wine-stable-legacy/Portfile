@@ -6,7 +6,7 @@ PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
 PortGroup                   legacysupport 1.1
 
-# ntdll requires "fstatat", since wine-5.9
+# ntdll requires fstatat, since wine-5.9
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
@@ -22,7 +22,6 @@ set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
 
-# arm64 compile of wine requires mingw-w64-clang but will only support arm64 Windows binaries
 supported_archs             i386 x86_64
 maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
@@ -256,18 +255,18 @@ if {${os.major} == 10} {
     # Must be statically linked or -preloader breaks
     configure.ldflags-append    ${prefix}/lib/libmacho.a
 
-    # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
     # "-no_new_main" is needed for preloader, since wine-4.0-rc1
+    # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
     require_active_variants     port:ld64 ld64_274
 
-    # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
     # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
+    # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
     pre-configure {
         reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
     }
 
-    # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
     # Features don't exist in IOKit until 10.7, since wine-4.21
+    # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
     patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
 
     # Using the 10.7 SDK to avoid even more reverts
