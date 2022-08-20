@@ -5,7 +5,7 @@ PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   legacysupport 1.1
 
-# ntdll requires "fstatat", since wine-5.9
+# ntdll requires fstatat, since wine-5.9
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
@@ -23,7 +23,7 @@ set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
 
-# arm64 compile of wine requires mingw-w64-clang but will only support arm64 Windows binaries
+# arm64 compile of wine will only support arm64 Windows binaries
 supported_archs             i386 x86_64
 maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
