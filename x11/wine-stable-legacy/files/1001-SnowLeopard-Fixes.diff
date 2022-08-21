@@ -1,8 +1,19 @@
+From 87f66038469371e3abbccbb45ffa45efe5045e2b Mon Sep 17 00:00:00 2001
+From: Ken <21211439+kencu@users.noreply.github.com>
+Date: Sat, 20 Aug 2022 16:49:47 -0400
+Subject: [PATCH 1/4] SnowLeopard Fixes
+
+---
+ dlls/winemac.drv/window.c | 10 +++++++++-
+ dlls/winex11.drv/pen.c    |  2 +-
+ dlls/ws2_32/socket.c      | 12 ++++++++++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
 diff --git a/dlls/winemac.drv/window.c b/dlls/winemac.drv/window.c
-index b7a0963..4f160ee 100644
+index 267c4cd550d..72b8dacb100 100644
 --- a/dlls/winemac.drv/window.c
 +++ b/dlls/winemac.drv/window.c
-@@ -1568,10 +1568,18 @@ static LRESULT CALLBACK desktop_wndproc_wrapper( HWND hwnd, UINT msg, WPARAM wp,
+@@ -1573,10 +1573,18 @@ static LRESULT CALLBACK desktop_wndproc_wrapper( HWND hwnd, UINT msg, WPARAM wp,
      {
      case WM_WINE_NOTIFY_ACTIVITY:
      {
@@ -23,7 +34,7 @@ index b7a0963..4f160ee 100644
          /* It's deprecated, but there's no better alternative. */
  #pragma clang diagnostic push
 diff --git a/dlls/winex11.drv/pen.c b/dlls/winex11.drv/pen.c
-index 6df2659..9b81492 100644
+index b1ad1026056..de7340b550d 100644
 --- a/dlls/winex11.drv/pen.c
 +++ b/dlls/winex11.drv/pen.c
 @@ -47,7 +47,7 @@ static DWORD get_user_dashes( char *res, const DWORD *style, DWORD len )
@@ -36,10 +47,10 @@ index 6df2659..9b81492 100644
  }
  
 diff --git a/dlls/ws2_32/socket.c b/dlls/ws2_32/socket.c
-index 27acd85..abe0c64 100644
+index 0579ede8772..61f93a31205 100644
 --- a/dlls/ws2_32/socket.c
 +++ b/dlls/ws2_32/socket.c
-@@ -464,10 +464,18 @@
+@@ -836,10 +836,18 @@ static const int ws_ip_map[][2] =
      MAP_OPTION( IP_MULTICAST_LOOP ),
      MAP_OPTION( IP_ADD_MEMBERSHIP ),
      MAP_OPTION( IP_DROP_MEMBERSHIP ),
@@ -58,7 +69,7 @@ index 27acd85..abe0c64 100644
      MAP_OPTION( IP_OPTIONS ),
  #ifdef IP_HDRINCL
      MAP_OPTION( IP_HDRINCL ),
-@@ -3457,7 +3465,9 @@
+@@ -5636,7 +5644,9 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
      int woptval;
      struct linger linger;
      struct timeval tval;
@@ -68,19 +79,19 @@ index 27acd85..abe0c64 100644
  
      TRACE("(socket %04lx, %s, optval %s, optlen %d)\n", s,
            debugstr_sockopt(level, optname), debugstr_optval(optval, optlen),
-@@ -3640,6 +3650,7 @@
-         case WS_IP_DROP_SOURCE_MEMBERSHIP:
+@@ -5852,6 +5862,7 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
+         case WS_IP_BLOCK_SOURCE:
          case WS_IP_UNBLOCK_SOURCE:
          {
 +#if MAC_OS_X_VERSION_MAX_ALLOWED > 1070
              WS_IP_MREQ_SOURCE* val = (void*)optval;
              mreq_source.imr_interface.s_addr = val->imr_interface.S_un.S_addr;
              mreq_source.imr_multiaddr.s_addr = val->imr_multiaddr.S_un.S_addr;
-@@ -3649,6 +3660,7 @@
+@@ -5861,6 +5872,7 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
              optlen = sizeof(mreq_source);
  
              convert_sockopt(&level, &optname);
 +#endif
              break;
          }
-         case WS_IP_DROP_MEMBERSHIP:
+         case WS_IP_ADD_MEMBERSHIP:

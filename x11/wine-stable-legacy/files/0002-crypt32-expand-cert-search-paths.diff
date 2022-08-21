@@ -19,5 +19,3 @@ index a345b5e6ac8..48a070cdb74 100644
  };
  
  static void load_root_certs(void)
---
-2.21.1 (Apple Git-122.3)

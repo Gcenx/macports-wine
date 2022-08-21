@@ -250,7 +250,7 @@ if {${os.major} == 10} {
     # https://trac.macports.org/ticket/61721
     compiler.whitelist          macports-clang-5.0
     depends_build-append        port:libmacho
-    patchfiles-append           1001-wine-SnowLeopard.diff
+    patchfiles-append           1001-SnowLeopard-Fixes.diff
 
     # Must be statically linked or -preloader breaks
     configure.ldflags-append    ${prefix}/lib/libmacho.a
@@ -267,7 +267,11 @@ if {${os.major} == 10} {
 
     # Features don't exist in IOKit until 10.7, since wine-4.21
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-    patchfiles-append           1002-Revert-ntdll-Implement-SystemBatteryState-for-Mac-OS.diff
+    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
+
+    # One or both of these need to be reverted or wine-6.0.4 won't launch some error on user32
+    patchfiles-append           1003-Revert-149284628def87f7e1ca70a1f8c7858d68cea346.diff
+    patchfiles-append           1004-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
 
     # Using the 10.7 SDK to avoid even more reverts
     configure.sdk_version   10.7
@@ -279,7 +283,7 @@ if {${os.major} == 10} {
 
     notes-append "
             \n
-            ${name} @${version} will have issues launching some things as wine-preloader\
+            ${name} @${version} might have issues launching somethings as wine-preloader\
             was designed for OS X 10.7 and not OS X 10.6
     "
 }
