@@ -43,8 +43,14 @@ long_description \
     of other methods and allowing you to cleanly \
     integrate Windows applications into your desktop.
 
-master_sites \
-    https://github.com/wine-mirror/wine/archive/:winesource
+depends_fetch-append        port:curl
+depends_skip_archcheck-append curl
+fetch {
+    # Manually download the file(s) if they don't exist
+    if {![file exists ${distpath}/${wine_distfile} ]} {
+        system -W /bin "${prefix}/bin/curl -Lo ${distpath}/${wine_distfile} https://github.com/wine-mirror/wine/archive/${wine_distfile}"
+    }
+}
 
 distfiles \
     ${wine_distfile}:winesource
@@ -87,7 +93,7 @@ depends_lib \
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:wine-gecko \
-    port:wine-mono-5.1.1
+    port:wine-mono
 
 patch.pre_args \
     -p1

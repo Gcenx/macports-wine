@@ -17,77 +17,6 @@ name                wine-mono
 set my_name         wine-mono
 
 if {${subport} eq ${name}} {
-    version         7.0.0
-    revision        0
-    
-    checksums       rmd160  96f7316927cef5ea35197389e425c54b0dccc3fb \
-                    sha256  2a047893f047b4f0f5b480f1947b7dda546cee3fec080beb105bf5759c563cd3 \
-                    size    45085800
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-6.4.0 {
-    version         6.4.0
-    revision        0
-    
-    checksums       rmd160  d48aee1995af12d180605cf007bbc8b45837acb8 \
-                    sha256  0473570207938f983994addb1ff3c3904a30f6cc07ecaa291c7900f5f7e4cc21 \
-                    size    44177712
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-6.3.0 {
-    version         6.3.0
-    revision        0
-    
-    checksums       rmd160  d4a7fc86326c952f50618b475db2c1ade1eab4c8 \
-                    sha256  eb67426ff60ed6395b70437e838883ee08b6189cad84faf036b1a4d7366a34e2 \
-                    size    44392520
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-6.2.0 {
-    version         6.2.2
-    revision        0
-    
-    checksums       rmd160  bb88f94c9e372b6c36dbf1cdeffe933b57883233 \
-                    sha256  4e70675b15ba36605b98a39067a0e773e61836e64b78632503575f0c0ebc985f \
-                    size    42270792
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-
-    # wine-mono-6.2.0 had regressions that wine-mono-6.2.2 resolved but wine looks for wine-mono-6.2.0
-    post-destroot {
-        file rename ${destroot}${prefix}/share/wine/mono/wine-mono-${version} ${destroot}${prefix}/share/wine/mono/wine-mono-6.2.0
-    }
-}
-
-subport wine-mono-6.1.1 {
-    version         6.1.1
-    revision        0
-    
-    checksums       rmd160  a27137adc908a4eb1a262cc0502ef73d5a1894e2 \
-                    sha256  c3bab46c3e69ecdda61532c28c6a94a78aef9c750cc18dbb60151e0697714d6d \
-                    size    45702072
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-6.0.0 {
-    version         6.0.0
-    revision        0
-    
-    checksums       rmd160  0ca3bdd05b78594ac928cbefd77e9e7e4ad164e2 \
-                    sha256  3a101983af16aa2652262fff9c6b5365b884866a9d3c65ee6de0c6c1f300134c \
-                    size    45485748
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-5.1.1 {
     version         5.1.1
     revision        0
     
@@ -96,41 +25,6 @@ subport wine-mono-5.1.1 {
                     size    44710604
     use_xz          yes
     distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-5.1.0 {
-    version         5.1.0
-    revision        0
-    
-    checksums       rmd160  2196f9176b8c6cad2e0bde328613af9080a78dff \
-                    sha256  7c69355566055121669f7e416e44185a5ccceb4312d0c19587d2303e63b6b63f \
-                    size    41627164
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-5.0.0 {
-    version         5.0.1
-    revision        0
-    checksums       rmd160  700512e7bbb71c21b283e5a2f518c2fc248cd6ff \
-                    sha256  c899f176cbb7b1c411abbc103e17ae05702df21a502534c6f71c891ebde7b604 \
-                    size    38986060
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-    
-    # wine-mono-5.0.0 had regressions that wine-mono-5.0.1 resolved but wine looks for wine-mono-5.0.0
-    post-destroot {
-        file rename ${destroot}${prefix}/share/wine/mono/wine-mono-${version} ${destroot}${prefix}/share/wine/mono/wine-mono-5.0.0
-    }
-}
-
-subport wine-mono-4.9.4 {
-    version         4.9.4
-    revision        0
-    checksums       rmd160  b3a85e8f857666c8f58c40b158059fa2815f4c0f \
-                    sha256  df97cdb904a583a1f92ce17d9d4793aed063ebc9bb139b6d1989b22a534c7b63 \
-                    size    91218178
-    distname        wine-mono-bin-${version}
 }
 
 set wine-mono_distfile \
