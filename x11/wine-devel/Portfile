@@ -4,13 +4,14 @@ PortSystem                  1.0
 PortGroup                   muniversal 1.0
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
+PortGroup                   legacysupport 1.1
 
-# Please keep the wine-stable, wine-devel, wine-staging and wine-crossover ports as similar as possible.
+# ntdll requires fstatat, since wine-5.9
+# https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
+legacysupport.newest_darwin_requires_legacy 13
 
-# When updating the version of wine, update wine_gecko and wine_mono to compatible versions
-# as referenced in the source code. Check here by replacing X.Y with the version:
-# https://source.winehq.org/git/wine.git/blob/refs/tags/wine-X.Y:/dlls/appwiz.cpl/addons.c
-# see also http://wiki.winehq.org/Gecko and http://wiki.winehq.org/Mono
+# Must be statically linked or -preloader breaks 
+legacysupport.use_static yes
 
 name                        wine-devel
 conflicts                   wine wine-stable wine-staging wine-crossover
@@ -20,14 +21,12 @@ revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  x11
-maintainers                 {gcenx @gcenx}
+maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
-platforms                   darwin
 distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
 set wine_distfile           ${distname}${extract.suffix}
 worksrcdir                  wine-${distname}
-use_parallel_build          yes
 
 description                 A Windows API implementation
 
@@ -40,21 +39,14 @@ long_description            Wine is a compatibility layer capable of running \
                             of other methods and allowing you to cleanly \
                             integrate Windows applications into your desktop.
 
-# GitHub requires TLS v1.2
-if {${os.major} > 15} {
-    master_sites                https://github.com/wine-mirror/wine/archive/:winesource
-} else {
-    depends_build-append        port:curl
-    
-    fetch {
-            # Manually download the file(s) if they don't exist
-            if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_distfile} ]} {
-                system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/wine-mirror/wine/archive/${wine_distfile}"
-            }
+depends_build-append        port:curl
+depends_skip_archcheck-append curl
+fetch {
+    # Manually download the file(s) if they don't exist
+    if {![file exists ${portdbpath}/distfiles/${dist_subdir}/${wine_distfile} ]} {
+        system -W /bin "cd ${portdbpath}/distfiles/${dist_subdir}/ && ${prefix}/bin/curl -LO https://github.com/wine-mirror/wine/archive/${wine_distfile}"
     }
 }
-
-extract.only                ${wine_distfile}
 
 distfiles                   ${wine_distfile}:winesource
 
@@ -63,33 +55,38 @@ checksums                   ${wine_distfile} \
                             sha256  9dae73074fa52938f9b0bdf8081e95adf0f77a7d360cdf09d468f805efd8f875 \
                             size    41358477
 
-# Note: Most of the X11 libs are dlopen()'d
-depends_lib                 port:fontconfig \
-                            port:freetype \
-                            port:FAudio \
-                            port:gnutls \
-                            port:gstreamer1 \
-                            port:gstreamer1-gst-plugins-base \
-                            path:include/turbojpeg.h:libjpeg-turbo \
-                            port:jxrlib \
-                            port:lcms2 \
-                            port:libiconv \
-                            port:libpcap \
-                            port:libpng \
-                            port:libusb \
-                            port:libunwind \
-                            port:libxml2 \
-                            port:libxslt \
-                            port:mpg123 \
-                            port:openal-soft \
-                            port:tiff \
-                            port:wine-gecko \
-                            port:wine-mono-6.2.0
+depends_build \
+    port:bison \
+    port:cctools \
+    port:flex \
+    port:gettext \
+    port:ld64 \
+    port:mingw-w64 \
+    port:pkgconfig
 
-depends_build               port:bison \
-                            port:flex \
-                            port:mingw-w64 \
-                            port:pkgconfig
+depends_lib \
+    port:freetype \
+    port:FAudio \
+    port:gnutls \
+    port:gstreamer1 \
+    port:gstreamer1-gst-plugins-base \
+    path:include/turbojpeg.h:libjpeg-turbo \
+    port:jxrlib \
+    port:lcms2 \
+    port:libiconv \
+    port:libpcap \
+    port:libpng \
+    port:libunwind \
+    port:libxml2 \
+    port:libxslt \
+    port:mpg123 \
+    port:openal-soft \
+    port:tiff
+
+depends_run \
+    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
+    port:wine-gecko \
+    port:wine-mono-6.2.0
 
 patch.pre_args              -p1
 
@@ -151,7 +148,7 @@ configure.args              --without-alsa \
                             --with-tiff \
                             --without-udev \
                             --with-unwind \
-                            --with-usb \
+                            --without-usb \
                             --without-v4l2 \
                             --without-vkd3d \
                             --without-xcomposite \
