@@ -8,7 +8,7 @@ PortGroup               cmake 1.1
 github.setup            FNA-XNA FAudio 22.01
 revision                0
 
-# zlib is the stock FAudio license, but changes to LGPL-2+ due to gstreamer1-gst-libav
+# zlib is the stock FAudio license, but changes to GPL-2+ due to gstreamer1-gst-libav
 license                 GPL-2+
 categories              audio
 platforms               darwin
