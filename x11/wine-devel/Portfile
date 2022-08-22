@@ -67,7 +67,7 @@ depends_build \
 depends_lib \
     port:freetype \
     port:FAudio \
-    port:gnutls \
+    path:lib/pkgconfig/gnutls.pc:gnutls \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     path:include/turbojpeg.h:libjpeg-turbo \
@@ -210,22 +210,6 @@ variant x11 {
                                 --x-lib=${prefix}/lib
 }
 
-# ffmpeg takes forever to build plus would cause a license change
-variant ffmpeg {
-    depends_lib-append          port:gstreamer1-gst-plugins-good \
-                                port:gstreamer1-gst-plugins-bad \
-                                port:gstreamer1-gst-plugins-ugly \
-                                port:gstreamer1-gst-libav
-
-    configure.args-delete       --without-dbus \
-                                --without-krb5
-
-    configure.args-append       --with-dbus \
-                                --with-krb5
-    
-    require_active_variants     port:FAudio wma
-}
-
 if {${os.platform} ne "darwin" && (${os.major} >= 9 && ${os.major} <= 18)} {
     default_variants        +x11
 }
@@ -265,11 +249,6 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
 platform darwin {
-    # On macOS, Core Text is used instead of fontconfig since Wine 1.5.10
-    depends_lib-delete                          port:fontconfig
-    configure.args-delete                       --with-fontconfig
-    configure.args-append                       --without-fontconfig
-
     # Vulkan is supported on macOS through MoltenVK since Wine 3.13, but because
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
@@ -297,16 +276,6 @@ platform darwin {
         configure.args-append        ac_cv_header_Metal_Metal_h="no"
     }
     
-    # wine-5.9 and later ntdll requires "_fstatat" that's not avalible until the 10.10 SDK
-    # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
-    # While legacysupport does get wine(64) to compile, the resulting binary
-    # gets the following type of errors
-    # "preloader: Warning: failed to reserve range 00001000-00010000"
-    if {${os.major} <= 13 && ${configure.sdkroot} eq ""} {
-        depends_build-append        port:MacOSX10.11.sdk
-        configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-    }
-    
     notes {
         When using the Mac Driver, it might be useful to enable RetinaMode\
         when you're using a high DPI monitor. To do that, open up Wine's\
@@ -321,12 +290,12 @@ platform darwin {
         and then set "RetinaMode" to "y". You may also want to adjust your\
         DPI under the Graphics tab in winecfg.}
     
-    # From Wine-6.5
+    # MacOSX10.7.SDK opencl isn't new enough, since wine-6.5
     # https://github.com/wine-mirror/wine/commit/6b15f4d614fd33ec2c81b377fe6609f2bb7bfa6c
     if {${os.major} < 12} {
         configure.args-replace  --with-opencl --without-opencl
     }
-    
+
     # https://trac.macports.org/ticket/61721
     if {${os.major} < 11} {
         compiler.whitelist          macports-clang-5.0
