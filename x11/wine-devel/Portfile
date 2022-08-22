@@ -335,9 +335,11 @@ platform darwin {
     if {${os.major} < 11} {
         compiler.whitelist          macports-clang-5.0
         depends_build-append        port:libmacho
-        configure.ldflags-append    -lmacho
         patchfiles-append           patch-wine-SnowLeopard.diff
-        
+
+        # Must be statically linked or -preloader breaks
+        configure.ldflags-append    ${prefix}/lib/libmacho.a
+
         # Features don't exist in IOKit until 10.7
         # https://github.com/wine-mirror/wine/commit/eea87600d21adcd910f72f1cdaf698451884f582
         patchfiles-append           system.diff
