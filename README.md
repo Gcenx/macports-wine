@@ -1,5 +1,5 @@
 # macports-wine
-This branch focuse is to allow get wine-6.0.4 running on OS X Snow Leopard
+This branch focuse is to get wine-6.0.4 running on OS X Snow Leopard
 
 ## This repository contains;
 - `FAudio` *(v22.01)*
