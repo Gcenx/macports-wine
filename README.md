@@ -1,5 +1,5 @@
 # macports-wine
-This branch focuse is to get wine-6.0.4 running on OS X Snow Leopard
+This branch focus having somewhat modern wine running on OS X Snow Leopard.
 
 ## This repository contains;
 - `FAudio` *(v22.01)*
@@ -13,5 +13,5 @@ After installing macports you will need a modern version of `git`\
 git clone the repository into /opt then follow [4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)\
 Next run `port -v sync` you can now install any of the provided Ports.
 
-### Project history
-You can find the prior commit history via [master](https://github.com/Gcenx/macports-wine/tree/master)
+# Requirements 
+`libsdl2` & `wine` require `MacOSX10.7.SDK`
