@@ -71,7 +71,6 @@ depends_lib \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     path:include/turbojpeg.h:libjpeg-turbo \
-    port:jxrlib \
     port:lcms2 \
     port:libiconv \
     port:libpcap \
@@ -127,7 +126,7 @@ configure.args              --without-alsa \
                             --without-hal \
                             --without-inotify \
                             --with-jpeg \
-                            --with-jxrlib \
+                            --without-jxrlib \
                             --without-krb5 \
                             --with-ldap \
                             --with-mingw \
