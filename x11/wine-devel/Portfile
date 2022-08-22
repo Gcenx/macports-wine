@@ -253,9 +253,7 @@ platform darwin {
     # it uses Metal it only works on 64-bit
     if {${os.major} >= 15 && ${universal_possible} && [variant_isset universal]} {
         depends_lib-append                      path:lib/libMoltenVK.dylib:MoltenVK
-        depends_skip_archcheck-append           MoltenVK \
-                                                CX-MoltenVK \
-                                                VulkanSDK
+        depends_skip_archcheck-append           MoltenVK
         lappend merger_configure_args(x86_64)   --with-vulkan \
                                                 ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
                                                 ac_cv_lib_soname_vulkan=
@@ -298,7 +296,6 @@ platform darwin {
 
     # https://trac.macports.org/ticket/61721
     if {${os.major} < 11} {
-        compiler.whitelist          macports-clang-5.0
         depends_build-append        port:libmacho
         patchfiles-append           patch-wine-SnowLeopard.diff
 
