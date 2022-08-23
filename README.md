@@ -7,7 +7,7 @@ This branch focus having somewhat modern wine running on OS X Snow Leopard.
 - `wine-stable` *(v6.0.4)*
 - `wine-devel` *(v6.13)*
 - `wine-gecko` *(v2.47.2)*
-- `wine-mono` *(v5.1.1)*
+- `wine-mono`
 - `libsdl2` *(v2.0.22)*
 
 ## How to use this repository
