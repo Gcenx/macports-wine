@@ -3,7 +3,9 @@ This branch focus having somewhat modern wine running on OS X Snow Leopard.
 
 ## This repository contains;
 - `FAudio` *(v22.01)*
-- `wine-stable-legacy` *(v6.0.4)*
+- `wine` *(replaced_by wine-stable)*
+- `wine-stable` *(v6.0.4)*
+- `wine-devel` *(v6.13)*
 - `wine-gecko` *(v2.47.2)*
 - `wine-mono` *(v5.1.1)*
 - `libsdl2` *(v2.0.22)*
