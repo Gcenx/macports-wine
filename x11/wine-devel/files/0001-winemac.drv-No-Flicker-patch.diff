@@ -1,3 +1,14 @@
+From 9a550439fe370711ce1a2146753aa41026d5fb2a Mon Sep 17 00:00:00 2001
+From: Ken Thomases <ken@codeweavers.com>
+Date: Tue, 22 Jun 2021 07:56:43 +1000
+Subject: [PATCH] winemac.drv: No Flicker patch
+
+---
+ dlls/winemac.drv/macdrv.h      | 1 +
+ dlls/winemac.drv/macdrv_main.c | 4 ++++
+ dlls/winemac.drv/opengl.c      | 2 +-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
 diff --git a/dlls/winemac.drv/macdrv.h b/dlls/winemac.drv/macdrv.h
 index a7c0b4cac87..be119c50d48 100644
 --- a/dlls/winemac.drv/macdrv.h

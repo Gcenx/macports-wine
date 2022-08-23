@@ -1,3 +1,14 @@
+From 87f66038469371e3abbccbb45ffa45efe5045e2b Mon Sep 17 00:00:00 2001
+From: Ken <21211439+kencu@users.noreply.github.com>
+Date: Sat, 20 Aug 2022 16:49:47 -0400
+Subject: [PATCH 1/2] SnowLeopard Fixes
+
+---
+ dlls/winemac.drv/window.c | 10 +++++++++-
+ dlls/winex11.drv/pen.c    |  2 +-
+ dlls/ws2_32/socket.c      | 12 ++++++++++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
 diff --git a/dlls/winemac.drv/window.c b/dlls/winemac.drv/window.c
 index 14d6a6f..ab3a3a1 100644
 --- a/dlls/winemac.drv/window.c

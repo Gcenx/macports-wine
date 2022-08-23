@@ -1,3 +1,13 @@
+From eebb1d8298c15ee1b8f390da1be40eaee9bd4467 Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Mon, 19 Jul 2021 21:02:13 -0400
+Subject: [PATCH 2/2] Revert "ntdll: Implement SystemBatteryState for Mac OS."
+
+This reverts commit eea87600d21adcd910f72f1cdaf698451884f582
+---
+ dlls/ntdll/unix/system.c | 70 ----------------------------------------
+ 1 file changed, 70 deletions(-)
+
 --- a/dlls/ntdll/unix/system.c	2021-07-02 15:45:02.000000000 -0400
 +++ b/dlls/ntdll/unix/system.c	2021-07-18 10:50:55.000000000 -0400
 @@ -52,9 +52,6 @@
