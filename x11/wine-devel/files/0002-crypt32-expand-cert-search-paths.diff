@@ -1,0 +1,21 @@
+From 461fa1b0bdd3bcdbed7191d86ab9fce14aba7b10 Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Fri, 22 Apr 2022 09:00:57 -0400
+Subject: [PATCH] crypt32: expand cert search paths
+
+---
+ dlls/crypt32/unixlib.c | 1 +++++
+ 1 file changed, 1 insertions(+)
+
+diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
+index a345b5e6ac8..48a070cdb74 100644
+--- a/dlls/crypt32/unixlib.c
++++ b/dlls/crypt32/unixlib.c
+@@ -619,6 +619,7 @@ static const char * const CRYPT_knownLocations[] = {
+  "/usr/local/share/certs/",
+  "/etc/sfw/openssl/certs",
+  "/etc/security/cacerts",  /* Android */
++ "@@PREFIX@@/share/curl/curl-ca-bundle.crt", /* Macports */
+ };
+ 
+ static void load_root_certs(void)
