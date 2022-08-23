@@ -13,8 +13,8 @@ legacysupport.newest_darwin_requires_legacy 13
 # Must be statically linked or -preloader breaks 
 legacysupport.use_static yes
 
-name                        wine-stable-legacy
-conflicts                   wine wine-stable wine-devel wine-staging wine-crossover
+name                        wine-stable
+conflicts                   wine-devel wine-crossover
 set my_name                 wine
 version                     6.0.4
 revision                    0
