@@ -28,19 +28,14 @@ if {${subport} eq ${name}} {
 }
 
 subport wine-mono-6.2.0 {
-    version         6.2.2
+    version         6.2.0
     revision        0
     
-    checksums       rmd160  bb88f94c9e372b6c36dbf1cdeffe933b57883233 \
-                    sha256  4e70675b15ba36605b98a39067a0e773e61836e64b78632503575f0c0ebc985f \
-                    size    42270792
+    checksums       rmd160  9bee0ce6f69cfae2450c690b57975f6c71a613b0 \
+                    sha256  f15d6a646b0bf141bd1b826dd4a273bbb6f8f1d592a2b65192281223e986ee15 \
+                    size    43071332
     use_xz          yes
     distname        wine-mono-${version}-x86
-
-    # wine-mono-6.2.0 had regressions that wine-mono-6.2.2 resolved but wine looks for wine-mono-6.2.0
-    post-destroot {
-        file rename ${destroot}${prefix}/share/wine/mono/wine-mono-${version} ${destroot}${prefix}/share/wine/mono/wine-mono-6.2.0
-    }
 }
 
 set wine-mono_distfile \
