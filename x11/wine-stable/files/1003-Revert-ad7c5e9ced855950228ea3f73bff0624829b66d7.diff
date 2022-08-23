@@ -1,7 +1,7 @@
 From daabb19af0d95832bd6046fc05b6c907a4bb280f Mon Sep 17 00:00:00 2001
 From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 20 Aug 2022 19:49:42 -0400
-Subject: [PATCH 4/4] Revert "user32: Redraw children when the combo box is
+Subject: [PATCH 3/4] Revert "user32: Redraw children when the combo box is
  dropped down."
 
 This reverts commit ad7c5e9ced855950228ea3f73bff0624829b66d7.
