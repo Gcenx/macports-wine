@@ -281,9 +281,10 @@ if {${os.major} == 10} {
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
     patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
 
-    # One or both of these need to be reverted or wine-6.0.4 won't launch some error on user32
-    #patchfiles-append           1003-Revert-149284628def87f7e1ca70a1f8c7858d68cea346.diff
-    #patchfiles-append           1004-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
+    #### Possibly need to revet for wine-6.22 not sure ####
+    # user32: Redraw children when the combo box is dropped down, since wine-6.22 (cherry picked)
+    # https://gitlab.winehq.org/wine/wine/-/commit/ad7c5e9ced855950228ea3f73bff0624829b66d7
+    #patchfiles-append           1003-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
 
     # Using the 10.7 SDK to avoid even more reverts
     configure.sdk_version   10.7
