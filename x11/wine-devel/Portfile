@@ -143,6 +143,7 @@ configure.args \
     --without-hal \
     --without-inotify \
     --with-jpeg \
+    --without-jxrlib \
     --without-krb5 \
     --with-ldap \
     --with-mingw \
