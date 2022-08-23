@@ -1,5 +1,11 @@
 # macports-wine
-This branch focus having somewhat modern wine running on OS X Snow Leopard.
+This branch focus having somewhat modern wine running on OS X Snow Leopard.\
+These are still WIP and lightly require additional many more reverts.
+
+wine-stable-6.0.4 builds and runs.
+
+wine-devel-6.13 builds but fails to run currently due to some 10.7 only functions added into winemac.drv from wine-6.9.
+This may get downgraded to wine-6.8 if this works until any relevant reverts are collected.
 
 ## This repository contains;
 - `FAudio` *(v22.01)*
