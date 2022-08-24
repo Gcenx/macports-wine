@@ -38,21 +38,22 @@ checksums               rmd160  15051f0b61b55a168562b8064c9099eedd19e085 \
 use_configure           no
 
 build {
-    # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
+    # Remove these to avoid gatekeeper crying, due to modifications
     delete ${workpath}/CrossOver.app/Contents/CodeResources
     delete ${workpath}/CrossOver.app/Contents/_CodeSignature
 
-    # Remove CrossOver CD Helper
+    # Remove "CrossOver CD Helper.app"
+    # https://www.codeweavers.com/support/forums/general?t=27;msg=228035
     delete "${workpath}/CrossOver.app/Contents/Resources/CrossOver CD Helper.app"
 
     # Can't remove Sparkle.framework so remove the update url
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
 }
 
-variant mod description {Replace DXVK, MoltenVK, SDL2, wine-gecko & wine-mono} {
+variant mod description {Replace libsdl2, MoltenVK, wine-gecko, wine-mono & x86_64-w64-mingw32-dxvk} {
     depends_lib-append  \
-        port:MoltenVK \
         port:libsdl2 \
+        port:MoltenVK \
         port:wine-gecko \
         port:wine-mono-7.2.0 \
         port:x86_64-w64-mingw32-dxvk
