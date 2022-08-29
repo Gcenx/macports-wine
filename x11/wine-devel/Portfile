@@ -78,8 +78,8 @@ depends_lib \
 
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
-    port:wine-gecko \
-    port:wine-mono
+    port:mingw-w64-wine-gecko \
+    port:mingw-w64-wine-mono
 
 patch.pre_args \
     -p1

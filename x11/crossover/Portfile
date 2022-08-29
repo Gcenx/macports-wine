@@ -5,7 +5,7 @@ PortSystem              1.0
 name                    CrossOver
 
 version                 22.0.0
-revision                0
+revision                1
 
 categories              x11
 license                 Commercial
@@ -54,8 +54,8 @@ variant mod description {Replace libsdl2, MoltenVK, wine-gecko, wine-mono & x86_
     depends_lib-append  \
         port:libsdl2 \
         port:MoltenVK \
-        port:wine-gecko-2.47.2 \
-        port:wine-mono-7.2.0 \
+        port:mingw-w64-wine-gecko-2.47.2 \
+        port:mingw-w64-wine-mono-7.2.0 \
         port:x86_64-w64-mingw32-dxvk
 
     post-build {

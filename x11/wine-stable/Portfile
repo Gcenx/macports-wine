@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    8
+revision                    9
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -78,8 +78,8 @@ depends_lib \
 
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
-    port:wine-gecko \
-    port:wine-mono
+    port:mingw-w64-wine-gecko \
+    port:mingw-w64-wine-mono
 
 patch.pre_args \
     -p1
@@ -92,17 +92,17 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
-# Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
-# Bump wine-mono to 7.3.0
-# https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
-patchfiles-append \
-    0003-mscore_update_wine_mono.diff
-
 # Keep in sync with default wine-gecko Portfile (to avoid orphaned ports)
 # Bump wine-gecko to 2.47.3
 # https://gitlab.winehq.org/wine/wine/-/commit/05b9bc2161bc2729e6ffe5b28fbcda9fcb9c64aa
 patchfiles-append \
-    0004-mshtml_update_wine_gecko.diff
+    0003-mshtml_update_wine_gecko.diff
+
+# Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
+# Bump wine-mono to 7.3.0
+# https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
+patchfiles-append \
+    0004-mscore_update_wine_mono.diff
 
 # layer backed views only works on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
