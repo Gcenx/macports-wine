@@ -17,7 +17,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging
 set my_name                 wine
-version                     7.15
+version                     7.16
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -53,9 +53,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  221db7828186296b9c018a823237409b77d2bd42 \
-    sha256  1e2fee2896d6a806fd29d60f4656997441347fa2982488954bc9b3cb76d3ce01 \
-    size    46882307
+    rmd160  5a3b2f105fa9f77a1daa8d07395ec98e7d104297 \
+    sha256  ba3002fd2520e3b7250aba127a8da682a07a7dc8919d3791a9a60448ffc2de06 \
+    size    46955627
 
 depends_build \
     port:bison \
@@ -264,9 +264,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  4e2644ab2ab111cb85d0d35cde46206c6d4240f5 \
-        sha256  d087889e8ae592ede55b4079ef6661d36c4e3054e4e56d0848381ac13caa3e31 \
-        size    9644942
+        rmd160  024e19d0a2a41a4cbeb4d471e9029a17707db3c8 \
+        sha256  d0ea7d7a83d03f0331e6912c9feb215aa7a07af77526336f9aa93b96e6efa43b \
+        size    9640421
 
     depends_build-append \
         port:autoconf
