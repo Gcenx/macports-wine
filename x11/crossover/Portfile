@@ -82,7 +82,7 @@ variant mod description {Replace libsdl2, MoltenVK, wine-gecko, wine-mono & x86_
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
         ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
-        # Use port: mingw-w64-wine-gecko-2.47.2
+        # Use port:mingw-w64-wine-gecko-2.47.2
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
         ln -sf ${prefix}/share/wine/gecko ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
 
