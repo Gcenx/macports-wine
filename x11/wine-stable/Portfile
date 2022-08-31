@@ -88,6 +88,7 @@ depends_lib \
     port:libxslt \
     port:mpg123 \
     port:openal-soft \
+    port:openldap \
     port:tiff
 
 depends_run \
@@ -207,8 +208,9 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
-# Workaround weirdness with i386 GSTREAMER_CFLAGS not always getting set from pkgconfig
+# Workaround weirdness with FAUDIO_CFLAGS & GSTREAMER_CFLAGS not always getting set from pkgconfig
 configure.args-append \
+    FAUDIO_CFLAGS="-I${prefix}/include/Faudio" \
     GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
