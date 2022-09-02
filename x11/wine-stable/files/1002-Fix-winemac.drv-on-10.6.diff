@@ -1,7 +1,7 @@
 From 87f66038469371e3abbccbb45ffa45efe5045e2b Mon Sep 17 00:00:00 2001
 From: Ken <21211439+kencu@users.noreply.github.com>
 Date: Sat, 20 Aug 2022 16:49:47 -0400
-Subject: [PATCH 2/5] Fix winemac.drv on 10.6
+Subject: [PATCH 2/5] winemac.drv: wake display from sleep on 10.6
 
 Fixes a regression introduced by 60edba563bbf95d15b7691fc9facbd97fce3f7b6.
 
