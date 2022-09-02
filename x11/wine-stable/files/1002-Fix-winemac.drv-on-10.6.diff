@@ -3,7 +3,7 @@ From: Ken <21211439+kencu@users.noreply.github.com>
 Date: Sat, 20 Aug 2022 16:49:47 -0400
 Subject: [PATCH 2/5] Fix winemac.drv on 10.6
 
-The commit fixes the regression from commmit 60edba563bbf95d15b7691fc9facbd97fce3f7b6
+Fixes a regression introduced by 60edba563bbf95d15b7691fc9facbd97fce3f7b6.
 
 ---
  dlls/winemac.drv/window.c | 10 +++++++++-
