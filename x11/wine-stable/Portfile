@@ -255,6 +255,8 @@ if {${os.major} >= 15} {
 }
 
 if {${os.major} == 10} {
+    # Need to try tracking down when these two reamaining breakages happened
+    # https://trac.macports.org/ticket/61721
     patchfiles-append           1001-SnowLeopard-Fixes.diff
 
     # winemac.drv: Wake up the display on user input., since wine-3.12
