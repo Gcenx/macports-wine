@@ -1,0 +1,92 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:filetype=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   cmake 1.1
+
+name                        cx-llvm
+
+# This custom compiler is based on llvm|clang-8 but each release adds fixes for newer SDKs.
+# CX22.0.0 doens't contain newer sources but the next point release should, that includes fixes for the macOS Ventura SDK
+version                     21.2.0
+revision                    0
+epoch                       0
+
+categories                  lang
+maintainers                 {@gcenx}
+
+license                     NCSA
+
+description                 CodeWeavers custom compiler for -mwine32 targets ${version}.
+long_description            ${description}
+
+homepage                    https://codeweavers.com/
+
+master_sites                https://media.codeweavers.com/pub/crossover/source/
+distname                    crossover-sources-${version}
+dist_subdir                 wine
+extract.suffix              .tar.gz
+
+checksums                   rmd160  b77b41589fff037714cc7ca16e64573c5cc4955d \
+                            sha256  138ee0d3c2232b6ef28d50a3efd43c2565e3b813838c6a4e32c8c5c024b5d17f \
+                            size    146767060
+
+supported_archs             x86_64
+
+worksrcdir                  sources/clang/llvm
+
+post-extract {
+    ln -s ${workpath}/sources/clang/clang ${workpath}/sources/clang/llvm/projects/clang
+}
+
+# sterilize MacPorts build environment; we want nothing picked up from MP prefix
+compiler.cpath
+compiler.library_path
+configure.cxx_stdlib
+configure.cflags
+configure.cxxflags
+configure.cppflags
+configure.optflags
+configure.ldflags
+configure.universal_cflags
+configure.universal_cxxflags
+configure.universal_cppflags
+configure.universal_ldflags
+configure.universal_args
+configure.ccache            no
+configure.distcc            no
+configure.env-append        PATH=/usr/bin:/bin:/usr/sbin:/sbin
+build.env-append            PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+cmake.build_type            Release
+cmake.generator             {Unix Makefiles}
+
+# Install everything into libexec
+cmake.install_prefix        ${prefix}/libexec/${name}
+cmake.install_rpath
+
+configure.pre_args-replace  {*}[cmake::system_prefix_path] \
+                            -DCMAKE_SYSTEM_PREFIX_PATH="${cmake.install_prefix}\;/usr"
+
+configure.pre_args-replace  {*}[cmake::rpath_flags] \
+                            -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
+
+configure.pre_args-delete   {*}[cmake::module_path]
+configure.pre_args-delete   {*}[cmake::ccaching]
+configure.pre_args-delete   -DCMAKE_INSTALL_NAME_DIR="${cmake.install_prefix}/lib"
+
+configure.args-append       -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+                            -DLLVM_TARGETS_TO_BUILD=X86
+
+if {${os.platform} eq "darwin" && ${os.major} < 19} {
+    depends_build
+    depends_lib
+    depends_run
+    archive_sites
+    known_fail yes
+    pre-fetch {
+        ui_error "${subport} is not required on this version of macOS."
+        return -code error {unsupported platform}
+    }
+}
+
+livecheck.type      none
