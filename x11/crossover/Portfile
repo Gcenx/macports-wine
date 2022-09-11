@@ -71,24 +71,24 @@ if {${subport} eq ${name}} {
             ## My preferred DXVK HUD configuration
             system "echo DXVK_HUD=devinfo,fps,version >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
 
-            # Use port:MoltenVK
-            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-
-            # Use port:libsdl2
+            # Use libsdl2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
-            # Use port:mingw-w64-wine-gecko-2.47.2
+            # Use MoltenVK
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+
+            # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
             ln -sf ${prefix}/share/wine/gecko ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
 
-            # Use port:mingw-w64-wine-mono-7.2.0
+            # Use mingw-w64-wine-mono-7.2.0
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
             ln -sf ${prefix}/share/wine/mono ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
 
-            # Use port:x86_64-w64-mingw32-dxvk
+            # Use x86_64-w64-mingw32-dxvk
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
             ln -sf ${prefix}/share/wine/dxvk/x64 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
         }
@@ -168,24 +168,24 @@ subport CrossOver-21.2.0 {
             ## My preferred DXVK HUD configuration
             system "echo DXVK_HUD=devinfo,fps,version >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
 
-            # Use port:MoltenVK
-            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-
-            # Use port:libsdl2
+            # Use libsdl2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
-            # Use port:mingw-w64-wine-gecko-2.47.2
+            # Use MoltenVK
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+
+            # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
             ln -sf ${prefix}/share/wine/gecko ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
 
-            # Use port:mingw-w64-wine-mono-7.0.0
+            # Use mingw-w64-wine-mono-7.0.0
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
             ln -sf ${prefix}/share/wine/mono ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
 
-            # Use port:x86_64-w64-mingw32-dxvk
+            # Use x86_64-w64-mingw32-dxvk
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
             ln -sf ${prefix}/share/wine/dxvk/x64 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
         }
