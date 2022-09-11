@@ -51,9 +51,9 @@ if {${subport} eq ${name}} {
     variant mod description {Replace DXVK, MoltenVK, SDL2, wine-gecko & wine-mono} {
         depends_lib-append \
             port:libsdl2 \
-            port:MoltenVK \
             port:mingw-w64-wine-gecko-2.47.2 \
             port:mingw-w64-wine-mono-7.2.0 \
+            port:MoltenVK \
             port:x86_64-w64-mingw32-dxvk
 
         post-build {
@@ -76,10 +76,6 @@ if {${subport} eq ${name}} {
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
-            # Use MoltenVK
-            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-
             # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
             ln -sf ${prefix}/share/wine/gecko ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
@@ -87,6 +83,10 @@ if {${subport} eq ${name}} {
             # Use mingw-w64-wine-mono-7.2.0
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
             ln -sf ${prefix}/share/wine/mono ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
+
+            # Use MoltenVK
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
 
             # Use x86_64-w64-mingw32-dxvk
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
@@ -101,7 +101,7 @@ if {${subport} eq ${name}} {
 }
 
 # CrossOver-22.0.0 has trouble running legacy games like Total Annihilaiton & Diablo 2
-subport CrossOver-21.2.0 {
+subport ${name}-21.2.0 {
     version             21.2.0
 
     checksums           rmd160  1707937446006d44611dac97f4efca137ebdf755 \
@@ -134,8 +134,6 @@ subport CrossOver-21.2.0 {
         # Add rpath
         system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin \
             "install_name_tool -add_rpath @loader_path/../lib64 ./vkd3d-compiler"
-        system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin \
-            "install_name_tool -add_rpath @loader_path/${prefix}/lib ./vkd3d-compiler"
 
         # Fix d3d12.dll.so (rev-upgrade)
         system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine \
@@ -148,9 +146,9 @@ subport CrossOver-21.2.0 {
     variant mod description {Replace DXVK, MoltenVK, SDL2, wine-gecko & wine-mono} {
         depends_lib-append \
             port:libsdl2 \
-            port:MoltenVK \
             port:mingw-w64-wine-gecko-2.47.2 \
             port:mingw-w64-wine-mono-7.0.0 \
+            port:MoltenVK \
             port:x86_64-w64-mingw32-dxvk
 
         post-build {
@@ -173,10 +171,6 @@ subport CrossOver-21.2.0 {
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
 
-            # Use MoltenVK
-            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-
             # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
             ln -sf ${prefix}/share/wine/gecko ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
@@ -184,6 +178,10 @@ subport CrossOver-21.2.0 {
             # Use mingw-w64-wine-mono-7.0.0
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
             ln -sf ${prefix}/share/wine/mono ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/mono
+
+            # Use MoltenVK
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+            ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
 
             # Use x86_64-w64-mingw32-dxvk
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
