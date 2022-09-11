@@ -298,18 +298,6 @@ if {${os.major} < 12} {
     }
 }
 
-if {${os.endian} eq "big"} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} can only be used on an Intel Mac or other computer with a little-endian processor."
-        return -code error "incompatible processor"
-    }
-}
-
 destroot.target install-lib
 
 post-destroot {
