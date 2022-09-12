@@ -261,6 +261,14 @@ if {${os.major} < 12} {
     configure.args-replace  --with-opencl --without-opencl
 }
 
+# Block installing on 10.6 for the moment as it requires more reverts
+if {${os.major} == 10} {
+    known_fail  yes
+    pre-fetch {
+        error "$name @${version} requires Mac OS X 10.7 or later"
+    }
+}
+
 if {${os.major} == 10} {
     # "winemac.drv: Wake up the display on user input.", since wine-3.12
     # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
