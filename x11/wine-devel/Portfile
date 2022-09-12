@@ -222,9 +222,8 @@ configure.ldflags-append \
 configure.args.i386-append \
     --without-vulkan
 
-configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
-build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
-destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
+configure.args.x86_64-append \
+    --enable-win64
 
 if {[llength ${supported_archs}] > 1} {
     default_variants +universal
