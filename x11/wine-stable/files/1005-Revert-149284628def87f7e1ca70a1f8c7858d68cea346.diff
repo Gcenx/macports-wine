@@ -1,7 +1,7 @@
 From 42170bab0e8086ae4b7c98cd80ff4b45490ade57 Mon Sep 17 00:00:00 2001
 From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 20 Aug 2022 19:49:29 -0400
-Subject: [PATCH 4/4] Revert "user32: Set WM_CONTEXTMENU's wparam to the child
+Subject: [PATCH 5/5] Revert "user32: Set WM_CONTEXTMENU's wparam to the child
  window's handle."
 
 This reverts commit 149284628def87f7e1ca70a1f8c7858d68cea346.

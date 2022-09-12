@@ -255,14 +255,20 @@ if {${os.major} >= 15} {
 }
 
 if {${os.major} == 10} {
+    # Need to try tracking down when these two reamaining breakages happened
     # https://trac.macports.org/ticket/61721
-    depends_build-append        port:libmacho
     patchfiles-append           1001-SnowLeopard-Fixes.diff
 
-    # Must be statically linked or -preloader breaks
+    # winemac.drv: Wake up the display on user input., since wine-3.12
+    # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
+    patchfiles-append           1002-Fix-winemac.drv-on-10.6.diff
+
+    # libmacho is required for getsegmentdata(3), since wine-3.14
+    # https://gitlab.winehq.org/wine/wine/-/commit/bdca749f7ba4f434ac326481cf4fe0a059887f5d
+    depends_build-append        port:libmacho
     configure.ldflags-append    ${prefix}/lib/libmacho.a
 
-    # "-no_new_main" is needed for preloader, since wine-4.0-rc1
+    # ld64 needs to support -no_new_main for preloader, since wine-4.0-rc1
     # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
     require_active_variants     port:ld64 ld64_274
 
@@ -274,16 +280,16 @@ if {${os.major} == 10} {
 
     # Features don't exist in IOKit until 10.7, since wine-4.21
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
+    patchfiles-append           1003-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
 
     #### One or both of these need to be reverted or wine-6.0.4 won't launch some error on user32 ####
     # user32: Redraw children when the combo box is dropped down, since wine-6.22 (cherry picked)
     # https://gitlab.winehq.org/wine/wine/-/commit/ad7c5e9ced855950228ea3f73bff0624829b66d7
-    patchfiles-append           1003-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
+    patchfiles-append           1004-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
 
     # user32: Set WM_CONTEXTMENU's wparam to the child window's handle, since wine-7.0-rc5 (cherry picked)
     # https://gitlab.winehq.org/wine/wine/-/commit/149284628def87f7e1ca70a1f8c7858d68cea346
-    patchfiles-append           1004-Revert-149284628def87f7e1ca70a1f8c7858d68cea346.diff
+    patchfiles-append           1005-Revert-149284628def87f7e1ca70a1f8c7858d68cea346.diff
     #### One or both of those need to be reverted or wine-6.0.4 won't launch some error on user32 ####
 
     # Using the 10.7 SDK to avoid even more reverts
