@@ -6,8 +6,7 @@ PortGroup                   cmake 1.1
 name                        cx-llvm
 
 # This custom compiler is based on llvm|clang-8 but each release adds fixes for newer SDKs.
-# CX22.0.0 doens't contain newer sources but the next point release should, that includes fixes for the macOS Ventura SDK
-version                     21.2.0
+version                     22.0.0
 revision                    0
 epoch                       0
 
@@ -26,9 +25,9 @@ distname                    crossover-sources-${version}
 dist_subdir                 wine
 extract.suffix              .tar.gz
 
-checksums                   rmd160  b77b41589fff037714cc7ca16e64573c5cc4955d \
-                            sha256  138ee0d3c2232b6ef28d50a3efd43c2565e3b813838c6a4e32c8c5c024b5d17f \
-                            size    146767060
+checksums                   rmd160  2404f09485e67517c0adea86bd2e1a1cb1649e6c \
+                            sha256  0855f72b83e32455ddd13d5ec6adf3b4c94edb7213af7ccac345c9cf590af13d \
+                            size    147662305
 
 supported_archs             x86_64
 
