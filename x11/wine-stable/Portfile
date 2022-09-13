@@ -126,7 +126,7 @@ configure.checks.implicit_function_declaration.whitelist-append \
     gethostbyname_r \
     sched_setaffinity
 
-# Wine requires the program specified in INSTALL to create intermediate
+# wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
 # http://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install \
@@ -206,7 +206,7 @@ variant x11 {
 
 # Workaround weirdness with GSTREAMER_CFLAGS not always getting set from pkgconfig
 configure.args-append \
-    GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4"
+    GSTREAMER_CFLAGS='-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4'
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
@@ -243,7 +243,7 @@ if {${os.major} >= 15} {
         ac_cv_lib_soname_vulkan=
 }
 
-if {${os.major} == 12 || ${os.major} == 13} {
+if {${os.major} < 15} {
     depends_build-append        port:MacOSX10.11.sdk
     configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
     
@@ -256,7 +256,6 @@ if {${os.major} == 12 || ${os.major} == 13} {
 # wine requires clang >= 3.8
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
-compiler.fallback-append    macports-clang-5.0
 
 variant usb description {Build ${name} with USB support} {
     depends_lib-append port:libusb
