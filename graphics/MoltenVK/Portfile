@@ -43,12 +43,6 @@ subport ${name}-CX {
                             size    8500388
 }
 
-# subport is no longer required, keep around for a couple of MoltenVK versions to ensure everyone is moved over
-subport ${name}-DXVK {
-    revision                1
-    replaced_by             MoltenVK
-}
-
 # Placed here we can override the version
 master_sites                https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/v${version}
 
