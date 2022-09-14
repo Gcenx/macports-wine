@@ -33,14 +33,14 @@ if {${subport} eq ${name}} {
 }
 
 subport ${name}-CX {
-    github.setup            gcenx MoltenVK 1.1.3 v
+    github.setup            gcenx MoltenVK 1.1.10 v
     conflicts               MoltenVK
     revision                0
 
-    distname                macos_cx21
-    checksums               rmd160  7bfc2dd9486aa463587e0f224f3c00e3cc9abf7b \
-                            sha256  60ec242207f2d139600d66c6ded65e942f8e50de54d7159de185479ca56e543c \
-                            size    8500388
+    distname                macos_cx22
+    checksums               rmd160  014f97b0c529f1c43d31a3b01e61b6882c9ac72c \
+                            sha256  3816dbed07643de78467767836b88f02dafcb0fbddfc4fe10e3fbf80a0b3a0be \
+                            size    9394524
 }
 
 # Placed here we can override the version
