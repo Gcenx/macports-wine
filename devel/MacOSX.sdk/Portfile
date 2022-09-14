@@ -96,6 +96,15 @@ subport MacOSX10.12.sdk {
     checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
                         sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
                         size    36301027
+    
+    post-build {
+        # AMDil_r700.dylib is not a valid dylib and also links to
+        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
+        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+    }
 
     variant quicktime description "Remove stub and install QuickTime.framework from MacOSX10.11.SDK" {
         depends_lib-append              port:QuickTime.framework
@@ -105,15 +114,6 @@ subport MacOSX10.12.sdk {
             file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
             ln -sf ${frameworks_dir}/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
         }
-    }
-    
-    post-destroot {
-        # AMDil_r700.dylib is not a valid dylib and also links to
-        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
     }
 }
 
@@ -130,17 +130,17 @@ subport MacOSX10.11.sdk {
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
 
-    post-destroot {
+    post-build {
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
         # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
-        file delete ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
+        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
 
         # iTunesAccess.framework contains a binary not a .tbd stub causing rev-upgrade to believe iTunesAccess.framework is broken
         if {${os.major} > 18} {
-            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
+            file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
         }
     }
 }
