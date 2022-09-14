@@ -10,8 +10,8 @@ name                    MacOSX.sdk
 categories              devel
 platforms               macosx
 maintainers             {@gcenx}
-
 license                 Restrictive Nomirror
+installs_libs           no
 
 homepage                https://developer.apple.com/macos/
 
