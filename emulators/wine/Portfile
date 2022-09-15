@@ -8,4 +8,4 @@ replaced_by         wine-stable
 version             4.0.4
 revision            1
 epoch               1
-categories          x11
+categories          emulators

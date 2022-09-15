@@ -21,7 +21,7 @@ version                     7.17
 revision                    0
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
-categories                  x11
+categories                  emulators
 
 # arm64 compile of wine will only support arm64 Windows binaries
 supported_archs             i386 x86_64
@@ -192,8 +192,8 @@ variant x11 {
 }
 
 # Workaround weirdness with GSTREAMER_CFLAGS not always getting set from pkgconfig
-configure.args-append \
-    GSTREAMER_CFLAGS='-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4'
+configure.cflags.i386-append \
+    -I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
