@@ -96,16 +96,16 @@ subport MacOSX10.12.sdk {
     checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
                         sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
                         size    36301027
-    
+
     post-build {
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk (rev-upgrade)
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
 
-        # This directory contains a binary file ContactsAgent however this framework already contains ContactsAgent.tbd
+        # ContactsAgent.framework contains a .tbd stub and a binary within /Executables remove it (rev-upgrade)
         file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/ContactsAgent.framework/Executables
     }
 
@@ -136,12 +136,12 @@ subport MacOSX10.11.sdk {
     post-build {
         # AMDil_r700.dylib is not a valid dylib and also links to
         # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk
+        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk (rev-upgrade)
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
         file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
 
-        # iTunesAccess.framework contains a binary not a .tbd stub causing rev-upgrade to believe iTunesAccess.framework is broken
+        # iTunesAccess.framework contains a binary not a .tbd stub (rev-upgrade)
         if {${os.major} > 18} {
             file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
         }
@@ -162,7 +162,7 @@ subport QuickTime.framework {
                         size    36006642
 }
 
-# Earlier SDKs contain binaries not .tbd stubs causing rev-upgrade to incorrectly believe the installed SDKs are broken
+# Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
 
 set sdk_dir             ${prefix}/Developer/SDKs
 set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
