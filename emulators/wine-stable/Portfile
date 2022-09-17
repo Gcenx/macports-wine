@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    9
+revision                    10
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -103,6 +103,11 @@ patchfiles-append \
 # https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
 patchfiles-append \
     0004-mscore_update_wine_mono.diff
+
+# Pending wine-7.0.1 patches (2022-09-17)
+# https://github.com/wine-mirror/wine/compare/stable...mstefani:wine-stable:stable
+patchfiles-append \
+    0005-wine-stable.diff
 
 # layer backed views only works on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
