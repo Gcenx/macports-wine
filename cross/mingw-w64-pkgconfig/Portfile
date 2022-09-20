@@ -1,0 +1,45 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+
+name                    mingw-w64-pkgconfig
+version                 0.0.1
+categories              cross
+maintainers             {@gcenx}
+
+supported_archs         noarch
+description             pkg-config, a system for managing library compile and \
+                        link flags
+
+long_description        The pkg-config program is used to retrieve information \
+                        about installed libraries in the system. It is typically \
+                        used to compile and link against one or more libraries.
+
+if {${subport} eq ${name}} {
+    PortGroup           stub 1.0
+    depends_run         port:i686-w64-mingw32-pkgconfig \
+                        port:x86_64-w64-mingw32-pkgconfig
+}
+
+subport i686-w64-mingw32-pkgconfig {
+    set mingw_target    i686-w64-mingw32
+}
+
+subport x86_64-w64-mingw32-pkgconfig {
+    set mingw_target    x86_64-w64-mingw32
+}
+
+distfiles
+patchfiles
+use_configure           no
+depends_run             port:pkgconfig
+
+build {
+    copy ${filespath}/mingw32-pkgconfig             ${workpath}/mingw32-pkgconfig
+    reinplace -q s|@@PREFIX@@|${prefix}|g           ${workpath}/mingw32-pkgconfig
+    reinplace -q s|@@TARGET@@|${mingw_target}|g     ${workpath}/mingw32-pkgconfig
+}
+
+destroot {
+    copy ${workpath}/mingw32-pkgconfig ${destroot}${prefix}/bin/${mingw_target}-pkg-config
+}

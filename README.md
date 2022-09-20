@@ -7,6 +7,7 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `MacOSX.sdk` (Allows installation of multiple MacOSX SDKs)
 - `mingw-w64-wine-gecko` (Multiple versions)
 - `mingw-w64-wine-mono` (Multiple versions)
+- `mingw-w64-pkgconfig`
 - `MoltenVK` *(v1.1.11)*
 - `wine-stable` *(v7.0.0)*
 - `wine-devel` *(v7.17)*
