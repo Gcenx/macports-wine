@@ -60,17 +60,19 @@ destroot {
         file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
     }
 
-    if {${os.major} < 20} {
+    if {[variant_exists universal] && [variant_isset universal] || ${os.major} < 20} {
         # Turn the dylib into a single arch for lower macOS versions
-        system -W ${destroot}${prefix}/lib "lipo -thin x86_64 libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
+        system -W ${destroot}${prefix}/lib "lipo -thin ${build.arch} libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
     }
 }
 
 platform darwin {
     if {${os.major} < 15} {
+        known_fail yes
         archive_sites
         distfiles
         depends_build
+        depends_lib
         pre-fetch {
             ui_error "${subport} @${version} requires macOS El Capitan or later"
             return -code error "incompatible OS X version"
