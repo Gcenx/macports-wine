@@ -14,7 +14,6 @@ This may get downgraded to wine-6.8 if this works until any relevant reverts are
 - `wine-devel` *(v6.13)*
 - `wine-gecko` *(v2.47.2)*
 - `wine-mono`
-- `libsdl2` *(v2.0.22)*
 
 ## How to use this repository
 After installing macports you will need a modern version of `git`\
