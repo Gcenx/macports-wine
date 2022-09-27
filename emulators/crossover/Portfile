@@ -66,6 +66,8 @@ if {${subport} eq ${name}} {
             system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by DXVK for AMD500/Intel GPUs
             system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+            ## Force SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE (better DXVK performance)
+            system "echo MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE=MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
             system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## My preferred DXVK HUD configuration
@@ -103,6 +105,7 @@ if {${subport} eq ${name}} {
 # CrossOver-22.0.0 has trouble running legacy games like Total Annihilaiton & Diablo 2
 subport ${name}-21.2.0 {
     version             21.2.0
+    revision            0
 
     checksums           rmd160  1707937446006d44611dac97f4efca137ebdf755 \
                         sha256  94eb363bd9bdced95548e858922d262ca3f70156ab9dba3d687eb2fa28bdbae0 \
@@ -161,6 +164,8 @@ subport ${name}-21.2.0 {
             system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by DXVK for AMD500/Intel GPUs
             system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+            ## Force SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE (better DXVK performance)
+            system "echo MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE=MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
             system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## My preferred DXVK HUD configuration
