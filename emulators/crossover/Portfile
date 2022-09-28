@@ -4,8 +4,8 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 22.0.0
-revision                2
+version                 22.0.1
+revision                0
 
 categories              emulators
 license                 Commercial
@@ -32,9 +32,9 @@ use_zip                 yes
 use_configure           no
 
 if {${subport} eq ${name}} {
-    checksums           rmd160  15051f0b61b55a168562b8064c9099eedd19e085 \
-                        sha256  e7341b0d2441c273dbe3dd093de1d43f05243b2811846d40cf15b4818179ef65 \
-                        size    399446028
+    checksums           rmd160  f7248b889db2eeb8b469a1717cdf05de2438401b \
+                        sha256  2581a768f72cd920c5ceadeca61ed5bc679e8276a57de7a7d9c53f693adc5db2 \
+                        size    399463837
 
     build {
         # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
