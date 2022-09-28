@@ -77,6 +77,7 @@ if {${subport} eq ${name}} {
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
+            ln -sf ${prefix}/lib/libSDL2-2.0.0.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
 
             # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
@@ -175,6 +176,7 @@ subport ${name}-21.2.0 {
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
+            ln -sf ${prefix}/lib/libSDL2-2.0.0.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
 
             # Use mingw-w64-wine-gecko-2.47.2
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/wine/gecko
