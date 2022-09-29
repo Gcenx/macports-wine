@@ -6,7 +6,7 @@ PortGroup                   cmake 1.1
 name                        cx-llvm
 
 # This custom compiler is based on llvm|clang-8 but each release adds fixes for newer SDKs.
-version                     22.0.0
+version                     22.0.1
 revision                    0
 epoch                       0
 
@@ -25,9 +25,9 @@ distname                    crossover-sources-${version}
 dist_subdir                 wine
 extract.suffix              .tar.gz
 
-checksums                   rmd160  2404f09485e67517c0adea86bd2e1a1cb1649e6c \
-                            sha256  0855f72b83e32455ddd13d5ec6adf3b4c94edb7213af7ccac345c9cf590af13d \
-                            size    147662305
+checksums                   rmd160  cad5aa7f05388c80d2cf7e695b1ccc2f40517835 \
+                            sha256  dd30b258494c27207c55548fe85ec32db33848ae18120baabe9aa3d014fb37ba \
+                            size    147683202
 
 supported_archs             x86_64
 
