@@ -1,0 +1,73 @@
+From 786b9539cdceaf6d1412e87e1865339066d6bf8f Mon Sep 17 00:00:00 2001
+From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
+Date: Wed, 12 Oct 2022 20:23:28 -0400
+Subject: [PATCH] CW HACK 18311: Use VK on 64-bit macOS for d3d10/11.
+
+---
+ dlls/wined3d/adapter_vk.c | 16 ++++++++++++++++
+ dlls/wined3d/directx.c    | 16 +++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/wined3d/adapter_vk.c b/dlls/wined3d/adapter_vk.c
+index 90ffec4b1f7..cd676fe63fb 100644
+--- a/dlls/wined3d/adapter_vk.c
++++ b/dlls/wined3d/adapter_vk.c
+@@ -2495,6 +2495,22 @@ static BOOL wined3d_adapter_vk_init(struct wined3d_adapter_vk *adapter_vk,
+         VK_CALL(vkGetPhysicalDeviceProperties(adapter_vk->physical_device, &properties2.properties));
+     adapter_vk->device_limits = properties2.properties.limits;
+ 
++    /* CW HACK 18311: Use VK on 64-bit macOS for d3d10/11. */
++    if (wined3d_settings.renderer == WINED3D_RENDERER_AUTO)
++    {
++        bool d3d10 = !(wined3d_creation_flags & WINED3D_PIXEL_CENTER_INTEGER);
++        bool moltenvk = adapter_vk->driver_properties.driverID == VK_DRIVER_ID_MOLTENVK;
++
++        if (!moltenvk || !d3d10)
++        {
++            if (!moltenvk)
++                TRACE("Not running on MoltenVK, defaulting to the OpenGL backend.\n");
++            if (!d3d10)
++                TRACE("Application using < d3d10 API, defaulting to the OpenGL backend.\n");
++            goto fail_vulkan;
++        }
++    }
++
+     VK_CALL(vkGetPhysicalDeviceMemoryProperties(adapter_vk->physical_device, &adapter_vk->memory_properties));
+ 
+     if (id_properties.deviceLUIDValid)
+diff --git a/dlls/wined3d/directx.c b/dlls/wined3d/directx.c
+index 8590bd4800a..e6827907ecb 100644
+--- a/dlls/wined3d/directx.c
++++ b/dlls/wined3d/directx.c
+@@ -3507,13 +3507,27 @@ done:
+ 
+ static struct wined3d_adapter *wined3d_adapter_create(unsigned int ordinal, DWORD wined3d_creation_flags)
+ {
++    struct wined3d_adapter *adapter = NULL;
++
+     if (wined3d_creation_flags & WINED3D_NO3D)
+         return wined3d_adapter_no3d_create(ordinal, wined3d_creation_flags);
+ 
+     if (wined3d_settings.renderer == WINED3D_RENDERER_VULKAN)
+         return wined3d_adapter_vk_create(ordinal, wined3d_creation_flags);
+ 
+-    return wined3d_adapter_gl_create(ordinal, wined3d_creation_flags);
++    if (wined3d_settings.renderer == WINED3D_RENDERER_OPENGL)
++        return wined3d_adapter_gl_create(ordinal, wined3d_creation_flags);
++
++/* CW HACK 18311: Use VK on 64-bit macOS. */
++#ifdef _WIN64
++    if ((adapter = wined3d_adapter_vk_create(ordinal, wined3d_creation_flags)))
++        ERR_(winediag)("Using the Vulkan renderer for d3d10/11 applications.\n");
++#endif
++
++    if (!adapter)
++        adapter = wined3d_adapter_gl_create(ordinal, wined3d_creation_flags);
++
++    return adapter;
+ }
+ 
+ static void STDMETHODCALLTYPE wined3d_null_wined3d_object_destroyed(void *parent) {}
+-- 
+2.37.0 (Apple Git-136)
+

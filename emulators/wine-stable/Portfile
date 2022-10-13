@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0
-revision                    10
+revision                    11
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -92,22 +92,26 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
+# CW HACK 18311: Use VK on 64-bit macOS for d3d10/11
+patchfiles-append \
+    0003-CW-HACK-18311.diff
+
 # Keep in sync with default wine-gecko Portfile (to avoid orphaned ports)
 # Bump wine-gecko to 2.47.3
 # https://gitlab.winehq.org/wine/wine/-/commit/05b9bc2161bc2729e6ffe5b28fbcda9fcb9c64aa
 patchfiles-append \
-    0003-mshtml_update_wine_gecko.diff
+    0004-mshtml_update_wine_gecko.diff
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
 # Bump wine-mono to 7.3.0
 # https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
 patchfiles-append \
-    0004-mscore_update_wine_mono.diff
+    0005-mscore_update_wine_mono.diff
 
 # Pending wine-7.0.1 patches (2022-09-17)
 # https://github.com/wine-mirror/wine/compare/stable...mstefani:wine-stable:stable
 patchfiles-append \
-    0005-wine-stable.diff
+    0006-wine-stable.diff
 
 # layer backed views only works on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
