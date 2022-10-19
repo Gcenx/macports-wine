@@ -62,8 +62,6 @@ if {${subport} eq ${name}} {
             xinstall -m 0644 ${filespath}/CrossOver.icns ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
 
             # Add required MoltenVK env options to cxbottle.conf template
-            ## Required by DXVK for Apple/NVidia GPUs (better FPS than CPU Emulation)
-            system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by DXVK for AMD500/Intel GPUs
             system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Force SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE (better DXVK performance)
@@ -103,7 +101,9 @@ if {${subport} eq ${name}} {
 
 }
 
-# CrossOver-22.0.0 has trouble running legacy games like Total Annihilaiton & Diablo 2
+# "CrossOver Hack #18576: don't check for kDisplayModeSafeFlag" was fixed in CrossOver-22.0.1
+# some legacy games still don't work on macOS Monterey, possibly related to bitdepth?
+# Keep around for a little longer to easily compare as needed.
 subport ${name}-21.2.0 {
     version             21.2.0
     revision            0
@@ -161,8 +161,6 @@ subport ${name}-21.2.0 {
             xinstall -m 0644 ${filespath}/CrossOver.icns ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
 
             # Add required MoltenVK env options to cxbottle.conf template
-            ## Required by DXVK for Apple/NVidia GPUs (better FPS than CPU Emulation)
-            system "echo MVK_ALLOW_METAL_FENCES=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by DXVK for AMD500/Intel GPUs
             system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Force SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE (better DXVK performance)
