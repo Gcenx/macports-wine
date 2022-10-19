@@ -60,8 +60,7 @@ destroot {
         file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
     }
 
-    if {[variant_exists universal] && ![variant_isset universal] || ${os.major} < 20} {
-        # Turn the dylib into a single arch for lower macOS versions
+    if {[variant_exists universal] && ![variant_isset universal] || ![variant_exists universal] || ${os.major} < 20} {
         system -W ${destroot}${prefix}/lib "lipo -thin ${configure.build_arch} libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
     }
 }
