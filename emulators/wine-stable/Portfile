@@ -213,6 +213,9 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
+default_variants \
+    +quartz -sdl -x11
+
 # Workaround weirdness with GSTREAMER_CFLAGS not always getting set from pkgconfig
 configure.cflags.i386-append \
     -I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4
