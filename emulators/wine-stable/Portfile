@@ -72,6 +72,7 @@ depends_lib \
     port:gstreamer1 \
     port:gstreamer1-gst-plugins-base \
     port:gstreamer1-gst-plugins-good \
+    port:gstreamer1-gst-libav \
     port:libpcap \
     port:libsdl2 \
     port:openal-soft
@@ -88,7 +89,7 @@ patch.pre_args \
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
 
-# Older versions of macOS have expired certs, this allows wine to use curl-ca-bundle.crt
+# This allows wine to use curl-ca-bundle.crt
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
