@@ -3,6 +3,8 @@ The current versions of `wine`, `wine-devel` & `wine-crossover` provided by macp
 The provided Ports *should* compile on Mac OSX 10.8 and later.
 
 ## This repository contains;
+- `crossovertricks`         *(winetricks wrapper for CrossOver)*
+- `CrossOver`               *(22.0.1 & 21.2.0)*
 - `cx-llvm`                 *(CodeWeavers custom compiler for -mwine32 targets)*
 - `gstreamer1`              *(1.20.3)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*

@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Wrapper script for winetricks compatability
+#
+# Copyright (C) 2021 Dean M Greer
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+#
+
+export CX_INSTALL="@@APPLICATIONS@@/CrossOver-@@CX_VERSION@@.app"
+export CX_WINEPATH="${CX_INSTALL}/Contents/SharedSupport/CrossOver/bin"
+export CX_BOTTLE="${CX_BOTTLE:-$HOME/Library/Application Support/CrossOver/Bottles/default}"
+
+if [ ! -d "${CX_BOTTLE}" ]; then
+    echo "Please set \$CX_BOTTLE env to your CrossOver Bottle"; exit
+fi
+
+export WINE="$CX_WINEPATH/wine"
+export WINE64="$CX_WINEPATH/wine"
+export WINEPREFIX="${CX_BOTTLE}"
+export WINETRICKS_WINE_VERSION=@@WINE_VERSION@@
+export WINEDEBUG=-all
+
+exec winetricks "${@}"
