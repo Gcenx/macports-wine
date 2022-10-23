@@ -13,6 +13,7 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `wine-stable`             *(v7.0)*
 - `wine-devel`              *(v7.19)*
 - `wine-staging`            *(v7.19)*
+- `winetricks`              *(v20221022)*
 - `x86_64-w64-mingw32-dxvk` *(v1.10.3)*
 
 ## How to use this repository

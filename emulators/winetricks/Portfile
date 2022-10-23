@@ -1,0 +1,42 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            The-Wineskin-Project winetricks 20221022
+revision                0
+checksums               rmd160  c728c000c8a574c1caa32c6b2ed554f9ab49d3df \
+                        sha256  ee2e2fc125248433294456376ddffb20b1722b80728c6b329df6a0c1521e5661 \
+                        size    692738
+
+categories              emulators
+maintainers             {@gcenx}
+license                 LGPL-2.1+
+homepage                http://www.winetricks.org/
+supported_archs         noarch
+use_configure           no
+
+description             downloads and installs various redistributable \
+                        runtime libraries
+
+long_description        ${name} can help you prepare your system for Windows \
+                        applications that mistakenly assume all users' \
+                        systems have all the needed redistributable runtime \
+                        libraries or fonts.
+
+github.tarball_from     archive
+
+depends_run             port:cabextract \
+                        path:bin/openssl:openssl \
+                        bin:curl:curl \
+                        bin:unzip:unzip
+
+build {}
+
+destroot.args           PREFIX=${prefix}
+
+post-destroot {
+    set docdir ${prefix}/share/doc/${subport}
+    xinstall -d ${destroot}${docdir}
+    xinstall -m 0644 -W ${worksrcpath} COPYING README.md ${destroot}${docdir}
+}
