@@ -3,7 +3,7 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            alexey-lysiuk macos-sdk 11.3
+github.setup            gcenx macos-sdk 12.3
 github.tarball_from     releases
 
 name                    MacOSX.sdk
@@ -17,6 +17,20 @@ homepage                https://developer.apple.com/macos/
 
 dist_subdir             MacOSX.sdk
 use_bzip2               yes
+
+subport MacOSX12.3.sdk {
+    set macos_name      {macOS Montery}
+    set xcode_vers      13.3
+    version             12.3
+    revision            0
+    supported_archs     arm64 x86_64
+
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-12_3-release-notes
+
+    checksums           rmd160  a461015180833f888df142ed184b9c09f7a0d189 \
+                        sha256  e951a52b9a1d3304f85aa93a45bbbe2237e0634efdb37d16a5bcbaaff8d4b210 \
+                        size    67238967
+}
 
 subport MacOSX11.3.sdk {
     set macos_name      {macOS Big Sur}
