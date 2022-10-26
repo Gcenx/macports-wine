@@ -8,7 +8,7 @@ PortGroup           meson 1.0
 PortGroup           muniversal 1.0
 
 # please only commit stable updates (even numbered releases)
-gitlab.setup        gstreamer gstreamer 1.20.3
+gitlab.setup        gstreamer gstreamer 1.20.4
 name                ${gitlab.project}1
 
 maintainers         {@gcenx}
@@ -16,9 +16,9 @@ categories          multimedia
 license             LGPL-2+
 
 checksums \
-    rmd160  c23d951774a05622d7795b1669e2649dcb987399 \
-    sha256  2b74ca3aad12e87fcfe85e3f21f16353e3e7eebeaa89fe9bb5e2e9f58a3094ba \
-    size    29344033
+    rmd160  41686370742874271c4680150823c67364cf2dde \
+    sha256  2151cc357f4c45ab4312c2cc17d5ec93b08e1a1a356c58bfb4a1f6563bf78f31 \
+    size    29349073
 
 depends_build-append \
     port:bison \
