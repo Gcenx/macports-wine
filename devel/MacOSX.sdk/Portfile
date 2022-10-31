@@ -18,6 +18,9 @@ homepage                https://developer.apple.com/macos/
 dist_subdir             MacOSX.sdk
 use_bzip2               yes
 
+set sdk_dir             ${prefix}/Developer/SDKs
+set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
+
 subport MacOSX12.3.sdk {
     set macos_name      {macOS Montery}
     set xcode_vers      13.3
@@ -32,6 +35,23 @@ subport MacOSX12.3.sdk {
                         size    67238967
 }
 
+subport MacOSX12.sdk {
+    PortGroup           stub 1.0
+    set macos_name      {macOS Montery}
+    set xcode_vers      13.3
+    version             12.3
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-12_3-release-notes
+    depends_run         port:MacOSX12.3.sdk
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.2.sdk
+        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.1.sdk
+        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.sdk
+    }
+}
+
 subport MacOSX11.3.sdk {
     set macos_name      {macOS Big Sur}
     set xcode_vers      12.5
@@ -44,6 +64,23 @@ subport MacOSX11.3.sdk {
     checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
                         sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
                         size    75910500
+}
+
+subport MacOSX11.sdk {
+    PortGroup           stub 1.0
+    set macos_name      {macOS Big Sur}
+    set xcode_vers      12.5
+    version             11.3
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
+    depends_run         port:MacOSX11.3.sdk
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.2.sdk
+        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.1.sdk
+        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.sdk
+    }
 }
 
 subport MacOSX10.15.sdk {
@@ -177,9 +214,6 @@ subport QuickTime.framework {
 }
 
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
-
-set sdk_dir             ${prefix}/Developer/SDKs
-set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
 
 use_configure           no
 
