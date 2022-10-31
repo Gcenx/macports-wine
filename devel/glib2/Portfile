@@ -113,6 +113,9 @@ post-patch {
     reinplace "s|path = \"/bin|path = \"${prefix}/bin:/bin|g" ${worksrcpath}/glib/gutils.c ${worksrcpath}/glib/gspawn.c
 }
 
+configure.checks.implicit_function_declaration.whitelist-append \
+    aligned_alloc
+
 # this edit does not, for some reason, apply against the build-arm64 config.h
 # and should not be needed if we're using the muniversal PortGroup
 # needs testing on 32 bit systems to be certain of this
