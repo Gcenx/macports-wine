@@ -15,6 +15,17 @@ long_description    ${subport} is a package containing Mono and other projects, 
                     for any other purpose.
 
 if {${subport} eq ${name}} {
+    version         7.4.0
+    revision        0
+    
+    checksums       rmd160  8df357ccd7e98c841b13a1eabfe8561f4a4900b8 \
+                    sha256  9249ece664bcf2fecb1308ea1d2542c72923df9fe3df891986f137b2266a9ba3 \
+                    size    45404344
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
+subport ${name}-7.3.0 {
     version         7.3.0
     revision        0
     
