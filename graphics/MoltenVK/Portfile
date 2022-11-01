@@ -22,29 +22,15 @@ long_description            ${name} is an implementation of the high-performance
 dist_subdir                 MoltenVK
 use_xz                      yes
 
-if {${subport} eq ${name}} {
-    conflicts               MoltenVK-CX
-    revision                0
-
-    distname                macos-${version}
-    checksums               rmd160  415e49766421b4955b6ad60de4f28645d7b31cbb \
+distname                    macos-${version}
+checksums                   rmd160  415e49766421b4955b6ad60de4f28645d7b31cbb \
                             sha256  7b2160ba9d24ca7e8b277a8edb19e43710946934fd137714fe8695b3114d93f1 \
                             size    9735388
-}
 
 subport ${name}-CX {
-    github.setup            gcenx MoltenVK 1.1.10 v
-    conflicts               MoltenVK
-    revision                0
-
-    distname                macos_cx22
-    checksums               rmd160  014f97b0c529f1c43d31a3b01e61b6882c9ac72c \
-                            sha256  3816dbed07643de78467767836b88f02dafcb0fbddfc4fe10e3fbf80a0b3a0be \
-                            size    9394524
+     revision               1
+     replaced_by            MoltenVK
 }
-
-# Placed here we can override the version
-master_sites                https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/v${version}
 
 use_configure               no
 build                       {}
