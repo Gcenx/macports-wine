@@ -74,8 +74,8 @@ if {${os.major} != 18} {
     depends_build
     depends_lib
     pre-fetch {
-        ui_error "${name} requires MacOS 10.14."
-        return -code error "incompatible Mac OS X version"
+        ui_error "${name} requires macOS 10.14."
+        return -code error "incompatible OS"
     }
 }
 
