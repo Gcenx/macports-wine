@@ -46,7 +46,8 @@ if {${os.subplatform} eq "macosx" && ${os.major} <= 10} {
     # SDL requires Objective-C ARC, from prerelease-2.23.1
     # https://github.com/libsdl-org/SDL/commit/ec8fa57750423978086cd7a96bd92e7e3ff46cc9
     # https://github.com/libsdl-org/SDL/issues/5954
-    if {${os.subplatform} eq "macosx" && ${os.major} < 19} {
+    # https://wiki.qt.io/Apple_Platforms_Coding_Conventions#Patching_the_Cocoa_runtime
+    if {${os.subplatform} eq "macosx" && ${os.major} < 16} {
         github.setup        libsdl-org SDL 2.0.22 release-
         epoch               1
         distname            SDL2-${version}
