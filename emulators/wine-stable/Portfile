@@ -17,8 +17,8 @@ legacysupport.use_static yes
 name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
-version                     7.0
-revision                    12
+version                     7.0.1
+revision                    0
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -53,9 +53,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  3e16bacce3d92a457966b770ea4a1286d98531e2 \
-    sha256  c101a6c1cc486aaca6d97a0b91368a42c6bebaeb4d6951e9b2dc82afa4673378 \
-    size    44990807
+    rmd160  67b49ff6f9662a575f0ffb389ec9b991a5d74599 \
+    sha256  d6af5e68f8b8d22515328203c3fc5c6a08f80cf05456a33748742e5027670c89 \
+    size    45031312
 
 depends_build \
     port:bison \
@@ -104,15 +104,10 @@ patchfiles-append \
     0004-mshtml_update_wine_gecko.diff
 
 # Keep in sync with default wine-mono Portfile (to avoid orphaned ports)
-# Bump wine-mono to 7.3.0
+# Bump wine-mono to 7.4.0
 # https://gitlab.winehq.org/wine/wine/-/commit/aa0186be62d6bc71a8b08da5abc1d89650939c19
 patchfiles-append \
     0005-mscore_update_wine_mono.diff
-
-# Pending wine-7.0.1 patches (2022-09-17)
-# https://github.com/wine-mirror/wine/compare/stable...mstefani:wine-stable:stable
-patchfiles-append \
-    0006-wine-stable.diff
 
 # layer backed views only works on macOS Mojave and later, since wine-6.17
 # https://bugs.winehq.org/show_bug.cgi?id=52354
