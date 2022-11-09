@@ -43,22 +43,11 @@ if {${os.subplatform} eq "macosx" && ${os.major} <= 10} {
         system "echo $name is a stub port > ${destroot}${prefix}/share/doc/${name}/README"
     }
 } else {
-    # SDL requires Objective-C ARC, from prerelease-2.23.1
-    # https://github.com/libsdl-org/SDL/commit/ec8fa57750423978086cd7a96bd92e7e3ff46cc9
-    # https://github.com/libsdl-org/SDL/issues/5954
-    # https://wiki.qt.io/Apple_Platforms_Coding_Conventions#Patching_the_Cocoa_runtime
-    if {${os.subplatform} eq "macosx" && ${os.major} < 16} {
-        github.setup        libsdl-org SDL 2.0.22 release-
-        epoch               1
-        distname            SDL2-${version}
-        checksums           rmd160  887c0414e1e3ad1a74900eae89c071a053d9a178 \
-        sha256              fe7cbf3127882e3fc7259a75a0cb585620272c51745d3852ab9dd87960697f2e \
-        size                7250633
-    }
-
     conflicts libsdl2-snowleopard
 
-    compiler.blacklist *gcc* {clang < 211}
+    # ARC applies to Objective-C pointer types, block pointer types, and [beginning Apple 8.0, LLVM 3.8] BPTRs declared within extern "BCPL" blocks.
+    # https://clang.llvm.org/docs/AutomaticReferenceCounting.html#evolution
+    compiler.blacklist *gcc* {clang < 704}
 
     variant x11 {
         configure.args-delete --without-x
