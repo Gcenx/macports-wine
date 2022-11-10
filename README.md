@@ -7,7 +7,6 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `CrossOver`               *(22.0.1 & 21.2.0)*
 - `cx-llvm`                 *(CodeWeavers custom compiler for -mwine32 targets)*
 - `gstreamer1`              *(1.20.4)*
-- `libsdl2`                 *(2.24.2)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
