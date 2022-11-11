@@ -338,6 +338,17 @@ if {${universal_possible} && [variant_isset universal]} {
     "
 }
 
+post-deactivate {
+    # When this port is deactivated, mingw-w64-wine-gecko should also be.
+    if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko] 0]}]} {
+        registry_deactivate_composite mingw-w64-wine-gecko "" [list ports_nodepcheck 1]
+    }
+    # When this port is deactivated, mingw-w64-wine-mono should also be.
+    if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono] 0]}]} {
+        registry_deactivate_composite mingw-w64-wine-mono "" [list ports_nodepcheck 1]
+    }
+}
+
 livecheck.url               ${homepage}
 livecheck.type              regex
 livecheck.regex             {"/announce/([^"]+)"}
