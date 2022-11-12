@@ -5,7 +5,7 @@ PortGroup           gitlab 1.0
 PortGroup           meson 1.0
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-PortGroup           muniversal 1.0
+PortGroup           muniversal 1.1
 
 # please only commit stable updates (even numbered releases)
 gitlab.setup        gstreamer gstreamer 1.20.4
