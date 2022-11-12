@@ -6,6 +6,7 @@ name                    CrossOver
 
 version                 22.0.1
 revision                0
+platforms               {darwin >= 17}
 
 categories              emulators
 license                 Commercial
@@ -95,18 +96,6 @@ distname    crossover-${version}
 
 destroot {
     copy ${workpath}/CrossOver.app ${destroot}${applications_dir}/CrossOver-${version}.app
-}
-
-platform darwin {
-    if {${os.major} < 17} {
-        archive_sites
-        distfiles
-        depends_build
-        pre-fetch {
-            ui_error "${name} @${version} requires macOS High Sierra or later"
-            return -code error "incompatible macOS version"
-        }
-    }
 }
 
 post-deactivate {
