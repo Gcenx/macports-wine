@@ -300,12 +300,6 @@ if {${os.major} == 10} {
             error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
         }
     }
-
-    notes-append "
-            \n
-            ${name} @${version} might have issues launching somethings as wine-preloader\
-            was designed for OS X 10.7 and not OS X 10.6
-    "
 }
 
 # wine requires clang >= 3.8
