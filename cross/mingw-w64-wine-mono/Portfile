@@ -1,39 +1,41 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
-categories          x11
-maintainers         {gcenx @gcenx}
+
+name                mingw-w64-wine-mono
+categories          cross
+maintainers         {@gcenx}
 license             GPL, LGPL2.1, MPL
 
 supported_archs     noarch
-platforms           darwin
 description         Wine's built-in replacement for Microsoft's .NET Framework
 long_description    ${subport} is a package containing Mono and other projects, \
                     intended as a replacement for the .NET runtime and class \
                     libraries in Wine. It works in conjunction with Wine's \
                     builtin mscoree.dll, and it is not intended to be useful \
                     for any other purpose.
-name                wine-mono
-set my_name         wine-mono
+
+use_configure       no
+build {}
 
 if {${subport} eq ${name}} {
-    version         5.1.1
-    revision        0
-    
-    checksums       rmd160  9f3b7597ee1d71d9adb656033fea173b964ebd6e \
-                    sha256  b17ac815afbf5eef768c4e8d50800be02af75c8b230d668e239bad99616caa82 \
-                    size    44710604
-    use_xz          yes
-    distname        wine-mono-${version}-x86
-}
-
-subport wine-mono-6.2.0 {
     version         6.2.0
     revision        0
     
     checksums       rmd160  9bee0ce6f69cfae2450c690b57975f6c71a613b0 \
                     sha256  f15d6a646b0bf141bd1b826dd4a273bbb6f8f1d592a2b65192281223e986ee15 \
                     size    43071332
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
+subport ${name}-5.1.1 {
+    version         5.1.1
+    revision        0
+    
+    checksums       rmd160  9f3b7597ee1d71d9adb656033fea173b964ebd6e \
+                    sha256  b17ac815afbf5eef768c4e8d50800be02af75c8b230d668e239bad99616caa82 \
+                    size    44710604
     use_xz          yes
     distname        wine-mono-${version}-x86
 }
@@ -46,9 +48,6 @@ master_sites        http://dl.winehq.org/wine/wine-mono/${version}/:mono \
 
 distfiles           ${wine-mono_distfile}:mono
 extract.only        ${wine-mono_distfile}
-
-use_configure       no
-build {}
 
 destroot {
     file mkdir ${destroot}${prefix}/share/wine/mono

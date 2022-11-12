@@ -10,17 +10,18 @@ PortGroup                   legacysupport 1.1
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
-# Must be statically linked or -preloader breaks
+# Must be statically linked or -preloader breaks 
 legacysupport.use_static yes
 
-name                        wine-devel
-conflicts                   wine-stable wine-crossover
+name                        wine-stable
+conflicts                   wine-devel wine-crossover
 set my_name                 wine
-version                     6.13
+version                     6.0.4
 revision                    0
-set branch                  [lindex [split ${version} .] 0].x
+platforms                   {darwin >= 10}
+set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
-categories                  x11
+categories                  emulators
 
 supported_archs             i386 x86_64
 maintainers                 {@gcenx}
@@ -57,9 +58,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  798ce8d206ef677cd464bd98791c852a7f801c14 \
-    sha256  9dae73074fa52938f9b0bdf8081e95adf0f77a7d360cdf09d468f805efd8f875 \
-    size    41358477
+    rmd160  c136de5fe6a7e3b5620ecd0afb272d165c1d9ec6 \
+    sha256  ca50376e3f7200493214daa5f7fd1145bfc9dd085c4814e4d502d4723e7b52a6 \
+    size    40532584
 
 depends_build \
     port:bison \
@@ -93,8 +94,8 @@ depends_lib \
 
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
-    port:wine-gecko \
-    port:wine-mono-6.2.0
+    port:mingw-w64-wine-gecko \
+    port:mingw-w64-wine-mono-5.1.1
 
 patch.pre_args \
     -p1
@@ -144,7 +145,6 @@ configure.args \
     --without-hal \
     --without-inotify \
     --with-jpeg \
-    --without-jxrlib \
     --without-krb5 \
     --with-ldap \
     --with-mingw \
@@ -222,8 +222,9 @@ configure.ldflags-append \
 configure.args.i386-append \
     --without-vulkan
 
-configure.args.x86_64-append \
-    --enable-win64
+configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
+build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
+destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
 
 if {[llength ${supported_archs}] > 1} {
     default_variants +universal
@@ -254,24 +255,14 @@ if {${os.major} >= 15} {
         ac_cv_lib_soname_vulkan=
 }
 
-# MacOSX10.7.SDK opencl isn't new enough, since wine-6.5
-# https://gitlab.winehq.org/wine/wine/-/commit/6b15f4d614fd33ec2c81b377fe6609f2bb7bfa6c
-if {${os.major} < 12} {
-    configure.args-replace  --with-opencl --without-opencl
-}
-
-# Block installing on 10.6 for the moment as it requires more reverts
 if {${os.major} == 10} {
-    known_fail  yes
-    pre-fetch {
-        error "$name @${version} requires Mac OS X 10.7 or later"
-    }
-}
-
-if {${os.major} == 10} {
-    # "winemac.drv: Wake up the display on user input.", since wine-3.12
-    # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
+    # Need to try tracking down when these two reamaining breakages happened
+    # https://trac.macports.org/ticket/61721
     patchfiles-append           1001-SnowLeopard-Fixes.diff
+
+    # winemac.drv: Wake up the display on user input., since wine-3.12
+    # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
+    patchfiles-append           1002-Fix-winemac.drv-on-10.6.diff
 
     # libmacho is required for getsegmentdata(3), since wine-3.14
     # https://gitlab.winehq.org/wine/wine/-/commit/bdca749f7ba4f434ac326481cf4fe0a059887f5d
@@ -290,12 +281,17 @@ if {${os.major} == 10} {
 
     # Features don't exist in IOKit until 10.7, since wine-4.21
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
+    patchfiles-append           1003-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
 
-    #### Possibly need to revet for wine-6.22 not sure ####
+    #### One or both of these need to be reverted or wine-6.0.4 won't launch some error on user32 ####
     # user32: Redraw children when the combo box is dropped down, since wine-6.22 (cherry picked)
     # https://gitlab.winehq.org/wine/wine/-/commit/ad7c5e9ced855950228ea3f73bff0624829b66d7
-    #patchfiles-append           1003-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
+    patchfiles-append           1004-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
+
+    # user32: Set WM_CONTEXTMENU's wparam to the child window's handle, since wine-7.0-rc5 (cherry picked)
+    # https://gitlab.winehq.org/wine/wine/-/commit/149284628def87f7e1ca70a1f8c7858d68cea346
+    patchfiles-append           1005-Revert-149284628def87f7e1ca70a1f8c7858d68cea346.diff
+    #### One or both of those need to be reverted or wine-6.0.4 won't launch some error on user32 ####
 
     # Using the 10.7 SDK to avoid even more reverts
     configure.sdk_version   10.7
@@ -304,12 +300,6 @@ if {${os.major} == 10} {
             error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
         }
     }
-
-    notes-append "
-            \n
-            ${name} @${version} might have issues launching somethings as wine-preloader\
-            was designed for OS X 10.7 and not OS X 10.6
-    "
 }
 
 # wine requires clang >= 3.8
@@ -321,30 +311,6 @@ variant usb description {Build ${name} with USB support} {
     depends_lib-append port:libusb
     configure.args-delete --without-usb
     configure.args-append --with-usb
-}
-
-if {${os.major} < 10} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} @${version} requires Mac OS X 10.6 or later."
-        return -code error "incompatible Mac OS X version"
-    }
-}
-
-if {${os.endian} eq "big"} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} can only be used on an Intel Mac or other computer with a little-endian processor."
-        return -code error "incompatible processor"
-    }
 }
 
 destroot.target install-lib
@@ -379,5 +345,16 @@ if {${universal_possible} && [variant_isset universal]} {
         See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
     "
 }
+
+post-deactivate {
+     # When this port is deactivated, mingw-w64-wine-gecko should also be.
+     if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko] 0]}]} {
+         registry_deactivate_composite mingw-w64-wine-gecko "" [list ports_nodepcheck 1]
+     }
+     # When this port is deactivated, mingw-w64-wine-mono-5.1.1 should also be.
+     if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono-5.1.1] 0]}]} {
+         registry_deactivate_composite mingw-w64-wine-mono-5.1.1 "" [list ports_nodepcheck 1]
+     }
+ }
 
 livecheck.type              none
