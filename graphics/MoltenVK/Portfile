@@ -6,6 +6,7 @@ PortGroup                   github 1.0
 github.setup                The-Wineskin-Project MoltenVK 1.2.0 v
 github.tarball_from         releases
 
+platforms                   {darwin >= 15}
 categories                  graphics
 maintainers                 {@gcenx}
 platforms                   macosx
@@ -48,19 +49,5 @@ destroot {
 
     if {[variant_exists universal] && ![variant_isset universal] || ![variant_exists universal] || ${os.major} < 20} {
         system -W ${destroot}${prefix}/lib "lipo -thin ${configure.build_arch} libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
-    }
-}
-
-platform darwin {
-    if {${os.major} < 15} {
-        known_fail yes
-        archive_sites
-        distfiles
-        depends_build
-        depends_lib
-        pre-fetch {
-            ui_error "${subport} @${version} requires macOS El Capitan or later"
-            return -code error "incompatible OS X version"
-        }
     }
 }

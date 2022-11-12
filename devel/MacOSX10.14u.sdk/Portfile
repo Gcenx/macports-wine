@@ -5,7 +5,7 @@ PortSystem                  1.0
 name                        MacOSX10.14u.sdk
 version                     1.0
 categories                  devel
-platforms                   macosx
+platforms                   {darwin == 18}
 maintainers                 {@gcenx}
 
 license                     Restrictive Nomirror
@@ -64,18 +64,6 @@ destroot {
     # can't use ${developer_dir}/SDKs as that could return Xcode
     if {![file exists ${sdk_dir2}/${name} ]} {
         ln -sf ${sdk_dir}/${name} ${destroot}${sdk_dir2}/${name}
-    }
-}
-
-if {${os.major} != 18} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} requires macOS 10.14."
-        return -code error "incompatible OS"
     }
 }
 

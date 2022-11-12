@@ -19,6 +19,7 @@ conflicts                   wine-stable wine-staging
 set my_name                 wine
 version                     7.20
 revision                    0
+platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators
@@ -291,18 +292,6 @@ variant usb description {Build ${name} with USB support} {
     depends_lib-append port:libusb
     configure.args-delete --without-usb
     configure.args-append --with-usb
-}
-
-if {${os.major} < 12} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} @${version} requires Mac OS X 10.8 or later."
-        return -code error "incompatible Mac OS X version"
-    }
 }
 
 destroot.target install-lib
