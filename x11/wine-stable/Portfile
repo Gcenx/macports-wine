@@ -18,6 +18,7 @@ conflicts                   wine-devel wine-crossover
 set my_name                 wine
 version                     6.0.4
 revision                    0
+platforms                   {darwin >= 10}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  x11
@@ -316,30 +317,6 @@ variant usb description {Build ${name} with USB support} {
     depends_lib-append port:libusb
     configure.args-delete --without-usb
     configure.args-append --with-usb
-}
-
-if {${os.major} < 10} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} @${version} requires Mac OS X 10.6 or later."
-        return -code error "incompatible Mac OS X version"
-    }
-}
-
-if {${os.endian} eq "big"} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} can only be used on an Intel Mac or other computer with a little-endian processor."
-        return -code error "incompatible processor"
-    }
 }
 
 destroot.target install-lib
