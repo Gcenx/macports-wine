@@ -346,4 +346,15 @@ if {${universal_possible} && [variant_isset universal]} {
     "
 }
 
+post-deactivate {
+     # When this port is deactivated, wine-gecko should also be.
+     if {![catch {set installed [lindex [registry_active wine-gecko] 0]}]} {
+         registry_deactivate_composite wine-gecko "" [list ports_nodepcheck 1]
+     }
+     # When this port is deactivated,wine-mono should also be.
+     if {![catch {set installed [lindex [registry_active wine-mono] 0]}]} {
+         registry_deactivate_composite wine-mono "" [list ports_nodepcheck 1]
+     }
+ }
+
 livecheck.type              none
