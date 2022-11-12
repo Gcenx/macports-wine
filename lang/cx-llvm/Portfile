@@ -9,6 +9,7 @@ name                        cx-llvm
 version                     22.0.1
 revision                    0
 epoch                       0
+platforms                   {darwin >= 19.4}
 
 categories                  lang
 maintainers                 {@gcenx}
@@ -75,17 +76,5 @@ configure.pre_args-delete   -DCMAKE_INSTALL_NAME_DIR="${cmake.install_prefix}/li
 
 configure.args-append       -DPYTHON_EXECUTABLE=/usr/bin/python3 \
                             -DLLVM_TARGETS_TO_BUILD=X86
-
-if {${os.platform} eq "darwin" && ${os.major} < 19} {
-    depends_build
-    depends_lib
-    depends_run
-    archive_sites
-    known_fail yes
-    pre-fetch {
-        ui_error "${subport} is not required on this version of macOS."
-        return -code error {unsupported platform}
-    }
-}
 
 livecheck.type      none
