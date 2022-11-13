@@ -145,7 +145,6 @@ if {${universal_possible} && [variant_isset universal]} {
     configure.args-append --arch=${configure.build_arch}
     configure.env-append  ASFLAGS=[get_canonical_archflags]
     if {${build_arch} eq "i386" || ${build_arch} eq "x86_64"} {
-        depends_build-append port:nasm
         configure.args-append --enable-x86asm
     } else {
         configure.args-append --disable-asm
