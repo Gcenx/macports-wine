@@ -129,9 +129,6 @@ configure.args \
     --enable-videotoolbox \
     --cc=${configure.cc}
 
-# configure isn't autoconf and they do use a dep cache
-configure.universal_args-delete --disable-dependency-tracking
-
 # stop muniversal-1.1 from adding --host & --build
 triplet.add_host    none
 triplet.add_build   none
