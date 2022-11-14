@@ -2,7 +2,7 @@
 
 PortSystem          1.0
 PortGroup           xcodeversion 1.0
-PortGroup           muniversal 1.0
+PortGroup           muniversal 1.1
 PortGroup           compiler_blacklist_versions 1.0
 PortGroup           active_variants 1.1
 
@@ -132,24 +132,13 @@ configure.args \
 # configure isn't autoconf and they do use a dep cache
 configure.universal_args-delete --disable-dependency-tracking
 
-if {${universal_possible} && [variant_isset universal]} {
-    foreach arch ${configure.universal_archs} {
-        set merger_host($arch) ""
-        lappend merger_configure_args($arch) --arch=${arch}
-        lappend merger_configure_env($arch)  ASFLAGS='-arch ${arch}'
-    }
-    lappend merger_configure_args(i386) --enable-x86asm
-    lappend merger_configure_args(x86_64) --enable-x86asm
-    lappend merger_configure_args(arm64) --disable-asm
-} else {
-    configure.args-append --arch=${configure.build_arch}
-    configure.env-append  ASFLAGS=[get_canonical_archflags]
-    if {${build_arch} eq "i386" || ${build_arch} eq "x86_64"} {
-        configure.args-append --enable-x86asm
-    } else {
-        configure.args-append --disable-asm
-    }
-}
+# stop muniversal-1.1 from adding --host & --build
+triplet.add_host    none
+triplet.add_build   none
+
+configure.args.arm64-append     --disable-asm --arch=arm64
+configure.args.i386-append      --enable-x86asm --arch=i386
+configure.args.x86_64-append    --enable-x86asm --arch=x86_64
 
 build.env-append    V=1
 destroot.env-append V=1
