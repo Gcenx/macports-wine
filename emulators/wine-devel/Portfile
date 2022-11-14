@@ -216,7 +216,7 @@ configure.args.i386-append \
 configure.args.x86_64-append \
     --enable-win64
 
-if {([llength ${supported_archs}] > 1) && (${os.major} =< 18)} {
+if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants-append +universal
 }
 
