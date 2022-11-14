@@ -75,8 +75,7 @@ depends_lib \
     port:gstreamer1-gst-plugins-good \
     port:gstreamer1-gst-libav \
     port:libpcap \
-    port:libsdl2 \
-    port:openal-soft
+    port:libsdl2
 
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
@@ -145,7 +144,6 @@ configure.args \
     --with-ldap \
     --with-mingw \
     --without-netapi \
-    --with-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
