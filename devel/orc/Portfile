@@ -33,5 +33,3 @@ configure.args-append       -Dbenchmarks=disabled \
                             -Dgtk_doc=disabled \
                             -Dtests=disabled \
                             -Dtools=enabled
-
-configure.cflags-append     -Wno-implicit-function-declaration
