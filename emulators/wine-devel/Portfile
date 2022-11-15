@@ -292,7 +292,11 @@ variant usb description {Build ${name} with USB support} {
     configure.args-append --with-usb
 }
 
-destroot.target install-lib
+compiler.limit_flags        yes
+muniversal.arch_flag        no
+configure.ldflags-delete    -L${compiler.library_path}
+configure.optflags          -g -O2
+destroot.target             install-lib
 
 post-destroot {
     # Add custom tool for easy launching explorer
