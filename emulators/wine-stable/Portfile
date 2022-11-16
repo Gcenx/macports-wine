@@ -161,7 +161,7 @@ configure.args \
     --without-vkd3d \
     --without-x
 
-# wine has a native display driver, since wine-1.5.26
+# winemac.drv is the native display driver, since wine-1.5.26
 variant x11 {
     depends_lib-append \
         port:libGLU \
@@ -241,31 +241,38 @@ if {${os.major} >= 15} {
 }
 
 if {${os.major} < 15} {
-    depends_build-append        port:MacOSX10.11.sdk
-    configure.sdkroot           ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-    
+    depends_build-append    port:MacOSX10.11.sdk
+    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+
     # Avoid linking Metal or rev-upgrade will cry
     # Support GPU initialization via Metal, since wine-4.15
     # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-    configure.args-append       ac_cv_header_Metal_Metal_h=
+    configure.args-append   ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+# wine(64)-preloader claims usb interface for no reason
+# https://github.com/Gcenx/WineskinServer/discussions/280
 variant usb description {Build ${name} with USB support} {
-    depends_lib-append port:libusb
-    configure.args-delete --wthout-usb
-    configure.args-append --with-usb
+    depends_lib-append      port:libusb
+    configure.args-delete   --wthout-usb
+    configure.args-append   --with-usb
 }
 
-destroot.target install-lib
+# macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
+# https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
+compiler.limit_flags        yes
+muniversal.arch_flag        no
+configure.ldflags-delete    -L${compiler.library_path}
+configure.optflags          -g -O2
+
+# Were only installing wine not the development files
+destroot.target             install-lib
 
 post-destroot {
-    # Add custom tool for easy launching explorer
-    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
-
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
@@ -294,11 +301,9 @@ if {${universal_possible} && [variant_isset universal]} {
 }
 
 post-deactivate {
-    # When this port is deactivated, mingw-w64-wine-gecko-2.47.2 should also be.
     if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-2.47.2] 0]}]} {
         registry_deactivate_composite mingw-w64-wine-gecko-2.47.2 "" [list ports_nodepcheck 1]
     }
-    # When this port is deactivated, mingw-w64-wine-mono-7.0.0 should also be.
     if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono-7.0.0] 0]}]} {
         registry_deactivate_composite mingw-w64-wine-mono-7.0.0 "" [list ports_nodepcheck 1]
     }
