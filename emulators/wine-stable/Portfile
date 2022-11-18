@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging
 set my_name                 wine
 version                     7.0.1
-revision                    1
+revision                    2
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -98,9 +98,13 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-# layer backed views only works on macOS Mojave and later, since wine-6.17
+# Remove wine-8.0
+patchfiles-append \
+    0004-preloader-10.7.diff
+
+# layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=52354
-if {${os.major} < 18} {
+if {${os.major} < 14} {
     patchfiles-append \
         1001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
         1002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
