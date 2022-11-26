@@ -18,7 +18,7 @@ name                        wine-devel
 conflicts                   wine-stable wine-staging
 set my_name                 wine
 version                     7.21
-revision                    1
+revision                    2
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -99,7 +99,8 @@ patchfiles-append \
 
 # Remove wine-7.22
 patchfiles-append \
-    0004-preloader-10.7.diff
+    0004-preloader-10.7.diff \
+    0005-loader-fix-environ.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=52354
