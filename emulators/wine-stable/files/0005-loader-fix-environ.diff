@@ -1,7 +1,7 @@
 From bc737a345161b431b9a30baa18d14f8260d61094 Mon Sep 17 00:00:00 2001
 From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
 Date: Thu, 24 Nov 2022 12:24:39 -0500
-Subject: [PATCH] HACK: loader: Fix environ being NULL on macOS Big Sur and later
+Subject: [PATCH] loader: Fix environ being NULL on macOS Big Sur and later
 
 https://gitlab.winehq.org/wine/wine/-/merge_requests/1396#note_17218
 https://www.gnu.org/software/gnulib/manual/html_node/environ.html
