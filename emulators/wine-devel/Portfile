@@ -297,6 +297,15 @@ variant usb description {Build ${name} with USB support} {
     configure.args-append   --with-usb
 }
 
+# Unmerged wow64 patches, make a none default variant
+# https://gitlab.winehq.org/jacek/wine/-/tree/wow
+if {${os.major} > 18} {
+    variant wow description {Build ${name} with wow64} {
+        patchfiles-append               0005-wow.diff
+        configure.args.x86_64-append    --enable-archs=i386,x86_64
+    }
+}
+
 # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
 # https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
 compiler.limit_flags        yes
