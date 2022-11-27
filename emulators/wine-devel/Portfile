@@ -17,8 +17,8 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging
 set my_name                 wine
-version                     7.21
-revision                    2
+version                     7.22
+revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  f35719d7f6eaefc6851e97447c0d0bcc743c8ec7 \
-    sha256  4e680972bb71b12d91e2d311268cf988291691425a36e0d7fb6ca73c0cf47dca \
-    size    47491974
+    rmd160  cdd7bd026cae8c368c8b4529f0c4171574d71c47 \
+    sha256  a82165bf14fbf9a318ee260fe9cfb73983ca8ad3348c0bf1fc6593d5ebdfc7e8 \
+    size    47904474
 
 depends_build \
     port:bison \
@@ -97,10 +97,8 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-# Remove wine-7.22
 patchfiles-append \
-    0004-preloader-10.7.diff \
-    0005-loader-fix-environ.diff
+    0004-loader-fix-environ.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=52354
@@ -275,9 +273,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  22597d504de309c017e5f4c2bff8e09329538500 \
-        sha256  7d99a9967706a8113be09f6653779e3951049fc0753d8a036f4e4cf5e8430347 \
-        size    9530737
+        rmd160  17fab6b669588b8240dc250182e0a7e2b03a6c50 \
+        sha256  74104b902d2f60c019c62a15b1f475773f939aedafe05cc937d3ba89973bf00f \
+        size    9528424
 
     depends_build-append \
         port:autoconf
