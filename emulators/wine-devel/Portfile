@@ -97,7 +97,9 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-patchfiles-append \
+# wine segfaults on startup on macOS 11.1 and later
+# https://bugs.winehq.org/show_bug.cgi?id=54009
+patchfiles-appended \
     0004-loader-fix-environ.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22

@@ -100,7 +100,11 @@ patchfiles-append \
 
 # Remove wine-8.0
 patchfiles-append \
-    0004-preloader-10.7.diff \
+    0004-preloader-10.7.diff
+
+# wine segfaults on startup on macOS 11.1 and later
+# https://bugs.winehq.org/show_bug.cgi?id=54009
+patchfiles-appended \
     0005-loader-fix-environ.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
