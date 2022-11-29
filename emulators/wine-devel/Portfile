@@ -277,7 +277,7 @@ subport wine-staging {
         sha256  74104b902d2f60c019c62a15b1f475773f939aedafe05cc937d3ba89973bf00f \
         size    9528424
 
-    depends_build-append \
+    depends_extract-append \
         port:autoconf
 
     # Running "patchinstall.sh" before patchesfiles that get inherited from wine-devel
