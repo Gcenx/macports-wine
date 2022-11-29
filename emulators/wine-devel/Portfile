@@ -299,7 +299,7 @@ variant usb description {Build ${name} with USB support} {
 
 # Unmerged wow64 patches, make a none default variant
 # https://gitlab.winehq.org/jacek/wine/-/tree/wow
-if {${os.major} > 18} {
+if {${universal_possible} && ![variant_isset universal] || ${os.major} > 18} {
     variant wow description {Build ${name} with wow64} {
         patchfiles-append               0005-wow.diff
         configure.args.x86_64-append    --enable-archs=i386,x86_64
