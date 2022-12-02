@@ -45,6 +45,12 @@ if {${subport} eq ${name}} {
         # Remove CrossOver CD Helper
         delete "${workpath}/CrossOver.app/Contents/Resources/CrossOver CD Helper.app"
 
+        # Remove DXVK dlls (32Bit)
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
+
+        # Remove DXVK d3d9.dll (64Bit)
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine64/dxvk/d3d9.dll
+
         # Can't remove Sparkle.framework so remove the update url
         reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
     }
