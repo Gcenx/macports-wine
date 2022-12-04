@@ -210,10 +210,9 @@ variant x11 {
 default_variants \
     +quartz -sdl -x11
 
-# Workaround weirdness with i386 GSTREAMER_CFLAGS & SDL2_CFLAGS not getting set from pkgconfig
-configure.args.i386-append \
-    GSTREAMER_CFLAGS="-I${prefix}/include/gstreamer-1.0 -I${prefix}/include/glib-2.0 -I${prefix}/lib/glib-2.0/include -I${prefix}/include/orc-0.4" \
-    SDL2_CFLAGS="-D_THREAD_SAFE -I${prefix}/include/SDL2"
+# Set pkgconfig search path
+configure.env.i386-append \
+    PKG_CONFIG_LIBDIR=${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
