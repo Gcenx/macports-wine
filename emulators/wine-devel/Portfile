@@ -146,7 +146,6 @@ configure.args \
     --with-gstreamer \
     --without-inotify \
     --without-krb5 \
-    --with-ldap \
     --with-mingw \
     --without-netapi \
     --with-opencl \
