@@ -1,0 +1,1445 @@
+From 45eca854c4fab7e864deebf9a51c74147884ebc8 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Wed, 9 Nov 2022 16:15:00 +0100
+Subject: [PATCH] openal32: Remove dll.
+
+It's not part of Windows, so applications have to ship the native
+version anyway.
+
+cherry picked from https://github.com/wine-mirror/wine/commit/45eca854c4fab7e864deebf9a51c74147884ebc8
+---
+ configure                   |  101 ----
+ configure.ac                |   29 -
+ dlls/openal32/Makefile.in   |    7 -
+ dlls/openal32/openal.c      | 1029 -----------------------------------
+ dlls/openal32/openal32.spec |   97 ----
+ include/config.h.in         |    9 -
+ 6 files changed, 1272 deletions(-)
+ delete mode 100644 dlls/openal32/Makefile.in
+ delete mode 100644 dlls/openal32/openal.c
+ delete mode 100644 dlls/openal32/openal32.spec
+
+diff --git a/configure b/configure
+index 9c937f61..329a54eb 100755
+--- a/configure
++++ b/configure
+@@ -752,7 +752,6 @@ AVFOUNDATION_LIBS
+ METAL_LIBS
+ CARBON_LIBS
+ OPENCL_LIBS
+-OPENAL_LIBS
+ COREAUDIO_LIBS
+ SECURITY_LIBS
+ DISKARBITRATION_LIBS
+@@ -905,7 +904,6 @@ with_krb5
+ with_ldap
+ with_mingw
+ with_netapi
+-with_openal
+ with_opencl
+ with_opengl
+ with_osmesa
+@@ -1295,7 +1293,6 @@ enable_olepro32
+ enable_olesvr32
+ enable_olethk32
+ enable_opcservices
+-enable_openal32
+ enable_opencl
+ enable_opengl32
+ enable_packager
+@@ -2406,7 +2403,6 @@ Optional Packages:
+   --without-ldap          do not use LDAP
+   --without-mingw         do not use the MinGW cross-compiler
+   --without-netapi        do not use the Samba NetAPI library
+-  --without-openal        do not use OpenAL
+   --without-opencl        do not use OpenCL
+   --without-opengl        do not use OpenGL
+   --without-osmesa        do not use the OSMesa library
+@@ -4280,13 +4276,6 @@ then :
+ fi
+ 
+ 
+-# Check whether --with-openal was given.
+-if test ${with_openal+y}
+-then :
+-  withval=$with_openal; if test "x$withval" = "xno"; then ac_cv_header_AL_al_h=no; ac_cv_header_OpenAL_al_h=no; fi
+-fi
+-
+-
+ # Check whether --with-opencl was given.
+ if test ${with_opencl+y}
+ then :
+@@ -7972,12 +7961,6 @@ if test "x$ac_cv_header_IOKit_usb_IOUSBLib_h" = xyes
+ then :
+   printf "%s\n" "#define HAVE_IOKIT_USB_IOUSBLIB_H 1" >>confdefs.h
+ 
+-fi
+-ac_fn_c_check_header_compile "$LINENO" "OpenAL/al.h" "ac_cv_header_OpenAL_al_h" "$ac_includes_default"
+-if test "x$ac_cv_header_OpenAL_al_h" = xyes
+-then :
+-  printf "%s\n" "#define HAVE_OPENAL_AL_H 1" >>confdefs.h
+-
+ fi
+ ac_fn_c_check_header_compile "$LINENO" "OpenCL/opencl.h" "ac_cv_header_OpenCL_opencl_h" "$ac_includes_default"
+ if test "x$ac_cv_header_OpenCL_opencl_h" = xyes
+@@ -10078,15 +10061,6 @@ fi
+ 
+         enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-yes}
+     fi
+-    if test "$ac_cv_header_OpenAL_al_h" = "yes"
+-    then
+-        OPENAL_LIBS="-framework OpenAL"
+-
+-
+-printf "%s\n" "#define HAVE_OPENAL 1" >>confdefs.h
+-
+-        ac_cv_lib_openal=yes
+-    fi
+     if test "$ac_cv_header_OpenCL_opencl_h" = "yes"
+     then
+         OPENCL_LIBS="-framework OpenCL"
+@@ -18208,79 +18182,6 @@ esac
+ 
+ fi
+ 
+-if test "$ac_cv_header_AL_al_h" = "yes"
+-then
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for -lopenal" >&5
+-printf %s "checking for -lopenal... " >&6; }
+-if test ${ac_cv_lib_soname_openal+y}
+-then :
+-  printf %s "(cached) " >&6
+-else $as_nop
+-  ac_check_soname_save_LIBS=$LIBS
+-LIBS="-lopenal  $LIBS"
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-char alGetSource3i ();
+-int
+-main (void)
+-{
+-return alGetSource3i ();
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_link "$LINENO"
+-then :
+-  case "$LIBEXT" in
+-    dll) ac_cv_lib_soname_openal=`$ac_cv_path_LDD conftest.exe | grep "openal" | sed -e "s/dll.*/dll/"';2,$d'` ;;
+-    dylib) ac_cv_lib_soname_openal=`$OTOOL -L conftest$ac_exeext | grep "libopenal\\.[0-9A-Za-z.]*dylib" | sed -e "s/^.*\/\(libopenal\.[0-9A-Za-z.]*dylib\).*$/\1/"';2,$d'` ;;
+-    *) ac_cv_lib_soname_openal=`$READELF -d conftest$ac_exeext | grep "NEEDED.*libopenal\\.$LIBEXT" | sed -e "s/^.*\\[\\(libopenal\\.$LIBEXT[^	 ]*\\)\\].*$/\1/"';2,$d'`
+-       if ${ac_cv_lib_soname_openal:+false} :
+-then :
+-  ac_cv_lib_soname_openal=`$LDD conftest$ac_exeext | grep "libopenal\\.$LIBEXT" | sed -e "s/^.*\(libopenal\.$LIBEXT[^	 ]*\).*$/\1/"';2,$d'`
+-fi ;;
+-  esac
+-else $as_nop
+-  ac_cv_lib_soname_openal=
+-fi
+-rm -f core conftest.err conftest.$ac_objext conftest.beam \
+-    conftest$ac_exeext conftest.$ac_ext
+-  LIBS=$ac_check_soname_save_LIBS
+-fi
+-if ${ac_cv_lib_soname_openal:+false} :
+-then :
+-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+-printf "%s\n" "not found" >&6; }
+-
+-else $as_nop
+-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_soname_openal" >&5
+-printf "%s\n" "$ac_cv_lib_soname_openal" >&6; }
+-
+-printf "%s\n" "#define SONAME_LIBOPENAL \"$ac_cv_lib_soname_openal\"" >>confdefs.h
+-
+-       OPENAL_LIBS="-lopenal"
+-
+-                      ac_cv_lib_openal=yes
+-
+-printf "%s\n" "#define HAVE_OPENAL 1" >>confdefs.h
+-
+-fi
+-fi
+-if test "x$ac_cv_lib_openal" != xyes
+-then :
+-  case "x$with_openal" in
+-  x)   as_fn_append wine_notices "|libopenal ${notice_platform}development files not found (or too old), OpenAL won't be supported." ;;
+-  xno) ;;
+-  *)   as_fn_error $? "libopenal ${notice_platform}development files not found (or too old), OpenAL won't be supported.
+-This is an error since --with-openal was requested." "$LINENO" 5 ;;
+-esac
+-enable_openal32=${enable_openal32:-no}
+-fi
+-
+ if test "$ac_cv_header_libprocstat_h" = "yes"
+ then
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for procstat_open_sysctl in -lprocstat" >&5
+@@ -22312,7 +22213,6 @@ wine_fn_config_makefile dlls/olesvr32 enable_olesvr32
+ wine_fn_config_makefile dlls/olethk32 enable_olethk32
+ wine_fn_config_makefile dlls/opcservices enable_opcservices
+ wine_fn_config_makefile dlls/opcservices/tests enable_tests
+-wine_fn_config_makefile dlls/openal32 enable_openal32
+ wine_fn_config_makefile dlls/opencl enable_opencl
+ wine_fn_config_makefile dlls/opengl32 enable_opengl32
+ wine_fn_config_makefile dlls/opengl32/tests enable_tests
+@@ -23756,7 +23656,6 @@ SYSTEMCONFIGURATION_LIBS = $SYSTEMCONFIGURATION_LIBS
+ DISKARBITRATION_LIBS = $DISKARBITRATION_LIBS
+ SECURITY_LIBS = $SECURITY_LIBS
+ COREAUDIO_LIBS = $COREAUDIO_LIBS
+-OPENAL_LIBS = $OPENAL_LIBS
+ OPENCL_LIBS = $OPENCL_LIBS
+ CARBON_LIBS = $CARBON_LIBS
+ METAL_LIBS = $METAL_LIBS
+diff --git a/configure.ac b/configure.ac
+index 480f673e..9aa2492c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -46,8 +46,6 @@ AC_ARG_WITH(ldap,      AS_HELP_STRING([--without-ldap],[do not use LDAP]),
+             [if test "x$withval" = "xno"; then ac_cv_header_ldap_h=no; ac_cv_header_lber_h=no; fi])
+ AC_ARG_WITH(mingw,     AS_HELP_STRING([--without-mingw],[do not use the MinGW cross-compiler]))
+ AC_ARG_WITH(netapi,    AS_HELP_STRING([--without-netapi],[do not use the Samba NetAPI library]))
+-AC_ARG_WITH(openal,    AS_HELP_STRING([--without-openal],[do not use OpenAL]),
+-            [if test "x$withval" = "xno"; then ac_cv_header_AL_al_h=no; ac_cv_header_OpenAL_al_h=no; fi])
+ AC_ARG_WITH(opencl,    AS_HELP_STRING([--without-opencl],[do not use OpenCL]),
+             [if test "x$withval" = "xno"; then ac_cv_header_CL_cl_h=no; ac_cv_header_OpenCL_opencl_h=no; fi])
+ AC_ARG_WITH(opengl,    AS_HELP_STRING([--without-opengl],[do not use OpenGL]))
+@@ -447,7 +445,6 @@ AC_CHECK_HEADERS(\
+ 	IOKit/IOKitLib.h \
+ 	IOKit/hid/IOHIDLib.h \
+ 	IOKit/usb/IOUSBLib.h \
+-	OpenAL/al.h \
+ 	OpenCL/opencl.h \
+ 	Security/Security.h \
+ 	SystemConfiguration/SCDynamicStoreCopyDHCPInfo.h \
+@@ -760,12 +757,6 @@ case $host_os in
+         AC_SUBST(COREAUDIO_LIBS,"-framework CoreFoundation -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework CoreMIDI")
+         enable_winecoreaudio_drv=${enable_winecoreaudio_drv:-yes}
+     fi
+-    if test "$ac_cv_header_OpenAL_al_h" = "yes"
+-    then
+-        AC_SUBST(OPENAL_LIBS,"-framework OpenAL")
+-        AC_DEFINE_UNQUOTED(HAVE_OPENAL,1,[Define to 1 if OpenAL is available])
+-        ac_cv_lib_openal=yes
+-    fi
+     if test "$ac_cv_header_OpenCL_opencl_h" = "yes"
+     then
+         AC_SUBST(OPENCL_LIBS,"-framework OpenCL")
+@@ -1811,25 +1802,6 @@ fi
+ WINE_NOTICE_WITH(gssapi,[test "x$ac_cv_lib_soname_gssapi_krb5" = "x"],
+                  [libgssapi_krb5 ${notice_platform}development files not found (or too old), no Kerberos SSP support.])
+ 
+-dnl **** Check for OpenAL 1.1 ****
+-if test "$ac_cv_header_AL_al_h" = "yes"
+-then
+-    WINE_CHECK_SONAME(openal,alGetSource3i,[AC_SUBST(OPENAL_LIBS,"-lopenal")
+-                      ac_cv_lib_openal=yes
+-                      AC_DEFINE_UNQUOTED(HAVE_OPENAL,1,[Define to 1 if OpenAL is available])],,)
+-fi
+-WINE_NOTICE_WITH(openal,[test "x$ac_cv_lib_openal" != xyes],
+-                 [libopenal ${notice_platform}development files not found (or too old), OpenAL won't be supported.],
+-                 [enable_openal32])
+-
+-dnl **** Check for libprocstat ****
+-if test "$ac_cv_header_libprocstat_h" = "yes"
+-then
+-    AC_CHECK_LIB(procstat,procstat_open_sysctl,
+-                 [AC_DEFINE(HAVE_LIBPROCSTAT, 1, [Define to 1 if you have the `procstat' library (-lprocstat).])
+-                  AC_SUBST(PROCSTAT_LIBS,"-lprocstat")])
+-fi
+-
+ dnl **** Check for libodbc ****
+ WINE_CHECK_SONAME(odbc,SQLConnect,,[AC_DEFINE_UNQUOTED(SONAME_LIBODBC,["libodbc.$LIBEXT"])])
+ 
+@@ -2960,7 +2932,6 @@ WINE_CONFIG_MAKEFILE(dlls/olesvr32)
+ WINE_CONFIG_MAKEFILE(dlls/olethk32)
+ WINE_CONFIG_MAKEFILE(dlls/opcservices)
+ WINE_CONFIG_MAKEFILE(dlls/opcservices/tests)
+-WINE_CONFIG_MAKEFILE(dlls/openal32)
+ WINE_CONFIG_MAKEFILE(dlls/opencl)
+ WINE_CONFIG_MAKEFILE(dlls/opengl32)
+ WINE_CONFIG_MAKEFILE(dlls/opengl32/tests)
+diff --git a/dlls/openal32/Makefile.in b/dlls/openal32/Makefile.in
+deleted file mode 100644
+index 6572fcf5..00000000
+--- a/dlls/openal32/Makefile.in
++++ /dev/null
+@@ -1,7 +0,0 @@
+-MODULE    = openal32.dll
+-EXTRALIBS = $(OPENAL_LIBS)
+-
+-EXTRADLLFLAGS = -Wb,--prefer-native -mcygwin
+-
+-C_SRCS = \
+-	openal.c
+diff --git a/dlls/openal32/openal.c b/dlls/openal32/openal.c
+deleted file mode 100644
+index 5a4e1e71..00000000
+--- a/dlls/openal32/openal.c
++++ /dev/null
+@@ -1,1029 +0,0 @@
+-/*
+- * OpenAL32.dll thunk. Wraps Win32 OpenAL function calls around a native
+- * implementation.
+- *
+- * Copyright 2007 Nick Burns (adger44@hotmail.com)
+- * Copyright 2007,2009 Chris Robinson
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2.1 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+- */
+-
+-#include "config.h"
+-
+-#include <stdarg.h>
+-#include <string.h>
+-
+-#ifdef HAVE_AL_AL_H
+-#include <AL/al.h>
+-#include <AL/alc.h>
+-#elif defined(HAVE_OPENAL_AL_H)
+-#include <OpenAL/al.h>
+-#include <OpenAL/alc.h>
+-#endif
+-
+-#include "windef.h"
+-#include "winbase.h"
+-#include "wine/debug.h"
+-
+-WINE_DEFAULT_DEBUG_CHANNEL(openal32);
+-
+-static ALCboolean  (ALC_APIENTRY*alcSetThreadContext)(ALCcontext *context);
+-static ALCcontext* (ALC_APIENTRY*alcGetThreadContext)(ALCvoid);
+-
+-static ALboolean loaded_procs;
+-
+-static ALvoid (AL_APIENTRY*alBufferDataStatic)(const ALuint bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq);
+-static ALvoid (AL_APIENTRY*alGenFilters)(ALsizei n, ALuint* filters);
+-static ALvoid (AL_APIENTRY*alDeleteFilters)(ALsizei n, const ALuint* filters);
+-static ALboolean (AL_APIENTRY*alIsFilter)(ALuint fid);
+-static ALvoid (AL_APIENTRY*alFilterf)(ALuint fid, ALenum param, ALfloat value);
+-static ALvoid (AL_APIENTRY*alFilterfv)(ALuint fid, ALenum param, const ALfloat* values);
+-static ALvoid (AL_APIENTRY*alFilteri)(ALuint fid, ALenum param, ALint value);
+-static ALvoid (AL_APIENTRY*alFilteriv)(ALuint fid, ALenum param, const ALint* values);
+-static ALvoid (AL_APIENTRY*alGetFilterf)(ALuint fid, ALenum param, ALfloat* value);
+-static ALvoid (AL_APIENTRY*alGetFilterfv)(ALuint fid, ALenum param, ALfloat* values);
+-static ALvoid (AL_APIENTRY*alGetFilteri)(ALuint fid, ALenum param, ALint* value);
+-static ALvoid (AL_APIENTRY*alGetFilteriv)(ALuint fid, ALenum param, ALint* values);
+-static ALvoid (AL_APIENTRY*alGenEffects)(ALsizei n, ALuint* effects);
+-static ALvoid (AL_APIENTRY*alDeleteEffects)(ALsizei n, const ALuint* effects);
+-static ALboolean (AL_APIENTRY*alIsEffect)(ALuint eid);
+-static ALvoid (AL_APIENTRY*alEffectf)(ALuint eid, ALenum param, ALfloat value);
+-static ALvoid (AL_APIENTRY*alEffectfv)(ALuint eid, ALenum param, const ALfloat* values);
+-static ALvoid (AL_APIENTRY*alEffecti)(ALuint eid, ALenum param, ALint value);
+-static ALvoid (AL_APIENTRY*alEffectiv)(ALuint eid, ALenum param, const ALint* values);
+-static ALvoid (AL_APIENTRY*alGetEffectf)(ALuint eid, ALenum param, ALfloat* value);
+-static ALvoid (AL_APIENTRY*alGetEffectfv)(ALuint eid, ALenum param, ALfloat* values);
+-static ALvoid (AL_APIENTRY*alGetEffecti)(ALuint eid, ALenum param, ALint* value);
+-static ALvoid (AL_APIENTRY*alGetEffectiv)(ALuint eid, ALenum param, ALint* values);
+-static ALvoid (AL_APIENTRY*alGenAuxiliaryEffectSlots)(ALsizei n, ALuint* slots);
+-static ALvoid (AL_APIENTRY*alDeleteAuxiliaryEffectSlots)(ALsizei n, const ALuint* slots);
+-static ALboolean (AL_APIENTRY*alIsAuxiliaryEffectSlot)(ALuint sid);
+-static ALvoid (AL_APIENTRY*alAuxiliaryEffectSlotf)(ALuint sid, ALenum param, ALfloat value);
+-static ALvoid (AL_APIENTRY*alAuxiliaryEffectSlotfv)(ALuint sid, ALenum param, const ALfloat* values);
+-static ALvoid (AL_APIENTRY*alAuxiliaryEffectSloti)(ALuint sid, ALenum param, ALint value);
+-static ALvoid (AL_APIENTRY*alAuxiliaryEffectSlotiv)(ALuint sid, ALenum param, const ALint* values);
+-static ALvoid (AL_APIENTRY*alGetAuxiliaryEffectSlotf)(ALuint sid, ALenum param, ALfloat* value);
+-static ALvoid (AL_APIENTRY*alGetAuxiliaryEffectSlotfv)(ALuint sid, ALenum param, ALfloat* values);
+-static ALvoid (AL_APIENTRY*alGetAuxiliaryEffectSloti)(ALuint sid, ALenum param, ALint* value);
+-static ALvoid (AL_APIENTRY*alGetAuxiliaryEffectSlotiv)(ALuint sid, ALenum param, ALint* values);
+-
+-extern ALCvoid* CDECL wine_alcGetProcAddress(ALCdevice *, const ALCchar *);
+-extern ALvoid*  CDECL wine_alGetProcAddress(const ALchar*);
+-
+-static CRITICAL_SECTION openal_cs;
+-static CRITICAL_SECTION_DEBUG openal_cs_debug =
+-{
+-    0, 0, &openal_cs,
+-    {&openal_cs_debug.ProcessLocksList,
+-    &openal_cs_debug.ProcessLocksList},
+-    0, 0, {(DWORD_PTR)(__FILE__ ": openal_cs")}
+-};
+-static CRITICAL_SECTION openal_cs = {&openal_cs_debug, -1, 0, 0, 0, 0};
+-
+-/***********************************************************************
+- *           OpenAL initialisation routine
+- */
+-BOOL WINAPI DllMain( HINSTANCE hinst, DWORD reason, LPVOID reserved )
+-{
+-    switch(reason)
+-    {
+-    case DLL_PROCESS_ATTACH:
+-        DisableThreadLibraryCalls(hinst);
+-#define LOADFUNC(x) x = alcGetProcAddress(NULL, #x)
+-        LOADFUNC(alcSetThreadContext);
+-        LOADFUNC(alcGetThreadContext);
+-#undef LOADFUNC
+-        break;
+-    case DLL_PROCESS_DETACH:
+-        if (reserved) break;
+-        DeleteCriticalSection(&openal_cs);
+-    }
+-
+-    return TRUE;
+-}
+-
+-
+-static void LoadProcs(void)
+-{
+-#define LOADFUNC(x) x = alGetProcAddress(#x)
+-    LOADFUNC(alBufferDataStatic);
+-    LOADFUNC(alGenFilters);
+-    LOADFUNC(alDeleteFilters);
+-    LOADFUNC(alIsFilter);
+-    LOADFUNC(alFilterf);
+-    LOADFUNC(alFilterfv);
+-    LOADFUNC(alFilteri);
+-    LOADFUNC(alFilteriv);
+-    LOADFUNC(alGetFilterf);
+-    LOADFUNC(alGetFilterfv);
+-    LOADFUNC(alGetFilteri);
+-    LOADFUNC(alGetFilteriv);
+-    LOADFUNC(alGenEffects);
+-    LOADFUNC(alDeleteEffects);
+-    LOADFUNC(alIsEffect);
+-    LOADFUNC(alEffectf);
+-    LOADFUNC(alEffectfv);
+-    LOADFUNC(alEffecti);
+-    LOADFUNC(alEffectiv);
+-    LOADFUNC(alGetEffectf);
+-    LOADFUNC(alGetEffectfv);
+-    LOADFUNC(alGetEffecti);
+-    LOADFUNC(alGetEffectiv);
+-    LOADFUNC(alGenAuxiliaryEffectSlots);
+-    LOADFUNC(alDeleteAuxiliaryEffectSlots);
+-    LOADFUNC(alIsAuxiliaryEffectSlot);
+-    LOADFUNC(alAuxiliaryEffectSlotf);
+-    LOADFUNC(alAuxiliaryEffectSlotfv);
+-    LOADFUNC(alAuxiliaryEffectSloti);
+-    LOADFUNC(alAuxiliaryEffectSlotiv);
+-    LOADFUNC(alGetAuxiliaryEffectSlotf);
+-    LOADFUNC(alGetAuxiliaryEffectSlotfv);
+-    LOADFUNC(alGetAuxiliaryEffectSloti);
+-    LOADFUNC(alGetAuxiliaryEffectSlotiv);
+-#undef LOADFUNC
+-}
+-
+-/***********************************************************************
+- *           OpenAL thunk routines
+- */
+-
+-/* OpenAL ALC 1.0 functions */
+-ALCcontext* CDECL wine_alcCreateContext(ALCdevice *device, const ALCint* attrlist)
+-{
+-    return alcCreateContext(device, attrlist);
+-}
+-
+-ALCboolean CDECL wine_alcMakeContextCurrent(ALCcontext *context)
+-{
+-    EnterCriticalSection(&openal_cs);
+-    if(alcMakeContextCurrent(context) == ALC_FALSE)
+-    {
+-        WARN("Failed to make context %p current\n", context);
+-        LeaveCriticalSection(&openal_cs);
+-        return ALC_FALSE;
+-    }
+-
+-    if(context && !loaded_procs)
+-    {
+-        loaded_procs = AL_TRUE;
+-        LoadProcs();
+-    }
+-    LeaveCriticalSection(&openal_cs);
+-
+-    return ALC_TRUE;
+-}
+-
+-ALvoid CDECL wine_alcProcessContext(ALCcontext *context)
+-{
+-    alcProcessContext(context);
+-}
+-
+-ALvoid CDECL wine_alcSuspendContext(ALCcontext *context)
+-{
+-    alcSuspendContext(context);
+-}
+-
+-ALvoid CDECL wine_alcDestroyContext(ALCcontext *context)
+-{
+-    alcDestroyContext(context);
+-}
+-
+-ALCcontext* CDECL wine_alcGetCurrentContext(ALCvoid)
+-{
+-    return alcGetCurrentContext();
+-}
+-
+-ALCdevice* CDECL wine_alcGetContextsDevice(ALCcontext *context)
+-{
+-    return alcGetContextsDevice(context);
+-}
+-
+-ALCdevice* CDECL wine_alcOpenDevice(const ALCchar *devicename)
+-{
+-    if(devicename != NULL && (strcmp(devicename, "DirectSound3D") == 0 ||
+-                              strcmp(devicename, "DirectSound") == 0 ||
+-                              strcmp(devicename, "Generic Hardware") == 0 ||
+-                              strcmp(devicename, "Generic Software") == 0)) {
+-        devicename = NULL;
+-    }
+-    return alcOpenDevice(devicename);
+-}
+-
+-ALCboolean CDECL wine_alcCloseDevice(ALCdevice *device)
+-{
+-    return alcCloseDevice(device);
+-}
+-
+-ALCenum CDECL wine_alcGetError(ALCdevice *device)
+-{
+-    return alcGetError(device);
+-}
+-
+-ALCboolean CDECL wine_alcIsExtensionPresent(ALCdevice *device, const ALCchar *extname)
+-{
+-    return alcIsExtensionPresent(device, extname);
+-}
+-
+-ALCenum CDECL wine_alcGetEnumValue(ALCdevice *device, const ALCchar *enumname)
+-{
+-    return alcGetEnumValue(device, enumname);
+-}
+-
+-const ALCchar* CDECL wine_alcGetString(ALCdevice *device, ALCenum param)
+-{
+-    return alcGetString(device, param);
+-}
+-
+-ALvoid CDECL wine_alcGetIntegerv(ALCdevice *device, ALCenum param, ALCsizei size, ALCint *dest)
+-{
+-    alcGetIntegerv(device, param, size, dest);
+-}
+-
+-
+-/* OpenAL 1.0 functions */
+-ALvoid CDECL wine_alEnable(ALenum capability)
+-{
+-    alEnable(capability);
+-}
+-
+-ALvoid CDECL wine_alDisable(ALenum capability)
+-{
+-    alDisable(capability);
+-}
+-
+-ALboolean CDECL wine_alIsEnabled(ALenum capability)
+-{
+-    return alIsEnabled(capability);
+-}
+-
+-const ALchar* CDECL wine_alGetString(ALenum param)
+-{
+-    return alGetString(param);
+-}
+-
+-ALvoid CDECL wine_alGetBooleanv(ALenum param, ALboolean* data)
+-{
+-    alGetBooleanv(param, data);
+-}
+-
+-ALvoid CDECL wine_alGetIntegerv(ALenum param, ALint* data)
+-{
+-    alGetIntegerv(param, data);
+-}
+-
+-ALvoid CDECL wine_alGetFloatv(ALenum param, ALfloat* data)
+-{
+-    alGetFloatv(param, data);
+-}
+-
+-ALvoid CDECL wine_alGetDoublev(ALenum param, ALdouble* data)
+-{
+-    alGetDoublev(param, data);
+-}
+-
+-ALboolean CDECL wine_alGetBoolean(ALenum param)
+-{
+-    return alGetBoolean(param);
+-}
+-
+-ALint CDECL wine_alGetInteger(ALenum param)
+-{
+-    return alGetInteger(param);
+-}
+-
+-ALfloat CDECL wine_alGetFloat(ALenum param)
+-{
+-    return alGetFloat(param);
+-}
+-
+-ALdouble CDECL wine_alGetDouble(ALenum param)
+-{
+-    return alGetDouble(param);
+-}
+-
+-ALenum CDECL wine_alGetError(ALvoid)
+-{
+-    return alGetError();
+-}
+-
+-ALboolean CDECL wine_alIsExtensionPresent(const ALchar* extname)
+-{
+-    return alIsExtensionPresent(extname);
+-}
+-
+-ALenum CDECL wine_alGetEnumValue(const ALchar* ename)
+-{
+-    return alGetEnumValue(ename);
+-}
+-
+-ALvoid CDECL wine_alListenerf(ALenum param, ALfloat value)
+-{
+-    alListenerf(param, value);
+-}
+-
+-ALvoid CDECL wine_alListener3f(ALenum param, ALfloat value1, ALfloat value2, ALfloat value3)
+-{
+-    alListener3f(param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alListenerfv(ALenum param, const ALfloat* values)
+-{
+-    alListenerfv(param, values);
+-}
+-
+-ALvoid CDECL wine_alListeneri(ALenum param, ALint value)
+-{
+-    alListeneri(param, value);
+-}
+-
+-ALvoid CDECL wine_alGetListenerf(ALenum param, ALfloat* value)
+-{
+-    alGetListenerf(param, value);
+-}
+-
+-ALvoid CDECL wine_alGetListener3f(ALenum param, ALfloat *value1, ALfloat *value2, ALfloat *value3)
+-{
+-    alGetListener3f(param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alGetListenerfv(ALenum param, ALfloat* values)
+-{
+-    alGetListenerfv(param, values);
+-}
+-
+-ALvoid CDECL wine_alGetListeneri(ALenum param, ALint* value)
+-{
+-    alGetListeneri(param, value);
+-}
+-
+-ALvoid CDECL wine_alGetListeneriv(ALenum param, ALint* values)
+-{
+-    alGetListeneriv(param, values);
+-}
+-
+-ALvoid CDECL wine_alGenSources(ALsizei n, ALuint* sources)
+-{
+-    alGenSources(n, sources);
+-}
+-
+-ALvoid CDECL wine_alDeleteSources(ALsizei n, const ALuint* sources)
+-{
+-    alDeleteSources(n, sources);
+-}
+-
+-ALboolean CDECL wine_alIsSource(ALuint sid)
+-{
+-    return alIsSource(sid);
+-}
+-
+-ALvoid CDECL wine_alSourcef(ALuint sid, ALenum param, ALfloat value)
+-{
+-    alSourcef(sid, param, value);
+-}
+-
+-ALvoid CDECL wine_alSource3f(ALuint sid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3)
+-{
+-    alSource3f(sid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alSourcefv(ALuint sid, ALenum param, const ALfloat* values)
+-{
+-    alSourcefv(sid, param, values);
+-}
+-
+-ALvoid CDECL wine_alSourcei(ALuint sid, ALenum param, ALint value)
+-{
+-    alSourcei(sid, param, value);
+-}
+-
+-ALvoid CDECL wine_alGetSourcef(ALuint sid, ALenum param, ALfloat* value)
+-{
+-    alGetSourcef(sid, param, value);
+-}
+-
+-ALvoid CDECL wine_alGetSource3f(ALuint sid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3)
+-{
+-    alGetSource3f(sid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alGetSourcefv(ALuint sid, ALenum param, ALfloat* values)
+-{
+-    alGetSourcefv(sid, param, values);
+-}
+-
+-ALvoid CDECL wine_alGetSourcei(ALuint sid, ALenum param, ALint* value)
+-{
+-    alGetSourcei(sid, param, value);
+-}
+-
+-ALvoid CDECL wine_alGetSourceiv(ALuint sid, ALenum param, ALint* values)
+-{
+-    alGetSourceiv(sid, param, values);
+-}
+-
+-ALvoid CDECL wine_alSourcePlayv(ALsizei ns, const ALuint *sids)
+-{
+-    alSourcePlayv(ns, sids);
+-}
+-
+-ALvoid CDECL wine_alSourceStopv(ALsizei ns, const ALuint *sids)
+-{
+-    alSourceStopv(ns, sids);
+-}
+-
+-ALvoid CDECL wine_alSourceRewindv(ALsizei ns, const ALuint *sids)
+-{
+-    alSourceRewindv(ns, sids);
+-}
+-
+-ALvoid CDECL wine_alSourcePausev(ALsizei ns, const ALuint *sids)
+-{
+-    alSourcePausev(ns, sids);
+-}
+-
+-ALvoid CDECL wine_alSourcePlay(ALuint sid)
+-{
+-    alSourcePlay(sid);
+-}
+-
+-ALvoid CDECL wine_alSourceStop(ALuint sid)
+-{
+-    alSourceStop(sid);
+-}
+-
+-ALvoid CDECL wine_alSourceRewind(ALuint sid)
+-{
+-    alSourceRewind(sid);
+-}
+-
+-ALvoid CDECL wine_alSourcePause(ALuint sid)
+-{
+-    alSourcePause(sid);
+-}
+-
+-ALvoid CDECL wine_alSourceQueueBuffers(ALuint sid, ALsizei numEntries, const ALuint *bids)
+-{
+-    alSourceQueueBuffers(sid, numEntries, bids);
+-}
+-
+-ALvoid CDECL wine_alSourceUnqueueBuffers(ALuint sid, ALsizei numEntries, ALuint *bids)
+-{
+-    alSourceUnqueueBuffers(sid, numEntries, bids);
+-}
+-
+-ALvoid CDECL wine_alGenBuffers(ALsizei n, ALuint* buffers)
+-{
+-    alGenBuffers(n, buffers);
+-}
+-
+-ALvoid CDECL wine_alDeleteBuffers(ALsizei n, const ALuint* buffers)
+-{
+-    alDeleteBuffers(n, buffers);
+-}
+-
+-ALboolean CDECL wine_alIsBuffer(ALuint bid)
+-{
+-    return alIsBuffer(bid);
+-}
+-
+-ALvoid CDECL wine_alBufferData(ALuint bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq)
+-{
+-    alBufferData(bid, format, data, size, freq);
+-}
+-
+-static ALvoid CDECL wine_alBufferDataStatic(const ALuint bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq)
+-{
+-    alBufferDataStatic(bid, format, data, size, freq);
+-}
+-
+-ALvoid CDECL wine_alGetBufferf(ALuint bid, ALenum param, ALfloat* value)
+-{
+-    alGetBufferf(bid, param, value);
+-}
+-
+-ALvoid CDECL wine_alGetBufferfv(ALuint bid, ALenum param, ALfloat* values)
+-{
+-    alGetBufferfv(bid, param, values);
+-}
+-
+-ALvoid CDECL wine_alGetBufferi(ALuint bid, ALenum param, ALint* value)
+-{
+-    alGetBufferi(bid, param, value);
+-}
+-
+-ALvoid CDECL wine_alGetBufferiv(ALuint bid, ALenum param, ALint* values)
+-{
+-    alGetBufferiv(bid, param, values);
+-}
+-
+-ALvoid CDECL wine_alDopplerFactor(ALfloat value)
+-{
+-    alDopplerFactor(value);
+-}
+-
+-ALvoid CDECL wine_alDopplerVelocity(ALfloat value)
+-{
+-    alDopplerVelocity(value);
+-}
+-
+-ALvoid CDECL wine_alDistanceModel(ALenum distanceModel)
+-{
+-    alDistanceModel(distanceModel);
+-}
+-
+-
+-/* OpenAL ALC 1.1 functions */
+-ALCdevice* CDECL wine_alcCaptureOpenDevice(const ALCchar *devicename, ALCuint frequency, ALCenum format, ALCsizei buffersize)
+-{
+-     return alcCaptureOpenDevice(devicename, frequency, format, buffersize);
+-}
+-
+-ALCboolean CDECL wine_alcCaptureCloseDevice(ALCdevice *device)
+-{
+-    return alcCaptureCloseDevice(device);
+-}
+-
+-ALCvoid CDECL wine_alcCaptureStart(ALCdevice *device)
+-{
+-    alcCaptureStart(device);
+-}
+-
+-ALCvoid CDECL wine_alcCaptureStop(ALCdevice *device)
+-{
+-    alcCaptureStop(device);
+-}
+-
+-ALCvoid CDECL wine_alcCaptureSamples(ALCdevice *device, ALCvoid *buffer, ALCsizei samples)
+-{
+-    alcCaptureSamples(device, buffer, samples);
+-}
+-
+-/* OpenAL 1.1 functions */
+-ALvoid CDECL wine_alListener3i(ALenum param, ALint value1, ALint value2, ALint value3)
+-{
+-    alListener3i(param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alListeneriv(ALenum param, const ALint* values)
+-{
+-    alListeneriv(param, values);
+-}
+-
+-ALvoid CDECL wine_alGetListener3i(ALenum param, ALint *value1, ALint *value2, ALint *value3)
+-{
+-    alGetListener3i(param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alSource3i(ALuint sid, ALenum param, ALint value1, ALint value2, ALint value3)
+-{
+-    alSource3i(sid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alSourceiv(ALuint sid, ALenum param, const ALint* values)
+-{
+-    alSourceiv(sid, param, values);
+-}
+-
+-ALvoid CDECL wine_alGetSource3i(ALuint sid, ALenum param, ALint* value1, ALint* value2, ALint* value3)
+-{
+-    alGetSource3i(sid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alBufferf(ALuint bid, ALenum param, ALfloat value)
+-{
+-    alBufferf(bid, param, value);
+-}
+-
+-ALvoid CDECL wine_alBuffer3f(ALuint bid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3)
+-{
+-    alBuffer3f(bid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alBufferfv(ALuint bid, ALenum param, const ALfloat* values)
+-{
+-    alBufferfv(bid, param, values);
+-}
+-
+-ALvoid CDECL wine_alBufferi(ALuint bid, ALenum param, ALint value)
+-{
+-    alBufferi(bid, param, value);
+-}
+-
+-ALvoid CDECL wine_alBuffer3i(ALuint bid, ALenum param, ALint value1, ALint value2, ALint value3)
+-{
+-    alBuffer3i(bid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alBufferiv(ALuint bid, ALenum param, const ALint* values)
+-{
+-    alBufferiv(bid, param, values);
+-}
+-
+-ALvoid CDECL wine_alGetBuffer3f(ALuint bid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3)
+-{
+-    alGetBuffer3f(bid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alGetBuffer3i(ALuint bid, ALenum param, ALint* value1, ALint* value2, ALint* value3)
+-{
+-    alGetBuffer3i(bid, param, value1, value2, value3);
+-}
+-
+-ALvoid CDECL wine_alSpeedOfSound(ALfloat value)
+-{
+-    alSpeedOfSound(value);
+-}
+-
+-/* OpenAL EFX extension functions */
+-static ALvoid CDECL wine_alGenFilters(ALsizei n, ALuint* filters)
+-{
+-    alGenFilters(n, filters);
+-}
+-
+-static ALvoid CDECL wine_alDeleteFilters(ALsizei n, const ALuint* filters)
+-{
+-    alDeleteFilters(n, filters);
+-}
+-
+-static ALboolean CDECL wine_alIsFilter(ALuint fid)
+-{
+-    return alIsFilter(fid);
+-}
+-
+-static ALvoid CDECL wine_alFilterf(ALuint fid, ALenum param, ALfloat value)
+-{
+-    alFilterf(fid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alFilterfv(ALuint fid, ALenum param, const ALfloat* values)
+-{
+-    alFilterfv(fid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alFilteri(ALuint fid, ALenum param, ALint value)
+-{
+-    alFilteri(fid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alFilteriv(ALuint fid, ALenum param, const ALint* values)
+-{
+-    alFilteriv(fid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetFilterf(ALuint fid, ALenum param, ALfloat* value)
+-{
+-    alGetFilterf(fid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetFilterfv(ALuint fid, ALenum param, ALfloat* values)
+-{
+-    alGetFilterfv(fid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetFilteri(ALuint fid, ALenum param, ALint* value)
+-{
+-    alGetFilteri(fid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetFilteriv(ALuint fid, ALenum param, ALint* values)
+-{
+-    alGetFilteriv(fid, param, values);
+-}
+-
+-
+-static ALvoid CDECL wine_alGenEffects(ALsizei n, ALuint* effects)
+-{
+-    alGenEffects(n, effects);
+-}
+-
+-static ALvoid CDECL wine_alDeleteEffects(ALsizei n, const ALuint* effects)
+-{
+-    alDeleteEffects(n, effects);
+-}
+-
+-static ALboolean CDECL wine_alIsEffect(ALuint eid)
+-{
+-    return alIsEffect(eid);
+-}
+-
+-static ALvoid CDECL wine_alEffectf(ALuint eid, ALenum param, ALfloat value)
+-{
+-    alEffectf(eid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alEffectfv(ALuint eid, ALenum param, const ALfloat* values)
+-{
+-    alEffectfv(eid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alEffecti(ALuint eid, ALenum param, ALint value)
+-{
+-    alEffecti(eid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alEffectiv(ALuint eid, ALenum param, const ALint* values)
+-{
+-    alEffectiv(eid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetEffectf(ALuint eid, ALenum param, ALfloat* value)
+-{
+-    alGetEffectf(eid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetEffectfv(ALuint eid, ALenum param, ALfloat* values)
+-{
+-    alGetEffectfv(eid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetEffecti(ALuint eid, ALenum param, ALint* value)
+-{
+-    alGetEffecti(eid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetEffectiv(ALuint eid, ALenum param, ALint* values)
+-{
+-    alGetEffectiv(eid, param, values);
+-}
+-
+-
+-static ALvoid CDECL wine_alGenAuxiliaryEffectSlots(ALsizei n, ALuint* slots)
+-{
+-    alGenAuxiliaryEffectSlots(n, slots);
+-}
+-
+-static ALvoid CDECL wine_alDeleteAuxiliaryEffectSlots(ALsizei n, const ALuint* slots)
+-{
+-    alDeleteAuxiliaryEffectSlots(n, slots);
+-}
+-
+-static ALboolean CDECL wine_alIsAuxiliaryEffectSlot(ALuint sid)
+-{
+-    return alIsAuxiliaryEffectSlot(sid);
+-}
+-
+-static ALvoid CDECL wine_alAuxiliaryEffectSlotf(ALuint sid, ALenum param, ALfloat value)
+-{
+-    alAuxiliaryEffectSlotf(sid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alAuxiliaryEffectSlotfv(ALuint sid, ALenum param, const ALfloat* values)
+-{
+-    alAuxiliaryEffectSlotfv(sid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alAuxiliaryEffectSloti(ALuint sid, ALenum param, ALint value)
+-{
+-    alAuxiliaryEffectSloti(sid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alAuxiliaryEffectSlotiv(ALuint sid, ALenum param, const ALint* values)
+-{
+-    alAuxiliaryEffectSlotiv(sid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetAuxiliaryEffectSlotf(ALuint sid, ALenum param, ALfloat* value)
+-{
+-    alGetAuxiliaryEffectSlotf(sid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetAuxiliaryEffectSlotfv(ALuint sid, ALenum param, ALfloat* values)
+-{
+-    alGetAuxiliaryEffectSlotfv(sid, param, values);
+-}
+-
+-static ALvoid CDECL wine_alGetAuxiliaryEffectSloti(ALuint sid, ALenum param, ALint* value)
+-{
+-    alGetAuxiliaryEffectSloti(sid, param, value);
+-}
+-
+-static ALvoid CDECL wine_alGetAuxiliaryEffectSlotiv(ALuint sid, ALenum param, ALint* values)
+-{
+-    alGetAuxiliaryEffectSlotiv(sid, param, values);
+-}
+-
+-
+-/* Thread-local context functions */
+-static ALCboolean CDECL wine_alcSetThreadContext(ALCcontext *context)
+-{
+-    EnterCriticalSection(&openal_cs);
+-    if(alcSetThreadContext(context) == ALC_FALSE)
+-    {
+-        WARN("Failed to make context %p current\n", context);
+-        LeaveCriticalSection(&openal_cs);
+-        return ALC_FALSE;
+-    }
+-
+-    if(context && !loaded_procs)
+-    {
+-        loaded_procs = AL_TRUE;
+-        LoadProcs();
+-    }
+-    LeaveCriticalSection(&openal_cs);
+-
+-    return ALC_TRUE;
+-}
+-
+-static ALCcontext* CDECL wine_alcGetThreadContext(ALCvoid)
+-{
+-    return alcGetThreadContext();
+-}
+-
+-struct FuncList {
+-    const char *name;
+-    void *proc;
+-};
+-
+-static const struct FuncList ALCFuncs[] = {
+-    { "alcCreateContext",           wine_alcCreateContext        },
+-    { "alcMakeContextCurrent",      wine_alcMakeContextCurrent   },
+-    { "alcProcessContext",          wine_alcProcessContext       },
+-    { "alcSuspendContext",          wine_alcSuspendContext       },
+-    { "alcDestroyContext",          wine_alcDestroyContext       },
+-    { "alcGetCurrentContext",       wine_alcGetCurrentContext    },
+-    { "alcGetContextsDevice",       wine_alcGetContextsDevice    },
+-    { "alcOpenDevice",              wine_alcOpenDevice           },
+-    { "alcCloseDevice",             wine_alcCloseDevice          },
+-    { "alcGetError",                wine_alcGetError             },
+-    { "alcIsExtensionPresent",      wine_alcIsExtensionPresent   },
+-    { "alcGetProcAddress",          wine_alcGetProcAddress       },
+-    { "alcGetEnumValue",            wine_alcGetEnumValue         },
+-    { "alcGetString",               wine_alcGetString            },
+-    { "alcGetIntegerv",             wine_alcGetIntegerv          },
+-    { "alcCaptureOpenDevice",       wine_alcCaptureOpenDevice    },
+-    { "alcCaptureCloseDevice",      wine_alcCaptureCloseDevice   },
+-    { "alcCaptureStart",            wine_alcCaptureStart         },
+-    { "alcCaptureStop",             wine_alcCaptureStop          },
+-    { "alcCaptureSamples",          wine_alcCaptureSamples       },
+-    { "alcSetThreadContext",        wine_alcSetThreadContext     },
+-    { "alcGetThreadContext",        wine_alcGetThreadContext     },
+-    { NULL,                         NULL                         }
+-};
+-static const struct FuncList ALFuncs[] = {
+-    { "alEnable",                   wine_alEnable                },
+-    { "alDisable",                  wine_alDisable               },
+-    { "alIsEnabled",                wine_alIsEnabled             },
+-    { "alGetString",                wine_alGetString             },
+-    { "alGetBooleanv",              wine_alGetBooleanv           },
+-    { "alGetIntegerv",              wine_alGetIntegerv           },
+-    { "alGetFloatv",                wine_alGetFloatv             },
+-    { "alGetDoublev",               wine_alGetDoublev            },
+-    { "alGetBoolean",               wine_alGetBoolean            },
+-    { "alGetInteger",               wine_alGetInteger            },
+-    { "alGetFloat",                 wine_alGetFloat              },
+-    { "alGetDouble",                wine_alGetDouble             },
+-    { "alGetError",                 wine_alGetError              },
+-    { "alIsExtensionPresent",       wine_alIsExtensionPresent    },
+-    { "alGetProcAddress",           wine_alGetProcAddress        },
+-    { "alGetEnumValue",             wine_alGetEnumValue          },
+-    { "alListenerf",                wine_alListenerf             },
+-    { "alListener3f",               wine_alListener3f            },
+-    { "alListenerfv",               wine_alListenerfv            },
+-    { "alListeneri",                wine_alListeneri             },
+-    { "alListener3i",               wine_alListener3i            },
+-    { "alListeneriv",               wine_alListeneriv            },
+-    { "alGetListenerf",             wine_alGetListenerf          },
+-    { "alGetListener3f",            wine_alGetListener3f         },
+-    { "alGetListenerfv",            wine_alGetListenerfv         },
+-    { "alGetListeneri",             wine_alGetListeneri          },
+-    { "alGetListener3i",            wine_alGetListener3i         },
+-    { "alGetListeneriv",            wine_alGetListeneriv         },
+-    { "alGenSources",               wine_alGenSources            },
+-    { "alDeleteSources",            wine_alDeleteSources         },
+-    { "alIsSource",                 wine_alIsSource              },
+-    { "alSourcef",                  wine_alSourcef               },
+-    { "alSource3f",                 wine_alSource3f              },
+-    { "alSourcefv",                 wine_alSourcefv              },
+-    { "alSourcei",                  wine_alSourcei               },
+-    { "alSource3i",                 wine_alSource3i              },
+-    { "alSourceiv",                 wine_alSourceiv              },
+-    { "alGetSourcef",               wine_alGetSourcef            },
+-    { "alGetSource3f",              wine_alGetSource3f           },
+-    { "alGetSourcefv",              wine_alGetSourcefv           },
+-    { "alGetSourcei",               wine_alGetSourcei            },
+-    { "alGetSource3i",              wine_alGetSource3i           },
+-    { "alGetSourceiv",              wine_alGetSourceiv           },
+-    { "alSourcePlayv",              wine_alSourcePlayv           },
+-    { "alSourceStopv",              wine_alSourceStopv           },
+-    { "alSourceRewindv",            wine_alSourceRewindv         },
+-    { "alSourcePausev",             wine_alSourcePausev          },
+-    { "alSourcePlay",               wine_alSourcePlay            },
+-    { "alSourceStop",               wine_alSourceStop            },
+-    { "alSourceRewind",             wine_alSourceRewind          },
+-    { "alSourcePause",              wine_alSourcePause           },
+-    { "alSourceQueueBuffers",       wine_alSourceQueueBuffers    },
+-    { "alSourceUnqueueBuffers",     wine_alSourceUnqueueBuffers  },
+-    { "alGenBuffers",               wine_alGenBuffers            },
+-    { "alDeleteBuffers",            wine_alDeleteBuffers         },
+-    { "alIsBuffer",                 wine_alIsBuffer              },
+-    { "alBufferData",               wine_alBufferData            },
+-    { "alBufferDataStatic",         wine_alBufferDataStatic      },
+-    { "alBufferf",                  wine_alBufferf               },
+-    { "alBuffer3f",                 wine_alBuffer3f              },
+-    { "alBufferfv",                 wine_alBufferfv              },
+-    { "alBufferi",                  wine_alBufferi               },
+-    { "alBuffer3i",                 wine_alBuffer3i              },
+-    { "alBufferiv",                 wine_alBufferiv              },
+-    { "alGetBufferf",               wine_alGetBufferf            },
+-    { "alGetBuffer3f",              wine_alGetBuffer3f           },
+-    { "alGetBufferfv",              wine_alGetBufferfv           },
+-    { "alGetBufferi",               wine_alGetBufferi            },
+-    { "alGetBuffer3i",              wine_alGetBuffer3i           },
+-    { "alGetBufferiv",              wine_alGetBufferiv           },
+-    { "alDopplerFactor",            wine_alDopplerFactor         },
+-    { "alDopplerVelocity",          wine_alDopplerVelocity       },
+-    { "alSpeedOfSound",             wine_alSpeedOfSound          },
+-    { "alDistanceModel",            wine_alDistanceModel         },
+-
+-    { "alGenFilters",               wine_alGenFilters            },
+-    { "alDeleteFilters",            wine_alDeleteFilters         },
+-    { "alIsFilter",                 wine_alIsFilter              },
+-    { "alFilterf",                  wine_alFilterf               },
+-    { "alFilterfv",                 wine_alFilterfv              },
+-    { "alFilteri",                  wine_alFilteri               },
+-    { "alFilteriv",                 wine_alFilteriv              },
+-    { "alGetFilterf",               wine_alGetFilterf            },
+-    { "alGetFilterfv",              wine_alGetFilterfv           },
+-    { "alGetFilteri",               wine_alGetFilteri            },
+-    { "alGetFilteriv",              wine_alGetFilteriv           },
+-
+-    { "alGenEffects",               wine_alGenEffects            },
+-    { "alDeleteEffects",            wine_alDeleteEffects         },
+-    { "alIsEffect",                 wine_alIsEffect              },
+-    { "alEffectf",                  wine_alEffectf               },
+-    { "alEffectfv",                 wine_alEffectfv              },
+-    { "alEffecti",                  wine_alEffecti               },
+-    { "alEffectiv",                 wine_alEffectiv              },
+-    { "alGetEffectf",               wine_alGetEffectf            },
+-    { "alGetEffectfv",              wine_alGetEffectfv           },
+-    { "alGetEffecti",               wine_alGetEffecti            },
+-    { "alGetEffectiv",              wine_alGetEffectiv           },
+-
+-    { "alGenAuxiliaryEffectSlots",  wine_alGenAuxiliaryEffectSlots},
+-    { "alDeleteAuxiliaryEffectSlots",wine_alDeleteAuxiliaryEffectSlots},
+-    { "alIsAuxiliaryEffectSlot",    wine_alIsAuxiliaryEffectSlot },
+-    { "alAuxiliaryEffectSlotf",     wine_alAuxiliaryEffectSlotf  },
+-    { "alAuxiliaryEffectSlotfv",    wine_alAuxiliaryEffectSlotfv },
+-    { "alAuxiliaryEffectSloti",     wine_alAuxiliaryEffectSloti  },
+-    { "alAuxiliaryEffectSlotiv",    wine_alAuxiliaryEffectSlotiv },
+-    { "alGetAuxiliaryEffectSlotf",  wine_alGetAuxiliaryEffectSlotf},
+-    { "alGetAuxiliaryEffectSlotfv", wine_alGetAuxiliaryEffectSlotfv},
+-    { "alGetAuxiliaryEffectSloti",  wine_alGetAuxiliaryEffectSloti},
+-    { "alGetAuxiliaryEffectSlotiv", wine_alGetAuxiliaryEffectSlotiv},
+-
+-    { NULL,                         NULL                         }
+-};
+-
+-
+-ALCvoid* CDECL wine_alcGetProcAddress(ALCdevice *device, const ALCchar *funcname)
+-{
+-    void *proc;
+-    int i;
+-
+-    /* Make sure the host implementation has the requested function */
+-    proc = alcGetProcAddress(device, funcname);
+-    if(!proc)
+-        return NULL;
+-
+-    for(i = 0;ALCFuncs[i].name;i++)
+-    {
+-        if(strcmp(funcname, ALCFuncs[i].name) == 0)
+-            return ALCFuncs[i].proc;
+-    }
+-    FIXME("Could not find function in list: %s\n", funcname);
+-    return NULL;
+-}
+-
+-
+-ALvoid* CDECL wine_alGetProcAddress(const ALchar* funcname)
+-{
+-    void *proc;
+-    int i;
+-
+-    /* Make sure the host implementation has the requested function. This will
+-     * also set the last AL error properly if the function should not be
+-     * returned (eg. no current context). */
+-    proc = alGetProcAddress(funcname);
+-    if(!proc)
+-        return NULL;
+-
+-    for(i = 0;ALFuncs[i].name;i++)
+-    {
+-        if(strcmp(funcname, ALFuncs[i].name) == 0)
+-            return ALFuncs[i].proc;
+-    }
+-    FIXME("Could not find function in list: %s\n", funcname);
+-    return NULL;
+-}
+diff --git a/dlls/openal32/openal32.spec b/dlls/openal32/openal32.spec
+deleted file mode 100644
+index 0094fc23..00000000
+--- a/dlls/openal32/openal32.spec
++++ /dev/null
+@@ -1,97 +0,0 @@
+-#OpenAL ALC_1_0
+-@ cdecl alcCreateContext(ptr ptr) wine_alcCreateContext
+-@ cdecl alcMakeContextCurrent(ptr) wine_alcMakeContextCurrent
+-@ cdecl alcProcessContext(ptr) wine_alcProcessContext
+-@ cdecl alcSuspendContext(ptr) wine_alcSuspendContext
+-@ cdecl alcDestroyContext(ptr) wine_alcDestroyContext
+-@ cdecl alcGetCurrentContext() wine_alcGetCurrentContext
+-@ cdecl alcGetContextsDevice(ptr) wine_alcGetContextsDevice
+-@ cdecl alcOpenDevice(str) wine_alcOpenDevice
+-@ cdecl alcCloseDevice(ptr) wine_alcCloseDevice
+-@ cdecl alcGetError(ptr) wine_alcGetError
+-@ cdecl alcIsExtensionPresent(ptr str) wine_alcIsExtensionPresent
+-@ cdecl alcGetProcAddress(ptr str) wine_alcGetProcAddress
+-@ cdecl alcGetEnumValue(ptr str) wine_alcGetEnumValue
+-@ cdecl alcGetString(ptr long) wine_alcGetString
+-@ cdecl alcGetIntegerv(ptr long long ptr) wine_alcGetIntegerv
+-#OpenAL AL_1_0
+-@ cdecl alEnable(long) wine_alEnable
+-@ cdecl alDisable(long) wine_alDisable
+-@ cdecl alIsEnabled(long) wine_alIsEnabled
+-@ cdecl alGetString(long) wine_alGetString
+-@ cdecl alGetBooleanv(long ptr) wine_alGetBooleanv
+-@ cdecl alGetIntegerv(long ptr) wine_alGetIntegerv
+-@ cdecl alGetFloatv(long ptr) wine_alGetFloatv
+-@ cdecl alGetDoublev(long ptr) wine_alGetDoublev
+-@ cdecl alGetBoolean(long) wine_alGetBoolean
+-@ cdecl alGetInteger(long) wine_alGetInteger
+-@ cdecl alGetFloat(long) wine_alGetFloat
+-@ cdecl alGetDouble(long) wine_alGetDouble
+-@ cdecl alGetError() wine_alGetError
+-@ cdecl alIsExtensionPresent(str) wine_alIsExtensionPresent
+-@ cdecl alGetProcAddress(str) wine_alGetProcAddress
+-@ cdecl alGetEnumValue(str) wine_alGetEnumValue
+-@ cdecl alListenerf(long long) wine_alListenerf
+-@ cdecl alListener3f(long long long long) wine_alListener3f
+-@ cdecl alListenerfv(long ptr) wine_alListenerfv
+-@ cdecl alListeneri(long long) wine_alListeneri
+-@ cdecl alGetListenerf(long ptr) wine_alGetListenerf
+-@ cdecl alGetListener3f(long ptr ptr ptr) wine_alGetListener3f
+-@ cdecl alGetListenerfv(long ptr) wine_alGetListenerfv
+-@ cdecl alGetListeneri(long ptr) wine_alGetListeneri
+-@ cdecl alGetListeneriv(long ptr) wine_alGetListeneriv
+-@ cdecl alGenSources(long ptr) wine_alGenSources
+-@ cdecl alDeleteSources(long ptr) wine_alDeleteSources
+-@ cdecl alIsSource(long) wine_alIsSource
+-@ cdecl alSourcef(long long long) wine_alSourcef
+-@ cdecl alSource3f(long long long long long) wine_alSource3f
+-@ cdecl alSourcefv(long long ptr) wine_alSourcefv
+-@ cdecl alSourcei(long long long) wine_alSourcei
+-@ cdecl alGetSourcef(long long ptr) wine_alGetSourcef
+-@ cdecl alGetSource3f(long long ptr ptr ptr) wine_alGetSource3f
+-@ cdecl alGetSourcefv(long long ptr) wine_alGetSourcefv
+-@ cdecl alGetSourcei(long long ptr) wine_alGetSourcei
+-@ cdecl alGetSourceiv(long long ptr) wine_alGetSourceiv
+-@ cdecl alSourcePlayv(long ptr) wine_alSourcePlayv
+-@ cdecl alSourceStopv(long ptr) wine_alSourceStopv
+-@ cdecl alSourceRewindv(long ptr) wine_alSourceRewindv
+-@ cdecl alSourcePausev(long ptr) wine_alSourcePausev
+-@ cdecl alSourcePlay(long) wine_alSourcePlay
+-@ cdecl alSourceStop(long) wine_alSourceStop
+-@ cdecl alSourceRewind(long) wine_alSourceRewind
+-@ cdecl alSourcePause(long) wine_alSourcePause
+-@ cdecl alSourceQueueBuffers(long long ptr) wine_alSourceQueueBuffers
+-@ cdecl alSourceUnqueueBuffers(long long ptr) wine_alSourceUnqueueBuffers
+-@ cdecl alGenBuffers(long ptr) wine_alGenBuffers
+-@ cdecl alDeleteBuffers(long ptr) wine_alDeleteBuffers
+-@ cdecl alIsBuffer(long) wine_alIsBuffer
+-@ cdecl alBufferData(long long ptr long long) wine_alBufferData
+-@ cdecl alGetBufferf(long long ptr) wine_alGetBufferf
+-@ cdecl alGetBufferfv(long long ptr) wine_alGetBufferfv
+-@ cdecl alGetBufferi(long long ptr) wine_alGetBufferi
+-@ cdecl alGetBufferiv(long long ptr) wine_alGetBufferiv
+-@ cdecl alDopplerFactor(long) wine_alDopplerFactor
+-@ cdecl alDopplerVelocity(long) wine_alDopplerVelocity
+-@ cdecl alDistanceModel(long) wine_alDistanceModel
+-#OpenAL ALC_1_1
+-@ cdecl alcCaptureOpenDevice(str long long long) wine_alcCaptureOpenDevice
+-@ cdecl alcCaptureCloseDevice(ptr) wine_alcCaptureCloseDevice
+-@ cdecl alcCaptureStart(ptr) wine_alcCaptureStart
+-@ cdecl alcCaptureStop(ptr) wine_alcCaptureStop
+-@ cdecl alcCaptureSamples(ptr ptr long) wine_alcCaptureSamples
+-#OpenAL AL_1_1
+-@ cdecl alListener3i(long long long long) wine_alListener3i
+-@ cdecl alListeneriv(long ptr) wine_alListeneriv
+-@ cdecl alGetListener3i(long ptr ptr ptr) wine_alGetListener3i
+-@ cdecl alSource3i(long long long long long) wine_alSource3i
+-@ cdecl alSourceiv(long long ptr) wine_alSourceiv
+-@ cdecl alGetSource3i(long long ptr ptr ptr) wine_alGetSource3i
+-@ cdecl alBufferf(long long long) wine_alBufferf
+-@ cdecl alBuffer3f(long long long long long) wine_alBuffer3f
+-@ cdecl alBufferfv(long long ptr) wine_alBufferfv
+-@ cdecl alBufferi(long long long) wine_alBufferi
+-@ cdecl alBuffer3i(long long long long long) wine_alBuffer3i
+-@ cdecl alBufferiv(long long ptr) wine_alBufferiv
+-@ cdecl alGetBuffer3f(long long ptr ptr ptr) wine_alGetBuffer3f
+-@ cdecl alGetBuffer3i(long long ptr ptr ptr) wine_alGetBuffer3i
+-@ cdecl alSpeedOfSound(long) wine_alSpeedOfSound
+diff --git a/include/config.h.in b/include/config.h.in
+index ee4b02a0..e62b36f1 100644
+--- a/include/config.h.in
++++ b/include/config.h.in
+@@ -329,12 +329,6 @@
+ /* Define to 1 if you have the <net/route.h> header file. */
+ #undef HAVE_NET_ROUTE_H
+ 
+-/* Define to 1 if OpenAL is available */
+-#undef HAVE_OPENAL
+-
+-/* Define to 1 if you have the <OpenAL/al.h> header file. */
+-#undef HAVE_OPENAL_AL_H
+-
+ /* Define to 1 if you have the <OpenCL/opencl.h> header file. */
+ #undef HAVE_OPENCL_OPENCL_H
+ 
+@@ -847,9 +841,6 @@
+ /* Define to the soname of the libodbc library. */
+ #undef SONAME_LIBODBC
+ 
+-/* Define to the soname of the libopenal library. */
+-#undef SONAME_LIBOPENAL
+-
+ /* Define to the soname of the libOSMesa library. */
+ #undef SONAME_LIBOSMESA
+ 
+-- 
+2.37.1 (Apple Git-137.1)
+
