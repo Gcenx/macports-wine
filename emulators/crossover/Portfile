@@ -55,7 +55,7 @@ if {${subport} eq ${name}} {
         reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
     }
 
-    variant mod description {Replace DXVK, MoltenVK, SDL2, wine-gecko & wine-mono} {
+    variant mod description {Replace DXVK, MoltenVK & SDL2} {
         depends_lib-append \
             port:libsdl2 \
             port:MoltenVK \
