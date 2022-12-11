@@ -97,11 +97,6 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-# wine segfaults on startup on macOS 11.1 and later
-# https://bugs.winehq.org/show_bug.cgi?id=54009
-patchfiles-append \
-    0004-loader-fix-environ.diff
-
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=52354
 if {${os.major} < 14} {
@@ -298,12 +293,14 @@ variant usb description {Build ${name} with USB support} {
     configure.args-append   --with-usb
 }
 
-# Unmerged wow64 patches, make a none default variant
-# https://gitlab.winehq.org/jacek/wine/-/tree/wow
-if {${universal_possible} && ![variant_isset universal] || ${os.major} > 18} {
-    variant wow description {Build ${name} with wow64} {
-        patchfiles-append               0005-wow.diff
-        configure.args.x86_64-append    --enable-archs=i386,x86_64
+if {${subport} eq "wine-devel" } {
+    # Unmerged wow64 patches, make a none default variant
+    # https://gitlab.winehq.org/jacek/wine/-/tree/wow
+    if {${universal_possible} && ![variant_isset universal] || ${os.major} > 18} {
+        variant wow description {Build ${name} with wow64} {
+            patchfiles-append               2001-wow.diff
+            configure.args.x86_64-append    --enable-archs=i386,x86_64
+        }
     }
 }
 
