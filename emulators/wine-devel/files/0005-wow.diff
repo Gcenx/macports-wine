@@ -1,14 +1,14 @@
-From 96ce3a1e536b6b48cdcd5b5d63d042263d95000b Mon Sep 17 00:00:00 2001
+From cd9bd7ec8923b4399407d821af8f4d54c1916d02 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 12:50:29 +0200
-Subject: [PATCH 01/21] gdi HACK: Disable printer drivers.
+Subject: [PATCH 01/19] gdi HACK: Disable printer drivers.
 
 ---
  dlls/gdi32/dc.c | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/dlls/gdi32/dc.c b/dlls/gdi32/dc.c
-index 6ec11650d27..5956f2a9d0f 100644
+index 44dd9b9373da..f32d1d9304c8 100644
 --- a/dlls/gdi32/dc.c
 +++ b/dlls/gdi32/dc.c
 @@ -147,6 +147,9 @@ static driver_entry_point load_driver( LPCWSTR name )
@@ -22,10 +22,10 @@ index 6ec11650d27..5956f2a9d0f 100644
      {
          EnterCriticalSection( &driver_section );
 
-From e1f80e5b5c5df2c740eca75bcd1c7052b13f151b Mon Sep 17 00:00:00 2001
+From 619fafb8491badcd887d727975effd6671ea4f5b Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 12:58:15 +0200
-Subject: [PATCH 02/21] win32u: Use syscall interface for NtGdiOpenDCW.
+Subject: [PATCH 02/19] win32u: Use syscall interface for NtGdiOpenDCW.
 
 ---
  dlls/win32u/gdiobj.c         |  1 -
@@ -38,7 +38,7 @@ Subject: [PATCH 02/21] win32u: Use syscall interface for NtGdiOpenDCW.
  7 files changed, 21 insertions(+), 14 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index f88efbaa679..2088ba3218b 100644
+index f88efbaa6798..2088ba3218b7 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1101,7 +1101,6 @@ static struct unix_funcs unix_funcs =
@@ -50,7 +50,7 @@ index f88efbaa679..2088ba3218b 100644
      NtGdiPlgBlt,
      NtGdiPolyDraw,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index ec6cd859ff6..aa36104a88e 100644
+index 32812a3d8816..b1b6345f491d 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -83,6 +83,7 @@ static void * const syscalls[] =
@@ -62,7 +62,7 @@ index ec6cd859ff6..aa36104a88e 100644
      NtGdiPtInRegion,
      NtGdiRectInRegion,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index c9c126ec2f3..102b6117929 100644
+index c3ed3c0559a9..e4e0f3d4c69c 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -547,7 +547,7 @@
@@ -75,7 +75,7 @@ index c9c126ec2f3..102b6117929 100644
  @ stub NtGdiPATHOBJ_bEnumClipLines
  @ stub NtGdiPATHOBJ_vEnumStart
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 8fc00cf3296..77b4c4d4647 100644
+index 8e294b7924ad..080ccf9fd7b6 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -130,9 +130,6 @@ struct unix_funcs
@@ -89,7 +89,7 @@ index 8fc00cf3296..77b4c4d4647 100644
      BOOL     (WINAPI *pNtGdiPlgBlt)( HDC hdc, const POINT *point, HDC hdc_src, INT x_src, INT y_src,
                                       INT width, INT height, HBITMAP mask, INT x_mask, INT y_mask,
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index e128705ef37..004833dc3b4 100644
+index e128705ef378..004833dc3b4f 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -426,15 +426,6 @@ INT WINAPI NtGdiOffsetClipRgn( HDC hdc, INT x, INT y )
@@ -109,7 +109,7 @@ index e128705ef37..004833dc3b4 100644
  {
      if (!unix_funcs) return FALSE;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 6fa36b5f3a3..abb15da1884 100644
+index 6fa36b5f3a3d..abb15da1884c 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -623,6 +623,24 @@ NTSTATUS WINAPI wow64_NtGdiOffsetRgn( UINT *args )
@@ -138,7 +138,7 @@ index 6fa36b5f3a3..abb15da1884 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index e9b63f365dd..85e303129bf 100644
+index ecf79f69cce0..dd69d03d0922 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -69,6 +69,7 @@
@@ -150,10 +150,10 @@ index e9b63f365dd..85e303129bf 100644
      SYSCALL_ENTRY( NtGdiPtInRegion ) \
      SYSCALL_ENTRY( NtGdiRectInRegion ) \
 
-From 293e67fabbf59959a8b284780e7d79bb5fae3e7d Mon Sep 17 00:00:00 2001
+From 51fd54f74f220cd9e6e0cc6b7c30ac4d4b11e738 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 13:20:35 +0200
-Subject: [PATCH 03/21] win32u: Use syscall interface for more painting
+Subject: [PATCH 03/19] win32u: Use syscall interface for more painting
  functions.
 
 ---
@@ -167,7 +167,7 @@ Subject: [PATCH 03/21] win32u: Use syscall interface for more painting
  7 files changed, 113 insertions(+), 76 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 2088ba3218b..4db5bd98f86 100644
+index 2088ba3218b7..4db5bd98f86b 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1034,7 +1034,6 @@ static struct unix_funcs unix_funcs =
@@ -226,7 +226,7 @@ index 2088ba3218b..4db5bd98f86 100644
      NtGdiStartDoc,
      NtGdiStartPage,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index aa36104a88e..34a7bbbba59 100644
+index b1b6345f491d..96d99a07b06d 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -38,6 +38,7 @@ static void * const syscalls[] =
@@ -280,7 +280,7 @@ index aa36104a88e..34a7bbbba59 100644
      NtGdiSetRectRgn,
      NtGdiSetTextJustification,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 102b6117929..e5d1322ebc5 100644
+index e4e0f3d4c69c..a51e9cb2df6e 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -115,7 +115,7 @@
@@ -355,7 +355,7 @@ index 102b6117929..e5d1322ebc5 100644
  @ stub NtGdiSetPrivateDeviceGammaRamp
  @ stdcall -syscall NtGdiSetRectRgn(long long long long long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 77b4c4d4647..a0002547093 100644
+index 080ccf9fd7b6..3974de819d59 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -42,8 +42,6 @@ struct unix_funcs
@@ -419,7 +419,7 @@ index 77b4c4d4647..a0002547093 100644
      INT      (WINAPI *pNtGdiStartDoc)( HDC hdc, const DOCINFOW *doc, BOOL *banding, INT job );
      INT      (WINAPI *pNtGdiStartPage)( HDC hdc );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 004833dc3b4..ee87d6f3302 100644
+index 004833dc3b4f..ee87d6f3302a 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -51,13 +51,6 @@ BOOL WINAPI NtGdiAngleArc( HDC hdc, INT x, INT y, DWORD radius, FLOAT start_angl
@@ -529,7 +529,7 @@ index 004833dc3b4..ee87d6f3302 100644
  {
      if (!unix_funcs) return SYSPAL_ERROR;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index abb15da1884..78bb57a7ef9 100644
+index abb15da1884c..78bb57a7ef97 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -79,6 +79,22 @@ NTSTATUS WINAPI wow64_NtGdiAddFontResourceW( UINT *args )
@@ -657,7 +657,7 @@ index abb15da1884..78bb57a7ef9 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 85e303129bf..1063ec55772 100644
+index dd69d03d0922..97796f63fb7d 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -24,6 +24,7 @@
@@ -711,10 +711,10 @@ index 85e303129bf..1063ec55772 100644
      SYSCALL_ENTRY( NtGdiSetRectRgn ) \
      SYSCALL_ENTRY( NtGdiSetTextJustification ) \
 
-From 646cc2b374e5bb524ba2b79711d310a2e7009a18 Mon Sep 17 00:00:00 2001
+From ef0ae91e8f1d9a1dbfb3cedef29e4813d0088273 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 14:47:56 +0200
-Subject: [PATCH 04/21] win32u: Use syscall interface for more painting
+Subject: [PATCH 04/19] win32u: Use syscall interface for more painting
  functions.
 
 FIXME: get_float() works, but it does not seem right, take a closer look
@@ -730,7 +730,7 @@ FIXME: get_float() works, but it does not seem right, take a closer look
  8 files changed, 109 insertions(+), 77 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 4db5bd98f86..d15e5367f15 100644
+index 4db5bd98f86b..d15e5367f15a 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1033,7 +1033,6 @@ static struct unix_funcs unix_funcs =
@@ -773,7 +773,7 @@ index 4db5bd98f86..d15e5367f15 100644
      NtGdiRectVisible,
      NtGdiResetDC,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 34a7bbbba59..6d95fe77f58 100644
+index 96d99a07b06d..b165601c9c20 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -38,6 +38,7 @@ static void * const syscalls[] =
@@ -816,7 +816,7 @@ index 34a7bbbba59..6d95fe77f58 100644
      NtGdiRectInRegion,
      NtGdiRectangle,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index e5d1322ebc5..48c34c825b5 100644
+index a51e9cb2df6e..5ec958c5f286 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -113,7 +113,7 @@
@@ -883,7 +883,7 @@ index e5d1322ebc5..48c34c825b5 100644
  @ stdcall -syscall NtGdiPtInRegion(long long long)
  @ stdcall NtGdiPtVisible(long long long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index a0002547093..21f44521b0a 100644
+index 3974de819d59..7812044c6883 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -40,8 +40,6 @@ struct unix_funcs
@@ -932,7 +932,7 @@ index a0002547093..21f44521b0a 100644
      BOOL     (WINAPI *pNtGdiRectVisible)( HDC hdc, const RECT *rect );
      BOOL     (WINAPI *pNtGdiResetDC)( HDC hdc, const DEVMODEW *devmode, BOOL *banding,
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index ee87d6f3302..50bfec72e3d 100644
+index ee87d6f3302a..50bfec72e3d8 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -45,12 +45,6 @@ BOOL WINAPI NtGdiAlphaBlend( HDC hdc_dst, int x_dst, int y_dst, int width_dst, i
@@ -1033,7 +1033,7 @@ index ee87d6f3302..50bfec72e3d 100644
  {
      if (!unix_funcs) return FALSE;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 78bb57a7ef9..2b7644b318e 100644
+index 78bb57a7ef97..2b7644b318eb 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -79,6 +79,18 @@ NTSTATUS WINAPI wow64_NtGdiAddFontResourceW( UINT *args )
@@ -1163,7 +1163,7 @@ index 78bb57a7ef9..2b7644b318e 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 1063ec55772..cfa26dc7a8e 100644
+index 97796f63fb7d..1adb756afe47 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -24,6 +24,7 @@
@@ -1206,7 +1206,7 @@ index 1063ec55772..cfa26dc7a8e 100644
      SYSCALL_ENTRY( NtGdiRectInRegion ) \
      SYSCALL_ENTRY( NtGdiRectangle ) \
 diff --git a/dlls/wow64win/wow64win_private.h b/dlls/wow64win/wow64win_private.h
-index 643875c69ce..6f23030c418 100644
+index 643875c69ce1..6f23030c418c 100644
 --- a/dlls/wow64win/wow64win_private.h
 +++ b/dlls/wow64win/wow64win_private.h
 @@ -54,6 +54,7 @@ typedef struct
@@ -1218,10 +1218,10 @@ index 643875c69ce..6f23030c418 100644
  static inline void **addr_32to64( void **addr, ULONG *addr32 )
  {
 
-From 2c3afbca02c49c1d318ce9d006c77af092d20050 Mon Sep 17 00:00:00 2001
+From e7a1a6fb437aadac085b03c04ff2d74d4bcdc603 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 14:59:29 +0200
-Subject: [PATCH 05/21] win32u: Use syscall interface for more printer
+Subject: [PATCH 05/19] win32u: Use syscall interface for more printer
  functions.
 
 ---
@@ -1235,7 +1235,7 @@ Subject: [PATCH 05/21] win32u: Use syscall interface for more printer
  7 files changed, 67 insertions(+), 45 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index d15e5367f15..240703e1489 100644
+index d15e5367f15a..240703e14897 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,7 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -1266,7 +1266,7 @@ index d15e5367f15..240703e1489 100644
      NtGdiStretchDIBitsInternal,
      NtGdiStrokeAndFillPath,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 6d95fe77f58..c1bc5dc8b68 100644
+index b165601c9c20..80cfc9f99f26 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -36,6 +36,7 @@
@@ -1296,7 +1296,7 @@ index 6d95fe77f58..c1bc5dc8b68 100644
      NtGdiTransformPoints,
      NtUserActivateKeyboardLayout,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 48c34c825b5..8939d505795 100644
+index 5ec958c5f286..d8fe9d3227bc 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -104,7 +104,7 @@
@@ -1332,7 +1332,7 @@ index 48c34c825b5..8939d505795 100644
  @ stdcall NtGdiStretchDIBitsInternal(long long long long long long long long long ptr ptr long long long long long)
  @ stdcall NtGdiStrokeAndFillPath(long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 21f44521b0a..b650fbeae52 100644
+index 7812044c6883..f6d3164947a9 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,7 +35,6 @@
@@ -1363,7 +1363,7 @@ index 21f44521b0a..b650fbeae52 100644
                                           HDC hdc_src, INT x_src, INT y_src, INT width_src, INT height_src,
                                           DWORD rop, COLORREF bk_color );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 50bfec72e3d..e8d6ab55dfe 100644
+index 50bfec72e3d8..e8d6ab55dfe5 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,12 +24,6 @@
@@ -1424,7 +1424,7 @@ index 50bfec72e3d..e8d6ab55dfe 100644
                               HDC hdc_src, INT x_src, INT y_src, INT width_src, INT height_src,
                               DWORD rop, COLORREF bk_color )
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 2b7644b318e..e40e3557c9b 100644
+index 2b7644b318eb..e40e3557c9b2 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -56,6 +56,13 @@ static DWORD gdi_handle_type( HGDIOBJ obj )
@@ -1501,7 +1501,7 @@ index 2b7644b318e..e40e3557c9b 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index cfa26dc7a8e..94b970ef50d 100644
+index 1adb756afe47..1b31e6469169 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -22,6 +22,7 @@
@@ -1531,10 +1531,10 @@ index cfa26dc7a8e..94b970ef50d 100644
      SYSCALL_ENTRY( NtGdiTransformPoints ) \
      SYSCALL_ENTRY( NtUserActivateKeyboardLayout ) \
 
-From 5d1e0ad90ec2617fecc390c2f8a34e75d49a0f45 Mon Sep 17 00:00:00 2001
+From e84007e9030869b5b04b81c36961b12c4c73d855 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 15:14:30 +0200
-Subject: [PATCH 06/21] win32u: Use syscall interface for more path functions.
+Subject: [PATCH 06/19] win32u: Use syscall interface for more path functions.
 
 ---
  dlls/win32u/gdiobj.c         |  9 -----
@@ -1547,7 +1547,7 @@ Subject: [PATCH 06/21] win32u: Use syscall interface for more path functions.
  7 files changed, 91 insertions(+), 81 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 240703e1489..c78b8850e91 100644
+index 240703e14897..c78b8850e910 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,11 +1030,8 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -1598,7 +1598,7 @@ index 240703e1489..c78b8850e91 100644
      NtUserDrawMenuBarTemp,
      NtUserEndPaint,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index c1bc5dc8b68..c731393869d 100644
+index 80cfc9f99f26..bbb53cea93a0 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -37,10 +37,13 @@
@@ -1650,7 +1650,7 @@ index c1bc5dc8b68..c731393869d 100644
      NtUserAddClipboardFormatListener,
      NtUserAssociateInputContext,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 8939d505795..1a307964514 100644
+index d8fe9d3227bc..46f97f794361 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -105,7 +105,7 @@
@@ -1728,7 +1728,7 @@ index 8939d505795..1a307964514 100644
  @ stub NtGdiXFORMOBJ_iGetXform
  @ stub NtGdiXLATEOBJ_cGetPalette
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index b650fbeae52..2d8e012a7c2 100644
+index f6d3164947a9..acb9732dadc4 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,14 +35,11 @@
@@ -1786,7 +1786,7 @@ index b650fbeae52..2d8e012a7c2 100644
                                                 HICON icon, const WCHAR *str, UINT flags );
      DWORD    (WINAPI *pNtUserDrawMenuBarTemp)( HWND hwnd, HDC hdc, RECT *rect, HMENU handle, HFONT font );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index e8d6ab55dfe..9ad14424c2a 100644
+index e8d6ab55dfe5..9ad14424c2ac 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,12 +24,6 @@
@@ -1900,7 +1900,7 @@ index e8d6ab55dfe..9ad14424c2a 100644
  {
      if (!unix_funcs) return STATUS_NOT_SUPPORTED;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index e40e3557c9b..4464cd576f7 100644
+index e40e3557c9b2..4464cd576f7f 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -63,6 +63,13 @@ NTSTATUS WINAPI wow64_NtGdiAbortDoc( UINT *args )
@@ -2014,7 +2014,7 @@ index e40e3557c9b..4464cd576f7 100644
 +    return NtGdiWidenPath( hdc );
 +}
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 94b970ef50d..aff1e579276 100644
+index 1b31e6469169..1a1f635af65c 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -23,10 +23,13 @@
@@ -2066,10 +2066,10 @@ index 94b970ef50d..aff1e579276 100644
      SYSCALL_ENTRY( NtUserAddClipboardFormatListener ) \
      SYSCALL_ENTRY( NtUserAssociateInputContext ) \
 
-From 24551fe34f7431a92c7fac48deccd6e88dc10c88 Mon Sep 17 00:00:00 2001
+From 23be90e4791a690bab8343017c5d85b851e6e6f9 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 15:34:03 +0200
-Subject: [PATCH 07/21] win32u: Use syscall interface for bitblt functions.
+Subject: [PATCH 07/19] win32u: Use syscall interface for bitblt functions.
 
 FIXME: better BLENDFUNCTION handling
 ---
@@ -2083,7 +2083,7 @@ FIXME: better BLENDFUNCTION handling
  7 files changed, 197 insertions(+), 131 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index c78b8850e91..1df4c83ed55 100644
+index c78b8850e910..1df4c83ed55c 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,9 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -2126,7 +2126,7 @@ index c78b8850e91..1df4c83ed55 100644
      NtGdiUpdateColors,
      NtUserDrawCaptionTemp,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index c731393869d..97f0a704da2 100644
+index bbb53cea93a0..7d69fcf92143 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -40,11 +40,14 @@ static void * const syscalls[] =
@@ -2182,7 +2182,7 @@ index c731393869d..97f0a704da2 100644
      NtUserActivateKeyboardLayout,
      NtUserAddClipboardFormatListener,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 1a307964514..9ca1e17fe4a 100644
+index 46f97f794361..60a21b2880ff 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -112,7 +112,7 @@
@@ -2264,7 +2264,7 @@ index 1a307964514..9ca1e17fe4a 100644
  @ stub NtGdiUnloadPrinterDriver
  @ stub NtGdiUnmapMemFont
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 2d8e012a7c2..d29cf4f5c9b 100644
+index acb9732dadc4..b3b070e5f2be 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,12 +35,6 @@
@@ -2325,7 +2325,7 @@ index 2d8e012a7c2..d29cf4f5c9b 100644
      BOOL     (WINAPI *pNtGdiUpdateColors)( HDC hdc );
      BOOL     (WINAPI *pNtUserDrawCaptionTemp)( HWND hwnd, HDC hdc, const RECT *rect, HFONT font,
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 9ad14424c2a..4cd756fd575 100644
+index 9ad14424c2ac..4cd756fd5756 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,29 +24,6 @@
@@ -2455,7 +2455,7 @@ index 9ad14424c2a..4cd756fd575 100644
  {
      if (!unix_funcs) return FALSE;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 4464cd576f7..22dbc1ad790 100644
+index 4464cd576f7f..22dbc1ad7905 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -93,6 +93,25 @@ NTSTATUS WINAPI wow64_NtGdiAddFontResourceW( UINT *args )
@@ -2686,7 +2686,7 @@ index 4464cd576f7..22dbc1ad790 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index aff1e579276..948a4c952ff 100644
+index 1a1f635af65c..e38c3956ca41 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -26,11 +26,14 @@
@@ -2742,10 +2742,10 @@ index aff1e579276..948a4c952ff 100644
      SYSCALL_ENTRY( NtUserActivateKeyboardLayout ) \
      SYSCALL_ENTRY( NtUserAddClipboardFormatListener ) \
 
-From 21ad0664090ba39f8143ab3589655e2aae1e3251 Mon Sep 17 00:00:00 2001
+From 3435044ab812af873fb7f36c3dfcc97d9648077c Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 15:59:15 +0200
-Subject: [PATCH 08/21] win32u: Use syscall interface for more bitmap
+Subject: [PATCH 08/19] win32u: Use syscall interface for more bitmap
  functions.
 
 ---
@@ -2759,7 +2759,7 @@ Subject: [PATCH 08/21] win32u: Use syscall interface for more bitmap
  7 files changed, 23 insertions(+), 18 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 1df4c83ed55..93c20f5cac0 100644
+index 1df4c83ed55c..93c20f5cac0b 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,7 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -2779,7 +2779,7 @@ index 1df4c83ed55..93c20f5cac0 100644
      NtGdiSelectFont,
      NtGdiSelectPen,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 97f0a704da2..2c42406fdeb 100644
+index 7d69fcf92143..82d12b833665 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -50,6 +50,7 @@ static void * const syscalls[] =
@@ -2799,7 +2799,7 @@ index 97f0a704da2..2c42406fdeb 100644
      NtGdiSetBitmapBits,
      NtGdiSetBitmapDimension,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 9ca1e17fe4a..2ee2917589a 100644
+index 60a21b2880ff..a943d0627678 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -145,7 +145,7 @@
@@ -2821,7 +2821,7 @@ index 9ca1e17fe4a..2ee2917589a 100644
  @ stdcall -syscall NtGdiSelectClipPath(long long)
  @ stdcall NtGdiSelectFont(long long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index d29cf4f5c9b..fb7cb74927c 100644
+index b3b070e5f2be..581d4bd4e379 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,7 +35,6 @@
@@ -2841,7 +2841,7 @@ index d29cf4f5c9b..fb7cb74927c 100644
      HGDIOBJ  (WINAPI *pNtGdiSelectFont)( HDC hdc, HGDIOBJ handle );
      HGDIOBJ  (WINAPI *pNtGdiSelectPen)( HDC hdc, HGDIOBJ handle );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 4cd756fd575..4f51dbd2206 100644
+index 4cd756fd5756..4f51dbd2206f 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,12 +24,6 @@
@@ -2871,7 +2871,7 @@ index 4cd756fd575..4f51dbd2206 100644
  {
      if (!unix_funcs) return 0;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 22dbc1ad790..a41f7e69b11 100644
+index 22dbc1ad7905..a41f7e69b111 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -207,6 +207,15 @@ NTSTATUS WINAPI wow64_NtGdiCreateClientObj( UINT *args )
@@ -2906,7 +2906,7 @@ index 22dbc1ad790..a41f7e69b11 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 948a4c952ff..f3313831f47 100644
+index e38c3956ca41..feec3fe2a79d 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -36,6 +36,7 @@
@@ -2926,10 +2926,10 @@ index 948a4c952ff..f3313831f47 100644
      SYSCALL_ENTRY( NtGdiSetBitmapBits ) \
      SYSCALL_ENTRY( NtGdiSetBitmapDimension ) \
 
-From 1b6de269244ae94d1e5832c532363e640367fbe8 Mon Sep 17 00:00:00 2001
+From a104236705be2491ffa059ff9f092d357025cb74 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 20:02:03 +0200
-Subject: [PATCH 09/21] win32u: Use syscall interface for D3DKMT functions.
+Subject: [PATCH 09/19] win32u: Use syscall interface for D3DKMT functions.
 
 ---
  dlls/win32u/gdiobj.c         |  10 --
@@ -2942,7 +2942,7 @@ Subject: [PATCH 09/21] win32u: Use syscall interface for D3DKMT functions.
  7 files changed, 212 insertions(+), 91 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 93c20f5cac0..d882f0dd009 100644
+index 93c20f5cac0b..d882f0dd0093 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1033,16 +1033,6 @@ static struct unix_funcs unix_funcs =
@@ -2963,7 +2963,7 @@ index 93c20f5cac0..d882f0dd009 100644
      NtGdiDoPalette,
      NtGdiEnumFonts,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 2c42406fdeb..8600c36bc87 100644
+index 82d12b833665..467c15ba23d2 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -62,10 +62,20 @@ static void * const syscalls[] =
@@ -2988,7 +2988,7 @@ index 2c42406fdeb..8600c36bc87 100644
      NtGdiDescribePixelFormat,
      NtGdiDrawStream,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 2ee2917589a..b17a9e08b3e 100644
+index a943d0627678..33c0bf197ba3 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -186,14 +186,14 @@
@@ -3060,7 +3060,7 @@ index 2ee2917589a..b17a9e08b3e 100644
  @ stub NtGdiDdDDIShareObjects
  @ stub NtGdiDdDDISharedPrimaryLockNotification
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index fb7cb74927c..521ca665b54 100644
+index 581d4bd4e379..d415ae5b562b 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -41,16 +41,6 @@ struct unix_funcs
@@ -3081,7 +3081,7 @@ index fb7cb74927c..521ca665b54 100644
      LONG     (WINAPI *pNtGdiDoPalette)( HGDIOBJ handle, WORD start, WORD count, void *entries,
                                          DWORD func, BOOL inbound );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 4f51dbd2206..7f2dae040cf 100644
+index 4f51dbd2206f..7f2dae040cf5 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -375,66 +375,6 @@ BOOL WINAPI NtGdiUpdateColors( HDC hdc )
@@ -3152,7 +3152,7 @@ index 4f51dbd2206..7f2dae040cf 100644
                                     HICON icon, const WCHAR *str, UINT flags )
  {
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index a41f7e69b11..b511953ef97 100644
+index a41f7e69b111..b511953ef975 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -333,6 +333,55 @@ NTSTATUS WINAPI wow64_NtGdiCreateSolidBrush( UINT *args )
@@ -3383,7 +3383,7 @@ index a41f7e69b11..b511953ef97 100644
  {
      HGDIOBJ obj = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index f3313831f47..4bd4589ab16 100644
+index feec3fe2a79d..b64f2850a831 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -48,10 +48,20 @@
@@ -3408,10 +3408,10 @@ index f3313831f47..4bd4589ab16 100644
      SYSCALL_ENTRY( NtGdiDescribePixelFormat ) \
      SYSCALL_ENTRY( NtGdiDrawStream ) \
 
-From fbf578716e8ee40478926edf04f582ded15063dd Mon Sep 17 00:00:00 2001
+From 8c2f1742aa1e67bc75ea5669c94bceb5b871dbbf Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 20:21:13 +0200
-Subject: [PATCH 10/21] win32u: Use syscall interface for DIB functions.
+Subject: [PATCH 10/19] win32u: Use syscall interface for DIB functions.
 
 ---
  dlls/win32u/gdiobj.c         |  4 --
@@ -3424,7 +3424,7 @@ Subject: [PATCH 10/21] win32u: Use syscall interface for DIB functions.
  7 files changed, 95 insertions(+), 68 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index d882f0dd009..ef56fc24a5b 100644
+index d882f0dd0093..ef56fc24a5ba 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1031,7 +1031,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -3456,7 +3456,7 @@ index d882f0dd009..ef56fc24a5b 100644
      NtGdiUpdateColors,
      NtUserDrawCaptionTemp,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 8600c36bc87..beb1daed797 100644
+index 467c15ba23d2..43d0c63d404b 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -53,6 +53,7 @@ static void * const syscalls[] =
@@ -3492,7 +3492,7 @@ index 8600c36bc87..beb1daed797 100644
      NtGdiStrokePath,
      NtGdiSwapBuffers,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index b17a9e08b3e..18c1fefc53d 100644
+index 33c0bf197ba3..6f6685f3446c 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -149,7 +149,7 @@
@@ -3532,7 +3532,7 @@ index b17a9e08b3e..18c1fefc53d 100644
  @ stdcall -syscall NtGdiStrokePath(long)
  @ stdcall -syscall NtGdiSwapBuffers(long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 521ca665b54..4c8f636c977 100644
+index d415ae5b562b..76fb07706a25 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -36,10 +36,6 @@ struct unix_funcs
@@ -3577,7 +3577,7 @@ index 521ca665b54..4c8f636c977 100644
      BOOL     (WINAPI *pNtGdiUpdateColors)( HDC hdc );
      BOOL     (WINAPI *pNtUserDrawCaptionTemp)( HWND hwnd, HDC hdc, const RECT *rect, HFONT font,
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 7f2dae040cf..dc3733dc90e 100644
+index 7f2dae040cf5..dc3733dc90ee 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -30,16 +30,6 @@ HDC WINAPI NtGdiCreateCompatibleDC( HDC hdc )
@@ -3652,7 +3652,7 @@ index 7f2dae040cf..dc3733dc90e 100644
  {
      if (!unix_funcs) return FALSE;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index b511953ef97..eeb9004bf7b 100644
+index b511953ef975..eeb9004bf7b9 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -249,6 +249,25 @@ NTSTATUS WINAPI wow64_NtGdiCreateDIBSection( UINT *args )
@@ -3767,7 +3767,7 @@ index b511953ef97..eeb9004bf7b 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 4bd4589ab16..53ee003e69d 100644
+index b64f2850a831..cfd3edd6bab2 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -39,6 +39,7 @@
@@ -3803,10 +3803,10 @@ index 4bd4589ab16..53ee003e69d 100644
      SYSCALL_ENTRY( NtGdiStrokePath ) \
      SYSCALL_ENTRY( NtGdiSwapBuffers ) \
 
-From 5c2ec3feba1ae629c014bd335304ea34fbecd384 Mon Sep 17 00:00:00 2001
+From 3e7aa1d41af0937b4a61c491158ab22e950aebd2 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 23:12:29 +0200
-Subject: [PATCH 11/21] win32u: Use syscall interface for more DC functions.
+Subject: [PATCH 11/19] win32u: Use syscall interface for more DC functions.
 
 ---
  dlls/win32u/gdiobj.c         |  5 -----
@@ -3819,7 +3819,7 @@ Subject: [PATCH 11/21] win32u: Use syscall interface for more DC functions.
  7 files changed, 55 insertions(+), 47 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index ef56fc24a5b..431bd9360c9 100644
+index ef56fc24a5ba..431bd9360c91 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,8 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -3850,7 +3850,7 @@ index ef56fc24a5b..431bd9360c9 100644
      NtUserDrawMenuBarTemp,
      NtUserEndPaint,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index beb1daed797..c8079e8a278 100644
+index 43d0c63d404b..4de87edaa411 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -51,12 +51,14 @@ static void * const syscalls[] =
@@ -3886,7 +3886,7 @@ index beb1daed797..c8079e8a278 100644
      NtUserActivateKeyboardLayout,
      NtUserAddClipboardFormatListener,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 18c1fefc53d..b26141a3674 100644
+index 6f6685f3446c..aeb9dde70f2d 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -146,14 +146,14 @@
@@ -3928,7 +3928,7 @@ index 18c1fefc53d..b26141a3674 100644
  @ stdcall -syscall NtGdiWidenPath(long)
  @ stub NtGdiXFORMOBJ_bApplyXform
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 4c8f636c977..9adf3415836 100644
+index 76fb07706a25..06190c7e67c8 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,8 +35,6 @@
@@ -3960,7 +3960,7 @@ index 4c8f636c977..9adf3415836 100644
                                                 HICON icon, const WCHAR *str, UINT flags );
      DWORD    (WINAPI *pNtUserDrawMenuBarTemp)( HWND hwnd, HDC hdc, RECT *rect, HMENU handle, HFONT font );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index dc3733dc90e..27da68d65d5 100644
+index dc3733dc90ee..27da68d65d53 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,18 +24,6 @@
@@ -4022,7 +4022,7 @@ index dc3733dc90e..27da68d65d5 100644
                                     HICON icon, const WCHAR *str, UINT flags )
  {
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index eeb9004bf7b..d8fd697a3c1 100644
+index eeb9004bf7b9..d8fd697a3c19 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -216,6 +216,13 @@ NTSTATUS WINAPI wow64_NtGdiCreateCompatibleBitmap( UINT *args )
@@ -4094,7 +4094,7 @@ index eeb9004bf7b..d8fd697a3c1 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 53ee003e69d..8558e4557e4 100644
+index cfd3edd6bab2..b219f844a527 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -37,12 +37,14 @@
@@ -4130,10 +4130,10 @@ index 53ee003e69d..8558e4557e4 100644
      SYSCALL_ENTRY( NtUserActivateKeyboardLayout ) \
      SYSCALL_ENTRY( NtUserAddClipboardFormatListener ) \
 
-From c29dba7da781dc5926387239043b9e5063972c96 Mon Sep 17 00:00:00 2001
+From 534d49e428e35053149788ab703445ce4098edc1 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 23:31:47 +0200
-Subject: [PATCH 12/21] win32u: Use syscall interface for more GDI object
+Subject: [PATCH 12/19] win32u: Use syscall interface for more GDI object
  functions.
 
 ---
@@ -4147,7 +4147,7 @@ Subject: [PATCH 12/21] win32u: Use syscall interface for more GDI object
  7 files changed, 53 insertions(+), 45 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 431bd9360c9..c45c82bf87b 100644
+index 431bd9360c91..c45c82bf87b6 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,7 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -4174,7 +4174,7 @@ index 431bd9360c9..c45c82bf87b 100644
      NtUserDrawMenuBarTemp,
      NtUserEndPaint,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index c8079e8a278..21cbafa10e8 100644
+index 4de87edaa411..18852dfb760f 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -80,6 +80,7 @@ static void * const syscalls[] =
@@ -4205,7 +4205,7 @@ index c8079e8a278..21cbafa10e8 100644
      NtGdiWidenPath,
      NtUserActivateKeyboardLayout,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index b26141a3674..88cce7c3b5b 100644
+index aeb9dde70f2d..b1612a4f0eb7 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -367,7 +367,7 @@
@@ -4241,7 +4241,7 @@ index b26141a3674..88cce7c3b5b 100644
  @ stub NtGdiUpdateTransform
  @ stdcall -syscall NtGdiWidenPath(long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 9adf3415836..c80128d1e24 100644
+index 06190c7e67c8..9cf99dc85e4a 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,7 +35,6 @@
@@ -4268,7 +4268,7 @@ index 9adf3415836..c80128d1e24 100644
                                                 HICON icon, const WCHAR *str, UINT flags );
      DWORD    (WINAPI *pNtUserDrawMenuBarTemp)( HWND hwnd, HDC hdc, RECT *rect, HMENU handle, HFONT font );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 27da68d65d5..b20bd2a82b1 100644
+index 27da68d65d53..b20bd2a82b1a 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,12 +24,6 @@
@@ -4323,7 +4323,7 @@ index 27da68d65d5..b20bd2a82b1 100644
                                     HICON icon, const WCHAR *str, UINT flags )
  {
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index d8fd697a3c1..e182dcf19a3 100644
+index d8fd697a3c19..e182dcf19a37 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -622,6 +622,13 @@ NTSTATUS WINAPI wow64_NtGdiDeleteClientObj( UINT *args )
@@ -4393,7 +4393,7 @@ index d8fd697a3c1..e182dcf19a3 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 8558e4557e4..96ff9c7ac14 100644
+index b219f844a527..b97291e04bd3 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -66,6 +66,7 @@
@@ -4424,10 +4424,10 @@ index 8558e4557e4..96ff9c7ac14 100644
      SYSCALL_ENTRY( NtGdiWidenPath ) \
      SYSCALL_ENTRY( NtUserActivateKeyboardLayout ) \
 
-From 7ad13357d42983cc15e00473ea637fc48af26f7b Mon Sep 17 00:00:00 2001
+From ff5a68fe8d3110b928cfde61bafe1d1ae000aaf0 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Sun, 31 Jul 2022 23:53:14 +0200
-Subject: [PATCH 13/21] win32u: Use syscall interface for more font functions.
+Subject: [PATCH 13/19] win32u: Use syscall interface for more font functions.
 
 ---
  dlls/win32u/gdiobj.c         |  10 --
@@ -4440,7 +4440,7 @@ Subject: [PATCH 13/21] win32u: Use syscall interface for more font functions.
  7 files changed, 224 insertions(+), 103 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index c45c82bf87b..8d3d2719728 100644
+index c45c82bf87b6..8d3d2719728b 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1031,18 +1031,13 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -4478,7 +4478,7 @@ index c45c82bf87b..8d3d2719728 100644
      NtGdiOffsetClipRgn,
      NtGdiPtVisible,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 21cbafa10e8..cb7861e3f47 100644
+index 18852dfb760f..198832696327 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -87,11 +87,13 @@ static void * const syscalls[] =
@@ -4524,7 +4524,7 @@ index 21cbafa10e8..cb7861e3f47 100644
      NtGdiGradientFill,
      NtGdiHfontCreate,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 88cce7c3b5b..969854d73e9 100644
+index b1612a4f0eb7..7913b7c630f2 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -413,7 +413,7 @@
@@ -4585,7 +4585,7 @@ index 88cce7c3b5b..969854d73e9 100644
  @ stub NtGdiGetUFI
  @ stub NtGdiGetUFIPathname
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index c80128d1e24..6e06015e749 100644
+index 9cf99dc85e4a..964a609958ff 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -37,23 +37,14 @@ struct unix_funcs
@@ -4630,7 +4630,7 @@ index c80128d1e24..6e06015e749 100644
      INT      (WINAPI *pNtGdiOffsetClipRgn)( HDC hdc, INT x, INT y );
      BOOL     (WINAPI *pNtGdiPtVisible)( HDC hdc, INT x, INT y );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index b20bd2a82b1..d451dc4d3ce 100644
+index b20bd2a82b1a..d451dc4d3cee 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -37,14 +37,6 @@ BOOL WINAPI NtUserEndPaint( HWND hwnd, const PAINTSTRUCT *ps )
@@ -4736,7 +4736,7 @@ index b20bd2a82b1..d451dc4d3ce 100644
  {
      if (!unix_funcs) return ERROR;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index e182dcf19a3..b7348b5c0be 100644
+index e182dcf19a37..b7348b5c0be3 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -49,6 +49,42 @@ typedef struct
@@ -4976,7 +4976,7 @@ index e182dcf19a3..b7348b5c0be 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 96ff9c7ac14..40ff49aca19 100644
+index b97291e04bd3..56dfe03c889f 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -73,11 +73,13 @@
@@ -5022,10 +5022,10 @@ index 96ff9c7ac14..40ff49aca19 100644
      SYSCALL_ENTRY( NtGdiGradientFill ) \
      SYSCALL_ENTRY( NtGdiHfontCreate ) \
 
-From ee9d6440af36bd5ae2d76ad5bde684da5ff08584 Mon Sep 17 00:00:00 2001
+From 5b35306d71ba0a73db2f6f9151f4d162f421040b Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Mon, 1 Aug 2022 00:05:05 +0200
-Subject: [PATCH 14/21] win32u: Use syscall interface for more font functions.
+Subject: [PATCH 14/19] win32u: Use syscall interface for more font functions.
 
 ---
  dlls/win32u/gdiobj.c         |  7 ----
@@ -5038,7 +5038,7 @@ Subject: [PATCH 14/21] win32u: Use syscall interface for more font functions.
  7 files changed, 89 insertions(+), 69 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 8d3d2719728..7c255231f08 100644
+index 8d3d2719728b..7c255231f08e 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1034,21 +1034,14 @@ static struct unix_funcs unix_funcs =
@@ -5064,7 +5064,7 @@ index 8d3d2719728..7c255231f08 100644
      NtGdiOffsetClipRgn,
      NtGdiPtVisible,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index cb7861e3f47..7a1cad4b229 100644
+index 198832696327..37fdeae01cd8 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -98,6 +98,7 @@ static void * const syscalls[] =
@@ -5095,7 +5095,7 @@ index cb7861e3f47..7a1cad4b229 100644
      NtGdiGetRgnBox,
      NtGdiGetSpoolMessage,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 969854d73e9..8eacd9266a2 100644
+index 7913b7c630f2..7018edeb6360 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -437,7 +437,7 @@
@@ -5139,7 +5139,7 @@ index 969854d73e9..8eacd9266a2 100644
  @ stdcall -syscall NtGdiGetRgnBox(long ptr)
  @ stub NtGdiGetServerMetaFileBits
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 6e06015e749..bdfefd155bf 100644
+index 964a609958ff..92f0a5c2b681 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -41,24 +41,14 @@ struct unix_funcs
@@ -5168,7 +5168,7 @@ index 6e06015e749..bdfefd155bf 100644
      INT      (WINAPI *pNtGdiOffsetClipRgn)( HDC hdc, INT x, INT y );
      BOOL     (WINAPI *pNtGdiPtVisible)( HDC hdc, INT x, INT y );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index d451dc4d3ce..6eb1c80d622 100644
+index d451dc4d3cee..6eb1c80d6222 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -57,12 +57,6 @@ INT WINAPI NtGdiExtSelectClipRgn( HDC hdc, HRGN region, INT mode )
@@ -5238,7 +5238,7 @@ index d451dc4d3ce..6eb1c80d622 100644
  {
      if (!unix_funcs) return ERROR;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index b7348b5c0be..b10e7d30192 100644
+index b7348b5c0be3..b10e7d301929 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -913,6 +913,13 @@ NTSTATUS WINAPI wow64_NtGdiFlush( UINT *args )
@@ -5338,7 +5338,7 @@ index b7348b5c0be..b10e7d30192 100644
  {
      HDC hdc = get_ptr( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 40ff49aca19..d3674129c45 100644
+index 56dfe03c889f..10b4b10fd770 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -84,6 +84,7 @@
@@ -5369,10 +5369,10 @@ index 40ff49aca19..d3674129c45 100644
      SYSCALL_ENTRY( NtGdiGetRgnBox ) \
      SYSCALL_ENTRY( NtGdiGetSpoolMessage ) \
 
-From c04bf853138a8d28248649a8188fbda95f391aa8 Mon Sep 17 00:00:00 2001
+From 55009c4b30b802d4c7468179bfcbbc586dffa21c Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Mon, 1 Aug 2022 00:06:21 +0200
-Subject: [PATCH 15/21] win32u: Use syscall interface for more clipping
+Subject: [PATCH 15/19] win32u: Use syscall interface for more clipping
  functions.
 
 ---
@@ -5386,7 +5386,7 @@ Subject: [PATCH 15/21] win32u: Use syscall interface for more clipping
  7 files changed, 122 insertions(+), 90 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 7c255231f08..8fa10f3542c 100644
+index 7c255231f08e..8fa10f3542c0 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1031,23 +1031,13 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -5414,7 +5414,7 @@ index 7c255231f08..8fa10f3542c 100644
      NtGdiSetLayout,
      NtGdiSetSystemPaletteUse,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 7a1cad4b229..658474fb187 100644
+index 37fdeae01cd8..414c124a3b82 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -89,10 +89,12 @@ static void * const syscalls[] =
@@ -5482,7 +5482,7 @@ index 7a1cad4b229..658474fb187 100644
      NtGdiSetColorAdjustment,
      NtGdiSetDIBitsToDeviceInternal,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 8eacd9266a2..2ee6acfd523 100644
+index 7018edeb6360..408750693a19 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -417,13 +417,13 @@
@@ -5567,7 +5567,7 @@ index 8eacd9266a2..2ee6acfd523 100644
  @ stdcall -syscall NtGdiSetBrushOrg(long long long ptr)
  @ stdcall -syscall NtGdiSetColorAdjustment(long ptr)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index bdfefd155bf..653575e0d76 100644
+index 92f0a5c2b681..1a3097e35707 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -37,24 +37,14 @@ struct unix_funcs
@@ -5596,7 +5596,7 @@ index bdfefd155bf..653575e0d76 100644
      DWORD    (WINAPI *pNtGdiSetLayout)( HDC hdc, LONG wox, DWORD layout );
      UINT     (WINAPI *pNtGdiSetSystemPaletteUse)( HDC hdc, UINT use );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 6eb1c80d622..96f9d294314 100644
+index 6eb1c80d6222..96f9d2943147 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -37,12 +37,6 @@ BOOL WINAPI NtUserEndPaint( HWND hwnd, const PAINTSTRUCT *ps )
@@ -5699,7 +5699,7 @@ index 6eb1c80d622..96f9d294314 100644
  {
      if (!unix_funcs) return FALSE;
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index b10e7d30192..a1a4c9de2e8 100644
+index b10e7d301929..a1a4c9de2e8e 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -730,6 +730,17 @@ NTSTATUS WINAPI wow64_NtGdiEnumFonts( UINT *args )
@@ -5858,7 +5858,7 @@ index b10e7d30192..a1a4c9de2e8 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index d3674129c45..81898644043 100644
+index 10b4b10fd770..b753cb7d282d 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -75,10 +75,12 @@
@@ -5926,10 +5926,10 @@ index d3674129c45..81898644043 100644
      SYSCALL_ENTRY( NtGdiSetColorAdjustment ) \
      SYSCALL_ENTRY( NtGdiSetDIBitsToDeviceInternal ) \
 
-From a4ae76723ee71fffb55522f38bd6652bf72c4492 Mon Sep 17 00:00:00 2001
+From b23a6de2fbdf59fc1c8fad0556dc79d3d810c8cf Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Mon, 1 Aug 2022 01:07:48 +0200
-Subject: [PATCH 16/21] win32u: Use syscall interface for more GDI functions.
+Subject: [PATCH 16/19] win32u: Use syscall interface for more GDI functions.
 
 ---
  dlls/win32u/gdiobj.c         |  11 ----
@@ -5942,7 +5942,7 @@ Subject: [PATCH 16/21] win32u: Use syscall interface for more GDI functions.
  7 files changed, 143 insertions(+), 113 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 8fa10f3542c..ac4a0300f2a 100644
+index 8fa10f3542c0..ac4a0300f2ac 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,17 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -5964,7 +5964,7 @@ index 8fa10f3542c..ac4a0300f2a 100644
      NtUserDrawMenuBarTemp,
      NtUserEndPaint,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 658474fb187..953653d503e 100644
+index 414c124a3b82..8d3112556586 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -82,6 +82,7 @@ static void * const syscalls[] =
@@ -6038,7 +6038,7 @@ index 658474fb187..953653d503e 100644
      NtGdiSetVirtualResolution,
      NtGdiStartDoc,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 2ee6acfd523..f19d1d91a45 100644
+index 408750693a19..6e9e4a9610eb 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -372,7 +372,7 @@
@@ -6131,7 +6131,7 @@ index 2ee6acfd523..f19d1d91a45 100644
  @ stub NtGdiSetUMPDSandboxState
  @ stdcall -syscall NtGdiSetVirtualResolution(long long long long long)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 653575e0d76..3f8426234fd 100644
+index 1a3097e35707..abb2d6565772 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,19 +35,6 @@
@@ -6155,7 +6155,7 @@ index 653575e0d76..3f8426234fd 100644
                                                 HICON icon, const WCHAR *str, UINT flags );
      DWORD    (WINAPI *pNtUserDrawMenuBarTemp)( HWND hwnd, HDC hdc, RECT *rect, HMENU handle, HFONT font );
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 96f9d294314..7957f1052c7 100644
+index 96f9d2943147..7957f1052c7c 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,81 +24,12 @@
@@ -6241,7 +6241,7 @@ index 96f9d294314..7957f1052c7 100644
                                     HICON icon, const WCHAR *str, UINT flags )
  {
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index a1a4c9de2e8..4ccab84e65d 100644
+index a1a4c9de2e8e..4ccab84e65dc 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -675,6 +675,18 @@ NTSTATUS WINAPI wow64_NtGdiDescribePixelFormat( UINT *args )
@@ -6441,7 +6441,7 @@ index a1a4c9de2e8..4ccab84e65d 100644
  {
      HDC hdc = get_handle( &args );
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 81898644043..5733dac0c23 100644
+index b753cb7d282d..873b3e6f013c 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -68,6 +68,7 @@
@@ -6515,10 +6515,10 @@ index 81898644043..5733dac0c23 100644
      SYSCALL_ENTRY( NtGdiSetVirtualResolution ) \
      SYSCALL_ENTRY( NtGdiStartDoc ) \
 
-From be2561b02e02fc106dbc701faa7abbceab4af1c2 Mon Sep 17 00:00:00 2001
+From 70c45ff5aefa1493fad3d5ed6400f8a9cfbdb80d Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Mon, 1 Aug 2022 21:30:30 +0200
-Subject: [PATCH 17/21] win32u: Use syscall interface for user functions.
+Subject: [PATCH 17/19] win32u: Use syscall interface for user functions.
 
 ---
  dlls/win32u/gdiobj.c         |  9 ----
@@ -6531,7 +6531,7 @@ Subject: [PATCH 17/21] win32u: Use syscall interface for user functions.
  7 files changed, 112 insertions(+), 85 deletions(-)
 
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index ac4a0300f2a..44eac99a30d 100644
+index ac4a0300f2ac..44eac99a30d5 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,15 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -6551,7 +6551,7 @@ index ac4a0300f2a..44eac99a30d 100644
      __wine_get_brush_bitmap_info,
      __wine_get_file_outline_text_metric,
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 953653d503e..83d677d0174 100644
+index 8d3112556586..5f0d9464931f 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -248,15 +248,19 @@ static void * const syscalls[] =
@@ -6574,7 +6574,7 @@ index 953653d503e..83d677d0174 100644
      NtUserFindExistingCursorIcon,
      NtUserFindWindowEx,
      NtUserFlashWindowEx,
-@@ -346,10 +350,13 @@ static void * const syscalls[] =
+@@ -351,10 +355,13 @@ static void * const syscalls[] =
      NtUserRegisterClassExWOW,
      NtUserRegisterHotKey,
      NtUserRegisterRawInputDevices,
@@ -6588,16 +6588,16 @@ index 953653d503e..83d677d0174 100644
      NtUserSendInput,
      NtUserSetActiveWindow,
      NtUserSetCapture,
-@@ -406,6 +413,7 @@ static void * const syscalls[] =
-     NtUserUnregisterClass,
+@@ -413,6 +420,7 @@ static void * const syscalls[] =
      NtUserUnregisterHotKey,
      NtUserUpdateInputContext,
+     NtUserValidateRect,
 +    NtUserUpdateLayeredWindow,
      NtUserVkKeyScanEx,
      NtUserWaitForInputIdle,
-     NtUserWindowFromDC,
+     NtUserWaitMessage,
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index f19d1d91a45..8308741fc4c 100644
+index 6e9e4a9610eb..fc3310b29219 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -849,9 +849,9 @@
@@ -6658,7 +6658,7 @@ index f19d1d91a45..8308741fc4c 100644
  @ stub NtUserUpdateWindowInputSinkHints
  @ stub NtUserUpdateWindowTrackingInfo
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 3f8426234fd..2de7623adc1 100644
+index abb2d6565772..c676aca928ce 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -34,21 +34,6 @@
@@ -6684,7 +6684,7 @@ index 3f8426234fd..2de7623adc1 100644
      INT (WINAPI *pSetDIBits)( HDC hdc, HBITMAP hbitmap, UINT startscan,
                                UINT lines, const void *bits, const BITMAPINFO *info,
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index 7957f1052c7..c89c0f16edc 100644
+index 7957f1052c7c..c89c0f16edc4 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -24,59 +24,6 @@
@@ -6748,7 +6748,7 @@ index 7957f1052c7..c89c0f16edc 100644
                        UINT lines, const void *bits, const BITMAPINFO *info,
                        UINT coloruse )
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 5733dac0c23..2e248816c2d 100644
+index 873b3e6f013c..bd68c98deba9 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -234,15 +234,19 @@
@@ -6771,7 +6771,7 @@ index 5733dac0c23..2e248816c2d 100644
      SYSCALL_ENTRY( NtUserFindExistingCursorIcon ) \
      SYSCALL_ENTRY( NtUserFindWindowEx ) \
      SYSCALL_ENTRY( NtUserFlashWindowEx ) \
-@@ -332,10 +336,13 @@
+@@ -337,10 +341,13 @@
      SYSCALL_ENTRY( NtUserRegisterClassExWOW ) \
      SYSCALL_ENTRY( NtUserRegisterHotKey ) \
      SYSCALL_ENTRY( NtUserRegisterRawInputDevices ) \
@@ -6785,16 +6785,16 @@ index 5733dac0c23..2e248816c2d 100644
      SYSCALL_ENTRY( NtUserSendInput ) \
      SYSCALL_ENTRY( NtUserSetActiveWindow ) \
      SYSCALL_ENTRY( NtUserSetCapture ) \
-@@ -392,6 +399,7 @@
-     SYSCALL_ENTRY( NtUserUnregisterClass ) \
+@@ -399,6 +406,7 @@
      SYSCALL_ENTRY( NtUserUnregisterHotKey ) \
      SYSCALL_ENTRY( NtUserUpdateInputContext ) \
+     SYSCALL_ENTRY( NtUserValidateRect ) \
 +    SYSCALL_ENTRY( NtUserUpdateLayeredWindow ) \
      SYSCALL_ENTRY( NtUserVkKeyScanEx ) \
      SYSCALL_ENTRY( NtUserWaitForInputIdle ) \
-     SYSCALL_ENTRY( NtUserWindowFromDC ) \
+     SYSCALL_ENTRY( NtUserWaitMessage ) \
 diff --git a/dlls/wow64win/user.c b/dlls/wow64win/user.c
-index 256add62aab..254be214b69 100644
+index 4ce8c94c1af2..4bd63326c71c 100644
 --- a/dlls/wow64win/user.c
 +++ b/dlls/wow64win/user.c
 @@ -1600,6 +1600,19 @@ NTSTATUS WINAPI wow64_NtUserDragObject( UINT *args )
@@ -6866,7 +6866,7 @@ index 256add62aab..254be214b69 100644
  NTSTATUS WINAPI wow64_NtUserFindExistingCursorIcon( UINT *args )
  {
      UNICODE_STRING32 *module32 = get_ptr( &args );
-@@ -3230,6 +3271,14 @@ NTSTATUS WINAPI wow64_NtUserRegisterRawInputDevices( UINT *args )
+@@ -3271,6 +3312,14 @@ NTSTATUS WINAPI wow64_NtUserRegisterRawInputDevices( UINT *args )
      return NtUserRegisterRawInputDevices( devices64, count, sizeof(*devices64) );
  }
  
@@ -6881,7 +6881,7 @@ index 256add62aab..254be214b69 100644
  NTSTATUS WINAPI wow64_NtUserRemoveClipboardFormatListener( UINT *args )
  {
      HWND hwnd = get_handle( &args );
-@@ -3254,6 +3303,19 @@ NTSTATUS WINAPI wow64_NtUserRemoveProp( UINT *args )
+@@ -3295,6 +3344,19 @@ NTSTATUS WINAPI wow64_NtUserRemoveProp( UINT *args )
      return HandleToUlong( NtUserRemoveProp( hwnd, str ));
  }
  
@@ -6901,7 +6901,7 @@ index 256add62aab..254be214b69 100644
  NTSTATUS WINAPI wow64_NtUserScrollWindowEx( UINT *args )
  {
      HWND hwnd = get_handle( &args );
-@@ -3268,6 +3330,15 @@ NTSTATUS WINAPI wow64_NtUserScrollWindowEx( UINT *args )
+@@ -3309,6 +3371,15 @@ NTSTATUS WINAPI wow64_NtUserScrollWindowEx( UINT *args )
      return NtUserScrollWindowEx( hwnd, dx, dy, rect, clip_rect, update_rgn, update_rect, flags );
  }
  
@@ -6917,7 +6917,7 @@ index 256add62aab..254be214b69 100644
  NTSTATUS WINAPI wow64_NtUserSendInput( UINT *args )
  {
      UINT count = get_ulong( &args );
-@@ -4088,6 +4159,23 @@ NTSTATUS WINAPI wow64_NtUserUpdateInputContext( UINT *args )
+@@ -4137,6 +4208,23 @@ NTSTATUS WINAPI wow64_NtUserUpdateInputContext( UINT *args )
      return NtUserUpdateInputContext( handle, attr, value );
  }
  
@@ -6938,14 +6938,14 @@ index 256add62aab..254be214b69 100644
 +                                      key, blend, flags, dirty );
 +}
 +
- NTSTATUS WINAPI wow64_NtUserVkKeyScanEx( UINT *args )
+ NTSTATUS WINAPI wow64_NtUserValidateRect( UINT *args )
  {
-     WCHAR chr = get_ulong( &args );
+     HWND hwnd = get_handle( &args );
 
-From abf54cc492392f80d7390e6480dcea8997d635b4 Mon Sep 17 00:00:00 2001
+From 16a5637514442e8bf241ba02e6728d1be3656946 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Mon, 1 Aug 2022 21:42:14 +0200
-Subject: [PATCH 18/21] win32u: Use syscall interface for remaining functions.
+Subject: [PATCH 18/19] win32u: Use syscall interface for remaining functions.
 
 FIXME: revisit need for them
 ---
@@ -6966,7 +6966,7 @@ FIXME: revisit need for them
  14 files changed, 104 insertions(+), 76 deletions(-)
 
 diff --git a/dlls/gdi32/enhmetafile.c b/dlls/gdi32/enhmetafile.c
-index 336f2d389fd..716e1689f1b 100644
+index 336f2d389fd3..716e1689f1b7 100644
 --- a/dlls/gdi32/enhmetafile.c
 +++ b/dlls/gdi32/enhmetafile.c
 @@ -1894,7 +1894,7 @@ BOOL WINAPI PlayEnhMetaFileRecord(
@@ -6997,7 +6997,7 @@ index 336f2d389fd..716e1689f1b 100644
  
  	pbi = (const BITMAPINFO *)((const BYTE *)mr + pPlgBlt->offBmiSrc);
 diff --git a/dlls/gdi32/gdi32.spec b/dlls/gdi32/gdi32.spec
-index d6a0ad90e1e..9705e976d0d 100644
+index d6a0ad90e1e0..9705e976d0db 100644
 --- a/dlls/gdi32/gdi32.spec
 +++ b/dlls/gdi32/gdi32.spec
 @@ -482,7 +482,7 @@
@@ -7010,7 +7010,7 @@ index d6a0ad90e1e..9705e976d0d 100644
  @ stdcall SetDeviceGammaRamp(long ptr) NtGdiSetDeviceGammaRamp
  @ stdcall SetEnhMetaFileBits(long ptr)
 diff --git a/dlls/gdi32/text.c b/dlls/gdi32/text.c
-index b0134e529f5..07e980ac60c 100644
+index b0134e529f5a..07e980ac60cc 100644
 --- a/dlls/gdi32/text.c
 +++ b/dlls/gdi32/text.c
 @@ -2668,10 +2668,11 @@ static BOOL create_fot( const WCHAR *resource, const WCHAR *font_file, const str
@@ -7092,7 +7092,7 @@ index b0134e529f5..07e980ac60c 100644
      if (hidden) fontdir.dfType |= 0x80;
      return create_fot( resource_file, font_file, &fontdir );
 diff --git a/dlls/win32u/brush.c b/dlls/win32u/brush.c
-index 8523826627e..9ab674197ae 100644
+index 8523826627e8..9ab674197ae2 100644
 --- a/dlls/win32u/brush.c
 +++ b/dlls/win32u/brush.c
 @@ -147,7 +147,7 @@ void free_brush_pattern( struct brush_pattern *pattern )
@@ -7105,7 +7105,7 @@ index 8523826627e..9ab674197ae 100644
      BRUSHOBJ *brush;
      BOOL ret = FALSE;
 diff --git a/dlls/win32u/dc.c b/dlls/win32u/dc.c
-index 8379cd353ef..ea406af10fd 100644
+index 8379cd353eff..ea406af10fd1 100644
 --- a/dlls/win32u/dc.c
 +++ b/dlls/win32u/dc.c
 @@ -1474,7 +1474,7 @@ DWORD WINAPI NtGdiSetLayout( HDC hdc, LONG wox, DWORD layout )
@@ -7118,7 +7118,7 @@ index 8379cd353ef..ea406af10fd 100644
      PHYSDEV physdev;
      DC *dc;
 diff --git a/dlls/win32u/font.c b/dlls/win32u/font.c
-index 9c5da5bbdc9..09c99037307 100644
+index 9c5da5bbdc9a..09c99037307a 100644
 --- a/dlls/win32u/font.c
 +++ b/dlls/win32u/font.c
 @@ -6256,7 +6256,8 @@ DWORD WINAPI NtGdiGetGlyphOutline( HDC hdc, UINT ch, UINT format, GLYPHMETRICS *
@@ -7143,7 +7143,7 @@ index 9c5da5bbdc9..09c99037307 100644
      return TRUE;
  
 diff --git a/dlls/win32u/gdiobj.c b/dlls/win32u/gdiobj.c
-index 44eac99a30d..122db5a2112 100644
+index 44eac99a30d5..122db5a2112c 100644
 --- a/dlls/win32u/gdiobj.c
 +++ b/dlls/win32u/gdiobj.c
 @@ -1030,10 +1030,6 @@ BOOL WINAPI NtGdiSetColorAdjustment( HDC hdc, const COLORADJUSTMENT *ca )
@@ -7158,7 +7158,7 @@ index 44eac99a30d..122db5a2112 100644
  };
  
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 83d677d0174..7f64d5537cd 100644
+index 5f0d9464931f..3cf58ad2397f 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -184,6 +184,7 @@ static void * const syscalls[] =
@@ -7169,8 +7169,8 @@ index 83d677d0174..7f64d5537cd 100644
      NtGdiSetDIBitsToDeviceInternal,
      NtGdiSetDeviceGammaRamp,
      NtGdiSetLayout,
-@@ -418,6 +419,9 @@ static void * const syscalls[] =
-     NtUserWaitForInputIdle,
+@@ -426,6 +427,9 @@ static void * const syscalls[] =
+     NtUserWaitMessage,
      NtUserWindowFromDC,
      NtUserWindowFromPoint,
 +    __wine_get_brush_bitmap_info,
@@ -7180,7 +7180,7 @@ index 83d677d0174..7f64d5537cd 100644
  
  static BYTE arguments[ARRAY_SIZE(syscalls)];
 diff --git a/dlls/win32u/win32u.spec b/dlls/win32u/win32u.spec
-index 8308741fc4c..88e9f15c4b7 100644
+index fc3310b29219..18671323c884 100644
 --- a/dlls/win32u/win32u.spec
 +++ b/dlls/win32u/win32u.spec
 @@ -597,6 +597,7 @@
@@ -7203,7 +7203,7 @@ index 8308741fc4c..88e9f15c4b7 100644
 +@ stdcall -syscall __wine_get_icm_profile(long long ptr ptr)
 +@ stdcall -syscall __wine_get_file_outline_text_metric(wstr ptr ptr ptr)
 diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
-index 2de7623adc1..c2f877286d6 100644
+index c676aca928ce..c5ac85283213 100644
 --- a/dlls/win32u/win32u_private.h
 +++ b/dlls/win32u/win32u_private.h
 @@ -35,12 +35,6 @@
@@ -7220,7 +7220,7 @@ index 2de7623adc1..c2f877286d6 100644
  };
  
 diff --git a/dlls/win32u/wrappers.c b/dlls/win32u/wrappers.c
-index c89c0f16edc..248310ef0ef 100644
+index c89c0f16edc4..248310ef0ef5 100644
 --- a/dlls/win32u/wrappers.c
 +++ b/dlls/win32u/wrappers.c
 @@ -21,38 +21,21 @@
@@ -7271,7 +7271,7 @@ index c89c0f16edc..248310ef0ef 100644
  }
  
 diff --git a/dlls/wow64win/gdi.c b/dlls/wow64win/gdi.c
-index 4ccab84e65d..69ca032cd33 100644
+index 4ccab84e65dc..69ca032cd339 100644
 --- a/dlls/wow64win/gdi.c
 +++ b/dlls/wow64win/gdi.c
 @@ -2067,3 +2067,46 @@ NTSTATUS WINAPI wow64_NtGdiWidenPath( UINT *args )
@@ -7322,7 +7322,7 @@ index 4ccab84e65d..69ca032cd33 100644
 +    return __wine_get_file_outline_text_metric( path, otm, em_square, face_name );
 +}
 diff --git a/dlls/wow64win/syscall.h b/dlls/wow64win/syscall.h
-index 2e248816c2d..40789199c6e 100644
+index bd68c98deba9..8888edd79b32 100644
 --- a/dlls/wow64win/syscall.h
 +++ b/dlls/wow64win/syscall.h
 @@ -170,6 +170,7 @@
@@ -7333,9 +7333,9 @@ index 2e248816c2d..40789199c6e 100644
      SYSCALL_ENTRY( NtGdiSetDIBitsToDeviceInternal ) \
      SYSCALL_ENTRY( NtGdiSetDeviceGammaRamp ) \
      SYSCALL_ENTRY( NtGdiSetLayout ) \
-@@ -403,6 +404,9 @@
-     SYSCALL_ENTRY( NtUserVkKeyScanEx ) \
+@@ -411,6 +412,9 @@
      SYSCALL_ENTRY( NtUserWaitForInputIdle ) \
+     SYSCALL_ENTRY( NtUserWaitMessage ) \
      SYSCALL_ENTRY( NtUserWindowFromDC ) \
 -    SYSCALL_ENTRY( NtUserWindowFromPoint )
 +    SYSCALL_ENTRY( NtUserWindowFromPoint ) \
@@ -7345,7 +7345,7 @@ index 2e248816c2d..40789199c6e 100644
  
  #endif /* __WOW64WIN_SYSCALL_H */
 diff --git a/include/ntgdi.h b/include/ntgdi.h
-index 1aa5cad468f..250eedc1d7d 100644
+index 1aa5cad468f3..250eedc1d7d1 100644
 --- a/include/ntgdi.h
 +++ b/include/ntgdi.h
 @@ -482,11 +482,12 @@ NTSTATUS WINAPI NtGdiDdDDISetQueuedLimit( D3DKMT_SETQUEUEDLIMIT *desc );
@@ -7367,10 +7367,10 @@ index 1aa5cad468f..250eedc1d7d 100644
  
  #endif /* _NTGDI_ */
 
-From 7e1c5815ccba9f1ed03af18826a5dfead9fd2eda Mon Sep 17 00:00:00 2001
+From 24a54044b8ba3025010a16ba34078d3d6ec7e2f7 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Thu, 18 Aug 2022 01:59:50 +0200
-Subject: [PATCH 19/21] ntdll: Introduce WINEWOW environment variable.
+Subject: [PATCH 19/19] ntdll: Introduce WINEWOW environment variable.
 
 Allows forcing using wow64 in Wine installs that otherwise supports using native 32-bit.
 ---
@@ -7380,7 +7380,7 @@ Allows forcing using wow64 in Wine installs that otherwise supports using native
  3 files changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/dlls/ntdll/unix/env.c b/dlls/ntdll/unix/env.c
-index 328040bbda6..64ba05b35fc 100644
+index 6f1709f4713d..029c47c16d4e 100644
 --- a/dlls/ntdll/unix/env.c
 +++ b/dlls/ntdll/unix/env.c
 @@ -1933,7 +1933,7 @@ static RTL_USER_PROCESS_PARAMETERS *build_initial_params( void **module )
@@ -7393,7 +7393,7 @@ index 328040bbda6..64ba05b35fc 100644
  
      if (status)  /* try launching it through start.exe */
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index deb25a8e35e..78dedc5832e 100644
+index a1525cf7f936..45d9838130c0 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
 @@ -73,6 +73,7 @@
@@ -7448,7 +7448,7 @@ index deb25a8e35e..78dedc5832e 100644
  
      argv[1] = strdup( wineloader );
 diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
-index aad472faff8..e056d2b533e 100644
+index 8821cd784916..e4b1070ce288 100644
 --- a/dlls/ntdll/unix/unix_private.h
 +++ b/dlls/ntdll/unix/unix_private.h
 @@ -159,6 +159,7 @@ extern NTSTATUS load_main_exe( const WCHAR *name, const char *unix_name, const W
@@ -7459,1346 +7459,3 @@ index aad472faff8..e056d2b533e 100644
  
  extern unsigned int server_call_unlocked( void *req_ptr ) DECLSPEC_HIDDEN;
  extern void server_enter_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset ) DECLSPEC_HIDDEN;
-
-From 4c600dad0deee1234c1ced8ade7a9c9df7e14f57 Mon Sep 17 00:00:00 2001
-From: Jacek Caban <jacek@codeweavers.com>
-Date: Fri, 18 Nov 2022 02:38:27 +0100
-Subject: [PATCH 20/21] winevulkan: Wrap VkDeviceMemory.
-
----
- dlls/winevulkan/make_vulkan      |   5 +
- dlls/winevulkan/vulkan.c         |  49 +++-
- dlls/winevulkan/vulkan_private.h |  10 +
- dlls/winevulkan/vulkan_thunks.c  | 434 ++++++++++++++++++++++++++++---
- dlls/winevulkan/vulkan_thunks.h  |   3 +
- 5 files changed, 467 insertions(+), 34 deletions(-)
-
-diff --git a/dlls/winevulkan/make_vulkan b/dlls/winevulkan/make_vulkan
-index 45418e362c5..d995224c009 100755
---- a/dlls/winevulkan/make_vulkan
-+++ b/dlls/winevulkan/make_vulkan
-@@ -209,7 +209,10 @@ FUNCTION_OVERRIDES = {
-     "vkGetDeviceProcAddr" : {"dispatch" : False, "driver" : True, "thunk" : ThunkType.NONE, "loader_thunk" : ThunkType.NONE},
-     "vkGetDeviceQueue" : {"dispatch": True, "driver" : False, "thunk" : ThunkType.NONE},
-     "vkGetDeviceQueue2" : {"dispatch": True, "driver" : False, "thunk" : ThunkType.NONE},
-+    "vkAllocateMemory" : {"dispatch" : True, "driver" : False, "thunk" : ThunkType.PRIVATE},
-+    "vkFreeMemory" : {"dispatch" : True, "driver" : False, "thunk" : ThunkType.PRIVATE},
-     "vkMapMemory" : {"dispatch" : True, "driver" : False, "thunk" : ThunkType.PRIVATE},
-+    "vkUnmapMemory" : {"dispatch" : True, "driver" : False, "thunk" : ThunkType.PRIVATE},
- 
-     # VK_KHR_surface
-     "vkDestroySurfaceKHR" : {"dispatch" : True, "driver" : True, "thunk" : ThunkType.NONE},
-@@ -1079,6 +1082,8 @@ class VkHandle(object):
-             return "wine_device_from_handle({0})->device".format(name)
-         if self.name == "VkInstance":
-             return "wine_instance_from_handle({0})->instance".format(name)
-+        if self.name == "VkDeviceMemory":
-+            return "wine_device_memory_from_handle({0})->memory".format(name)
-         if self.name == "VkPhysicalDevice":
-             return "wine_phys_dev_from_handle({0})->phys_dev".format(name)
-         if self.name == "VkQueue":
-diff --git a/dlls/winevulkan/vulkan.c b/dlls/winevulkan/vulkan.c
-index bd02edde4b6..b092756fd4e 100644
---- a/dlls/winevulkan/vulkan.c
-+++ b/dlls/winevulkan/vulkan.c
-@@ -1441,19 +1441,54 @@ void wine_vkDestroySurfaceKHR(VkInstance handle, VkSurfaceKHR surface,
-     free(object);
- }
- 
--VkResult wine_vkMapMemory(VkDevice handle, VkDeviceMemory memory, VkDeviceSize offset,
-+VkResult wine_vkAllocateMemory(VkDevice handle, const VkMemoryAllocateInfo *alloc_info,
-+                               const VkAllocationCallbacks *allocator, VkDeviceMemory *ret)
-+{
-+    struct wine_device *device = wine_device_from_handle(handle);
-+    struct wine_device_memory *memory;
-+    VkResult result;
-+
-+    if (!(memory = malloc(sizeof(*memory))))
-+        return VK_ERROR_OUT_OF_HOST_MEMORY;
-+
-+    result = device->funcs.p_vkAllocateMemory(device->device, alloc_info, NULL, &memory->memory);
-+    if (result != VK_SUCCESS)
-+    {
-+        free(memory);
-+        return result;
-+    }
-+
-+    *ret = (VkDeviceMemory)(uintptr_t)memory;
-+    return VK_SUCCESS;
-+}
-+
-+void wine_vkFreeMemory(VkDevice handle, VkDeviceMemory memory_handle, const VkAllocationCallbacks *allocator)
-+{
-+    struct wine_device *device = wine_device_from_handle(handle);
-+    struct wine_device_memory *memory;
-+
-+    if (!memory_handle)
-+        return;
-+    memory = wine_device_memory_from_handle(memory_handle);
-+
-+    device->funcs.p_vkFreeMemory(device->device, memory->memory, NULL);
-+    free(memory);
-+}
-+
-+VkResult wine_vkMapMemory(VkDevice handle, VkDeviceMemory memory_handle, VkDeviceSize offset,
-                           VkDeviceSize size, VkMemoryMapFlags flags, void **data)
- {
-     struct wine_device *device = wine_device_from_handle(handle);
-+    struct wine_device_memory *memory = wine_device_memory_from_handle(memory_handle);
-     VkResult result;
- 
--    result = device->funcs.p_vkMapMemory(device->device, memory, offset, size, flags, data);
-+    result = device->funcs.p_vkMapMemory(device->device, memory->memory, offset, size, flags, data);
- 
- #ifdef _WIN64
-     if (NtCurrentTeb()->WowTebOffset && result == VK_SUCCESS && (UINT_PTR)*data >> 32)
-     {
-         FIXME("returned mapping %p does not fit 32-bit pointer\n", *data);
--        device->funcs.p_vkUnmapMemory(device->device, memory);
-+        device->funcs.p_vkUnmapMemory(device->device, memory->memory);
-         *data = NULL;
-         result = VK_ERROR_OUT_OF_HOST_MEMORY;
-     }
-@@ -1462,6 +1497,14 @@ VkResult wine_vkMapMemory(VkDevice handle, VkDeviceMemory memory, VkDeviceSize o
-     return result;
- }
- 
-+void wine_vkUnmapMemory(VkDevice handle, VkDeviceMemory memory_handle)
-+{
-+    struct wine_device *device = wine_device_from_handle(handle);
-+    struct wine_device_memory *memory = wine_device_memory_from_handle(memory_handle);
-+
-+    device->funcs.p_vkUnmapMemory(device->device, memory->memory);
-+}
-+
- static inline void adjust_max_image_count(struct wine_phys_dev *phys_dev, VkSurfaceCapabilitiesKHR* capabilities)
- {
-     /* Many Windows games, for example Strange Brigade, No Man's Sky, Path of Exile
-diff --git a/dlls/winevulkan/vulkan_private.h b/dlls/winevulkan/vulkan_private.h
-index a895b848156..8055b2380fd 100644
---- a/dlls/winevulkan/vulkan_private.h
-+++ b/dlls/winevulkan/vulkan_private.h
-@@ -169,6 +169,16 @@ static inline struct wine_cmd_pool *wine_cmd_pool_from_handle(VkCommandPool hand
-     return (struct wine_cmd_pool *)(uintptr_t)client_ptr->unix_handle;
- }
- 
-+struct wine_device_memory
-+{
-+    VkDeviceMemory memory;
-+};
-+
-+static inline struct wine_device_memory *wine_device_memory_from_handle(VkDeviceMemory handle)
-+{
-+    return (struct wine_device_memory *)(uintptr_t)handle;
-+}
-+
- struct wine_debug_utils_messenger
- {
-     struct wine_instance *instance; /* parent */
-diff --git a/dlls/winevulkan/vulkan_thunks.c b/dlls/winevulkan/vulkan_thunks.c
-index dad8991e095..2fc79205592 100644
---- a/dlls/winevulkan/vulkan_thunks.c
-+++ b/dlls/winevulkan/vulkan_thunks.c
-@@ -6024,6 +6024,8 @@ static uint64_t wine_vk_unwrap_handle(uint32_t type, uint64_t handle)
-         return (uint64_t) wine_debug_utils_messenger_from_handle(handle)->debug_messenger;
-     case VK_OBJECT_TYPE_DEVICE:
-         return (uint64_t) (uintptr_t) wine_device_from_handle(((VkDevice) (uintptr_t) handle))->device;
-+    case VK_OBJECT_TYPE_DEVICE_MEMORY:
-+        return (uint64_t) wine_device_memory_from_handle(handle)->memory;
-     case VK_OBJECT_TYPE_INSTANCE:
-         return (uint64_t) (uintptr_t) wine_instance_from_handle(((VkInstance) (uintptr_t) handle))->instance;
-     case VK_OBJECT_TYPE_PHYSICAL_DEVICE:
-@@ -6425,6 +6427,21 @@ static inline void convert_VkCommandBufferBeginInfo_win32_to_host(struct convers
-     }
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkBindAccelerationStructureMemoryInfoNV_win64_to_host(const VkBindAccelerationStructureMemoryInfoNV *in, VkBindAccelerationStructureMemoryInfoNV *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->accelerationStructure = in->accelerationStructure;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->memoryOffset = in->memoryOffset;
-+    out->deviceIndexCount = in->deviceIndexCount;
-+    out->pDeviceIndices = in->pDeviceIndices;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkBindAccelerationStructureMemoryInfoNV_win32_to_host(const VkBindAccelerationStructureMemoryInfoNV32 *in, VkBindAccelerationStructureMemoryInfoNV *out)
- {
-     if (!in) return;
-@@ -6432,7 +6449,7 @@ static inline void convert_VkBindAccelerationStructureMemoryInfoNV_win32_to_host
-     out->sType = in->sType;
-     out->pNext = NULL;
-     out->accelerationStructure = in->accelerationStructure;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->memoryOffset = in->memoryOffset;
-     out->deviceIndexCount = in->deviceIndexCount;
-     out->pDeviceIndices = (const uint32_t *)UlongToPtr(in->pDeviceIndices);
-@@ -6440,6 +6457,24 @@ static inline void convert_VkBindAccelerationStructureMemoryInfoNV_win32_to_host
-         FIXME("Unexpected pNext\n");
- }
- 
-+#ifdef _WIN64
-+static inline const VkBindAccelerationStructureMemoryInfoNV *convert_VkBindAccelerationStructureMemoryInfoNV_array_win64_to_host(struct conversion_context *ctx, const VkBindAccelerationStructureMemoryInfoNV *in, uint32_t count)
-+{
-+    VkBindAccelerationStructureMemoryInfoNV *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkBindAccelerationStructureMemoryInfoNV_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkBindAccelerationStructureMemoryInfoNV *convert_VkBindAccelerationStructureMemoryInfoNV_array_win32_to_host(struct conversion_context *ctx, const VkBindAccelerationStructureMemoryInfoNV32 *in, uint32_t count)
- {
-     VkBindAccelerationStructureMemoryInfoNV *out;
-@@ -6456,6 +6491,19 @@ static inline const VkBindAccelerationStructureMemoryInfoNV *convert_VkBindAccel
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkBindBufferMemoryInfo_win64_to_host(const VkBindBufferMemoryInfo *in, VkBindBufferMemoryInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->buffer = in->buffer;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->memoryOffset = in->memoryOffset;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkBindBufferMemoryInfo_win32_to_host(struct conversion_context *ctx, const VkBindBufferMemoryInfo32 *in, VkBindBufferMemoryInfo *out)
- {
-     const VkBaseInStructure32 *in_header;
-@@ -6466,7 +6514,7 @@ static inline void convert_VkBindBufferMemoryInfo_win32_to_host(struct conversio
-     out->sType = in->sType;
-     out->pNext = NULL;
-     out->buffer = in->buffer;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->memoryOffset = in->memoryOffset;
- 
-     for (in_header = UlongToPtr(in->pNext); in_header; in_header = UlongToPtr(in_header->pNext))
-@@ -6492,6 +6540,24 @@ static inline void convert_VkBindBufferMemoryInfo_win32_to_host(struct conversio
-     }
- }
- 
-+#ifdef _WIN64
-+static inline const VkBindBufferMemoryInfo *convert_VkBindBufferMemoryInfo_array_win64_to_host(struct conversion_context *ctx, const VkBindBufferMemoryInfo *in, uint32_t count)
-+{
-+    VkBindBufferMemoryInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkBindBufferMemoryInfo_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkBindBufferMemoryInfo *convert_VkBindBufferMemoryInfo_array_win32_to_host(struct conversion_context *ctx, const VkBindBufferMemoryInfo32 *in, uint32_t count)
- {
-     VkBindBufferMemoryInfo *out;
-@@ -6508,6 +6574,19 @@ static inline const VkBindBufferMemoryInfo *convert_VkBindBufferMemoryInfo_array
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkBindImageMemoryInfo_win64_to_host(const VkBindImageMemoryInfo *in, VkBindImageMemoryInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->image = in->image;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->memoryOffset = in->memoryOffset;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkBindImageMemoryInfo_win32_to_host(struct conversion_context *ctx, const VkBindImageMemoryInfo32 *in, VkBindImageMemoryInfo *out)
- {
-     const VkBaseInStructure32 *in_header;
-@@ -6518,7 +6597,7 @@ static inline void convert_VkBindImageMemoryInfo_win32_to_host(struct conversion
-     out->sType = in->sType;
-     out->pNext = NULL;
-     out->image = in->image;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->memoryOffset = in->memoryOffset;
- 
-     for (in_header = UlongToPtr(in->pNext); in_header; in_header = UlongToPtr(in_header->pNext))
-@@ -6569,6 +6648,24 @@ static inline void convert_VkBindImageMemoryInfo_win32_to_host(struct conversion
-     }
- }
- 
-+#ifdef _WIN64
-+static inline const VkBindImageMemoryInfo *convert_VkBindImageMemoryInfo_array_win64_to_host(struct conversion_context *ctx, const VkBindImageMemoryInfo *in, uint32_t count)
-+{
-+    VkBindImageMemoryInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkBindImageMemoryInfo_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkBindImageMemoryInfo *convert_VkBindImageMemoryInfo_array_win32_to_host(struct conversion_context *ctx, const VkBindImageMemoryInfo32 *in, uint32_t count)
- {
-     VkBindImageMemoryInfo *out;
-@@ -16373,19 +16470,50 @@ static inline void convert_VkPerformanceCounterDescriptionKHR_array_host_to_win3
-     }
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkMappedMemoryRange_win64_to_host(const VkMappedMemoryRange *in, VkMappedMemoryRange *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->offset = in->offset;
-+    out->size = in->size;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkMappedMemoryRange_win32_to_host(const VkMappedMemoryRange32 *in, VkMappedMemoryRange *out)
- {
-     if (!in) return;
- 
-     out->sType = in->sType;
-     out->pNext = NULL;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->offset = in->offset;
-     out->size = in->size;
-     if (in->pNext)
-         FIXME("Unexpected pNext\n");
- }
- 
-+#ifdef _WIN64
-+static inline const VkMappedMemoryRange *convert_VkMappedMemoryRange_array_win64_to_host(struct conversion_context *ctx, const VkMappedMemoryRange *in, uint32_t count)
-+{
-+    VkMappedMemoryRange *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkMappedMemoryRange_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkMappedMemoryRange *convert_VkMappedMemoryRange_array_win32_to_host(struct conversion_context *ctx, const VkMappedMemoryRange32 *in, uint32_t count)
- {
-     VkMappedMemoryRange *out;
-@@ -17039,13 +17167,24 @@ static inline void convert_VkSparseImageMemoryRequirements2_array_host_to_win32(
-     }
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkDeviceMemoryOpaqueCaptureAddressInfo_win64_to_host(const VkDeviceMemoryOpaqueCaptureAddressInfo *in, VkDeviceMemoryOpaqueCaptureAddressInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkDeviceMemoryOpaqueCaptureAddressInfo_win32_to_host(const VkDeviceMemoryOpaqueCaptureAddressInfo32 *in, VkDeviceMemoryOpaqueCaptureAddressInfo *out)
- {
-     if (!in) return;
- 
-     out->sType = in->sType;
-     out->pNext = NULL;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     if (in->pNext)
-         FIXME("Unexpected pNext\n");
- }
-@@ -23892,17 +24031,48 @@ static inline void convert_VkInitializePerformanceApiInfoINTEL_win32_to_host(con
-         FIXME("Unexpected pNext\n");
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkSparseMemoryBind_win64_to_host(const VkSparseMemoryBind *in, VkSparseMemoryBind *out)
-+{
-+    if (!in) return;
-+
-+    out->resourceOffset = in->resourceOffset;
-+    out->size = in->size;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->memoryOffset = in->memoryOffset;
-+    out->flags = in->flags;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkSparseMemoryBind_win32_to_host(const VkSparseMemoryBind32 *in, VkSparseMemoryBind *out)
- {
-     if (!in) return;
- 
-     out->resourceOffset = in->resourceOffset;
-     out->size = in->size;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->memoryOffset = in->memoryOffset;
-     out->flags = in->flags;
- }
- 
-+#ifdef _WIN64
-+static inline const VkSparseMemoryBind *convert_VkSparseMemoryBind_array_win64_to_host(struct conversion_context *ctx, const VkSparseMemoryBind *in, uint32_t count)
-+{
-+    VkSparseMemoryBind *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkSparseMemoryBind_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkSparseMemoryBind *convert_VkSparseMemoryBind_array_win32_to_host(struct conversion_context *ctx, const VkSparseMemoryBind32 *in, uint32_t count)
- {
-     VkSparseMemoryBind *out;
-@@ -23919,6 +24089,17 @@ static inline const VkSparseMemoryBind *convert_VkSparseMemoryBind_array_win32_t
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkSparseBufferMemoryBindInfo_win64_to_host(struct conversion_context *ctx, const VkSparseBufferMemoryBindInfo *in, VkSparseBufferMemoryBindInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->buffer = in->buffer;
-+    out->bindCount = in->bindCount;
-+    out->pBinds = convert_VkSparseMemoryBind_array_win64_to_host(ctx, in->pBinds, in->bindCount);
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkSparseBufferMemoryBindInfo_win32_to_host(struct conversion_context *ctx, const VkSparseBufferMemoryBindInfo32 *in, VkSparseBufferMemoryBindInfo *out)
- {
-     if (!in) return;
-@@ -23928,6 +24109,24 @@ static inline void convert_VkSparseBufferMemoryBindInfo_win32_to_host(struct con
-     out->pBinds = convert_VkSparseMemoryBind_array_win32_to_host(ctx, (const VkSparseMemoryBind32 *)UlongToPtr(in->pBinds), in->bindCount);
- }
- 
-+#ifdef _WIN64
-+static inline const VkSparseBufferMemoryBindInfo *convert_VkSparseBufferMemoryBindInfo_array_win64_to_host(struct conversion_context *ctx, const VkSparseBufferMemoryBindInfo *in, uint32_t count)
-+{
-+    VkSparseBufferMemoryBindInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkSparseBufferMemoryBindInfo_win64_to_host(ctx, &in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkSparseBufferMemoryBindInfo *convert_VkSparseBufferMemoryBindInfo_array_win32_to_host(struct conversion_context *ctx, const VkSparseBufferMemoryBindInfo32 *in, uint32_t count)
- {
-     VkSparseBufferMemoryBindInfo *out;
-@@ -23944,6 +24143,17 @@ static inline const VkSparseBufferMemoryBindInfo *convert_VkSparseBufferMemoryBi
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkSparseImageOpaqueMemoryBindInfo_win64_to_host(struct conversion_context *ctx, const VkSparseImageOpaqueMemoryBindInfo *in, VkSparseImageOpaqueMemoryBindInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->image = in->image;
-+    out->bindCount = in->bindCount;
-+    out->pBinds = convert_VkSparseMemoryBind_array_win64_to_host(ctx, in->pBinds, in->bindCount);
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkSparseImageOpaqueMemoryBindInfo_win32_to_host(struct conversion_context *ctx, const VkSparseImageOpaqueMemoryBindInfo32 *in, VkSparseImageOpaqueMemoryBindInfo *out)
- {
-     if (!in) return;
-@@ -23953,6 +24163,24 @@ static inline void convert_VkSparseImageOpaqueMemoryBindInfo_win32_to_host(struc
-     out->pBinds = convert_VkSparseMemoryBind_array_win32_to_host(ctx, (const VkSparseMemoryBind32 *)UlongToPtr(in->pBinds), in->bindCount);
- }
- 
-+#ifdef _WIN64
-+static inline const VkSparseImageOpaqueMemoryBindInfo *convert_VkSparseImageOpaqueMemoryBindInfo_array_win64_to_host(struct conversion_context *ctx, const VkSparseImageOpaqueMemoryBindInfo *in, uint32_t count)
-+{
-+    VkSparseImageOpaqueMemoryBindInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkSparseImageOpaqueMemoryBindInfo_win64_to_host(ctx, &in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkSparseImageOpaqueMemoryBindInfo *convert_VkSparseImageOpaqueMemoryBindInfo_array_win32_to_host(struct conversion_context *ctx, const VkSparseImageOpaqueMemoryBindInfo32 *in, uint32_t count)
- {
-     VkSparseImageOpaqueMemoryBindInfo *out;
-@@ -23969,6 +24197,20 @@ static inline const VkSparseImageOpaqueMemoryBindInfo *convert_VkSparseImageOpaq
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkSparseImageMemoryBind_win64_to_host(const VkSparseImageMemoryBind *in, VkSparseImageMemoryBind *out)
-+{
-+    if (!in) return;
-+
-+    out->subresource = in->subresource;
-+    out->offset = in->offset;
-+    out->extent = in->extent;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-+    out->memoryOffset = in->memoryOffset;
-+    out->flags = in->flags;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkSparseImageMemoryBind_win32_to_host(const VkSparseImageMemoryBind32 *in, VkSparseImageMemoryBind *out)
- {
-     if (!in) return;
-@@ -23976,11 +24218,29 @@ static inline void convert_VkSparseImageMemoryBind_win32_to_host(const VkSparseI
-     out->subresource = in->subresource;
-     out->offset = in->offset;
-     out->extent = in->extent;
--    out->memory = in->memory;
-+    out->memory = wine_device_memory_from_handle(in->memory)->memory;
-     out->memoryOffset = in->memoryOffset;
-     out->flags = in->flags;
- }
- 
-+#ifdef _WIN64
-+static inline const VkSparseImageMemoryBind *convert_VkSparseImageMemoryBind_array_win64_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBind *in, uint32_t count)
-+{
-+    VkSparseImageMemoryBind *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkSparseImageMemoryBind_win64_to_host(&in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkSparseImageMemoryBind *convert_VkSparseImageMemoryBind_array_win32_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBind32 *in, uint32_t count)
- {
-     VkSparseImageMemoryBind *out;
-@@ -23997,6 +24257,17 @@ static inline const VkSparseImageMemoryBind *convert_VkSparseImageMemoryBind_arr
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkSparseImageMemoryBindInfo_win64_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBindInfo *in, VkSparseImageMemoryBindInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->image = in->image;
-+    out->bindCount = in->bindCount;
-+    out->pBinds = convert_VkSparseImageMemoryBind_array_win64_to_host(ctx, in->pBinds, in->bindCount);
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkSparseImageMemoryBindInfo_win32_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBindInfo32 *in, VkSparseImageMemoryBindInfo *out)
- {
-     if (!in) return;
-@@ -24006,6 +24277,24 @@ static inline void convert_VkSparseImageMemoryBindInfo_win32_to_host(struct conv
-     out->pBinds = convert_VkSparseImageMemoryBind_array_win32_to_host(ctx, (const VkSparseImageMemoryBind32 *)UlongToPtr(in->pBinds), in->bindCount);
- }
- 
-+#ifdef _WIN64
-+static inline const VkSparseImageMemoryBindInfo *convert_VkSparseImageMemoryBindInfo_array_win64_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBindInfo *in, uint32_t count)
-+{
-+    VkSparseImageMemoryBindInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkSparseImageMemoryBindInfo_win64_to_host(ctx, &in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkSparseImageMemoryBindInfo *convert_VkSparseImageMemoryBindInfo_array_win32_to_host(struct conversion_context *ctx, const VkSparseImageMemoryBindInfo32 *in, uint32_t count)
- {
-     VkSparseImageMemoryBindInfo *out;
-@@ -24022,6 +24311,26 @@ static inline const VkSparseImageMemoryBindInfo *convert_VkSparseImageMemoryBind
-     return out;
- }
- 
-+#ifdef _WIN64
-+static inline void convert_VkBindSparseInfo_win64_to_host(struct conversion_context *ctx, const VkBindSparseInfo *in, VkBindSparseInfo *out)
-+{
-+    if (!in) return;
-+
-+    out->sType = in->sType;
-+    out->pNext = in->pNext;
-+    out->waitSemaphoreCount = in->waitSemaphoreCount;
-+    out->pWaitSemaphores = in->pWaitSemaphores;
-+    out->bufferBindCount = in->bufferBindCount;
-+    out->pBufferBinds = convert_VkSparseBufferMemoryBindInfo_array_win64_to_host(ctx, in->pBufferBinds, in->bufferBindCount);
-+    out->imageOpaqueBindCount = in->imageOpaqueBindCount;
-+    out->pImageOpaqueBinds = convert_VkSparseImageOpaqueMemoryBindInfo_array_win64_to_host(ctx, in->pImageOpaqueBinds, in->imageOpaqueBindCount);
-+    out->imageBindCount = in->imageBindCount;
-+    out->pImageBinds = convert_VkSparseImageMemoryBindInfo_array_win64_to_host(ctx, in->pImageBinds, in->imageBindCount);
-+    out->signalSemaphoreCount = in->signalSemaphoreCount;
-+    out->pSignalSemaphores = in->pSignalSemaphores;
-+}
-+#endif /* _WIN64 */
-+
- static inline void convert_VkBindSparseInfo_win32_to_host(struct conversion_context *ctx, const VkBindSparseInfo32 *in, VkBindSparseInfo *out)
- {
-     const VkBaseInStructure32 *in_header;
-@@ -24079,6 +24388,24 @@ static inline void convert_VkBindSparseInfo_win32_to_host(struct conversion_cont
-     }
- }
- 
-+#ifdef _WIN64
-+static inline const VkBindSparseInfo *convert_VkBindSparseInfo_array_win64_to_host(struct conversion_context *ctx, const VkBindSparseInfo *in, uint32_t count)
-+{
-+    VkBindSparseInfo *out;
-+    unsigned int i;
-+
-+    if (!in || !count) return NULL;
-+
-+    out = conversion_context_alloc(ctx, count * sizeof(*out));
-+    for (i = 0; i < count; i++)
-+    {
-+        convert_VkBindSparseInfo_win64_to_host(ctx, &in[i], &out[i]);
-+    }
-+
-+    return out;
-+}
-+#endif /* _WIN64 */
-+
- static inline const VkBindSparseInfo *convert_VkBindSparseInfo_array_win32_to_host(struct conversion_context *ctx, const VkBindSparseInfo32 *in, uint32_t count)
- {
-     VkBindSparseInfo *out;
-@@ -24917,7 +25244,7 @@ static NTSTATUS thunk64_vkAllocateMemory(void *args)
- 
-     TRACE("%p, %p, %p, %p\n", params->device, params->pAllocateInfo, params->pAllocator, params->pMemory);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkAllocateMemory(wine_device_from_handle(params->device)->device, params->pAllocateInfo, NULL, params->pMemory);
-+    params->result = wine_vkAllocateMemory(params->device, params->pAllocateInfo, params->pAllocator, params->pMemory);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -24939,7 +25266,7 @@ static NTSTATUS thunk32_vkAllocateMemory(void *args)
- 
-     init_conversion_context(&ctx);
-     convert_VkMemoryAllocateInfo_win32_to_host(&ctx, (const VkMemoryAllocateInfo32 *)UlongToPtr(params->pAllocateInfo), &pAllocateInfo_host);
--    params->result = wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkAllocateMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, &pAllocateInfo_host, NULL, (VkDeviceMemory *)UlongToPtr(params->pMemory));
-+    params->result = wine_vkAllocateMemory((VkDevice)UlongToPtr(params->device), &pAllocateInfo_host, (const VkAllocationCallbacks *)UlongToPtr(params->pAllocator), (VkDeviceMemory *)UlongToPtr(params->pMemory));
-     free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
-@@ -24980,10 +25307,15 @@ static NTSTATUS thunk32_vkBeginCommandBuffer(void *args)
- static NTSTATUS thunk64_vkBindAccelerationStructureMemoryNV(void *args)
- {
-     struct vkBindAccelerationStructureMemoryNV_params *params = args;
-+    const VkBindAccelerationStructureMemoryInfoNV *pBindInfos_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->bindInfoCount, params->pBindInfos);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindAccelerationStructureMemoryNV(wine_device_from_handle(params->device)->device, params->bindInfoCount, params->pBindInfos);
-+    init_conversion_context(&ctx);
-+    pBindInfos_host = convert_VkBindAccelerationStructureMemoryInfoNV_array_win64_to_host(&ctx, params->pBindInfos, params->bindInfoCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindAccelerationStructureMemoryNV(wine_device_from_handle(params->device)->device, params->bindInfoCount, pBindInfos_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25016,7 +25348,7 @@ static NTSTATUS thunk64_vkBindBufferMemory(void *args)
- 
-     TRACE("%p, 0x%s, 0x%s, 0x%s\n", params->device, wine_dbgstr_longlong(params->buffer), wine_dbgstr_longlong(params->memory), wine_dbgstr_longlong(params->memoryOffset));
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory(wine_device_from_handle(params->device)->device, params->buffer, params->memory, params->memoryOffset);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory(wine_device_from_handle(params->device)->device, params->buffer, wine_device_memory_from_handle(params->memory)->memory, params->memoryOffset);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25034,7 +25366,7 @@ static NTSTATUS thunk32_vkBindBufferMemory(void *args)
- 
-     TRACE("%#x, 0x%s, 0x%s, 0x%s\n", params->device, wine_dbgstr_longlong(params->buffer), wine_dbgstr_longlong(params->memory), wine_dbgstr_longlong(params->memoryOffset));
- 
--    params->result = wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkBindBufferMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->buffer, params->memory, params->memoryOffset);
-+    params->result = wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkBindBufferMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->buffer, wine_device_memory_from_handle(params->memory)->memory, params->memoryOffset);
-     return STATUS_SUCCESS;
- }
- 
-@@ -25042,10 +25374,15 @@ static NTSTATUS thunk32_vkBindBufferMemory(void *args)
- static NTSTATUS thunk64_vkBindBufferMemory2(void *args)
- {
-     struct vkBindBufferMemory2_params *params = args;
-+    const VkBindBufferMemoryInfo *pBindInfos_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->bindInfoCount, params->pBindInfos);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory2(wine_device_from_handle(params->device)->device, params->bindInfoCount, params->pBindInfos);
-+    init_conversion_context(&ctx);
-+    pBindInfos_host = convert_VkBindBufferMemoryInfo_array_win64_to_host(&ctx, params->pBindInfos, params->bindInfoCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory2(wine_device_from_handle(params->device)->device, params->bindInfoCount, pBindInfos_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25075,10 +25412,15 @@ static NTSTATUS thunk32_vkBindBufferMemory2(void *args)
- static NTSTATUS thunk64_vkBindBufferMemory2KHR(void *args)
- {
-     struct vkBindBufferMemory2KHR_params *params = args;
-+    const VkBindBufferMemoryInfo *pBindInfos_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->bindInfoCount, params->pBindInfos);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory2KHR(wine_device_from_handle(params->device)->device, params->bindInfoCount, params->pBindInfos);
-+    init_conversion_context(&ctx);
-+    pBindInfos_host = convert_VkBindBufferMemoryInfo_array_win64_to_host(&ctx, params->pBindInfos, params->bindInfoCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindBufferMemory2KHR(wine_device_from_handle(params->device)->device, params->bindInfoCount, pBindInfos_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25111,7 +25453,7 @@ static NTSTATUS thunk64_vkBindImageMemory(void *args)
- 
-     TRACE("%p, 0x%s, 0x%s, 0x%s\n", params->device, wine_dbgstr_longlong(params->image), wine_dbgstr_longlong(params->memory), wine_dbgstr_longlong(params->memoryOffset));
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory(wine_device_from_handle(params->device)->device, params->image, params->memory, params->memoryOffset);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory(wine_device_from_handle(params->device)->device, params->image, wine_device_memory_from_handle(params->memory)->memory, params->memoryOffset);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25129,7 +25471,7 @@ static NTSTATUS thunk32_vkBindImageMemory(void *args)
- 
-     TRACE("%#x, 0x%s, 0x%s, 0x%s\n", params->device, wine_dbgstr_longlong(params->image), wine_dbgstr_longlong(params->memory), wine_dbgstr_longlong(params->memoryOffset));
- 
--    params->result = wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkBindImageMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->image, params->memory, params->memoryOffset);
-+    params->result = wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkBindImageMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->image, wine_device_memory_from_handle(params->memory)->memory, params->memoryOffset);
-     return STATUS_SUCCESS;
- }
- 
-@@ -25137,10 +25479,15 @@ static NTSTATUS thunk32_vkBindImageMemory(void *args)
- static NTSTATUS thunk64_vkBindImageMemory2(void *args)
- {
-     struct vkBindImageMemory2_params *params = args;
-+    const VkBindImageMemoryInfo *pBindInfos_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->bindInfoCount, params->pBindInfos);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory2(wine_device_from_handle(params->device)->device, params->bindInfoCount, params->pBindInfos);
-+    init_conversion_context(&ctx);
-+    pBindInfos_host = convert_VkBindImageMemoryInfo_array_win64_to_host(&ctx, params->pBindInfos, params->bindInfoCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory2(wine_device_from_handle(params->device)->device, params->bindInfoCount, pBindInfos_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -25170,10 +25517,15 @@ static NTSTATUS thunk32_vkBindImageMemory2(void *args)
- static NTSTATUS thunk64_vkBindImageMemory2KHR(void *args)
- {
-     struct vkBindImageMemory2KHR_params *params = args;
-+    const VkBindImageMemoryInfo *pBindInfos_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->bindInfoCount, params->pBindInfos);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory2KHR(wine_device_from_handle(params->device)->device, params->bindInfoCount, params->pBindInfos);
-+    init_conversion_context(&ctx);
-+    pBindInfos_host = convert_VkBindImageMemoryInfo_array_win64_to_host(&ctx, params->pBindInfos, params->bindInfoCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkBindImageMemory2KHR(wine_device_from_handle(params->device)->device, params->bindInfoCount, pBindInfos_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -34974,10 +35326,15 @@ static NTSTATUS thunk32_vkEnumeratePhysicalDevices(void *args)
- static NTSTATUS thunk64_vkFlushMappedMemoryRanges(void *args)
- {
-     struct vkFlushMappedMemoryRanges_params *params = args;
-+    const VkMappedMemoryRange *pMemoryRanges_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->memoryRangeCount, params->pMemoryRanges);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkFlushMappedMemoryRanges(wine_device_from_handle(params->device)->device, params->memoryRangeCount, params->pMemoryRanges);
-+    init_conversion_context(&ctx);
-+    pMemoryRanges_host = convert_VkMappedMemoryRange_array_win64_to_host(&ctx, params->pMemoryRanges, params->memoryRangeCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkFlushMappedMemoryRanges(wine_device_from_handle(params->device)->device, params->memoryRangeCount, pMemoryRanges_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -35072,7 +35429,7 @@ static NTSTATUS thunk64_vkFreeMemory(void *args)
- 
-     TRACE("%p, 0x%s, %p\n", params->device, wine_dbgstr_longlong(params->memory), params->pAllocator);
- 
--    wine_device_from_handle(params->device)->funcs.p_vkFreeMemory(wine_device_from_handle(params->device)->device, params->memory, NULL);
-+    wine_vkFreeMemory(params->device, params->memory, params->pAllocator);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -35088,7 +35445,7 @@ static NTSTATUS thunk32_vkFreeMemory(void *args)
- 
-     TRACE("%#x, 0x%s, %#x\n", params->device, wine_dbgstr_longlong(params->memory), params->pAllocator);
- 
--    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkFreeMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->memory, NULL);
-+    wine_vkFreeMemory((VkDevice)UlongToPtr(params->device), params->memory, (const VkAllocationCallbacks *)UlongToPtr(params->pAllocator));
-     return STATUS_SUCCESS;
- }
- 
-@@ -36234,7 +36591,7 @@ static NTSTATUS thunk64_vkGetDeviceMemoryCommitment(void *args)
- 
-     TRACE("%p, 0x%s, %p\n", params->device, wine_dbgstr_longlong(params->memory), params->pCommittedMemoryInBytes);
- 
--    wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryCommitment(wine_device_from_handle(params->device)->device, params->memory, params->pCommittedMemoryInBytes);
-+    wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryCommitment(wine_device_from_handle(params->device)->device, wine_device_memory_from_handle(params->memory)->memory, params->pCommittedMemoryInBytes);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -36250,7 +36607,7 @@ static NTSTATUS thunk32_vkGetDeviceMemoryCommitment(void *args)
- 
-     TRACE("%#x, 0x%s, %#x\n", params->device, wine_dbgstr_longlong(params->memory), params->pCommittedMemoryInBytes);
- 
--    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkGetDeviceMemoryCommitment(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->memory, (VkDeviceSize *)UlongToPtr(params->pCommittedMemoryInBytes));
-+    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkGetDeviceMemoryCommitment(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, wine_device_memory_from_handle(params->memory)->memory, (VkDeviceSize *)UlongToPtr(params->pCommittedMemoryInBytes));
-     return STATUS_SUCCESS;
- }
- 
-@@ -36258,10 +36615,12 @@ static NTSTATUS thunk32_vkGetDeviceMemoryCommitment(void *args)
- static NTSTATUS thunk64_vkGetDeviceMemoryOpaqueCaptureAddress(void *args)
- {
-     struct vkGetDeviceMemoryOpaqueCaptureAddress_params *params = args;
-+    VkDeviceMemoryOpaqueCaptureAddressInfo pInfo_host;
- 
-     TRACE("%p, %p\n", params->device, params->pInfo);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryOpaqueCaptureAddress(wine_device_from_handle(params->device)->device, params->pInfo);
-+    convert_VkDeviceMemoryOpaqueCaptureAddressInfo_win64_to_host(params->pInfo, &pInfo_host);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryOpaqueCaptureAddress(wine_device_from_handle(params->device)->device, &pInfo_host);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -36287,10 +36646,12 @@ static NTSTATUS thunk32_vkGetDeviceMemoryOpaqueCaptureAddress(void *args)
- static NTSTATUS thunk64_vkGetDeviceMemoryOpaqueCaptureAddressKHR(void *args)
- {
-     struct vkGetDeviceMemoryOpaqueCaptureAddressKHR_params *params = args;
-+    VkDeviceMemoryOpaqueCaptureAddressInfo pInfo_host;
- 
-     TRACE("%p, %p\n", params->device, params->pInfo);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryOpaqueCaptureAddressKHR(wine_device_from_handle(params->device)->device, params->pInfo);
-+    convert_VkDeviceMemoryOpaqueCaptureAddressInfo_win64_to_host(params->pInfo, &pInfo_host);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkGetDeviceMemoryOpaqueCaptureAddressKHR(wine_device_from_handle(params->device)->device, &pInfo_host);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -39247,10 +39608,15 @@ static NTSTATUS thunk32_vkInitializePerformanceApiINTEL(void *args)
- static NTSTATUS thunk64_vkInvalidateMappedMemoryRanges(void *args)
- {
-     struct vkInvalidateMappedMemoryRanges_params *params = args;
-+    const VkMappedMemoryRange *pMemoryRanges_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p\n", params->device, params->memoryRangeCount, params->pMemoryRanges);
- 
--    params->result = wine_device_from_handle(params->device)->funcs.p_vkInvalidateMappedMemoryRanges(wine_device_from_handle(params->device)->device, params->memoryRangeCount, params->pMemoryRanges);
-+    init_conversion_context(&ctx);
-+    pMemoryRanges_host = convert_VkMappedMemoryRange_array_win64_to_host(&ctx, params->pMemoryRanges, params->memoryRangeCount);
-+    params->result = wine_device_from_handle(params->device)->funcs.p_vkInvalidateMappedMemoryRanges(wine_device_from_handle(params->device)->device, params->memoryRangeCount, pMemoryRanges_host);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -39397,10 +39763,15 @@ static NTSTATUS thunk32_vkQueueBeginDebugUtilsLabelEXT(void *args)
- static NTSTATUS thunk64_vkQueueBindSparse(void *args)
- {
-     struct vkQueueBindSparse_params *params = args;
-+    const VkBindSparseInfo *pBindInfo_host;
-+    struct conversion_context ctx;
- 
-     TRACE("%p, %u, %p, 0x%s\n", params->queue, params->bindInfoCount, params->pBindInfo, wine_dbgstr_longlong(params->fence));
- 
--    params->result = wine_queue_from_handle(params->queue)->device->funcs.p_vkQueueBindSparse(wine_queue_from_handle(params->queue)->queue, params->bindInfoCount, params->pBindInfo, params->fence);
-+    init_conversion_context(&ctx);
-+    pBindInfo_host = convert_VkBindSparseInfo_array_win64_to_host(&ctx, params->pBindInfo, params->bindInfoCount);
-+    params->result = wine_queue_from_handle(params->queue)->device->funcs.p_vkQueueBindSparse(wine_queue_from_handle(params->queue)->queue, params->bindInfoCount, pBindInfo_host, params->fence);
-+    free_conversion_context(&ctx);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -39997,7 +40368,7 @@ static NTSTATUS thunk64_vkSetDeviceMemoryPriorityEXT(void *args)
- 
-     TRACE("%p, 0x%s, %f\n", params->device, wine_dbgstr_longlong(params->memory), params->priority);
- 
--    wine_device_from_handle(params->device)->funcs.p_vkSetDeviceMemoryPriorityEXT(wine_device_from_handle(params->device)->device, params->memory, params->priority);
-+    wine_device_from_handle(params->device)->funcs.p_vkSetDeviceMemoryPriorityEXT(wine_device_from_handle(params->device)->device, wine_device_memory_from_handle(params->memory)->memory, params->priority);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -40013,7 +40384,7 @@ static NTSTATUS thunk32_vkSetDeviceMemoryPriorityEXT(void *args)
- 
-     TRACE("%#x, 0x%s, %f\n", params->device, wine_dbgstr_longlong(params->memory), params->priority);
- 
--    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkSetDeviceMemoryPriorityEXT(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->memory, params->priority);
-+    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkSetDeviceMemoryPriorityEXT(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, wine_device_memory_from_handle(params->memory)->memory, params->priority);
-     return STATUS_SUCCESS;
- }
- 
-@@ -40286,7 +40657,7 @@ static NTSTATUS thunk64_vkUnmapMemory(void *args)
- 
-     TRACE("%p, 0x%s\n", params->device, wine_dbgstr_longlong(params->memory));
- 
--    wine_device_from_handle(params->device)->funcs.p_vkUnmapMemory(wine_device_from_handle(params->device)->device, params->memory);
-+    wine_vkUnmapMemory(params->device, params->memory);
-     return STATUS_SUCCESS;
- }
- #endif /* _WIN64 */
-@@ -40301,7 +40672,7 @@ static NTSTATUS thunk32_vkUnmapMemory(void *args)
- 
-     TRACE("%#x, 0x%s\n", params->device, wine_dbgstr_longlong(params->memory));
- 
--    wine_device_from_handle((VkDevice)UlongToPtr(params->device))->funcs.p_vkUnmapMemory(wine_device_from_handle((VkDevice)UlongToPtr(params->device))->device, params->memory);
-+    wine_vkUnmapMemory((VkDevice)UlongToPtr(params->device), params->memory);
-     return STATUS_SUCCESS;
- }
- 
-@@ -40867,6 +41238,7 @@ BOOL wine_vk_is_type_wrapped(VkObjectType type)
-         type == VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT ||
-         type == VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT ||
-         type == VK_OBJECT_TYPE_DEVICE ||
-+        type == VK_OBJECT_TYPE_DEVICE_MEMORY ||
-         type == VK_OBJECT_TYPE_INSTANCE ||
-         type == VK_OBJECT_TYPE_PHYSICAL_DEVICE ||
-         type == VK_OBJECT_TYPE_QUEUE ||
-diff --git a/dlls/winevulkan/vulkan_thunks.h b/dlls/winevulkan/vulkan_thunks.h
-index 89f741ad062..b893f15a9f3 100644
---- a/dlls/winevulkan/vulkan_thunks.h
-+++ b/dlls/winevulkan/vulkan_thunks.h
-@@ -16,6 +16,7 @@
- 
- /* Functions for which we have custom implementations outside of the thunks. */
- VkResult wine_vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo *pAllocateInfo, VkCommandBuffer *pCommandBuffers) DECLSPEC_HIDDEN;
-+VkResult wine_vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo *pAllocateInfo, const VkAllocationCallbacks *pAllocator, VkDeviceMemory *pMemory) DECLSPEC_HIDDEN;
- VkResult wine_vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkCommandPool *pCommandPool, void *client_ptr) DECLSPEC_HIDDEN;
- VkResult wine_vkCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugReportCallbackEXT *pCallback) DECLSPEC_HIDDEN;
- VkResult wine_vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pMessenger) DECLSPEC_HIDDEN;
-@@ -36,6 +37,7 @@ VkResult wine_vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t *pPh
- VkResult wine_vkEnumeratePhysicalDeviceGroupsKHR(VkInstance instance, uint32_t *pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties *pPhysicalDeviceGroupProperties) DECLSPEC_HIDDEN;
- VkResult wine_vkEnumeratePhysicalDevices(VkInstance instance, uint32_t *pPhysicalDeviceCount, VkPhysicalDevice *pPhysicalDevices) DECLSPEC_HIDDEN;
- void wine_vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer *pCommandBuffers) DECLSPEC_HIDDEN;
-+void wine_vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks *pAllocator) DECLSPEC_HIDDEN;
- VkResult wine_vkGetCalibratedTimestampsEXT(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoEXT *pTimestampInfos, uint64_t *pTimestamps, uint64_t *pMaxDeviation) DECLSPEC_HIDDEN;
- void wine_vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue *pQueue) DECLSPEC_HIDDEN;
- void wine_vkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2 *pQueueInfo, VkQueue *pQueue) DECLSPEC_HIDDEN;
-@@ -51,6 +53,7 @@ VkResult wine_vkGetPhysicalDeviceImageFormatProperties2KHR(VkPhysicalDevice phys
- VkResult wine_vkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR *pSurfaceInfo, VkSurfaceCapabilities2KHR *pSurfaceCapabilities) DECLSPEC_HIDDEN;
- VkResult wine_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR *pSurfaceCapabilities) DECLSPEC_HIDDEN;
- VkResult wine_vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void **ppData) DECLSPEC_HIDDEN;
-+void wine_vkUnmapMemory(VkDevice device, VkDeviceMemory memory) DECLSPEC_HIDDEN;
- 
- /* For use by vkDevice and children */
- struct vulkan_device_funcs
-
-From 785e954634fa0e63063ed65fc3e8318cf8e2d451 Mon Sep 17 00:00:00 2001
-From: Jacek Caban <jacek@codeweavers.com>
-Date: Sun, 20 Nov 2022 16:25:13 +0100
-Subject: [PATCH 21/21] winevulkan: Use VK_EXT_external_memory_host extension
- to map memory on wow64.
-
----
- dlls/winevulkan/vulkan.c         | 167 +++++++++++++++++++++++++++++--
- dlls/winevulkan/vulkan_private.h |   4 +
- 2 files changed, 164 insertions(+), 7 deletions(-)
-
-diff --git a/dlls/winevulkan/vulkan.c b/dlls/winevulkan/vulkan.c
-index b092756fd4e..23676afac47 100644
---- a/dlls/winevulkan/vulkan.c
-+++ b/dlls/winevulkan/vulkan.c
-@@ -31,6 +31,21 @@
- WINE_DEFAULT_DEBUG_CHANNEL(vulkan);
- 
- 
-+static BOOL is_wow64(void)
-+{
-+    return sizeof(void *) == sizeof(UINT64) && NtCurrentTeb()->WowTebOffset;
-+}
-+
-+static BOOL use_external_memory(void)
-+{
-+    return is_wow64();
-+}
-+
-+static ULONG_PTR zero_bits(void)
-+{
-+    return is_wow64() ? 0x7fffffff : 0;
-+}
-+
- #define wine_vk_count_struct(s, t) wine_vk_count_struct_((void *)s, VK_STRUCTURE_TYPE_##t)
- static uint32_t wine_vk_count_struct_(void *s, VkStructureType t)
- {
-@@ -214,6 +229,7 @@ static struct wine_phys_dev *wine_vk_physical_device_alloc(struct wine_instance
-     struct wine_phys_dev *object;
-     uint32_t num_host_properties, num_properties = 0;
-     VkExtensionProperties *host_properties = NULL;
-+    BOOL have_external_memory_host = FALSE;
-     VkResult res;
-     unsigned int i, j;
- 
-@@ -227,6 +243,8 @@ static struct wine_phys_dev *wine_vk_physical_device_alloc(struct wine_instance
-     handle->base.unix_handle = (uintptr_t)object;
-     WINE_VK_ADD_DISPATCHABLE_MAPPING(instance, handle, phys_dev, object);
- 
-+    instance->funcs.p_vkGetPhysicalDeviceMemoryProperties(phys_dev, &object->memory_properties);
-+
-     res = instance->funcs.p_vkEnumerateDeviceExtensionProperties(phys_dev,
-             NULL, &num_host_properties, NULL);
-     if (res != VK_SUCCESS)
-@@ -264,6 +282,8 @@ static struct wine_phys_dev *wine_vk_physical_device_alloc(struct wine_instance
-         {
-             TRACE("Skipping extension '%s', no implementation found in winevulkan.\n", host_properties[i].extensionName);
-         }
-+        if (!strcmp(host_properties[i].extensionName, "VK_EXT_external_memory_host"))
-+            have_external_memory_host = TRUE;
-     }
- 
-     TRACE("Host supported extensions %u, Wine supported extensions %u\n", num_host_properties, num_properties);
-@@ -284,6 +304,24 @@ static struct wine_phys_dev *wine_vk_physical_device_alloc(struct wine_instance
-     }
-     object->extension_count = num_properties;
- 
-+    if (have_external_memory_host && use_external_memory())
-+    {
-+        VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_mem_props =
-+        {
-+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT,
-+        };
-+        VkPhysicalDeviceProperties2 props =
-+        {
-+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-+            .pNext = &host_mem_props,
-+        };
-+        instance->funcs.p_vkGetPhysicalDeviceProperties2KHR(phys_dev, &props);
-+        object->external_memory_align = host_mem_props.minImportedHostPointerAlignment;
-+        if (object->external_memory_align)
-+            TRACE("Using eVK_EXT_external_memory_host for memory mapping with alignment: %u\n",
-+                  object->external_memory_align);
-+    }
-+
-     free(host_properties);
-     return object;
- 
-@@ -353,7 +391,8 @@ static void wine_vk_device_get_queues(struct wine_device *device,
-     }
- }
- 
--static VkResult wine_vk_device_convert_create_info(const VkDeviceCreateInfo *src, VkDeviceCreateInfo *dst)
-+static VkResult wine_vk_device_convert_create_info(struct wine_phys_dev *phys_dev,
-+        struct conversion_context *ctx, const VkDeviceCreateInfo *src, VkDeviceCreateInfo *dst)
- {
-     unsigned int i;
- 
-@@ -375,6 +414,19 @@ static VkResult wine_vk_device_convert_create_info(const VkDeviceCreateInfo *src
-         }
-     }
- 
-+    if (phys_dev->external_memory_align)
-+    {
-+        const char **new_extensions;
-+
-+        new_extensions = conversion_context_alloc(ctx, (dst->enabledExtensionCount + 2) *
-+                                                  sizeof(*dst->ppEnabledExtensionNames));
-+        memcpy(new_extensions, src->ppEnabledExtensionNames,
-+               dst->enabledExtensionCount * sizeof(*dst->ppEnabledExtensionNames));
-+        new_extensions[dst->enabledExtensionCount++] = "VK_KHR_external_memory";
-+        new_extensions[dst->enabledExtensionCount++] = "VK_EXT_external_memory_host";
-+        dst->ppEnabledExtensionNames = new_extensions;
-+    }
-+
-     return VK_SUCCESS;
- }
- 
-@@ -447,8 +499,8 @@ NTSTATUS init_vulkan32(void *args)
-  * This function takes care of extensions handled at winevulkan layer, a Wine graphics
-  * driver is responsible for handling e.g. surface extensions.
-  */
--static VkResult wine_vk_instance_convert_create_info(const VkInstanceCreateInfo *src,
--        VkInstanceCreateInfo *dst, struct wine_instance *object)
-+static VkResult wine_vk_instance_convert_create_info(struct conversion_context *ctx,
-+        const VkInstanceCreateInfo *src, VkInstanceCreateInfo *dst, struct wine_instance *object)
- {
-     VkDebugUtilsMessengerCreateInfoEXT *debug_utils_messenger;
-     VkDebugReportCallbackCreateInfoEXT *debug_report_callback;
-@@ -516,6 +568,19 @@ static VkResult wine_vk_instance_convert_create_info(const VkInstanceCreateInfo
-         }
-     }
- 
-+    if (use_external_memory())
-+    {
-+        const char **new_extensions;
-+
-+        new_extensions = conversion_context_alloc(ctx, (dst->enabledExtensionCount + 2) *
-+                                                  sizeof(*dst->ppEnabledExtensionNames));
-+        memcpy(new_extensions, src->ppEnabledExtensionNames,
-+               dst->enabledExtensionCount * sizeof(*dst->ppEnabledExtensionNames));
-+        new_extensions[dst->enabledExtensionCount++] = "VK_KHR_get_physical_device_properties2";
-+        new_extensions[dst->enabledExtensionCount++] = "VK_KHR_external_memory_capabilities";
-+        dst->ppEnabledExtensionNames = new_extensions;
-+    }
-+
-     return VK_SUCCESS;
- }
- 
-@@ -689,6 +754,7 @@ VkResult wine_vkCreateDevice(VkPhysicalDevice phys_dev_handle, const VkDeviceCre
-     VkDeviceCreateInfo create_info_host;
-     struct VkQueue_T *queue_handles;
-     struct wine_queue *next_queue;
-+    struct conversion_context ctx;
-     struct wine_device *object;
-     unsigned int i;
-     VkResult res;
-@@ -712,10 +778,12 @@ VkResult wine_vkCreateDevice(VkPhysicalDevice phys_dev_handle, const VkDeviceCre
- 
-     object->phys_dev = phys_dev;
- 
--    res = wine_vk_device_convert_create_info(create_info, &create_info_host);
-+    init_conversion_context(&ctx);
-+    res = wine_vk_device_convert_create_info(phys_dev, &ctx, create_info, &create_info_host);
-     if (res == VK_SUCCESS)
-         res = phys_dev->instance->funcs.p_vkCreateDevice(phys_dev->phys_dev,
-                 &create_info_host, NULL /* allocator */, &object->device);
-+    free_conversion_context(&ctx);
-     WINE_VK_ADD_DISPATCHABLE_MAPPING(phys_dev->instance, device_handle, object->device, object);
-     if (res != VK_SUCCESS)
-     {
-@@ -780,6 +848,7 @@ VkResult wine_vkCreateInstance(const VkInstanceCreateInfo *create_info,
-     VkInstance client_instance = client_ptr;
-     VkInstanceCreateInfo create_info_host;
-     const VkApplicationInfo *app_info;
-+    struct conversion_context ctx;
-     struct wine_instance *object;
-     VkResult res;
- 
-@@ -794,9 +863,11 @@ VkResult wine_vkCreateInstance(const VkInstanceCreateInfo *create_info,
-     list_init(&object->wrappers);
-     pthread_rwlock_init(&object->wrapper_lock, NULL);
- 
--    res = wine_vk_instance_convert_create_info(create_info, &create_info_host, object);
-+    init_conversion_context(&ctx);
-+    res = wine_vk_instance_convert_create_info(&ctx, create_info, &create_info_host, object);
-     if (res == VK_SUCCESS)
-         res = vk_funcs->p_vkCreateInstance(&create_info_host, NULL /* allocator */, &object->instance);
-+    free_conversion_context(&ctx);
-     if (res != VK_SUCCESS)
-     {
-         ERR("Failed to create instance, res=%d\n", res);
-@@ -1446,18 +1517,85 @@ VkResult wine_vkAllocateMemory(VkDevice handle, const VkMemoryAllocateInfo *allo
- {
-     struct wine_device *device = wine_device_from_handle(handle);
-     struct wine_device_memory *memory;
-+    VkMemoryAllocateInfo info = *alloc_info;
-+    VkImportMemoryHostPointerInfoEXT host_pointer_info;
-+    uint32_t mem_flags;
-+    void *mapping = NULL;
-     VkResult result;
- 
-+    mem_flags = device->phys_dev->memory_properties.memoryTypes[alloc_info->memoryTypeIndex].propertyFlags;
-+    if (device->phys_dev->external_memory_align && (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) &&
-+        !find_next_struct(alloc_info->pNext, VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT))
-+    {
-+        VkMemoryHostPointerPropertiesEXT props =
-+        {
-+            .sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT,
-+        };
-+        uint32_t i, flags, align = device->phys_dev->external_memory_align - 1;
-+        SIZE_T alloc_size = info.allocationSize;
-+
-+        if (NtAllocateVirtualMemory(GetCurrentProcess(), &mapping, zero_bits(), &alloc_size,
-+                                    MEM_COMMIT, PAGE_READWRITE))
-+        {
-+            ERR("NtAllocateVirtualMemory failed\n");
-+            return VK_ERROR_OUT_OF_HOST_MEMORY;
-+        }
-+
-+        result = device->funcs.p_vkGetMemoryHostPointerPropertiesEXT(device->device,
-+                VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT, mapping, &props);
-+        if (result != VK_SUCCESS)
-+        {
-+            ERR("vkGetMemoryHostPointerPropertiesEXT failed: %d\n", result);
-+            return result;
-+        }
-+
-+        if (!(props.memoryTypeBits & (1u << info.memoryTypeIndex)))
-+        {
-+            for (i = 0; i < device->phys_dev->memory_properties.memoryTypeCount; i++)
-+            {
-+                if (!(props.memoryTypeBits & (1u << i)))
-+                    continue;
-+                flags = device->phys_dev->memory_properties.memoryTypes[i].propertyFlags;
-+                flags = flags & ~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-+                mem_flags = flags & ~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-+                if ((flags & mem_flags) == mem_flags)
-+                {
-+                    TRACE("Memory type not compatible with host memory, using %u instead\n", i);
-+                    info.memoryTypeIndex = i;
-+                    break;
-+                }
-+            }
-+            if (i == device->phys_dev->memory_properties.memoryTypeCount)
-+            {
-+                FIXME("Not found memory type compatible with requested memory type\n");
-+                alloc_size = 0;
-+                NtFreeVirtualMemory(GetCurrentProcess(), &mapping, &alloc_size, MEM_RELEASE);
-+            }
-+        }
-+
-+        if (props.memoryTypeBits & (1u << info.memoryTypeIndex))
-+        {
-+            host_pointer_info.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
-+            host_pointer_info.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT;
-+            host_pointer_info.pHostPointer = mapping;
-+            host_pointer_info.pNext = info.pNext;
-+            info.pNext = &host_pointer_info;
-+
-+            info.allocationSize = (info.allocationSize + align) & ~align;
-+        }
-+    }
-+
-     if (!(memory = malloc(sizeof(*memory))))
-         return VK_ERROR_OUT_OF_HOST_MEMORY;
- 
--    result = device->funcs.p_vkAllocateMemory(device->device, alloc_info, NULL, &memory->memory);
-+    result = device->funcs.p_vkAllocateMemory(device->device, &info, NULL, &memory->memory);
-     if (result != VK_SUCCESS)
-     {
-         free(memory);
-         return result;
-     }
- 
-+    memory->mapping = mapping;
-     *ret = (VkDeviceMemory)(uintptr_t)memory;
-     return VK_SUCCESS;
- }
-@@ -1472,6 +1610,13 @@ void wine_vkFreeMemory(VkDevice handle, VkDeviceMemory memory_handle, const VkAl
-     memory = wine_device_memory_from_handle(memory_handle);
- 
-     device->funcs.p_vkFreeMemory(device->device, memory->memory, NULL);
-+
-+    if (memory->mapping)
-+    {
-+        SIZE_T alloc_size = 0;
-+        NtFreeVirtualMemory(GetCurrentProcess(), &memory->mapping, &alloc_size, MEM_RELEASE);
-+    }
-+
-     free(memory);
- }
- 
-@@ -1482,6 +1627,13 @@ VkResult wine_vkMapMemory(VkDevice handle, VkDeviceMemory memory_handle, VkDevic
-     struct wine_device_memory *memory = wine_device_memory_from_handle(memory_handle);
-     VkResult result;
- 
-+    if (memory->mapping)
-+    {
-+        *data = (char *)memory->mapping + offset;
-+        TRACE("returning %p\n", *data);
-+        return VK_SUCCESS;
-+    }
-+
-     result = device->funcs.p_vkMapMemory(device->device, memory->memory, offset, size, flags, data);
- 
- #ifdef _WIN64
-@@ -1502,7 +1654,8 @@ void wine_vkUnmapMemory(VkDevice handle, VkDeviceMemory memory_handle)
-     struct wine_device *device = wine_device_from_handle(handle);
-     struct wine_device_memory *memory = wine_device_memory_from_handle(memory_handle);
- 
--    device->funcs.p_vkUnmapMemory(device->device, memory->memory);
-+    if (!memory->mapping)
-+        device->funcs.p_vkUnmapMemory(device->device, memory->memory);
- }
- 
- static inline void adjust_max_image_count(struct wine_phys_dev *phys_dev, VkSurfaceCapabilitiesKHR* capabilities)
-diff --git a/dlls/winevulkan/vulkan_private.h b/dlls/winevulkan/vulkan_private.h
-index 8055b2380fd..92504bffb41 100644
---- a/dlls/winevulkan/vulkan_private.h
-+++ b/dlls/winevulkan/vulkan_private.h
-@@ -125,9 +125,12 @@ struct wine_phys_dev
-     VkPhysicalDevice handle; /* client physical device */
-     VkPhysicalDevice phys_dev; /* native physical device */
- 
-+    VkPhysicalDeviceMemoryProperties memory_properties;
-     VkExtensionProperties *extensions;
-     uint32_t extension_count;
- 
-+    uint32_t external_memory_align;
-+
-     struct wine_vk_mapping mapping;
- };
- 
-@@ -172,6 +175,7 @@ static inline struct wine_cmd_pool *wine_cmd_pool_from_handle(VkCommandPool hand
- struct wine_device_memory
- {
-     VkDeviceMemory memory;
-+    void *mapping;
- };
- 
- static inline struct wine_device_memory *wine_device_memory_from_handle(VkDeviceMemory handle)
