@@ -8,6 +8,10 @@
 #
 
 
+PortGroup                   muniversal 1.1
+# Avoids extra work in each Port
+
+
 # meson builds need to be done out-of-source
 default build_dir           {${workpath}/build}
 
