@@ -3,7 +3,6 @@
 PortSystem          1.0
 PortGroup           gitlab 1.0
 PortGroup           meson 1.0
-PortGroup           muniversal 1.1
 
 # Only commit stable updates (even numbered releases)
 gitlab.setup        gstreamer gstreamer 1.20.4
