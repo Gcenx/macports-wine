@@ -23,17 +23,6 @@ if {${subport} eq ${name}} {
     depends_run-append      port:crossover
 }
 
-subport ${name}-21.2.0 {
-    set crossover_version   21.2.0
-    set wine_version        6.0
-    depends_run-append      port:crossover-${crossover_version}
-
-    # Renaming to allow both to co-exist
-    post-destroot {
-        file rename ${destroot}${prefix}/bin/crossovertricks ${destroot}${prefix}/bin/crossovertricks-${crossover_version}
-    }
-}
-
 build {
     copy ${filespath}/crossovertricks                       ${workpath}/crossovertricks
     reinplace -q s|@@APPLICATIONS@@|${applications_dir}|g   ${workpath}/crossovertricks
@@ -44,3 +33,5 @@ build {
 destroot {
     copy ${workpath}/crossovertricks ${destroot}${prefix}/bin/crossovertricks
 }
+
+livecheck.type      none
