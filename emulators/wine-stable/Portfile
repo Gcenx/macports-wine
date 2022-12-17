@@ -119,7 +119,8 @@ if {${os.major} < 14} {
 }
 
 post-patch {
-    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    reinplace -q "s|sprintf|snprintf|g"     ${worksrcpath}/tools/makedep.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
