@@ -33,6 +33,12 @@ subport ${name}-CX {
      replaced_by            MoltenVK
 }
 
+if {[llength ${supported_archs}] > 1} {
+    configure.universal_archs {*}${supported_archs}
+    variant universal {}
+    default_variants +universal
+}
+
 use_configure               no
 build                       {}
 
@@ -47,7 +53,7 @@ destroot {
         file copy ${output_dir}/MoltenVK.xcframework ${destroot}${frameworks_dir}
     }
 
-    if {[variant_exists universal] && ![variant_isset universal] || ![variant_exists universal] || ${os.major} < 20} {
+    if {(![variant_isset universal])} {
         system -W ${destroot}${prefix}/lib "lipo -thin ${configure.build_arch} libMoltenVK.dylib -o libMoltenVK.dylib 2> /dev/null"
     }
 }
