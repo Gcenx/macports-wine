@@ -240,8 +240,9 @@ if {${os.major} >= 15} {
     depends_lib-append \
         path:lib/libMoltenVK.dylib:MoltenVK
 
-    depends_skip_archcheck-append \
-        MoltenVK
+    if {"i386" in ${configure.universal_archs}} {
+        depends_skip_archcheck-append MoltenVK
+    }
 
     configure.args.x86_64-append \
         --with-vulkan \
