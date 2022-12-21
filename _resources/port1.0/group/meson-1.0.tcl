@@ -12,7 +12,7 @@
 default build_dir           {${workpath}/build}
 
 # Set "python3" to be used, keep in sync with meson port
-set py_ver                  3.10
+set py_ver                  3.11
 set py_ver_nodot            [string map {. {}} ${py_ver}]
 foreach stage {configure build destroot test} {
     ${stage}.env-append     PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
