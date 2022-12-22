@@ -33,12 +33,7 @@ subport ${name}-CX {
      replaced_by            MoltenVK
 }
 
-if {(${os.major} > 19) && ([llength ${supported_archs}] > 1)} {
-    configure.universal_archs {*}${supported_archs}
-    variant universal {}
-    default_variants +universal
-}
-
+variant universal           {}
 use_configure               no
 build                       {}
 
