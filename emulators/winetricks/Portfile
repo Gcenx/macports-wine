@@ -3,11 +3,11 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            The-Wineskin-Project winetricks 20221022
+github.setup            The-Wineskin-Project winetricks 20221108
 revision                0
-checksums               rmd160  c728c000c8a574c1caa32c6b2ed554f9ab49d3df \
-                        sha256  ee2e2fc125248433294456376ddffb20b1722b80728c6b329df6a0c1521e5661 \
-                        size    692738
+checksums               rmd160  100827f467def7d2b3e630b08c16bf8c5586557c \
+                        sha256  e2e9a9ed15306c5e80a9d2961069f278a82bebd7a4b89ffedbba86f7fa475c42 \
+                        size    692932
 
 categories              emulators
 maintainers             {@gcenx}
