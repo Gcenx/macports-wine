@@ -272,6 +272,8 @@ variant usb description {Build ${name} with USB support} {
     configure.args-append   --with-usb
 }
 
+triplet.add_build           cross
+
 # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
 # https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
 compiler.limit_flags        yes
