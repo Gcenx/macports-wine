@@ -157,46 +157,6 @@ configure.args \
     --without-v4l2 \
     --without-x
 
-# winemac.drv is the native display driver, since wine-1.5.26
-variant x11 {
-    depends_lib-append \
-        port:libGLU \
-        port:mesa \
-        port:xorg-libX11 \
-        port:xorg-libXcomposite \
-        port:xorg-libXcursor \
-        port:xorg-libXext \
-        port:xorg-libXi \
-        port:xorg-libXinerama \
-        port:xorg-libXrandr \
-        port:xorg-libXxf86vm \
-        port:xorg-libsm \
-        port:xorg-xorgproto \
-        port:xrender
-
-    configure.args-delete \
-        --without-x
-
-    configure.args-append \
-        --with-osmesa \
-        --with-xcomposite \
-        --with-xcursor \
-        --with-xfixes \
-        --with-xinerama \
-        --with-xinput \
-        --with-xinput2 \
-        --with-xrandr \
-        --with-xrender \
-        --with-xshape \
-        --with-xxf86vm \
-        --with-x \
-        --x-include=${prefix}/include \
-        --x-lib=${prefix}/lib
-}
-
-default_variants \
-    +quartz -sdl -x11
-
 # Set pkgconfig search path
 configure.env.i386-append \
     PKG_CONFIG_LIBDIR=${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
