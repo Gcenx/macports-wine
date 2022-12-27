@@ -158,9 +158,6 @@ configure.args \
     --without-v4l2 \
     --without-x
 
-default_variants \
-    +quartz -sdl -x11
-
 # Set pkgconfig search path
 configure.env.i386-append \
     PKG_CONFIG_LIBDIR=${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
