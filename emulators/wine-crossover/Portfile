@@ -74,7 +74,7 @@ depends_build \
 
 depends_lib \
     port:freetype \
-    port:gnutls \
+    path:lib/pkgconfig/gnutls.pc:gnutls \
     port:libpcap \
     port:libsdl2
 
