@@ -47,11 +47,6 @@ configure.cxxflags
 configure.cppflags
 configure.optflags
 configure.ldflags
-configure.universal_cflags
-configure.universal_cxxflags
-configure.universal_cppflags
-configure.universal_ldflags
-configure.universal_args
 configure.ccache            no
 configure.distcc            no
 configure.env-append        PATH=/usr/bin:/bin:/usr/sbin:/sbin
@@ -74,7 +69,13 @@ configure.pre_args-delete   {*}[cmake::module_path]
 configure.pre_args-delete   {*}[cmake::ccaching]
 configure.pre_args-delete   -DCMAKE_INSTALL_NAME_DIR="${cmake.install_prefix}/lib"
 
-configure.args-append       -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+if {${os.major} < 22} {
+    configure.python        /usr/bin/python2
+} else {
+    configure.python        /usr/bin/python3
+}
+
+configure.args-append       -DPYTHON_EXECUTABLE=${configure.python} \
                             -DLLVM_TARGETS_TO_BUILD=X86
 
-livecheck.type      none
+livecheck.type              none
