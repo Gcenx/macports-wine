@@ -12,6 +12,7 @@ github.tarball_from archive
 license             Apache-2
 categories          devel python
 maintainers         {@gcenx}
+platforms           {darwin >= 12}
 supported_archs     noarch
 installs_libs       no
 homepage            https://mesonbuild.com
