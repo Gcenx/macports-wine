@@ -28,11 +28,6 @@ checksums                   rmd160  b736546d864c4b8ab0efcc26258d422ba8e01e2c \
                             sha256  4ee9a0dc3049a2e0773bca131a5f2de73ed24cb31ea72df6250239a00194cf11 \
                             size    9851384
 
-subport ${name}-CX {
-     revision               1
-     replaced_by            MoltenVK
-}
-
 variant universal           {}
 use_configure               no
 build                       {}
