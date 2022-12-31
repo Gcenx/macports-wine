@@ -231,17 +231,12 @@ destroot.target             install-lib
 if {${os.major} > 18} {
     depends_build-append    port:cx-llvm
 
+    patchfiles-append       1001-remove-cross_compiling-check.diff
+
     configure.cc            "/usr/bin/env arch -x86_64 ${prefix}/libexec/cx-llvm/bin/clang"
     configure.cxx           "/usr/bin/env arch -x86_64 ${prefix}/libexec/cx-llvm/bin/clang++"
     configure.compiler.add_deps no
     configure.cmd ${worksrcpath}/configure
-
-    patchfiles-append       1001-remove-cross_compiling-check.diff
-
-    pre-configure {
-        file mkdir ${worksrcpath}-x86_64
-        file mkdir ${worksrcpath}-i386
-    }
 
     configure.args-append \
         --disable-winedbg
@@ -249,6 +244,11 @@ if {${os.major} > 18} {
     configure.args.i386-append \
         --enable-win32on64 \
         --disable-loader
+
+    pre-configure {
+        file mkdir ${worksrcpath}-x86_64
+        file mkdir ${worksrcpath}-i386
+    }
 
     configure {
         set configure.dir ${worksrcpath}-x86_64
