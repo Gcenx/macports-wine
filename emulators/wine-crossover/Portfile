@@ -20,7 +20,7 @@ name                        wine-crossover
 conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     22.0.1
-revision                    0
+revision                    1
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
 categories                  emulators
@@ -110,7 +110,7 @@ patchfiles-append \
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "s|(cw)||g" ${worksrcpath}/loader/wine.inf.in
+    reinplace -q "s|;(cw)||g" ${worksrcpath}/loader/wine.inf.in
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
