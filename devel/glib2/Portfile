@@ -95,7 +95,7 @@ build.args-append           --verbose
 post-build {
     if {[variant_exists universal] && [variant_isset universal]} {
         set dirs {}
-        foreach arch ${configure.universal_archs} {
+        foreach arch ${muniversal.architectures} {
             lappend dirs ${workpath}/build-${arch}
         }
     } else {
