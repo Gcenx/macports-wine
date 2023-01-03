@@ -249,7 +249,7 @@ variant gstreamer description {Build ${subport} with gstreamer support} {
 
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
-variant usb description {Build ${sunport} with USB support} {
+variant usb description {Build ${subport} with USB support} {
     depends_lib-append      port:libusb
     configure.args-replace  --without-usb --with-usb
 }
