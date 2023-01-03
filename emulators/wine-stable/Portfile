@@ -70,10 +70,6 @@ depends_build \
 depends_lib \
     port:freetype \
     path:lib/pkgconfig/gnutls.pc:gnutls \
-    port:gstreamer1 \
-    port:gstreamer1-gst-plugins-base \
-    port:gstreamer1-gst-plugins-good \
-    port:gstreamer1-gst-libav \
     port:libpcap \
     port:libsdl2 \
     port:openal-soft
@@ -147,7 +143,7 @@ configure.args \
     --without-gphoto \
     --with-gnutls \
     --without-gssapi \
-    --with-gstreamer \
+    --without-gstreamer \
     --without-inotify \
     --without-krb5 \
     --with-ldap \
@@ -223,13 +219,23 @@ if {${os.major} < 15} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+variant gstreamer description {Build ${subport} with gstreamer support} {
+    depends_lib-append \
+        port:gstreamer1 \
+        port:gstreamer1-gst-plugins-base \
+        port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-libav
+    configure.args-replace  --without-gstreamer --with-gstreamer
+}
+
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
-variant usb description {Build ${name} with USB support} {
+variant usb description {Build ${subport} with USB support} {
     depends_lib-append      port:libusb
-    configure.args-delete   --wthout-usb
-    configure.args-append   --with-usb
+    configure.args-replace  --wthout-usb --with-usb
 }
+
+default_variants-append     +gstreamer
 
 triplet.add_build           cross
 

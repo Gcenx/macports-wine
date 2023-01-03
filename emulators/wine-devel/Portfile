@@ -70,10 +70,6 @@ depends_build \
 depends_lib \
     port:freetype \
     path:lib/pkgconfig/gnutls.pc:gnutls \
-    port:gstreamer1 \
-    port:gstreamer1-gst-plugins-base \
-    port:gstreamer1-gst-plugins-good \
-    port:gstreamer1-gst-libav \
     port:libpcap \
     port:libsdl2
 
@@ -137,7 +133,7 @@ configure.args \
     --without-gphoto \
     --with-gnutls \
     --without-gssapi \
-    --with-gstreamer \
+    --without-gstreamer \
     --without-inotify \
     --without-krb5 \
     --with-mingw \
@@ -245,12 +241,20 @@ subport wine-staging {
     }
 }
 
+variant gstreamer description {Build ${subport} with gstreamer support} {
+    depends_lib-append \
+        port:gstreamer1 \
+        port:gstreamer1-gst-plugins-base \
+        port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-libav
+    configure.args-replace  --without-gstreamer --with-gstreamer
+}
+
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
-variant usb description {Build ${name} with USB support} {
+variant usb description {Build ${sunport} with USB support} {
     depends_lib-append      port:libusb
-    configure.args-delete   --without-usb
-    configure.args-append   --with-usb
+    configure.args-replace  --without-usb --with-usb
 }
 
 if {${subport} eq "wine-devel" } {
@@ -263,6 +267,8 @@ if {${subport} eq "wine-devel" } {
         }
     }
 }
+
+default_variants-append     +gstreamer
 
 triplet.add_build           cross
 

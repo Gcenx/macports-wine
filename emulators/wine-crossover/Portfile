@@ -212,6 +212,17 @@ if {${os.major} < 15} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+variant gstreamer description {Build ${subport} with gstreamer support} {
+    depends_lib-append \
+        port:gstreamer1 \
+        port:gstreamer1-gst-plugins-base \
+        port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-libav
+    configure.args-replace  --without-gstreamer --with-gstreamer
+}
+
+default_variants-append     +gstreamer
+
 triplet.add_build           cross
 
 # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
