@@ -219,7 +219,7 @@ variant gstreamer description {Build ${subport} with gstreamer support} {
 }
 
 # Uncomment variant for CX23
-#variant usb description {Build ${sunport} with USB support} {
+#variant usb description {Build ${subport} with USB support} {
 #    depends_lib-append      port:libusb
 #    configure.args-replace  --without-usb --with-usb
 #}
