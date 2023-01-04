@@ -111,6 +111,9 @@ subport ${name}-gst-plugins-base {
         port:orc \
         port:zlib
 
+    # gst-plugins-base needs 'gl-headers'
+    wrap_mode   {default}
+
     # OpenGL integration library options
     #  Leaving (auto)
 
