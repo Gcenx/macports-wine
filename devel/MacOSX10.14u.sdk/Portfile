@@ -5,6 +5,7 @@ PortSystem                  1.0
 name                        MacOSX10.14u.sdk
 version                     1.0
 categories                  devel
+supported_archs             i386 x86_64
 platforms                   {darwin == 18}
 maintainers                 {@gcenx}
 
@@ -68,6 +69,7 @@ destroot {
 }
 
 variant universal {}
+configure.universal_archs {*}${supported_archs}
 default_variants +universal
 variant_set universal
 
