@@ -103,6 +103,9 @@ subport ${name}-gst-plugins-base {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-plugins-base
 
+    depends_build-append \
+        port:gl-headers
+
     depends_lib-append \
         port:${name} \
         port:libogg \
@@ -110,9 +113,6 @@ subport ${name}-gst-plugins-base {
         port:libvorbis \
         port:orc \
         port:zlib
-
-    # gst-plugins-base needs 'gl-headers'
-    wrap_mode   {default}
 
     # OpenGL integration library options
     #  Leaving (auto)
