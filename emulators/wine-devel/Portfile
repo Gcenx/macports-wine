@@ -17,7 +17,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     8.0-rc2
+version                     8.0-rc3
 revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  3ac996dcb10d8f435d8e9146f3fec7cfacf752a6 \
-    sha256  27432ec96502747ae4b819a76f8fc9f5a13c6f69d7dc853848cf4887dcddaad0 \
-    size    48005595
+    rmd160  f9dff5efa88f4da05f1d9a48195b5f54df7c3c4c \
+    sha256  0fe74ea0d9c2c95e608206e52c874afc6818cf0c79d7f5e1454b1c5ecb7d0808 \
+    size    48009546
 
 depends_build \
     port:bison \
@@ -222,9 +222,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  515c25f3d72c3a55ca477786578e6c9a99983f18 \
-        sha256  93dbe148c953deefce6b925b9b0b7b808027e6ba7e71814c03854cf53e1b71d1 \
-        size    9526926
+        rmd160  c0342f3524dd71658f3d74739fb2fbe8b1fccfa0 \
+        sha256  58abea63c0d3820b5ef0b5303514bd8fd8fc4b2304bba3f4cb3db1800eff37ee \
+        size    9527042
 
     depends_extract-append \
         port:autoconf
