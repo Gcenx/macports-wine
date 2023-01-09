@@ -115,7 +115,6 @@ if {${os.major} < 14} {
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -165,6 +164,9 @@ configure.args \
     --without-v4l2 \
     --without-vkd3d \
     --without-x
+
+configure.pkg_config_path \
+    ${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
