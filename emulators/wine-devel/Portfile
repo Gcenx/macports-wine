@@ -105,6 +105,7 @@ if {${os.major} < 14} {
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -152,6 +153,7 @@ configure.args \
     --without-v4l2 \
     --without-x
 
+# Set the default pkgconfig path for Macports 
 configure.pkg_config_path \
     ${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 
