@@ -72,13 +72,9 @@ depends_build \
     port:pkgconfig
 
 depends_lib \
+    port:FAuido \
     port:freetype \
-    port:FAudio \
     path:lib/pkgconfig/gnutls.pc:gnutls \
-    port:gstreamer1 \
-    port:gstreamer1-gst-plugins-base \
-    port:gstreamer1-gst-plugins-good \
-    port:gstreamer1-gst-libav \
     path:include/turbojpeg.h:libjpeg-turbo \
     port:lcms2 \
     port:libiconv \
@@ -97,8 +93,7 @@ depends_run \
     port:mingw-w64-wine-gecko \
     port:mingw-w64-wine-mono-5.1.1
 
-patch.pre_args \
-    -p1
+patch.pre_args -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
@@ -110,7 +105,7 @@ patchfiles-append \
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
+    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -142,7 +137,7 @@ configure.args \
     --with-gnutls \
     --without-gsm \
     --without-gssapi \
-    --with-gstreamer \
+    --without-gstreamer \
     --without-hal \
     --without-inotify \
     --with-jpeg \
@@ -151,7 +146,7 @@ configure.args \
     --with-mingw \
     --with-mpg123 \
     --without-netapi \
-    --with-openal \
+    --without-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
@@ -210,6 +205,8 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
+default_variants +x11
+
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
@@ -223,7 +220,7 @@ build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
 destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
 
 if {[llength ${supported_archs}] > 1} {
-    default_variants +universal
+    default_variants-append +universal
 }
 
 if {${universal_possible} && [variant_isset universal]} {
@@ -242,16 +239,19 @@ if {${os.major} >= 15} {
     depends_lib-append \
         path:lib/libMoltenVK.dylib:MoltenVK
 
-    depends_skip_archcheck-append \
-        MoltenVK
+    if {"i386" in ${configure.universal_archs}} {
+        depends_skip_archcheck-append MoltenVK
+    }
 
     configure.args.x86_64-append \
         --with-vulkan \
         ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
         ac_cv_lib_soname_vulkan=
+} else {
+    configure.args.x86_64-append --without-vulkan
 }
 
-if {${os.major} == 10} {
+platform darwin 10 {
     # Need to try tracking down when these two reamaining breakages happened
     # https://trac.macports.org/ticket/61721
     patchfiles-append           1001-SnowLeopard-Fixes.diff
@@ -293,7 +293,7 @@ if {${os.major} == 10} {
     configure.sdk_version   10.7
     if {${configure.sdkroot} eq ""} {
         pre-fetch {
-            error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
+            error "Building ${subport} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
         }
     }
 }
@@ -303,18 +303,39 @@ if {${os.major} == 10} {
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
-variant usb description {Build ${name} with USB support} {
-    depends_lib-append port:libusb
-    configure.args-delete --without-usb
-    configure.args-append --with-usb
+variant gstreamer description {Build ${subport} with gstreamer support} {
+    depends_lib-append \
+        port:gstreamer1 \
+        port:gstreamer1-gst-plugins-base
+    configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
-destroot.target install-lib
+# wine(64)-preloader claims usb interface for no reason
+# https://github.com/Gcenx/WineskinServer/discussions/280
+variant usb description {Build ${subport} with USB support} {
+    depends_lib-append      port:libusb
+    configure.args-replace  --without-usb --with-usb
+}
+
+default_variants-append     +gstreamer
+
+triplet.add_build           cross
+
+# macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
+# https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
+compiler.limit_flags        yes
+muniversal.arch_flag        no
+muniversal.arch_compiler    yes
+configure.ldflags-delete    -L${compiler.library_path}
+configure.optflags          -g -O2
+
+# Reduce compilation warnings
+configure.cflags-append     -Wno-deprecated-declarations
+
+# Were only installing wine not the development files
+destroot.target             install-lib
 
 post-destroot {
-    # Add custom tool for easy launching explorer
-    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
-
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
@@ -341,16 +362,5 @@ if {${universal_possible} && [variant_isset universal]} {
         See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
     "
 }
-
-post-deactivate {
-     # When this port is deactivated, mingw-w64-wine-gecko should also be.
-     if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko] 0]}]} {
-         registry_deactivate_composite mingw-w64-wine-gecko "" [list ports_nodepcheck 1]
-     }
-     # When this port is deactivated, mingw-w64-wine-mono-5.1.1 should also be.
-     if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono-5.1.1] 0]}]} {
-         registry_deactivate_composite mingw-w64-wine-mono-5.1.1 "" [list ports_nodepcheck 1]
-     }
- }
 
 livecheck.type              none
