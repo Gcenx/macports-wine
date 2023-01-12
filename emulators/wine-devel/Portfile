@@ -72,8 +72,8 @@ depends_build \
     port:pkgconfig
 
 depends_lib \
-    port:freetype \
     port:FAudio \
+    port:freetype \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     path:include/turbojpeg.h:libjpeg-turbo \
     port:lcms2 \
@@ -84,7 +84,6 @@ depends_lib \
     port:libxml2 \
     port:libxslt \
     port:mpg123 \
-    port:openal-soft \
     port:openldap \
     port:tiff
 
@@ -105,7 +104,7 @@ patchfiles-append \
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
+    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -147,7 +146,7 @@ configure.args \
     --with-mingw \
     --with-mpg123 \
     --without-netapi \
-    --with-openal \
+    --without-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
@@ -298,7 +297,7 @@ platform darwin 10 {
     configure.sdk_version   10.7
     if {${configure.sdkroot} eq ""} {
         pre-fetch {
-            error "Building ${name} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
+            error "Building ${subport} @${version} on Mac OS X 10.6 requires the MacOSX10.7.sdk to be present in ${developer_dir}/SDKs/"
         }
     }
 }
@@ -311,9 +310,7 @@ compiler.fallback-append    macports-clang-5.0
 variant gstreamer description {Build ${subport} with gstreamer support} {
     depends_lib-append \
         port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-libav
+        port:gstreamer1-gst-plugins-base
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 

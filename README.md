@@ -8,7 +8,6 @@ wine-devel-6.13 builds but fails to run currently due to some 10.7 only function
 This may get downgraded to wine-6.8 if this works until any relevant reverts are collected.
 
 ## This repository contains;
-- `FAudio` *(v22.01)*
 - `wine` *(replaced_by wine-stable)*
 - `wine-stable` *(v6.0.4)*
 - `wine-devel` *(v6.13)*
