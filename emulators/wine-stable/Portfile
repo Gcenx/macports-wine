@@ -336,9 +336,6 @@ configure.cflags-append     -Wno-deprecated-declarations
 destroot.target             install-lib
 
 post-destroot {
-    # Add custom tool for easy launching explorer
-    xinstall ${worksrcpath}/tools/wineapploader.in ${destroot}${prefix}/bin/explorer
-
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
