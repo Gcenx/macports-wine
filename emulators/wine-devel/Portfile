@@ -262,7 +262,7 @@ if {${subport} eq "wine-devel" } {
     # Unmerged wow64 patches, make a none default variant
     # https://gitlab.winehq.org/jacek/wine/-/tree/wow
     if {${universal_possible} && ![variant_isset universal] || ${os.major} > 18} {
-        variant wow description {Build ${name} with wow64} {
+        variant wow description {Build ${subport} with wow64} {
             patchfiles-append               2001-wow.diff
             configure.args.x86_64-append    --enable-archs=i386,x86_64
         }
