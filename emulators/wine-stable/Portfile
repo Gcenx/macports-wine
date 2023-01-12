@@ -233,7 +233,7 @@ variant gstreamer description {Build ${subport} with gstreamer support} {
 # https://github.com/Gcenx/WineskinServer/discussions/280
 variant usb description {Build ${subport} with USB support} {
     depends_lib-append      port:libusb
-    configure.args-replace  --wthout-usb --with-usb
+    configure.args-replace  --without-usb --with-usb
 }
 
 default_variants-append     +gstreamer
