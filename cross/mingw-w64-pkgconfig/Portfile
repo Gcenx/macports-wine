@@ -46,18 +46,13 @@ patchfiles
 use_configure           no
 depends_run             port:pkgconfig
 
-build {
-    set gcc [open "${workpath}/mingw32-pkgconfig" w 0755]
-    puts ${gcc} "#!/bin/sh"
-    puts ${gcc} "export PKG_CONFIG_LIBDIR=@@PREFIX@@/@@TARGET@@/lib/pkgconfig:@@PREFIX@@/@@TARGET@@/share/pkgconfig"
-    puts ${gcc} "export PKG_CONFIG_PATH=\$\{PKG_CONFIG_PATH_CUSTOM\}:@@PREFIX@@/@@TARGET@@/lib/pkgconfig:@@PREFIX@@/@@TARGET@@/share/pkgconfig\}"
-    puts ${gcc} "@@PREFIX@@/bin/pkg-config \$\{\@\}"
-    close ${gcc}
-
-    reinplace -q s|@@PREFIX@@|${prefix}|g           ${workpath}/mingw32-pkgconfig
-    reinplace -q s|@@TARGET@@|${mingw_target}|g     ${workpath}/mingw32-pkgconfig
-}
+build {}
 
 destroot {
-    copy ${workpath}/mingw32-pkgconfig ${destroot}${prefix}/bin/${mingw_target}-pkg-config
+    set pkg [open "${destroot}${prefix}/bin/${mingw_target}-pkg-config" w 0755]
+    puts ${pkg} "#!/bin/sh"
+    puts ${pkg} "export PKG_CONFIG_LIBDIR=${prefix}/${mingw_target}/lib/pkgconfig:${prefix}/${mingw_target}/share/pkgconfig"
+    puts ${pkg} "export PKG_CONFIG_PATH=\$\{PKG_CONFIG_PATH_CUSTOM\}:${prefix}/${mingw_target}/lib/pkgconfig:${prefix}/${mingw_target}/share/pkgconfig\}"
+    puts ${pkg} "${prefix}/bin/pkg-config \$\{\@\}"
+    close ${pkg}
 }
