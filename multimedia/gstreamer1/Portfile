@@ -43,8 +43,8 @@ subport ${name} {
 
     depends_build \
         port:bison \
-        port:gettext \
         port:flex \
+        port:gettext \
         port:pkgconfig
 
     depends_lib \
