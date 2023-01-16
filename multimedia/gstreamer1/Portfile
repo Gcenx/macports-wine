@@ -23,13 +23,6 @@ checksums \
 compiler.cxx_standard \
     2014
 
-depends_build-append \
-    port:gettext \
-    port:pkgconfig
-
-depends_lib-append \
-    port:gettext-runtime
-
 
 subport ${name} {
     description \
@@ -48,11 +41,14 @@ subport ${name} {
     worksrcdir \
         ${worksrcpath}/subprojects/gstreamer
 
-    depends_build-append \
+    depends_build \
         port:bison \
-        port:flex
+        port:gettext \
+        port:flex \
+        port:pkgconfig
 
-    depends_lib-append \
+    depends_lib \
+        port:gettext-runtime \
         path:lib/pkgconfig/glib-2.0.pc:glib2
 
     configure.args-append \
@@ -103,10 +99,13 @@ subport ${name}-gst-plugins-base {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-plugins-base
 
-    depends_build-append \
-        port:gl-headers
+    depends_build \
+        port:gettext \
+        port:gl-headers \
+        port:pkgconfig
 
-    depends_lib-append \
+    depends_lib \
+        port:gettext-runtime \
         port:${name} \
         port:libogg \
         port:libopus \
@@ -181,8 +180,13 @@ subport ${name}-gst-plugins-good {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-plugins-good
 
-    depends_lib-append \
+    depends_build \
+        port:gettext \
+        port:pkgconfig
+
+    depends_lib \
         port:flac \
+        port:gettext-runtime \
         port:${name}-gst-plugins-base \
         path:lib/pkgconfig/vpx.pc:libvpx \
         port:mpg123 \
@@ -261,7 +265,12 @@ subport ${name}-gst-plugins-ugly {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-plugins-ugly
 
-    depends_lib-append \
+    depends_build \
+        port:gettext \
+        port:pkgconfig
+
+    depends_lib \
+        port:gettext-runtime
         port:${name}-gst-plugins-base \
         port:libmpeg2 \
         port:x264
@@ -312,9 +321,14 @@ subport ${name}-gst-plugins-bad {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-plugins-bad
 
-    depends_lib-append \
+    depends_build \
+        port:gettext \
+        port:pkgconfig
+
+    depends_lib \
         port:faac \
         port:faad2 \
+        port:gettext-runtime \
         port:${name}-gst-plugins-base \
         port:libfdk-aac \
         port:libusrsctp \
@@ -496,18 +510,13 @@ subport ${name}-gst-libav {
     worksrcdir \
         ${worksrcpath}/subprojects/gst-libav
 
-    depends_build-append \
-        port:nasm
+    depends_build \
+        port:nasm \
+        port:pkgconfig
 
-    depends_lib-append \
+    depends_lib \
         port:${name}-gst-plugins-base \
         port:ffmpeg
-
-    depends_build-delete \
-        port:gettext
-
-    depends_lib-delete \
-        port:gettext-runtime
 
     configure.args-append \
         -Ddoc=disabled \
