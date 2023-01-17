@@ -103,7 +103,7 @@ patchfiles-append \
     0005-loader-fix-environ.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
-# https://bugs.winehq.org/show_bug.cgi?id=52354
+# https://bugs.winehq.org/show_bug.cgi?id=54327
 if {${os.major} < 14} {
     patchfiles-append \
         1001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
