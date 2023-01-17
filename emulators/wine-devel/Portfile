@@ -16,7 +16,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-crossover
 set my_name                 wine
-version                     6.13
+version                     6.8
 revision                    0
 platforms                   {darwin >= 10}
 set branch                  [lindex [split ${version} .] 0].x
@@ -58,9 +58,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  798ce8d206ef677cd464bd98791c852a7f801c14 \
-    sha256  9dae73074fa52938f9b0bdf8081e95adf0f77a7d360cdf09d468f805efd8f875 \
-    size    41358477
+    rmd160  dab645cb700ee5a0915fa28feabc129f53f609e7 \
+    sha256  d0208944564acf5a14357117f34ed386e18709d28239f43377d639421c16b153 \
+    size    40979772
 
 depends_build \
     port:bison \
@@ -90,7 +90,7 @@ depends_lib \
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:mingw-w64-wine-gecko \
-    port:mingw-w64-wine-mono
+    port:mingw-w64-wine-mono-6.1.1
 
 patch.pre_args -p1
 
@@ -256,16 +256,7 @@ if {${os.major} < 12} {
     configure.args-replace  --with-opencl --without-opencl
 }
 
-# Pinning to wine-6.8 for Snow Leopard
 platform darwin 10 {
-    version                     6.8
-
-    checksums                   rmd160  dab645cb700ee5a0915fa28feabc129f53f609e7 \
-                                sha256  d0208944564acf5a14357117f34ed386e18709d28239f43377d639421c16b153 \
-                                size    40979772
-
-    depends_lib-replace         port:mingw-w64-wine-mono port:mingw-w64-wine-mono-6.1.1
-
     # "winemac.drv: Wake up the display on user input.", since wine-3.12
     # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
     patchfiles-append           1001-SnowLeopard-Fixes.diff
