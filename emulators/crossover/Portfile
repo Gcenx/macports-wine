@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 22.0.1
+version                 22.1.0
 revision                0
 platforms               {darwin >= 17}
 
@@ -45,12 +45,6 @@ if {${subport} eq ${name}} {
         # Remove CrossOver CD Helper
         delete "${workpath}/CrossOver.app/Contents/Resources/CrossOver CD Helper.app"
 
-        # Remove DXVK dlls (32Bit)
-        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
-
-        # Remove DXVK d3d9.dll (64Bit)
-        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine64/dxvk/d3d9.dll
-
         # Can't remove Sparkle.framework so remove the update url
         reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
     }
@@ -58,8 +52,8 @@ if {${subport} eq ${name}} {
     variant mod description {Replace DXVK, MoltenVK & SDL2} {
         depends_lib-append \
             port:libsdl2 \
-            port:MoltenVK \
-            port:x86_64-w64-mingw32-dxvk
+            port:mingw-w64-dxvk \
+            port:MoltenVK
 
         post-build {
             # Replace icon
@@ -69,8 +63,6 @@ if {${subport} eq ${name}} {
             # Add required MoltenVK env options to cxbottle.conf template
             ## Required by DXVK for AMD500/Intel GPUs
             system "echo MVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
-            ## Force SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE (better DXVK performance)
-            system "echo MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE=MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE_SINGLE_QUEUE >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
             system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
             ## My preferred DXVK HUD configuration
@@ -82,13 +74,15 @@ if {${subport} eq ${name}} {
             ln -sf ${prefix}/lib/libSDL2.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
             ln -sf ${prefix}/lib/libSDL2-2.0.0.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
 
+            # Use mingw-w64-dxvk
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
+            ln -sf ${prefix}/share/wine/dxvk/x32 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
+            ln -sf ${prefix}/share/wine/dxvk/x64 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
+
             # Use MoltenVK
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
             ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-
-            # Use x86_64-w64-mingw32-dxvk
-            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
-            ln -sf ${prefix}/share/wine/dxvk/x64 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
         }
 
         notes "
