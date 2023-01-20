@@ -8,6 +8,7 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `cx-llvm`                 *(CodeWeavers custom compiler for -mwine32 targets)*
 - `gl-headers`              *(2019.1.0)*
 - `gstreamer1`              *(1.20.5)*
+- `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
@@ -18,7 +19,6 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `wine-devel`              *(v8.0-rc4)*
 - `wine-staging`            *(v8.0-rc4)*
 - `winetricks`              *(v20221022)*
-- `x86_64-w64-mingw32-dxvk` *(v1.10.3)*
 
 ## How to use this repository
 After installing macports you will need a modern version of `git`\

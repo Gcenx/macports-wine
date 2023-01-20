@@ -1,0 +1,58 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        gcenx DXVK-macOS 1.10.3 v
+github.tarball_from releases
+
+categories          cross
+maintainers         {@gcenx}
+platforms           {darwin >= 15}
+license             zlib
+
+supported_archs     noarch
+description         Vulkan-based implementation of D3D10 and D3D11 for macOS / Wine, MingW version
+long_description    ${description}
+
+name                mingw-w64-dxvk
+dist_subdir         dxvk
+
+distname            dxvk-macOS-async-${version}_for_crossover22.1.0
+checksums           rmd160  9dc00d885fed5bda9db90d5638d00bdfe979faf7 \
+                    sha256  654fbc32da2540fa704e57707ba7593362224a9ce4bb70d71fc6867cdcd8f105 \
+                    size    9381061
+
+if {${subport} eq ${name}} {
+    PortGroup       stub 1.0
+    depends_run     port:i686-w64-mingw32-dxvk \
+                    port:x86_64-w64-mingw32-dxvk
+
+    post-deactivate {
+        # When this port is deactivated, i686-w64-mingw32-dxvk should also be.
+        if {![catch {set installed [lindex [registry_active i686-w64-mingw32-dxvk] 0]}]} {
+            registry_deactivate_composite i686-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+        }
+
+        # When this port is deactivated, x86_64-w64-mingw32-dxvk should also be.
+        if {![catch {set installed [lindex [registry_active x86_64-w64-mingw32-dxvk] 0]}]} {
+            registry_deactivate_composite x86_64-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+        }
+    }
+}
+
+subport i686-w64-mingw32-dxvk {
+    set arch        32
+}
+
+subport x86_64-w64-mingw32-dxvk {
+    set arch        64
+}
+
+use_configure       no
+build {}
+
+destroot {
+    xinstall -m 0755 -d ${destroot}${prefix}/share/wine/dxvk/x${arch}
+    xinstall -m 0644 {*}[glob ${workpath}/${distname}/x${arch}/*] ${destroot}${prefix}/share/wine/dxvk/x${arch}
+}
