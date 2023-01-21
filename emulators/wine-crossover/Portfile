@@ -3,6 +3,14 @@
 PortSystem                  1.0
 PortGroup                   muniversal 1.1
 PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   legacysupport 1.1
+
+# ntdll requires fstatat, since wine-5.9
+# https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
+legacysupport.newest_darwin_requires_legacy 13
+
+# Must be statically linked or -preloader breaks
+legacysupport.use_static yes
 
 # Keep the wine-stable, wine-devel, wine-staging and wine-crossover ports as similar as possible.
 
@@ -69,12 +77,7 @@ depends_lib \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     port:libpcap \
-    port:libsdl2 \
-    path:lib/libMoltenVK.dylib:MoltenVK
-
-if {"i386" in ${configure.universal_archs}} {
-    depends_skip_archcheck-append MoltenVK
-}
+    port:libsdl2
 
 depends_run \
     path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
@@ -171,10 +174,7 @@ configure.args.i386-append \
     --without-vulkan
 
 configure.args.x86_64-append \
-    --enable-win64 \
-    --with-vulkan \
-    ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-    ac_cv_lib_soname_vulkan=
+    --enable-win64
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants-append +universal
@@ -183,6 +183,31 @@ if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
 # Avoid weird linker errors with Xcode 10 and later
 if {${os.major} > 18} {
     macosx_deployment_target 10.14
+}
+
+# Vulkan is supported on macOS through MoltenVK, since wine-3.13
+if {${os.major} >= 15} {
+    depends_lib-append \
+        path:lib/libMoltenVK.dylib:MoltenVK
+
+    if {"i386" in ${configure.universal_archs}} {
+        depends_skip_archcheck-append MoltenVK
+    }
+
+    configure.args.x86_64-append \
+        --with-vulkan \
+        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
+        ac_cv_lib_soname_vulkan=
+}
+
+if {${os.major} < 15} {
+    depends_build-append    port:MacOSX10.11.sdk
+    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+
+    # Avoid linking Metal or rev-upgrade will cry
+    # Support GPU initialization via Metal, since wine-4.15
+    # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
+    configure.args-append   ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8
