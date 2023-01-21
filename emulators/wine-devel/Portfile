@@ -281,6 +281,7 @@ muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
+configure.env-append        CROSSCFLAGS=${configure.optflags}
 
 # Reduce compilation warnings
 configure.cflags-append     -Wno-deprecated-declarations
