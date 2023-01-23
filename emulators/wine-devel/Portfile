@@ -171,7 +171,7 @@ configure.args.x86_64-append \
     --enable-win64
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
-    default_variants-append +universal
+    default_variants +universal
 }
 
 # Avoid weird linker errors with Xcode 10 and later

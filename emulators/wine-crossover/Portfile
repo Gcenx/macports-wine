@@ -15,7 +15,6 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel, wine-staging and wine-crossover ports as similar as possible.
 
 # Crossover-specific bug reports are accepted at info@codeweavers.com
-
 name                        wine-crossover
 conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
@@ -177,7 +176,7 @@ configure.args.x86_64-append \
     --enable-win64
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
-    default_variants-append +universal
+    default_variants +universal
 }
 
 # Avoid weird linker errors with Xcode 10 and later
@@ -302,7 +301,7 @@ if {${os.major} > 18} {
     }
 
     notes-append "
-        ${subport} ${version} doesn't support generating 32Bit prefixes
+        ${subport}-${version} doesn't support generating 32Bit prefixes
     "
 }
 
