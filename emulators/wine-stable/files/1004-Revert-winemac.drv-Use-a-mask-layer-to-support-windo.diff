@@ -1,4 +1,4 @@
-From 7cb828b34d3b71754490453e3e68551c45e869dc Mon Sep 17 00:00:00 2001
+From 0aed8c5da4f46cb207ff06ac7f03716047c50e55 Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 22 Jan 2022 17:41:18 -0500
 Subject: [PATCH 4/5] Revert "winemac.drv: Use a mask layer to support window
@@ -11,10 +11,10 @@ This reverts commit 01f027b2db3196a8fe43be3d6718227794362985
  2 files changed, 47 insertions(+), 45 deletions(-)
 
 diff --git a/dlls/winemac.drv/cocoa_window.h b/dlls/winemac.drv/cocoa_window.h
-index 9a8bbb5e2557..a5ea17d5ea59 100644
+index a83f2aa803b..df02f1f6522 100644
 --- a/dlls/winemac.drv/cocoa_window.h
 +++ b/dlls/winemac.drv/cocoa_window.h
-@@ -52,6 +52,8 @@ @interface WineWindow : NSPanel <NSWindowDelegate>
+@@ -53,6 +53,8 @@ @interface WineWindow : NSPanel <NSWindowDelegate>
      NSRect wineFrame;
      NSRect roundedWineFrame;
  
@@ -24,10 +24,10 @@ index 9a8bbb5e2557..a5ea17d5ea59 100644
  
      BOOL colorKeyed;
 diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
-index 34b502b5f144..9ff587675c6a 100644
+index 2014027d2cc..6ccda75ac9f 100644
 --- a/dlls/winemac.drv/cocoa_window.m
 +++ b/dlls/winemac.drv/cocoa_window.m
-@@ -307,22 +307,6 @@ - (BOOL) layer:(CALayer*)layer shouldInheritContentsScale:(CGFloat)newScale from
+@@ -319,22 +319,6 @@ - (BOOL) layer:(CALayer*)layer shouldInheritContentsScale:(CGFloat)newScale from
  #endif
  
  
@@ -50,7 +50,7 @@ index 34b502b5f144..9ff587675c6a 100644
  @interface WineBaseView : NSView
  @end
  
-@@ -391,6 +375,8 @@ @interface WineWindow ()
+@@ -404,6 +388,8 @@ @interface WineWindow ()
  @property (nonatomic) void* surface;
  @property (nonatomic) pthread_mutex_t* surface_mutex;
  
@@ -59,7 +59,7 @@ index 34b502b5f144..9ff587675c6a 100644
  @property (nonatomic) BOOL shapeChangedSinceLastDraw;
  @property (readonly, nonatomic) BOOL needsTransparency;
  
-@@ -403,8 +389,6 @@ @interface WineWindow ()
+@@ -416,8 +402,6 @@ @interface WineWindow ()
  
  @property (readonly, copy, nonatomic) NSArray* childWineWindows;
  
@@ -68,7 +68,7 @@ index 34b502b5f144..9ff587675c6a 100644
      - (void) updateForGLSubviews;
  
      - (BOOL) becameEligibleParentOrChild;
-@@ -497,6 +481,17 @@ - (void) drawRect:(NSRect)rect
+@@ -510,6 +494,17 @@ - (void) drawRect:(NSRect)rect
          if ([window contentView] != self)
              return;
  
@@ -86,7 +86,7 @@ index 34b502b5f144..9ff587675c6a 100644
          if (window.surface && window.surface_mutex &&
              !pthread_mutex_lock(window.surface_mutex))
          {
-@@ -509,6 +504,8 @@ - (void) drawRect:(NSRect)rect
+@@ -522,6 +517,8 @@ - (void) drawRect:(NSRect)rect
                  CGContextRef context;
                  int i;
  
@@ -95,8 +95,8 @@ index 34b502b5f144..9ff587675c6a 100644
                  context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
                  CGContextSetBlendMode(context, kCGBlendModeCopy);
                  CGContextSetInterpolationQuality(context, retina_on ? kCGInterpolationHigh : kCGInterpolationNone);
-@@ -958,7 +955,7 @@ @implementation WineWindow
-     @synthesize disabled, noActivate, floating, fullscreen, fakingClose, closing, latentParentWindow, hwnd, queue;
+@@ -971,7 +968,7 @@ @implementation WineWindow
+     @synthesize disabled, noForeground, preventsAppActivation, floating, fullscreen, fakingClose, closing, latentParentWindow, hwnd, queue;
      @synthesize drawnSinceShown;
      @synthesize surface, surface_mutex;
 -    @synthesize shapeChangedSinceLastDraw;
@@ -104,7 +104,7 @@ index 34b502b5f144..9ff587675c6a 100644
      @synthesize colorKeyed, colorKeyRed, colorKeyGreen, colorKeyBlue;
      @synthesize usePerPixelAlpha;
      @synthesize imeData, commandDone;
-@@ -1059,6 +1056,8 @@ - (void) dealloc
+@@ -1072,6 +1069,8 @@ - (void) dealloc
          [queue release];
          [latentChildWindows release];
          [latentParentWindow release];
@@ -113,7 +113,7 @@ index 34b502b5f144..9ff587675c6a 100644
          [super dealloc];
      }
  
-@@ -1993,7 +1992,7 @@ - (void) setDisabled:(BOOL)newValue
+@@ -2020,7 +2019,7 @@ - (void) setDisabled:(BOOL)newValue
  
      - (BOOL) needsTransparency
      {
@@ -122,7 +122,7 @@ index 34b502b5f144..9ff587675c6a 100644
                  (gl_surface_mode == GL_SURFACE_BEHIND && [(WineContentView*)self.contentView hasGLDescendant]);
      }
  
-@@ -2015,27 +2014,22 @@ - (void) checkTransparency
+@@ -2042,27 +2041,22 @@ - (void) checkTransparency
          }
      }
  
@@ -159,7 +159,7 @@ index 34b502b5f144..9ff587675c6a 100644
      }
  
      - (void) makeFocused:(BOOL)activate
-@@ -2233,8 +2227,7 @@ - (void) checkWineDisplayLink
+@@ -2260,8 +2254,7 @@ - (void) checkWineDisplayLink
  
      - (BOOL) isEmptyShaped
      {
@@ -169,7 +169,7 @@ index 34b502b5f144..9ff587675c6a 100644
      }
  
      - (BOOL) canProvideSnapshot
-@@ -2636,7 +2629,8 @@ - (void) setRetinaMode:(int)mode
+@@ -2663,7 +2656,8 @@ - (void) setRetinaMode:(int)mode
  
          [transform scaleBy:scale];
  
@@ -179,7 +179,7 @@ index 34b502b5f144..9ff587675c6a 100644
  
          for (WineBaseView* subview in [self.contentView subviews])
          {
-@@ -3454,19 +3448,25 @@ void macdrv_set_window_shape(macdrv_window w, const CGRect *rects, int count)
+@@ -3481,19 +3475,25 @@ void macdrv_set_window_shape(macdrv_window w, const CGRect *rects, int count)
      OnMainThread(^{
          if (!rects || !count)
          {

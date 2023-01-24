@@ -1,4 +1,4 @@
-From 3f7bf531bb9591276cb9ebb567aa8173c0a3a2c3 Mon Sep 17 00:00:00 2001
+From 5d3360f2d101d6a2dc448afd4ac4734a44fc787f Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Fri, 7 Jan 2022 23:06:10 -0500
 Subject: [PATCH 1/5] Revert "winemac.drv: Remove now unused -[WineContentView
@@ -10,10 +10,10 @@ This reverts commit 3f845b34deada0dd58e3674119af47ce85851c24.
  1 file changed, 64 insertions(+)
 
 diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
-index 7708157a9924..836b1104145e 100644
+index bfa7e2fe8cc..2ee3b862456 100644
 --- a/dlls/winemac.drv/cocoa_window.m
 +++ b/dlls/winemac.drv/cocoa_window.m
-@@ -543,6 +543,70 @@ - (void) viewWillDraw
+@@ -556,6 +556,70 @@ - (void) viewWillDraw
          [pendingGlContexts removeAllObjects];
      }
  

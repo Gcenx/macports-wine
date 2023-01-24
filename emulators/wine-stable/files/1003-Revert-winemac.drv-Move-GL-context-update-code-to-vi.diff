@@ -1,4 +1,4 @@
-From 35a9bfee7858139363e3c36e225c591f159ac5e5 Mon Sep 17 00:00:00 2001
+From 403b32d28627bb6797cb8f4ceaff0018a6af26d1 Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 22 Jan 2022 17:39:54 -0500
 Subject: [PATCH 3/5] Revert "winemac.drv: Move GL context update code to
@@ -10,10 +10,10 @@ This reverts commit cad2a7c8e1ad97eaf8bbb7479f8c5ad8dca8a10d
  1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
-index 0f006f4ecc7a..34b502b5f144 100644
+index ba7eaf2ad78..2014027d2cc 100644
 --- a/dlls/winemac.drv/cocoa_window.m
 +++ b/dlls/winemac.drv/cocoa_window.m
-@@ -478,9 +478,9 @@ - (BOOL) isFlipped
+@@ -491,9 +491,9 @@ - (BOOL) isFlipped
          return YES;
      }
  
@@ -25,7 +25,7 @@ index 0f006f4ecc7a..34b502b5f144 100644
  
          for (WineOpenGLContext* context in pendingGlContexts)
          {
-@@ -493,11 +493,6 @@ - (void) viewWillDraw
+@@ -506,11 +506,6 @@ - (void) viewWillDraw
          }
          [glContexts addObjectsFromArray:pendingGlContexts];
          [pendingGlContexts removeAllObjects];

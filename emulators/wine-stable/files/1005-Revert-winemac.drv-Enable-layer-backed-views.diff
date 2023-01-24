@@ -1,4 +1,4 @@
-From 68e41032ea8d4e9706da3182357b6b06fa723d67 Mon Sep 17 00:00:00 2001
+From d0ed94ec9c8c5a4fb7e69aa8079c88de0bf88139 Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 22 Jan 2022 17:42:18 -0500
 Subject: [PATCH 5/5] Revert "winemac.drv: Enable layer-backed views."
@@ -9,10 +9,10 @@ This reverts commit a5cf847aa45c38bae1500ef19a9bac38bbd8d5ba
  1 file changed, 1 insertion(+), 20 deletions(-)
 
 diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
-index 9ff587675c6a..2c9f0828a939 100644
+index 6ccda75ac9f..5cf2ae6bc25 100644
 --- a/dlls/winemac.drv/cocoa_window.m
 +++ b/dlls/winemac.drv/cocoa_window.m
-@@ -297,16 +297,6 @@ static CVReturn WineDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTi
+@@ -309,16 +309,6 @@ static CVReturn WineDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTi
  @end
  
  
@@ -29,7 +29,7 @@ index 9ff587675c6a..2c9f0828a939 100644
  @interface WineBaseView : NSView
  @end
  
-@@ -323,7 +313,7 @@ - (id) initWithFrame:(NSRect)frame device:(id<MTLDevice>)device;
+@@ -335,7 +325,7 @@ - (id) initWithFrame:(NSRect)frame device:(id<MTLDevice>)device;
  #endif
  
  
@@ -38,7 +38,7 @@ index 9ff587675c6a..2c9f0828a939 100644
  {
      NSMutableArray* glContexts;
      NSMutableArray* pendingGlContexts;
-@@ -335,7 +325,6 @@ @interface WineContentView : WineBaseView <NSTextInputClient, NSViewLayerContent
+@@ -347,7 +337,6 @@ @interface WineContentView : WineBaseView <NSTextInputClient, NSViewLayerContent
      NSMutableAttributedString* markedText;
      NSRange markedTextSelection;
  
@@ -46,7 +46,7 @@ index 9ff587675c6a..2c9f0828a939 100644
      int backingSize[2];
  
  #ifdef HAVE_METAL_METAL_H
-@@ -686,15 +675,9 @@ - (void) setRetinaMode:(int)mode
+@@ -699,15 +688,9 @@ - (void) setRetinaMode:(int)mode
          [self setWantsBestResolutionOpenGLSurface:mode];
          [self updateGLContexts];
  
@@ -62,7 +62,7 @@ index 9ff587675c6a..2c9f0828a939 100644
      - (void) viewDidHide
      {
          [super viewDidHide];
-@@ -1006,7 +989,6 @@ + (WineWindow*) createWindowWithFeatures:(const struct macdrv_window_features*)w
+@@ -1019,7 +1002,6 @@ + (WineWindow*) createWindowWithFeatures:(const struct macdrv_window_features*)w
          contentView = [[[WineContentView alloc] initWithFrame:NSZeroRect] autorelease];
          if (!contentView)
              return nil;
@@ -70,7 +70,7 @@ index 9ff587675c6a..2c9f0828a939 100644
          [contentView setAutoresizesSubviews:NO];
  
          /* We use tracking areas in addition to setAcceptsMouseMovedEvents:YES
-@@ -3586,7 +3568,6 @@ macdrv_view macdrv_create_view(CGRect rect)
+@@ -3613,7 +3595,6 @@ macdrv_view macdrv_create_view(CGRect rect)
          NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
  
          view = [[WineContentView alloc] initWithFrame:NSRectFromCGRect(cgrect_mac_from_win(rect))];
