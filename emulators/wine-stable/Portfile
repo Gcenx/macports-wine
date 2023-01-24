@@ -106,7 +106,7 @@ patchfiles-append \
 
 post-patch {
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
+    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
