@@ -17,7 +17,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     8.0-rc5
+version                     8.0
 revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  79e282ffe6a06216c56b39d04a9345d9ec305029 \
-    sha256  414b9ad3ff3093c03812b2f2759e9c7776e1355135aabd5b3f525b6ff8982ad0 \
-    size    48010471
+    rmd160  72039ce3eff47e4fbdbae0c7c8b60408d5cbc51b \
+    sha256  2dc71023778b139234f4987333ec0d58da95c6f9e32952b756f7544280009d78 \
+    size    48004432
 
 depends_build \
     port:bison \
@@ -105,6 +105,7 @@ if {${os.major} < 14} {
 }
 
 post-patch {
+    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
@@ -174,9 +175,19 @@ if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
 }
 
-# Avoid weird linker errors with Xcode 10 and later
 if {${os.major} > 18} {
+    # Avoid weird linker errors with Xcode 10 and later
     macosx_deployment_target 10.14
+
+    # Build i386 & x86_64 PE binaries for WoW64
+    configure.args.x86_64-append    --enable-archs=i386,x86_64
+
+    # When building for WoW64 the wine loader isn't renamed to wine64(-preloader)
+    post-destroot {
+        # copy wine(-preloader) to wine64(-preloader) for consistancy and winetricks compatability
+        copy ${destroot}${prefix}/bin/wine ${destroot}${prefix}/bin/wine64
+        copy ${destroot}${prefix}/bin/wine-preloader ${destroot}${prefix}/bin/wine64-preloader
+    }
 }
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
@@ -227,9 +238,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  7aafed5e38dc968ee7f6e1a0168c71278e8c4cae \
-        sha256  d7dd6806ae0ad9695bdafe0b80ca2385a9e02ac921df45d3b6d512ff409cd92d \
-        size    9529588
+        rmd160  d22529c1e296d98700c859cfec0cc73a9eb63e28 \
+        sha256  9b0ba0be13ba2e77bc9a9d8c9160f3580e538d9eb788b52d176222349d9869cd \
+        size    9529620
 
     depends_extract-append \
         port:autoconf
@@ -259,17 +270,6 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-if {${subport} eq "wine-devel" } {
-    # Unmerged wow64 patches, make a none default variant
-    # https://gitlab.winehq.org/jacek/wine/-/tree/wow
-    if {${universal_possible} && ![variant_isset universal] || ${os.major} > 18} {
-        variant wow description {Build ${subport} with wow64} {
-            patchfiles-append               2001-wow.diff
-            configure.args.x86_64-append    --enable-archs=i386,x86_64
-        }
-    }
-}
-
 default_variants-append     +gstreamer
 
 triplet.add_build           cross
@@ -289,7 +289,7 @@ configure.cflags-append     -Wno-deprecated-declarations
 # Were only installing wine not the development files
 destroot.target             install-lib
 
-post-destroot {
+pre-destroot {
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \

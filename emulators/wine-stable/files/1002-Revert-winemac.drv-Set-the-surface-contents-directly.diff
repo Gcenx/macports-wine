@@ -1,4 +1,4 @@
-From f420f3d638418e4d9540525a1785a889bcbdb85c Mon Sep 17 00:00:00 2001
+From 54443f509930dbd66f54baf7205376babaf7b221 Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Sat, 22 Jan 2022 17:38:39 -0500
 Subject: [PATCH 2/5] Revert "winemac.drv: Set the surface contents directly to
@@ -12,10 +12,10 @@ This reverts commit 9e599a89e30c9ae403f5c7861e0f7690a03c4e22.
  3 files changed, 30 insertions(+), 101 deletions(-)
 
 diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
-index 836b1104145e..0f006f4ecc7a 100644
+index 2ee3b862456..ba7eaf2ad78 100644
 --- a/dlls/winemac.drv/cocoa_window.m
 +++ b/dlls/winemac.drv/cocoa_window.m
-@@ -478,54 +478,6 @@ - (BOOL) isFlipped
+@@ -491,54 +491,6 @@ - (BOOL) isFlipped
          return YES;
      }
  
@@ -70,7 +70,7 @@ index 836b1104145e..0f006f4ecc7a 100644
      - (void) viewWillDraw
      {
          [super viewWillDraw];
-@@ -556,17 +508,12 @@ - (void) drawRect:(NSRect)rect
+@@ -569,17 +521,12 @@ - (void) drawRect:(NSRect)rect
              const CGRect* rects;
              int count;
  
@@ -89,7 +89,7 @@ index 836b1104145e..0f006f4ecc7a 100644
                  context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
                  CGContextSetBlendMode(context, kCGBlendModeCopy);
                  CGContextSetInterpolationQuality(context, retina_on ? kCGInterpolationHigh : kCGInterpolationNone);
-@@ -577,15 +524,25 @@ - (void) drawRect:(NSRect)rect
+@@ -590,15 +537,25 @@ - (void) drawRect:(NSRect)rect
                      CGImageRef image;
  
                      imageRect = CGRectIntersection(rects[i], dirtyRect);
@@ -121,7 +121,7 @@ index 836b1104145e..0f006f4ecc7a 100644
  
                          CGImageRelease(image);
                      }
-@@ -738,9 +695,6 @@ - (void) setRetinaMode:(int)mode
+@@ -751,9 +708,6 @@ - (void) setRetinaMode:(int)mode
          [self updateGLContexts];
  
          _retinaMode = !!mode;
@@ -131,7 +131,7 @@ index 836b1104145e..0f006f4ecc7a 100644
          [super setRetinaMode:mode];
      }
  
-@@ -1061,9 +1015,6 @@ + (WineWindow*) createWindowWithFeatures:(const struct macdrv_window_features*)w
+@@ -1074,9 +1028,6 @@ + (WineWindow*) createWindowWithFeatures:(const struct macdrv_window_features*)w
          if (!contentView)
              return nil;
          [contentView setWantsLayer:YES];
@@ -141,7 +141,7 @@ index 836b1104145e..0f006f4ecc7a 100644
          [contentView setAutoresizesSubviews:NO];
  
          /* We use tracking areas in addition to setAcceptsMouseMovedEvents:YES
-@@ -3641,9 +3592,6 @@ macdrv_view macdrv_create_view(CGRect rect)
+@@ -3668,9 +3619,6 @@ macdrv_view macdrv_create_view(CGRect rect)
  
          view = [[WineContentView alloc] initWithFrame:NSRectFromCGRect(cgrect_mac_from_win(rect))];
          [view setWantsLayer:YES];
@@ -152,10 +152,10 @@ index 836b1104145e..0f006f4ecc7a 100644
          [view setAutoresizingMask:NSViewNotSizable];
          [view setHidden:YES];
 diff --git a/dlls/winemac.drv/macdrv_cocoa.h b/dlls/winemac.drv/macdrv_cocoa.h
-index 2c903bfb12a3..e9290a605aa9 100644
+index 94f9fbcfa17..c7bda0c89cf 100644
 --- a/dlls/winemac.drv/macdrv_cocoa.h
 +++ b/dlls/winemac.drv/macdrv_cocoa.h
-@@ -568,8 +568,7 @@ extern void macdrv_order_cocoa_window(macdrv_window w, macdrv_window prev,
+@@ -570,8 +570,7 @@ extern void macdrv_order_cocoa_window(macdrv_window w, macdrv_window prev,
  extern void macdrv_get_cocoa_window_frame(macdrv_window w, CGRect* out_frame) DECLSPEC_HIDDEN;
  extern void macdrv_set_cocoa_parent_window(macdrv_window w, macdrv_window parent) DECLSPEC_HIDDEN;
  extern void macdrv_set_window_surface(macdrv_window w, void *surface, pthread_mutex_t *mutex) DECLSPEC_HIDDEN;
@@ -166,10 +166,10 @@ index 2c903bfb12a3..e9290a605aa9 100644
  extern void macdrv_window_needs_display(macdrv_window w, CGRect rect) DECLSPEC_HIDDEN;
  extern void macdrv_set_window_shape(macdrv_window w, const CGRect *rects, int count) DECLSPEC_HIDDEN;
 diff --git a/dlls/winemac.drv/surface.c b/dlls/winemac.drv/surface.c
-index 6a5cd535923d..7be1b6850e06 100644
+index 9605e704c92..54a8e269b8c 100644
 --- a/dlls/winemac.drv/surface.c
 +++ b/dlls/winemac.drv/surface.c
-@@ -264,7 +264,7 @@ struct window_surface *create_surface(macdrv_window window, const RECT *rect,
+@@ -266,7 +266,7 @@ struct window_surface *create_surface(macdrv_window window, const RECT *rect,
  
      surface->info.bmiHeader.biSize        = sizeof(surface->info.bmiHeader);
      surface->info.bmiHeader.biWidth       = width;
@@ -178,7 +178,7 @@ index 6a5cd535923d..7be1b6850e06 100644
      surface->info.bmiHeader.biPlanes      = 1;
      surface->info.bmiHeader.biBitCount    = 32;
      surface->info.bmiHeader.biSizeImage   = get_dib_image_size(&surface->info);
-@@ -342,21 +342,18 @@ int get_surface_blit_rects(void *window_surface, const CGRect **rects, int *coun
+@@ -344,21 +344,18 @@ int get_surface_blit_rects(void *window_surface, const CGRect **rects, int *coun
  {
      struct macdrv_window_surface *surface = get_mac_surface(window_surface);
  
@@ -209,7 +209,7 @@ index 6a5cd535923d..7be1b6850e06 100644
  }
  
  /***********************************************************************
-@@ -374,8 +371,7 @@ int get_surface_blit_rects(void *window_surface, const CGRect **rects, int *coun
+@@ -376,8 +373,7 @@ int get_surface_blit_rects(void *window_surface, const CGRect **rects, int *coun
   *            must not use Win32 or Wine functions, including debug
   *            logging.
   */
@@ -219,7 +219,7 @@ index 6a5cd535923d..7be1b6850e06 100644
  {
      CGImageRef cgimage = NULL;
      struct macdrv_window_surface *surface = get_mac_surface(window_surface);
-@@ -396,7 +392,7 @@ CGImageRef create_surface_image(void *window_surface, CGRect *rect, int copy_dat
+@@ -398,7 +394,7 @@ CGImageRef create_surface_image(void *window_surface, CGRect *rect, int copy_dat
  
          colorspace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
          bytes_per_row = get_dib_stride(width, 32);
@@ -228,7 +228,7 @@ index 6a5cd535923d..7be1b6850e06 100644
          size = min(CGRectGetHeight(visrect) * bytes_per_row,
                     surface->info.bmiHeader.biSizeImage - offset);
  
-@@ -416,20 +412,6 @@ CGImageRef create_surface_image(void *window_surface, CGRect *rect, int copy_dat
+@@ -418,20 +414,6 @@ CGImageRef create_surface_image(void *window_surface, CGRect *rect, int copy_dat
                                  provider, NULL, retina_on, kCGRenderingIntentDefault);
          CGDataProviderRelease(provider);
          CGColorSpaceRelease(colorspace);
