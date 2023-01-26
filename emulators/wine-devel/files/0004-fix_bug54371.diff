@@ -1,0 +1,24 @@
+From 8a6115f76f51f434d0380835b93bb4e4b31bd26f Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Thu, 26 Jan 2023 10:37:48 +0100
+Subject: [PATCH] ntdll: Prefer the ntdll path over argv[0] on platforms
+ without reliable exe information.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=54371
+---
+ dlls/ntdll/unix/loader.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+index a1525cf7f936..2890e05c6332 100644
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -640,8 +640,6 @@ static void init_paths( char *argv[] )
+                 bin_dir = realpath_dirname( path );
+             free( path );
+         }
+-#else
+-        bin_dir = realpath_dirname( argv[0] );
+ #endif
+         if (!bin_dir) bin_dir = build_path( dll_dir, DLL_TO_BINDIR );
+         data_dir = build_path( bin_dir, BIN_TO_DATADIR );

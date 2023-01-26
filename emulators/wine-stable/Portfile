@@ -93,6 +93,10 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
+# https://bugs.winehq.org/show_bug.cgi?id=54371, remove wine-8.0.1
+patchfiles-append \
+    0004-fix_bug54371.diff
+
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
 if {${os.major} < 14} {
@@ -122,6 +126,12 @@ configure.checks.implicit_function_declaration.whitelist-append \
 # http://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install \
     ${worksrcpath}/tools/install-sh
+
+configure.pre_args.i386 \
+    --with-wine64=${workpath}/${worksrcdir}-x86_64
+
+configure.pre_args.x86_64 \
+    --enable-win64
 
 configure.args \
     --without-alsa \
@@ -155,7 +165,7 @@ configure.args \
     --without-v4l2 \
     --without-x
 
-# Set the default pkgconfig path for Macports 
+# Set the default pkgconfig path for Macports
 configure.pkg_config_path \
     ${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 
@@ -163,13 +173,6 @@ configure.pkg_config_path \
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
-
-configure.args.i386-append \
-    --with-wine64=${workpath}/${worksrcdir}-x86_64 \
-    --without-vulkan
-
-configure.args.x86_64-append \
-    --enable-win64
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
@@ -180,39 +183,32 @@ if {${os.major} > 18} {
     macosx_deployment_target 10.14
 
     # Build i386 & x86_64 PE binaries for WoW64
-    configure.args.x86_64-append    --enable-archs=i386,x86_64
-
-    # When building for WoW64 the wine loader isn't renamed to wine64(-preloader)
-    post-destroot {
-        # copy wine(-preloader) to wine64(-preloader) for consistancy and winetricks compatability
-        copy ${destroot}${prefix}/bin/wine ${destroot}${prefix}/bin/wine64
-        copy ${destroot}${prefix}/bin/wine-preloader ${destroot}${prefix}/bin/wine64-preloader
-    }
+    configure.pre_args.x86_64-append    --enable-archs=i386,x86_64
 }
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
-    depends_lib-append \
-        path:lib/libMoltenVK.dylib:MoltenVK
-
+    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
         depends_skip_archcheck-append MoltenVK
     }
-
-    configure.args.x86_64-append \
-        --with-vulkan \
-        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-        ac_cv_lib_soname_vulkan=
+    configure.args.i386     --without-vulkan
+    configure.args.x86_64   --with-vulkan
+    configure.env.x86_64    ac_cv_lib_soname_vulkan=
+} else {
+    configure.args-append   --without-vulkan
 }
 
 if {${os.major} < 15} {
-    depends_build-append    port:MacOSX10.11.sdk
-    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-
+    configure.sdk_version   10.11
+    if {${configure.sdkroot} eq ""} {
+        depends_build-append    port:MacOSX10.11.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+    }
     # Avoid linking Metal or rev-upgrade will cry
     # Support GPU initialization via Metal, since wine-4.15
     # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-    configure.args-append   ac_cv_header_Metal_Metal_h=
+    configure.env-append    ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8
@@ -254,7 +250,7 @@ configure.cflags-append     -Wno-deprecated-declarations
 # Were only installing wine not the development files
 destroot.target             install-lib
 
-pre-destroot {
+post-destroot {
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
@@ -266,7 +262,7 @@ pre-destroot {
         ${destroot}${docdir}
 }
 
-if {[variant_isset universal]} {
+if {[option universal_possible] && [variant_isset universal]} {
     notes-append "
         \n
         Wine supports both 32-bit and 64-bit now. It is compatible with your\

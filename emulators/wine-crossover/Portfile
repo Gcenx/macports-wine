@@ -109,6 +109,7 @@ patchfiles-append \
     0007-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
 
 post-patch {
+    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
     reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
@@ -126,6 +127,12 @@ configure.checks.implicit_function_declaration.whitelist-append \
 # http://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install \
     ${worksrcpath}/tools/install-sh
+
+configure.pre_args.i386 \
+    --with-wine64=${workpath}/${worksrcdir}-x86_64
+
+configure.pre_args.x86_64 \
+    --enable-win64
 
 configure.args \
     --without-alsa \
@@ -159,7 +166,7 @@ configure.args \
     --without-v4l2 \
     --without-x
 
-# Set the default pkgconfig path for Macports 
+# Set the default pkgconfig path for Macports
 configure.pkg_config_path \
     ${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 
@@ -167,13 +174,6 @@ configure.pkg_config_path \
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
-
-configure.args.i386-append \
-    --with-wine64=${workpath}/${worksrcdir}-x86_64 \
-    --without-vulkan
-
-configure.args.x86_64-append \
-    --enable-win64
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
@@ -186,27 +186,27 @@ if {${os.major} > 18} {
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
-    depends_lib-append \
-        path:lib/libMoltenVK.dylib:MoltenVK
-
+    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
         depends_skip_archcheck-append MoltenVK
     }
-
-    configure.args.x86_64-append \
-        --with-vulkan \
-        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-        ac_cv_lib_soname_vulkan=
+    configure.args.i386     --without-vulkan
+    configure.args.x86_64   --with-vulkan
+    configure.env.x86_64    ac_cv_lib_soname_vulkan=
+} else {
+    configure.args-append   --without-vulkan
 }
 
 if {${os.major} < 15} {
-    depends_build-append    port:MacOSX10.11.sdk
-    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-
+    configure.sdk_version   10.11
+    if {${configure.sdkroot} eq ""} {
+        depends_build-append    port:MacOSX10.11.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
+    }
     # Avoid linking Metal or rev-upgrade will cry
     # Support GPU initialization via Metal, since wine-4.15
     # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-    configure.args-append   ac_cv_header_Metal_Metal_h=
+    configure.env-append    ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8
@@ -249,18 +249,12 @@ destroot.target             install-lib
 
 if {${os.major} > 18} {
     depends_build-append    port:cx-llvm
-
-    patchfiles-append       1001-remove-cross_compiling-check.diff
-
     configure.cc            ${prefix}/libexec/cx-llvm/bin/clang
     configure.cxx           ${prefix}/libexec/cx-llvm/bin/clang++
     configure.cmd           ${worksrcpath}/configure
     configure.compiler.add_deps no
 
-    configure.args-append \
-        --disable-winedbg
-
-    configure.args.i386-append \
+    configure.pre_args.i386-append \
         --enable-win32on64 \
         --disable-loader
 
@@ -273,9 +267,10 @@ if {${os.major} > 18} {
         set configure.dir ${worksrcpath}-x86_64
         portconfigure::configure_main
 
+        configure.pre_args.x86_64
         configure.args.x86_64
         set configure.dir ${worksrcpath}-i386
-        configure.args-append ${configure.args.i386}
+        configure.args ${configure.pre_args.i386} ${configure.args} ${configure.args.i386}
         portconfigure::configure_main
     }
 
@@ -330,7 +325,7 @@ post-destroot {
         ${destroot}${docdir}
 }
 
-if {[variant_isset universal]} {
+if {[option universal_possible] && [variant_isset universal]} {
     notes-append "
         \n
         Wine supports both 32-bit and 64-bit now. It is compatible with your\
@@ -344,6 +339,10 @@ if {[variant_isset universal]} {
 
         See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
     "
+}
+
+platform darwin arm {
+    patchfiles.x86_64       1001-remove-cross_compiling-check.diff
 }
 
 livecheck.type              regex
