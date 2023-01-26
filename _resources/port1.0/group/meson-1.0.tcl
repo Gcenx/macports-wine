@@ -25,7 +25,7 @@ depends_skip_archcheck-append \
 
 # TODO: --buildtype=plain tells Meson not to add its own flags to the command line. This gives the packager total control on used flags.
 default configure.cmd       {${prefix}/bin/meson}
-default configure.pre_args  {setup}
+#default configure.pre_args  {setup}
 default configure.post_args {[meson::get_post_args]}
 configure.universal_args-delete \
                             --disable-dependency-tracking
