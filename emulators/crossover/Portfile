@@ -99,8 +99,8 @@ destroot {
 }
 
 post-deactivate {
-    # When this port is deactivated, x86_64-w64-mingw32-dxvk should also be.
-    if {![catch {set installed [lindex [registry_active x86_64-w64-mingw32-dxvk] 0]}]} {
-        registry_deactivate_composite x86_64-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+    # When this port is deactivated, mingw-w64-dxvk should also be.
+    if {![catch {set installed [lindex [registry_active mingw-w64-dxvk] 0]}]} {
+        registry_deactivate_composite mingw-w64-dxvk "" [list ports_nodepcheck 1]
     }
 }
