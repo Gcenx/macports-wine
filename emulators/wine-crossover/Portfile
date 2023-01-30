@@ -175,7 +175,7 @@ configure.pkg_config_path \
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
-if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
+if {([llength ${muniversal.architectures}] > 1) && (${os.major} < 19)} {
     default_variants +universal
 }
 
@@ -187,7 +187,7 @@ if {${os.major} > 18} {
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
     depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
+    if {"i386" in ${muniversal.architectures}} {
         depends_skip_archcheck-append MoltenVK
     }
     configure.args.i386     --without-vulkan
