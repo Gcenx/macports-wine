@@ -162,7 +162,9 @@ configure.args \
     --without-udev \
     --with-unwind \
     --without-usb \
-    --without-v4l2 \
+    --without-v4l2
+
+configure.post_args \
     --without-x
 
 # Set the default pkgconfig path for Macports
