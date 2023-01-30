@@ -163,7 +163,9 @@ configure.args \
     --without-udev \
     --with-unwind \
     --without-usb \
-    --without-v4l2 \
+    --without-v4l2
+
+configure.post_args \
     --without-x
 
 # Set the default pkgconfig path for Macports
@@ -270,7 +272,7 @@ if {${os.major} > 18} {
         configure.pre_args.x86_64
         configure.args.x86_64
         set configure.dir ${worksrcpath}-i386
-        configure.args ${configure.pre_args.i386} ${configure.args} ${configure.args.i386}
+        configure.args ${configure.pre_args.i386} ${configure.args} ${configure.args.i386} ${configure.post_args}
         portconfigure::configure_main
     }
 
