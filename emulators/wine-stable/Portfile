@@ -85,7 +85,6 @@ depends_lib \
     port:libxml2 \
     port:libxslt \
     port:mpg123 \
-    port:openal-soft \
     port:openldap \
     port:tiff
 
