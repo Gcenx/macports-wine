@@ -230,7 +230,7 @@ if {${os.major} > 18} {
     macosx_deployment_target    10.14
 }
 
-Vulkan is supported on macOS through MoltenVK, since wine-3.13
+# Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
     depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
