@@ -104,8 +104,9 @@ patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
 post-patch {
-    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
+    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
