@@ -207,25 +207,20 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
-default_variants +x11
-
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
-configure.args.i386-append \
-    --without-vulkan
-
-configure.args.x86_64-append \
+configure.pre_args.x86_64 \
     --enable-win64
 
 if {[llength ${supported_archs}] > 1} {
-    default_variants-append +universal
+    default_variants            +universal
 }
 
 if {${universal_possible} && [variant_isset universal]} {
-    configure.args.i386-append  --with-wine64=${workpath}/${worksrcdir}-x86_64
+    configure.pre_args.i386     --with-wine64=${workpath}/${worksrcdir}-x86_64
 } elseif {${universal_possible} && ![variant_isset universal]} {
     supported_archs             i386
 }
@@ -235,21 +230,17 @@ if {${os.major} > 18} {
     macosx_deployment_target    10.14
 }
 
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
+Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
-    depends_lib-append \
-        path:lib/libMoltenVK.dylib:MoltenVK
-
+    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
         depends_skip_archcheck-append MoltenVK
     }
-
-    configure.args.x86_64-append \
-        --with-vulkan \
-        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-        ac_cv_lib_soname_vulkan=
+    configure.args.i386     --without-vulkan
+    configure.args.x86_64   --with-vulkan
+    configure.env.x86_64    ac_cv_lib_soname_vulkan=
 } else {
-    configure.args.x86_64-append --without-vulkan
+    configure.args-append   --without-vulkan
 }
 
 # MacOSX10.7.SDK opencl isn't new enough, since wine-6.5
@@ -315,7 +306,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants-append     +gstreamer
+default_variants-append     +gstreamer +x11
 
 triplet.add_build           cross
 
