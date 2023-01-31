@@ -214,10 +214,7 @@ default_variants +x11
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
-configure.args.i386-append \
-    --without-vulkan
-
-configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
+configure.pre_args.x86_64.      "--enable-win64 --libdir=${prefix}/lib"
 build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
 destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
 
@@ -226,7 +223,7 @@ if {[llength ${supported_archs}] > 1} {
 }
 
 if {${universal_possible} && [variant_isset universal]} {
-    configure.args.i386-append  --with-wine64=${workpath}/${worksrcdir}-x86_64
+    configure.pre_args.i386     --with-wine64=${workpath}/${worksrcdir}-x86_64
 } elseif {${universal_possible} && ![variant_isset universal]} {
     supported_archs             i386
 }
@@ -238,19 +235,15 @@ if {${os.major} > 18} {
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
-    depends_lib-append \
-        path:lib/libMoltenVK.dylib:MoltenVK
-
+    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
         depends_skip_archcheck-append MoltenVK
     }
-
-    configure.args.x86_64-append \
-        --with-vulkan \
-        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-        ac_cv_lib_soname_vulkan=
+    configure.args.i386     --without-vulkan
+    configure.args.x86_64   --with-vulkan
+    configure.env.x86_64    ac_cv_lib_soname_vulkan=
 } else {
-    configure.args.x86_64-append --without-vulkan
+    configure.args-append   --without-vulkan
 }
 
 platform darwin 10 {
