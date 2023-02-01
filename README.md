@@ -2,8 +2,6 @@
 This branch focus having somewhat modern wine running on OS X Snow Leopard.\
 These are still WIP and lightly require additional reverts.
 
-wine-stable-6.0.4 builds and runs.
-
 ## This repository contains;
 - `wine` *(replaced_by wine-stable)*
 - `wine-stable` *(v6.0.4)*
@@ -17,4 +15,4 @@ git clone the repository into /opt then follow [4.6. Local Portfile Repositories
 Next run `port -v sync` you can now install any of the provided Ports.
 
 # Requirements 
-`libsdl2` & `wine-stable` require `MacOSX10.7.SDK`
+`MacOSX10.7.SDK`
