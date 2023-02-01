@@ -10,7 +10,7 @@ PortGroup                   muniversal 1.1
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
 legacysupport.newest_darwin_requires_legacy 13
 
-# Must be statically linked or -preloader breaks
+# Must be statically linked or wine(64)-preloader breaks
 legacysupport.use_static yes
 
 name                        wine-devel
@@ -243,19 +243,11 @@ if {${os.major} < 12} {
     configure.args-replace  --with-opencl --without-opencl
 }
 
+# Patches/reverts are ordered wine-6.x > wine-3.x
 platform darwin 10 {
-    # "winemac.drv: Wake up the display on user input.", since wine-3.12
-    # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
-    patchfiles-append           1001-SnowLeopard-Fixes.diff
-
-    # libmacho is required for getsegmentdata(3), since wine-3.14
-    # https://gitlab.winehq.org/wine/wine/-/commit/bdca749f7ba4f434ac326481cf4fe0a059887f5d
-    depends_build-append        port:libmacho
-    configure.ldflags-append    ${prefix}/lib/libmacho.a
-
-    # ld64 needs to support -no_new_main for preloader, since wine-4.0-rc1
-    # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
-    require_active_variants     port:ld64 ld64_274
+    # Features don't exist in IOKit until 10.7, since wine-4.21
+    # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
+    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
 
     # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
     # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
@@ -263,14 +255,18 @@ platform darwin 10 {
         reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
     }
 
-    # Features don't exist in IOKit until 10.7, since wine-4.21
-    # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
+    # ld64 needs to support -no_new_main for preloader, since wine-4.0-rc1
+    # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
+    require_active_variants     port:ld64 ld64_274
 
-    #### Possibly need to revet for wine-6.22 not sure ####
-    # user32: Redraw children when the combo box is dropped down, since wine-6.22 (cherry picked)
-    # https://gitlab.winehq.org/wine/wine/-/commit/ad7c5e9ced855950228ea3f73bff0624829b66d7
-    #patchfiles-append           1003-Revert-ad7c5e9ced855950228ea3f73bff0624829b66d7.diff
+    # libmacho is required for getsegmentdata(3), since wine-3.14
+    # https://gitlab.winehq.org/wine/wine/-/commit/bdca749f7ba4f434ac326481cf4fe0a059887f5d
+    depends_build-append        port:libmacho
+    configure.ldflags-append    ${prefix}/lib/libmacho.a
+
+    # "winemac.drv: Wake up the display on user input.", since wine-3.12
+    # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
+    patchfiles-append           1001-SnowLeopard-Fixes.diff
 
     # Using the 10.7 SDK to avoid even more reverts
     configure.sdk_version   10.7
