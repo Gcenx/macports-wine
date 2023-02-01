@@ -1,10 +1,10 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
-PortGroup                   muniversal 1.1
-PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   active_variants 1.1
+PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   legacysupport 1.1
+PortGroup                   muniversal 1.1
 
 # ntdll requires fstatat, since wine-5.9
 # https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
@@ -79,7 +79,6 @@ depends_lib \
     port:libxml2 \
     port:libxslt \
     port:mpg123 \
-    port:openal-soft \
     port:openldap \
     port:tiff
 
@@ -99,8 +98,9 @@ patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
 post-patch {
-    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
+    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -115,6 +115,10 @@ configure.checks.implicit_function_declaration.whitelist-append \
 # https://bugs.winehq.org/show_bug.cgi?id=35310
 configure.install \
     ${worksrcpath}/tools/install-sh
+
+configure.pre_args.x86_64 \
+    --enable-win64 \
+    --libdir=${prefix}/lib
 
 configure.args \
     --without-alsa \
@@ -200,26 +204,20 @@ variant x11 {
         --x-lib=${prefix}/lib
 }
 
-default_variants +x11
-
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append \
     -Wl,-rpath,${prefix}/lib
 
-configure.args.i386-append \
-    --without-vulkan
-
-configure.args.x86_64-append    "--enable-win64 --libdir=${prefix}/lib"
 build.args.x86_64-append        "dlldir=${prefix}/lib/wine64"
 destroot.args.x86_64-append     "dlldir=${prefix}/lib/wine64"
 
 if {[llength ${supported_archs}] > 1} {
-    default_variants-append +universal
+    default_variants            +universal
 }
 
 if {${universal_possible} && [variant_isset universal]} {
-    configure.args.i386-append  --with-wine64=${workpath}/${worksrcdir}-x86_64
+    configure.pre_args.i386     --with-wine64=${workpath}/${worksrcdir}-x86_64
 } elseif {${universal_possible} && ![variant_isset universal]} {
     supported_archs             i386
 }
@@ -231,19 +229,15 @@ if {${os.major} > 18} {
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
-    depends_lib-append \
-        path:lib/libMoltenVK.dylib:MoltenVK
-
+    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
     if {"i386" in ${configure.universal_archs}} {
         depends_skip_archcheck-append MoltenVK
     }
-
-    configure.args.x86_64-append \
-        --with-vulkan \
-        ac_cv_lib_soname_MoltenVK=libMoltenVK.dylib \
-        ac_cv_lib_soname_vulkan=
+    configure.args.i386     --without-vulkan
+    configure.args.x86_64   --with-vulkan
+    configure.env.x86_64    ac_cv_lib_soname_vulkan=
 } else {
-    configure.args.x86_64-append --without-vulkan
+    configure.args-append   --without-vulkan
 }
 
 platform darwin 10 {
@@ -312,7 +306,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants-append     +gstreamer
+default_variants-append     +gstreamer +x11
 
 triplet.add_build           cross
 
@@ -323,6 +317,7 @@ muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
+configure.env-append        CROSSCFLAGS=${configure.optflags}
 
 # Reduce compilation warnings
 configure.cflags-append     -Wno-deprecated-declarations
@@ -356,6 +351,10 @@ if {${universal_possible} && [variant_isset universal]} {
 
         See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
     "
+}
+
+platform darwin arm {
+    configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
 livecheck.type              none
