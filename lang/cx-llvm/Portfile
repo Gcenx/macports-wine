@@ -9,7 +9,7 @@ name                        cx-llvm
 version                     22.0.1
 revision                    0
 epoch                       0
-platforms                   {darwin >= 19}
+platforms                   {darwin any >= 18}
 
 categories                  lang
 maintainers                 {@gcenx}
