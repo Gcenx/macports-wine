@@ -278,6 +278,10 @@ if {[option universal_possible] && [variant_isset universal]} {
     "
 }
 
+platform darwin arm {
+    configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
+}
+
 livecheck.url               ${homepage}
 livecheck.type              regex
 livecheck.regex             {"/announce/([0-9]+\.0(\.[0-9]+)*)"}

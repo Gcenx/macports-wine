@@ -343,6 +343,7 @@ if {[option universal_possible] && [variant_isset universal]} {
 
 platform darwin arm {
     patchfiles.x86_64       1001-remove-cross_compiling-check.diff
+    configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
 livecheck.type              regex
