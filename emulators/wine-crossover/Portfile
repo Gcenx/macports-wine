@@ -267,7 +267,7 @@ if {${os.major} > 18} {
         set configure.dir ${worksrcpath}-x86_64
         portconfigure::configure_main
 
-        configure.pre_args.x86_64
+        configure.pre_args.x86_64-delete --enable-win64
         configure.args.x86_64
         set configure.dir ${worksrcpath}-i386
         configure.args ${configure.pre_args.i386} ${configure.args} ${configure.args.i386}
@@ -343,7 +343,6 @@ if {[option universal_possible] && [variant_isset universal]} {
 
 platform darwin arm {
     patchfiles.x86_64                 1001-remove-cross_compiling-check.diff
-    configure.pre_args.i386-prepend   [muniversal::get_triplets x86_64]
     configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
