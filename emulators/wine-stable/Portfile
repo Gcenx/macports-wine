@@ -121,6 +121,7 @@ configure.pre_args.x86_64 \
     --libdir=${prefix}/lib
 
 configure.args \
+    --disable-tests \
     --without-alsa \
     --without-capi \
     --with-cms \
