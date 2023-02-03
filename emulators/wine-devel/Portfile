@@ -120,7 +120,6 @@ configure.pre_args.x86_64 \
     --enable-win64
 
 configure.args \
-    --disable-tests \
     --without-alsa \
     --without-capi \
     --with-cms \
