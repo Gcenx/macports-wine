@@ -97,7 +97,8 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
-# Fixes cross compilation with GCC 11+
+# msvcrt: Add sincos to importlib, since wine-6.9
+# https://gitlab.winehq.org/wine/wine/-/commit/f0131276474997b9d4e593bbf8c5616b879d3bd5
 patchfiles-append \
     0003-msvcrt-add-sincos-to-importlib.diff
 
