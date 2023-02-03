@@ -66,7 +66,7 @@ depends_build \
     port:pkgconfig
 
 depends_lib \
-    port:FAuido \
+    port:FAudio \
     port:freetype \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
