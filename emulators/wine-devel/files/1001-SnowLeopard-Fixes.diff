@@ -1,37 +1,13 @@
-From 87f66038469371e3abbccbb45ffa45efe5045e2b Mon Sep 17 00:00:00 2001
+From d286a8d005dfa997d6e2e80997460006a43769b3 Mon Sep 17 00:00:00 2001
 From: Ken <21211439+kencu@users.noreply.github.com>
 Date: Sat, 20 Aug 2022 16:49:47 -0400
-Subject: [PATCH 1/2] SnowLeopard Fixes
+Subject: [PATCH 1/3] SnowLeopard Fixes
 
 ---
- dlls/winemac.drv/window.c |  9 +++++++++
- dlls/winex11.drv/pen.c    |  2 +-
- dlls/ws2_32/socket.c      | 12 ++++++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
+ dlls/winex11.drv/pen.c |  2 +-
+ dlls/ws2_32/socket.c   | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/dlls/winemac.drv/window.c b/dlls/winemac.drv/window.c
-index e7f5327fcdc..07c2e82ceeb 100644
---- a/dlls/winemac.drv/window.c
-+++ b/dlls/winemac.drv/window.c
-@@ -1573,9 +1573,18 @@ static LRESULT CALLBACK desktop_wndproc_wrapper( HWND hwnd, UINT msg, WPARAM wp,
-     {
-     case WM_WINE_NOTIFY_ACTIVITY:
-     {
-+#if MAC_OS_X_VERSION_MIN_REQUIRED > 1070
-         /* This wakes from display sleep, but doesn't affect the screen saver. */
-         static IOPMAssertionID assertion;
-         IOPMAssertionDeclareUserActivity(CFSTR("Wine user input"), kIOPMUserActiveLocal, &assertion);
-+#else
-+        /* https://stackoverflow.com/questions/10598809/how-do-i-wake-from-display-sleep-in-osx-10-7-4 */
-+        io_registry_entry_t regEntry = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler");
-+        if (regEntry != MACH_PORT_NULL) {
-+            IORegistryEntrySetCFProperty(regEntry, CFSTR("IORequestIdle"), kCFBooleanFalse);
-+            IOObjectRelease(regEntry);
-+        }
-+#endif
- 
-         /* This prevents the screen saver, but doesn't wake from display sleep. */
-         /* It's deprecated, but there's no better alternative. */
 diff --git a/dlls/winex11.drv/pen.c b/dlls/winex11.drv/pen.c
 index b1ad1026056..de7340b550d 100644
 --- a/dlls/winex11.drv/pen.c
@@ -94,3 +70,6 @@ index 3a8bfa0ce41..cfdf812e065 100644
              break;
          }
          case WS_IP_ADD_MEMBERSHIP:
+-- 
+2.37.1 (Apple Git-137.1)
+

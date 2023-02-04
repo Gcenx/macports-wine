@@ -251,11 +251,11 @@ if {${os.major} < 12} {
 platform darwin 10 {
     # Need to try tracking down when these two reamaining breakages happened
     # https://trac.macports.org/ticket/61721
-    #patchfiles-append           1001-SnowLeopard-Fixes.diff
+    patchfiles-append           1001-SnowLeopard-Fixes.diff
 
     # "winemac.drv: Wake up the display on user input.", since wine-3.12
     # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
-    patchfiles-append           1001-SnowLeopard-Fixes.diff
+    patchfiles-append           1002-winemac.drv-wake-display-from-sleep-on-10.6.diff
 
     # libmacho is required for getsegmentdata(3), since wine-3.14
     # https://gitlab.winehq.org/wine/wine/-/commit/bdca749f7ba4f434ac326481cf4fe0a059887f5d
@@ -274,7 +274,7 @@ platform darwin 10 {
 
     # Features don't exist in IOKit until 10.7, since wine-4.21
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
-    patchfiles-append           1002-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
+    patchfiles-append           1003-Revert-eea87600d21adcd910f72f1cdaf698451884f582.diff
 
     # Using the 10.7 SDK to avoid even more reverts
     configure.sdk_version   10.7
