@@ -1,0 +1,62 @@
+From 4e3860b567c9c25c651c4e5625a97a77155f8c70 Mon Sep 17 00:00:00 2001
+From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
+Date: Sat, 4 Feb 2023 16:30:49 -0500
+Subject: [PATCH 3/4] ws2_32: guard IGMP socket options
+
+Resolves issues caused by https://gitlab.winehq.org/wine/wine/-/commit/bf24c316f443185c16513118e30e160b20223134
+---
+ dlls/ws2_32/socket.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/dlls/ws2_32/socket.c b/dlls/ws2_32/socket.c
+index 3a8bfa0ce41..cfdf812e065 100644
+--- a/dlls/ws2_32/socket.c
++++ b/dlls/ws2_32/socket.c
+@@ -658,10 +658,18 @@ static const int ws_ip_map[][2] =
+     MAP_OPTION( IP_MULTICAST_LOOP ),
+     MAP_OPTION( IP_ADD_MEMBERSHIP ),
+     MAP_OPTION( IP_DROP_MEMBERSHIP ),
++#ifdef IP_ADD_SOURCE_MEMBERSHIP
+     MAP_OPTION( IP_ADD_SOURCE_MEMBERSHIP ),
++#endif
++#ifdef IP_DROP_SOURCE_MEMBERSHIP
+     MAP_OPTION( IP_DROP_SOURCE_MEMBERSHIP ),
++#endif
++#ifdef IP_BLOCK_SOURCE
+     MAP_OPTION( IP_BLOCK_SOURCE ),
++#endif
++#ifdef IP_UNBLOCK_SOURCE
+     MAP_OPTION( IP_UNBLOCK_SOURCE ),
++#endif
+     MAP_OPTION( IP_OPTIONS ),
+ #ifdef IP_HDRINCL
+     MAP_OPTION( IP_HDRINCL ),
+@@ -5215,7 +5223,9 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
+     int woptval;
+     struct linger linger;
+     struct timeval tval;
++#if MAC_OS_X_VERSION_MAX_ALLOWED > 1070
+     struct ip_mreq_source mreq_source;
++#endif
+ 
+     TRACE("(socket %04lx, %s, optval %s, optlen %d)\n", s,
+           debugstr_sockopt(level, optname), debugstr_optval(optval, optlen),
+@@ -5431,6 +5441,7 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
+         case WS_IP_BLOCK_SOURCE:
+         case WS_IP_UNBLOCK_SOURCE:
+         {
++#if MAC_OS_X_VERSION_MAX_ALLOWED > 1070
+             WS_IP_MREQ_SOURCE* val = (void*)optval;
+             mreq_source.imr_interface.s_addr = val->imr_interface.S_un.S_addr;
+             mreq_source.imr_multiaddr.s_addr = val->imr_multiaddr.S_un.S_addr;
+@@ -5440,6 +5451,7 @@ int WINAPI WS_setsockopt(SOCKET s, int level, int optname,
+             optlen = sizeof(mreq_source);
+ 
+             convert_sockopt(&level, &optname);
++#endif
+             break;
+         }
+         case WS_IP_ADD_MEMBERSHIP:
+-- 
+2.37.1 (Apple Git-137.1)
+
