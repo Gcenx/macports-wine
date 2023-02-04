@@ -249,6 +249,10 @@ if {${os.major} < 12} {
 }
 
 platform darwin 10 {
+    # Need to try tracking down when these two reamaining breakages happened
+    # https://trac.macports.org/ticket/61721
+    #patchfiles-append           1001-SnowLeopard-Fixes.diff
+
     # "winemac.drv: Wake up the display on user input.", since wine-3.12
     # https://gitlab.winehq.org/wine/wine/-/commit/60edba563bbf95d15b7691fc9facbd97fce3f7b6
     patchfiles-append           1001-SnowLeopard-Fixes.diff
