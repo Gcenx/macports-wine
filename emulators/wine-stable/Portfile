@@ -235,7 +235,7 @@ if {${os.major} >= 15} {
 }
 
 platform darwin 10 {
-    # Need to try tracking down when these two reamaining breakages happened
+    # Need to tracking down when the reamaining breakage happened
     # https://trac.macports.org/ticket/61721
     patchfiles-append           1001-SnowLeopard-Fixes.diff
 
@@ -258,6 +258,10 @@ platform darwin 10 {
     pre-configure {
         reinplace s|-mmacosx-version-min=10.7|-mmacosx-version-min=10.6|g ${worksrcpath}/configure
     }
+
+    # ws2_32: Handle more IGMP socket options, since wine-4.19
+    # https://gitlab.winehq.org/wine/wine/-/commit/bf24c316f443185c16513118e30e160b20223134
+    #patxhfiles-append           1003-ws_32-ifdef-functions.diff
 
     # Features don't exist in IOKit until 10.7, since wine-4.21
     # https://gitlab.winehq.org/wine/wine/-/commit/eea87600d21adcd910f72f1cdaf698451884f582
