@@ -16,8 +16,8 @@ The provided Ports *should* compile on Mac OSX 10.8 and later.
 - `MoltenVK`                *(v1.2.2)*
 - `wine-crossover`          *(v22.0.1)*
 - `wine-stable`             *(v8.0)*
-- `wine-devel`              *(v8.0)*
-- `wine-staging`            *(v8.0)*
+- `wine-devel`              *(v8.1)*
+- `wine-staging`            *(v8.1)*
 - `winetricks`              *(v20221022)*
 
 ## How to use this repository
