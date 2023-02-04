@@ -255,7 +255,7 @@ platform darwin 10 {
 
     # ld64 needs to support -no_new_main for preloader, since wine-4.0-rc1
     # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
-    depends_build-append        port:ld64_274
+    depends_build-replace       port:ld64 port:ld64_274
     configure.env-append        LD=${prefix}/bind/ld64-274
 
     # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
