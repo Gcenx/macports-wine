@@ -308,8 +308,6 @@ variant usb description {Build ${subport} with USB support} {
 
 default_variants-append     +gstreamer +x11
 
-triplet.add_build           cross
-
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
 
