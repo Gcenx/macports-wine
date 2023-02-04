@@ -1,7 +1,6 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
-PortGroup                   active_variants 1.1
 PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   legacysupport 1.1
 PortGroup                   muniversal 1.1
@@ -256,7 +255,8 @@ platform darwin 10 {
 
     # ld64 needs to support -no_new_main for preloader, since wine-4.0-rc1
     # https://gitlab.winehq.org/wine/wine/-/commit/a0ab2a7b0c9c28588714372cf1b19a06dd706b26
-    require_active_variants     port:ld64 ld64_274
+    depends_build-append        port:ld64_274
+    configure.env-append        LD=${prefix}/bind/ld64-274
 
     # Used to fix a build issue with Xcode 10, since wine-4.0-rc2
     # https://gitlab.winehq.org/wine/wine/-/commit/0185ee5d99e8dca2c69d61ba0c0e00256beaf1b5
