@@ -17,7 +17,7 @@ conflicts                   wine-devel wine-crossover
 set my_name                 wine
 version                     6.0.4
 revision                    0
-platforms                   {darwin >= 10}
+platforms                   {darwin >= 10 < 19}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -345,10 +345,6 @@ if {${universal_possible} && [variant_isset universal]} {
 
         See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
     "
-}
-
-platform darwin arm {
-    configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
 livecheck.type              none
