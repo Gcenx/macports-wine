@@ -15,4 +15,4 @@ git clone the repository into /opt then follow [4.6. Local Portfile Repositories
 Next run `port -v sync` you can now install any of the provided Ports.
 
 # Requirements 
-`MacOSX10.7.SDK`
+`ld64 + ld64_274` & `MacOSX10.7.SDK`
