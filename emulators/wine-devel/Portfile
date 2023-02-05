@@ -247,11 +247,7 @@ subport wine-staging {
 }
 
 variant gstreamer description {Build ${subport} with gstreamer support} {
-    depends_lib-append \
-        port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-libav
+    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
