@@ -15,6 +15,20 @@ long_description    ${subport} is a package containing Mono and other projects, 
                     for any other purpose.
 
 if {${subport} eq ${name}} {
+    PortGroup                   stub 1.0
+    version                     7.4.0
+    revision                    0
+    depends_run                 port:mingw-w64-wine-mono-${version}
+
+    post-deactivate {
+        # When this port is deactivated, mingw-w64-wine-mono-${version} should also be.
+        if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono-${version}] 0]}]} {
+            registry_deactivate_composite mingw-w64-wine-mono-${version} "" [list ports_nodepcheck 1]
+        }
+    }
+}
+
+subport ${name}-7.4.0 {
     version         7.4.0
     revision        0
     
