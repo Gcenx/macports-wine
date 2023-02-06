@@ -23,7 +23,7 @@ if {${subport} eq ${name}} {
     post-deactivate {
         # When this port is deactivated, mingw-w64-wine-gecko-${version} should also be.
         if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-${version}] 0]}]} {
-            registry_deactivate_composite i686-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+            registry_deactivate_composite mingw-w64-wine-gecko-${version} "" [list ports_nodepcheck 1]
         }
     }
 }
