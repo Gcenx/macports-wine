@@ -15,6 +15,20 @@ use_configure                   no
 build {}
 
 if {${subport} eq ${name}} {
+    PortGroup                   stub 1.0
+    version                     2.47.3
+    revision                    0
+    depends_run                 port:mingw-w64-wine-gecko-${version}
+
+    post-deactivate {
+        # When this port is deactivated, mingw-w64-wine-gecko-${version} should also be.
+        if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-${version}] 0]}]} {
+            registry_deactivate_composite i686-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+        }
+    }
+}
+
+subport ${name}-2.47.3 {
     version                     2.47.3
     revision                    0
 
