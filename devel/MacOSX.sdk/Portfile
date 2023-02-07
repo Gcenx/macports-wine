@@ -21,6 +21,22 @@ use_bzip2               yes
 set sdk_dir             ${prefix}/Developer/SDKs
 set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
 
+use_configure           no
+build {}
+
+if {${subport} eq ${name}} {
+    PortGroup           stub 1.0
+
+    revision            0
+    description         latest macOS SDK
+    long_description    This port installs a symlink to the latest macOS SDK.
+    supported_archs     noarch
+    depends_run-append  port:MacOSX${version}.sdk
+    pre-destroot {
+        ln -s MacOSX${version}.sdk ${destroot}${sdk_dir}/MacOSX.sdk
+    }
+}
+
 subport MacOSX12.3.sdk {
     set macos_name      {macOS Montery}
     set xcode_vers      13.3
@@ -200,6 +216,9 @@ subport MacOSX10.11.sdk {
 }
 
 subport QuickTime.framework {
+    description         QuickTime is an extensible multimedia framework developed by Apple Inc.
+    long_description    ${description}
+
     set macos_name      {OS X El Capitan}
     set xcode_vers      7.3
     version             10.11
@@ -211,11 +230,13 @@ subport QuickTime.framework {
     checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
+
+    destroot {
+        move ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${frameworks_dir}
+    }
 }
 
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
-
-use_configure           no
 
 destroot.violate_mtree  yes
 
@@ -223,30 +244,11 @@ destroot.violate_mtree  yes
 distname                MacOSX${version}
 master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
 
-build {}
-
 pre-destroot {
     xinstall -d ${destroot}${sdk_dir}
     xinstall -d ${destroot}${sdk_dir2}
 }
 
-if {${subport} eq "QuickTime.framework"} {
-    description         QuickTime is an extensible multimedia framework developed by Apple Inc.
-    long_description    ${description}
-
-    destroot {
-        move ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${frameworks_dir}
-    }
-} elseif {${subport} eq ${name}} {
-    revision            0
-    description         latest macOS SDK
-    long_description    This port installs a symlink to the latest macOS SDK.
-    distfiles
-    supported_archs     noarch
-    depends_run-append  port:MacOSX${version}.sdk
-    destroot {
-        ln -s MacOSX${version}.sdk ${destroot}${sdk_dir}/MacOSX.sdk
-    }
 } else {
     set macos_version   [lindex [split ${version} -] 0]
     set macos_build     [lindex [split ${version} -] 1]
