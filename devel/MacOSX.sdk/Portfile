@@ -215,6 +215,31 @@ subport MacOSX10.11.sdk {
     }
 }
 
+# Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
+
+destroot.violate_mtree  yes
+
+pre-destroot {
+    xinstall -d ${destroot}${sdk_dir}
+    xinstall -d ${destroot}${sdk_dir2}
+}
+
+set macos_version       [lindex [split ${version} -] 0]
+set macos_build         [lindex [split ${version} -] 1]
+set macos_major         [join [lrange [split ${macos_version} .] 0 1] .]
+
+description             ${macos_name} v${macos_version} (${macos_build}) SDK
+long_description        This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
+destroot {
+    move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
+
+    # Check if the SDK exits before adding a symlink
+    # can't use ${developer_dir}/SDKs as that could return Xcode
+    if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
+        ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+    }
+}
+
 subport QuickTime.framework {
     description         QuickTime is an extensible multimedia framework developed by Apple Inc.
     long_description    ${description}
@@ -231,41 +256,15 @@ subport QuickTime.framework {
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
 
+    pre-destroot {}
     destroot {
         move ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${frameworks_dir}
     }
 }
 
-# Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
-
-destroot.violate_mtree  yes
-
 # Placed here so we can override the version
 distname                MacOSX${version}
 master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
-
-pre-destroot {
-    xinstall -d ${destroot}${sdk_dir}
-    xinstall -d ${destroot}${sdk_dir2}
-}
-
-} else {
-    set macos_version   [lindex [split ${version} -] 0]
-    set macos_build     [lindex [split ${version} -] 1]
-    set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
-
-    description         ${macos_name} v${macos_version} (${macos_build}) SDK
-    long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
-    destroot {
-        move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
-
-        # Check if the SDK exits before adding a symlink
-        # can't use ${developer_dir}/SDKs as that could return Xcode
-        if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
-            ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
-        }
-    }
-}
 
 if {[llength ${supported_archs}] > 1} {
     configure.universal_archs {*}${supported_archs}
