@@ -91,7 +91,7 @@ patchfiles-append \
 
 # CW HACK 18311: Use VK on 64-bit macOS for d3d10/11
 patchfiles-append \
-    0003-CW-HACK-18311.diff
+    0003-WINED3D-CW-HACK-18311.diff
 
 # https://bugs.winehq.org/show_bug.cgi?id=54371, remove wine-8.0.1
 patchfiles-append \
