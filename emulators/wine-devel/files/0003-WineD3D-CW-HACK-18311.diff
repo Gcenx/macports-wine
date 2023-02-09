@@ -1,7 +1,7 @@
 From 9c7418dd9b4c23664312572a4ec590f2cc86c6d6 Mon Sep 17 00:00:00 2001
 From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
 Date: Wed, 12 Oct 2022 20:23:28 -0400
-Subject: [PATCH] CW HACK 18311: Use VK on 64-bit macOS for d3d10/11.
+Subject: [PATCH] wined3d: CW HACK 18311: Use VK on 64-bit macOS for d3d10/11.
 
 ---
  dlls/wined3d/adapter_vk.c      | 21 +++++++++++++++++++++
