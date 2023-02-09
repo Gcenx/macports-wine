@@ -97,6 +97,19 @@ patchfiles-append \
 patchfiles-append \
     0004-fix_bug54371.diff
 
+
+
+# Makes Win10 default and adds Win11 (3 commits)
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/2077/commits
+
+# Fake env fix for Ventura 
+# https://github.com/wine-mirror/wine/commit/36bb7175c14c887d8ebd73958fa69987181c1eb3
+
+# WoW64 fix for Rosetta2
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/2144
+
+
+
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
 if {${os.major} < 14} {
