@@ -270,7 +270,7 @@ subport ${name}-gst-plugins-ugly {
         port:pkgconfig
 
     depends_lib \
-        port:gettext-runtime
+        port:gettext-runtime \
         port:${name}-gst-plugins-base \
         port:libmpeg2 \
         port:x264
