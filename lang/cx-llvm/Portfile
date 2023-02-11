@@ -32,6 +32,12 @@ checksums                   rmd160  cad5aa7f05388c80d2cf7e695b1ccc2f40517835 \
 
 supported_archs             x86_64
 
+# Use cmake-bootstrap
+depends_build-replace       path:bin/cmake:cmake port:cmake-bootstrap
+depends_skip_archcheck-append cmake-bootstrap
+configure.cmd               ${prefix}/libexec/cmake-bootstrap/bin/cmake
+
+
 worksrcdir                  sources/clang/llvm
 
 post-extract {
@@ -47,8 +53,15 @@ configure.cxxflags
 configure.cppflags
 configure.optflags
 configure.ldflags
+configure.universal_cflags
+configure.universal_cxxflags
+configure.universal_cppflags
+configure.universal_ldflags
+configure.universal_args
 configure.ccache            no
 configure.distcc            no
+
+# sterilize PATH
 configure.env-append        PATH=/usr/bin:/bin:/usr/sbin:/sbin
 build.env-append            PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
@@ -69,5 +82,15 @@ configure.pre_args-delete   {*}[cmake::module_path]
 configure.pre_args-delete   {*}[cmake::ccaching]
 configure.pre_args-delete   -DCMAKE_INSTALL_NAME_DIR="${cmake.install_prefix}/lib"
 configure.args-append       -DLLVM_TARGETS_TO_BUILD=X86
+
+configure.args-append       -DLLVM_ENABLE_TERMINFO=OFF \
+                            -DLLVM_ENABLE_LIBXML2=OFF \
+                            -DLLVM_ENABLE_LIBEDIT=OFF \
+                            -DLLVM_ENABLE_LIBPFM=OFF \
+                            -DLLVM_ENABLE_THREADS=OFF \
+                            -DLLVM_ENABLE_ZLIB=OFF
+
+# remove need for port:libxml2 dependency
+configure.args-append       -DLIBXML2_LIBRARIES=IGNORE
 
 livecheck.type              none
