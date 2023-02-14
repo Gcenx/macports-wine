@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 22.0.1
+version                 22.1.0
 revision                0
 platforms               {darwin >= 17}
 
@@ -33,9 +33,9 @@ use_zip                 yes
 use_configure           no
 
 if {${subport} eq ${name}} {
-    checksums           rmd160  f7248b889db2eeb8b469a1717cdf05de2438401b \
-                        sha256  2581a768f72cd920c5ceadeca61ed5bc679e8276a57de7a7d9c53f693adc5db2 \
-                        size    399463837
+    checksums           rmd160  bc4b56966004be77e6102c9532a1a4c5bed099d0 \
+                        sha256  4c799041079abeabdad987135d3e1a281f670376e575c098e2bfbff6c3dfe4b0 \
+                        size    397769235
 
     build {
         # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
@@ -45,12 +45,6 @@ if {${subport} eq ${name}} {
         # Remove CrossOver CD Helper
         delete "${workpath}/CrossOver.app/Contents/Resources/CrossOver CD Helper.app"
 
-        # Remove DXVK dlls (32Bit)
-        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
-
-        # Remove DXVK d3d9.dll (64Bit)
-        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine64/dxvk/d3d9.dll
-
         # Can't remove Sparkle.framework so remove the update url
         reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
     }
@@ -59,7 +53,7 @@ if {${subport} eq ${name}} {
         depends_lib-append \
             port:libsdl2 \
             port:MoltenVK \
-            port:x86_64-w64-mingw32-dxvk
+            port:mingw-w64-dxvk
 
         post-build {
             # Replace icon
@@ -86,7 +80,9 @@ if {${subport} eq ${name}} {
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
             ln -sf ${prefix}/lib/libMoltenVK.dylib ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
 
-            # Use x86_64-w64-mingw32-dxvk
+            # Use mingw-w64-dxvk
+            delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
+            ln -sf ${prefix}/share/wine/dxvk/x86 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/dxvk
             delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
             ln -sf ${prefix}/share/wine/dxvk/x64 ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/wine/dxvk
         }
@@ -105,8 +101,8 @@ destroot {
 }
 
 post-deactivate {
-    # When this port is deactivated, x86_64-w64-mingw32-dxvk should also be.
-    if {![catch {set installed [lindex [registry_active x86_64-w64-mingw32-dxvk] 0]}]} {
-        registry_deactivate_composite x86_64-w64-mingw32-dxvk "" [list ports_nodepcheck 1]
+    # When this port is deactivated, mingw-w64-dxvk should also be.
+    if {![catch {set installed [lindex [registry_active mingw-w64-dxvk] 0]}]} {
+        registry_deactivate_composite mingw-w64-dxvk "" [list ports_nodepcheck 1]
     }
 }
