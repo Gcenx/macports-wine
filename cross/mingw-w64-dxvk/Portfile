@@ -54,5 +54,5 @@ build {}
 
 destroot {
     xinstall -m 0755 -d ${destroot}${prefix}/share/wine/dxvk/x${arch}
-    xinstall -m 0644 {*}[glob ${workpath}/${distname}/x${arch}/*] ${destroot}${prefix}/share/wine/dxvk/x${arch}
+    xinstall -m 0644 {*}[glob ${workpath}/dxvk-macOS-async-1.10.3/x${arch}/*] ${destroot}${prefix}/share/wine/dxvk/x${arch}
 }
