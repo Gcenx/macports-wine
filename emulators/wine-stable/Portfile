@@ -197,6 +197,12 @@ if {${os.major} > 18} {
 
     # Build i386 & x86_64 PE binaries for WoW64
     configure.pre_args.x86_64-append    --enable-archs=i386,x86_64
+
+    # Unmerged wow64 patches, make a none default variant as it breaks printers
+    # https://gitlab.winehq.org/jacek/wine/-/tree/wow
+    variant wow description {Build ${subport} with additinal wow64 patches} {
+         patchfiles-append  2001-wow.diff
+    }
 }
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
