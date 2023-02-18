@@ -210,6 +210,11 @@ if {${os.major} < 15} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+variant gphoto description {Build ${subport} with support for digital cameras} {
+    depends_lib-append      port:libgphoto2
+    configure.args-replace  --without-gphoto --with-gphoto
+}
+
 variant gstreamer description {Build ${subport} with gstreamer support} {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
