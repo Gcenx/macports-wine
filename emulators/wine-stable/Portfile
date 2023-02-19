@@ -215,7 +215,7 @@ variant gphoto description {Build ${subport} with support for digital cameras} {
     configure.args-replace  --without-gphoto --with-gphoto
 }
 
-variant gstreamer description {Build ${subport} with gstreamer support} {
+variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
