@@ -463,8 +463,7 @@ subport ${name}-gst-plugins-bad {
     pre-configure {
         # applemedia requires APIs added in macOS Mojave
         if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
-            configure.args-delete -Dapplemedia=disabled
-            configure.args-append -Dapplemedia=enabled
+            configure.args-replace -Dapplemedia=disabled -Dapplemedia=enabled
         }
     }
 
@@ -521,4 +520,360 @@ subport ${name}-gst-libav {
     configure.args-append \
         -Ddoc=disabled \
         -Dtests=disabled
+}
+
+
+# Let's build "gstreamer" with our desired subprojects
+subport ${gitlab.project} {
+
+    depends_build \
+        port:bison \
+        port:flex \
+        port:gettext \
+        port:gl-headers \
+        port:pkgconfig
+
+    depends_lib \
+        port:faac \
+        port:faad2 \
+        port:flac \
+        port:gettext-runtime \
+        path:lib/pkgconfig/glib-2.0.pc:glib2 \
+        port:gst-ffmpeg \
+        port:libfdk-aac \
+        port:libmpeg2 \
+        port:libogg \
+        port:libopus \
+        port:libsrtp \
+        port:libusrsctp \
+        port:libvorbis \
+        path:lib/pkgconfig/vpx.pc:libvpx \
+        port:mpg123 \
+        port:orc \
+        port:rtmpdump \
+        port:x264 \
+        port:x265 \
+        port:zlib
+
+
+
+    # GStreamer subprojects
+    configure.args-append \
+        -Dbase=enabled \
+        -Dgood=enabled \
+        -Dugly=enabled \
+        -Dbad=enabled \
+        -Dlibav=enabled \
+        -Ddevtools=disabled \
+        -Dges=disabled \
+        -Drtsp_server=disabled \
+        -Drs=disabled \
+        -Domx=disabled \
+        -Dvaapi=disabled \
+        -Dgst-examples=disabled
+
+    # Bindings
+    configure.args-append \
+        -Dpython=auto \
+        -Dsharp=disabled \
+
+    # External subprojects
+    configure.args-append \
+        -Dtls=disabled \
+        -Dlibnice=disabled
+
+    # Build for fuzzing
+    configure.args-append \
+        -Doss_fuzz=disabled
+
+    # Other options
+    configure.args-append \
+        -Dorc-source=system
+
+    # License-related feature options
+    configure.args-append \
+        -Dgpl=enabled
+
+   # Common options, automatically inherited by subprojects
+    configure.args-append \
+        -Dtests=disabled \
+        -Dtools=disabled \
+        -Dexamples=disabled \
+        -Dintrospection=disabled \
+        -Dnls=disabled \
+        -Dorc=enabled \
+        -Ddoc=disabled \
+        -Dgtk_doc=disabled \
+        -Dqt5=disabled \
+        -Dqt6=disabled \
+        -Dgobject-cast-checks=disabled \
+        -Dglib-asserts=disabled \
+        -Dglib-checks=disabled
+
+
+ 
+    ## gstreamer
+    configure.args-append \
+        -Dgstreamer:gst_debug=true \
+        -Dgstreamer:gst_parse=false \
+        -Dgstreamer:registry=true \
+        -Dgstreamer:tracer_hooks=true \
+        -Dgstreamer:ptp-helper-permissions=none
+
+    # Feature options
+    configure.args-append \
+        -Dgstreamer:check=disabled \
+        -Dgstreamer:libunwind=disabled \
+        -Dgstreamer:libdw=disabled \
+        -Dgstreamer:dbghelp=disabled \
+        -Dgstreamer:bash-completion=disabled \
+        -Dgstreamer:coretracers=disabled
+
+
+
+    ## gst-plugins-base
+    # OpenGL integration library options
+    #  Leaving (auto)
+
+    # Feature option for opengl plugin and integration library
+    configure.args-append \
+        -Dgst-plugins-base:gl=enabled \
+        -Dgst-plugins-base:gl-graphene=disabled \
+        -Dgst-plugins-base:gl-jpeg=disabled \
+        -Dgst-plugins-base:gl-png=disabled
+
+    # Feature options for plugins with no external deps
+    configure.args-append \
+        -Dgst-plugins-base:tcp=disabled \
+        -Dgst-plugins-base:videotestsrc=disabled
+
+    # Feature options for plugins with external deps
+    configure.args-append \
+        -Dgst-plugins-base:alsa=disabled \
+        -Dgst-plugins-base:cdparanoia=disabled \
+        -Dgst-plugins-base:libvisual=disabled \
+        -Dgst-plugins-base:ogg=enabled \
+        -Dgst-plugins-base:opus=enabled \
+        -Dgst-plugins-base:pango=disabled \
+        -Dgst-plugins-base:theora=disabled \
+        -Dgst-plugins-base:tremor=disabled \
+        -Dgst-plugins-base:vorbis=enabled \
+        -Dgst-plugins-base:x11=disabled \
+        -Dgst-plugins-base:xshm=disabled \
+        -Dgst-plugins-base:xvideo=disabled
+
+
+
+    ## gst-plugins-good
+    # Feature options for plugins without external deps
+    configure.args-append \
+        -Dgst-plugins-good:debugutils=disabled \
+        -Dgst-plugins-good:dtmf=disabled
+
+    # Feature options for plugins with external deps
+    configure.args-append \
+        -Dgst-plugins-good:aalib=disabled \
+        -Dgst-plugins-good:bz2=disabled \
+        -Dgst-plugins-good:cairo=disabled \
+        -Dgst-plugins-good:directsound=enabled \
+        -Dgst-plugins-good:dv=disabled \
+        -Dgst-plugins-good:dv1394=disabled \
+        -Dgst-plugins-good:flac=enabled \
+        -Dgst-plugins-good:gdk-pixbuf=disabled \
+        -Dgst-plugins-good:gtk3=disabled \
+        -Dgst-plugins-good:jack=disabled \
+        -Dgst-plugins-good:jpeg=disabled \
+        -Dgst-plugins-good:lame=disabled \
+        -Dgst-plugins-good:libcaca=disabled \
+        -Dgst-plugins-good:mpg123=enabled \
+        -Dgst-plugins-good:oss=disabled \
+        -Dgst-plugins-good:oss4=disabled \
+        -Dgst-plugins-good:osxaudio=enabled \
+        -Dgst-plugins-good:osxvideo=enabled \
+        -Dgst-plugins-good:png=disabled \
+        -Dgst-plugins-good:pulse=disabled \
+        -Dgst-plugins-good:qt5=disabled \
+        -Dgst-plugins-good:shout2=disabled \
+        -Dgst-plugins-good:soup=disabled \
+        -Dgst-plugins-good:speex=disabled \
+        -Dgst-plugins-good:taglib=disabled \
+        -Dgst-plugins-good:twolame=disabled \
+        -Dgst-plugins-good:vpx=enabled \
+        -Dgst-plugins-good:waveform=disabled \
+        -Dgst-plugins-good:wavpack=disabled
+
+    # ximagesrc plugin options
+    configure.args-append \
+        -Dgst-plugins-good:ximagesrc=disabled
+
+    # v4l2 plugin options
+    configure.args-append \
+        -Dgst-plugins-good:v4l2=disabled
+
+
+
+    ## gst-plugins-ugly
+    # Feature options for plugins without external deps
+    configure.args-append \
+        -Dgst-plugins-ugly:dvdsub=disabled
+
+    # Feature options for plugins that need external deps
+    configure.args-append \
+        -Dgst-plugins-ugly:a52dec=disabled \
+        -Dgst-plugins-ugly:amrnb=disabled \
+        -Dgst-plugins-ugly:amrwbdec=disabled \
+        -Dgst-plugins-ugly:cdio=disabled \
+        -Dgst-plugins-ugly:dvdread=disabled \
+        -Dgst-plugins-ugly:mpeg2dec=enabled \
+        -Dgst-plugins-ugly:sidplay=disabled \
+        -Dgst-plugins-ugly:x264=enabled
+
+
+
+    ## gst-plugins-bad
+    # Enable GstPlay tests that need network access
+    configure.args-append \
+        -Dgst-plugins-bad:gst_play_tests=false
+
+    # Feature options for plugins without external deps
+    #  Leaving (auto)
+
+    # Feature options for libraries that need external deps
+    configure.args-append \
+        -Dgst-plugins-bad:opencv=disabled
+
+    # Feature options for optional deps in plugins
+    configure.args-append \
+        -Dgst-plugins-bad:wayland=disabled \
+        -Dgst-plugins-bad:x11=disabled
+
+    # Feature options for plugins that need external deps
+    configure.args-append \
+        -Dgst-plugins-bad:aes=disabled \
+        -Dgst-plugins-bad:aom=disabled \
+        -Dgst-plugins-bad:avtp=disabled \
+        -Dgst-plugins-bad:androidmedia=disabled \
+        -Dgst-plugins-bad:applemedia=disabled \
+        -Dgst-plugins-bad:asio=disabled \
+        -Dgst-plugins-bad:asio-sdk-path= \
+        -Dgst-plugins-bad:assrender=disabled \
+        -Dgst-plugins-bad:bluez=disabled \
+        -Dgst-plugins-bad:bs2b=disabled \
+        -Dgst-plugins-bad:bz2=disabled \
+        -Dgst-plugins-bad:chromaprint=disabled \
+        -Dgst-plugins-bad:closedcaption=disabled \
+        -Dgst-plugins-bad:colormanagement=disabled \
+        -Dgst-plugins-bad:curl=disabled \
+        -Dgst-plugins-bad:curl-ssh2=disabled \
+        -Dgst-plugins-bad:d3dvideosink=disabled \
+        -Dgst-plugins-bad:d3d11=disabled \
+        -Dgst-plugins-bad:dash=disabled \
+        -Dgst-plugins-bad:dc1394=disabled \
+        -Dgst-plugins-bad:decklink=disabled \
+        -Dgst-plugins-bad:directfb=disabled \
+        -Dgst-plugins-bad:directsound=disabled \
+        -Dgst-plugins-bad:dtls=disabled \
+        -Dgst-plugins-bad:dts=disabled \
+        -Dgst-plugins-bad:dvb=disabled \
+        -Dgst-plugins-bad:faac=enabled \
+        -Dgst-plugins-bad:faad=enabled \
+        -Dgst-plugins-bad:fbdev=disabled \
+        -Dgst-plugins-bad:fdkaac=enabled \
+        -Dgst-plugins-bad:flite=disabled \
+        -Dgst-plugins-bad:fluidsynth=disabled \
+        -Dgst-plugins-bad:gl=enabled \
+        -Dgst-plugins-bad:gme=disabled \
+        -Dgst-plugins-bad:gs=disabled \
+        -Dgst-plugins-bad:gsm=disabled \
+        -Dgst-plugins-bad:ipcpipeline=disabled \
+        -Dgst-plugins-bad:ipcpipeline=disabled \
+        -Dgst-plugins-bad:iqa=disabled \
+        -Dgst-plugins-bad:kate=disabled \
+        -Dgst-plugins-bad:kms=disabled \
+        -Dgst-plugins-bad:ladspa=disabled \
+        -Dgst-pkugins-bad:ldac=disabled \
+        -Dgst-plugins-bad:libde265=disabled \
+        -Dgst-plugins-bad:openaptx=disabled \
+        -Dgst-plugins-bad:lv2=disabled \
+        -Dgst-plugins-bad:mediafoundation=disabled \
+        -Dgst-plugins-bad:microdns=disabled \
+        -Dgst-plugins-bad:modplug=disabled \
+        -Dgst-plugins-bad:mpeg2enc=disabled \
+        -Dgst-plugins-bad:mplex=disabled \
+        -Dgst-plugins-bad:msdk=disabled \
+        -Dgst-plugins-bad:musepack=disabled \
+        -Dgst-plugins-bad:neon=disabled \
+        -Dgst-plugins-bad:nvcodec=disabled \
+        -Dgst-plugins-bad:onnx=disabled \
+        -Dgst-plugins-bad:openal=disabled \
+        -Dgst-plugins-bad:openexr=disabled \
+        -Dgst-plugins-bad:openh264=disabled \
+        -Dgst-plugins-bad:openjpeg=disabled \
+        -Dgst-plugins-bad:openmpt=disabled \
+        -Dgst-plugins-bad:openni2=disabled \
+        -Dgst-plugins-bad:opensles=disabled \
+        -Dgst-plugins-bad:opus=disabled \
+        -Dgst-plugins-bad:qroverlay=disabled \
+        -Dgst-plugins-bad:resindvd=disabled \
+        -Dgst-plugins-bad:rsvg=disabled \
+        -Dgst-plugins-bad:rtmp=disabled \
+        -Dgst-plugins-bad:sbc=disabled \
+        -Dgst-plugins-bad:sctp=disabled \
+        -Dgst-plugins-bad:shm=disabled \
+        -Dgst-plugins-bad:smoothstreaming=disabled \
+        -Dgst-plugins-bad:sndfile=disabled \
+        -Dgst-plugins-bad:soundtouch=disabled \
+        -Dgst-plugins-bad:spandsp=disabled \
+        -Dgst-plugins-bad:srt=disabled \
+        -Dgst-plugins-bad:srtp=disabled \
+        -Dgst-plugins-bad:svthevcenc=disabled \
+        -Dgst-plugins-bad:teletext=disabled \
+        -Dgst-plugins-bad:tinyalsa=disabled \
+        -Dgst-plugins-bad:transcode=disabled \
+        -Dgst-plugins-bad:ttml=disabled \
+        -Dgst-plugins-bad:uvch264=disabled \
+        -Dgst-plugins-bad:va=disabled \
+        -Dgst-plugins-bad:voaacenc=disabled \
+        -Dgst-plugins-bad:voamrwbenc=disabled \
+        -Dgst-plugins-bad:vulkan=disabled \
+        -Dgst-plugins-bad:wasapi=disabled \
+        -Dgst-plugins-bad:wasapi2=disabled \
+        -Dgst-plugins-bad:webp=disabled \
+        -Dgst-plugins-bad:webrtc=disabled \
+        -Dgst-plugins-bad:webrtcdsp=disabled \
+        -Dgst-plugins-bad:wildmidi=disabled \
+        -Dgst-plugins-bad:winks=disabled \
+        -Dgst-plugins-bad:winscreencap=disabled \
+        -Dgst-plugins-bad:x265=enabled \
+        -Dgst-plugins-bad:zbar=disabled \
+        -Dgst-plugins-bad:zxing=disabled \
+        -Dgst-plugins-bad:wpe=disabled \
+        -Dgst-plugins-bad:magicleap=disabled \
+        -Dgst-plugins-bad:v4l2codecs=disabled \
+        -Dgst-plugins-bad:isac=disabled
+
+    # We put this into a pre-configure block so it can be evaluated _after_ platform selection.
+    pre-configure {
+        # applemedia requires APIs added in macOS Mojave
+        if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
+            configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
+        }
+    }
+
+    # HLS plugin options
+    #  Leaving (auto)
+
+    # SCTP plugin options
+    #  Leaving (auto)
+
+    # MSDK plugin options
+    #  Leaving (auto)
+
+
+
+    ## gst-libav (no options to pass?)
+
+    # Help gst-libav find gst-ffmpeg
+    configure.pkg_config_path \
+       ${prefix}/libexec/gst-ffmpeg/lib/pkgconfig:${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 }
