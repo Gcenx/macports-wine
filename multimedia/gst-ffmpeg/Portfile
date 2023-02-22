@@ -13,13 +13,12 @@ PortGroup           legacysupport 1.1
 # https://trac.macports.org/ticket/59308
 PortGroup           xcode_workaround 1.0
 
-name                ffmpeg
+name                gst-ffmpeg
 set my_name         ffmpeg
-conflicts           ffmpeg-devel
 # Please increase the revision of mpv whenever ffmpeg's version is updated.
-epoch               1
+epoch               0
 version             4.4.1
-revision            6
+revision            0
 license             GPL-2+
 categories          multimedia
 maintainers         {@gcenx}
@@ -101,6 +100,7 @@ compiler.c_standard 2011
 compiler.blacklist-append {clang < 800}
 
 configure.cflags-append -DHAVE_LRINTF ${configure.cppflags}
+configure.pre_args --prefix=${prefix}/libexec/gstreamer
 configure.args \
     --enable-shared \
     --disable-static \
