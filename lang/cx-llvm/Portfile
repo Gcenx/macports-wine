@@ -87,7 +87,7 @@ configure.args-append       -DLLVM_ENABLE_TERMINFO=OFF \
                             -DLLVM_ENABLE_LIBXML2=OFF \
                             -DLLVM_ENABLE_LIBEDIT=OFF \
                             -DLLVM_ENABLE_LIBPFM=OFF \
-                            -DLLVM_ENABLE_THREADS=OFF \
+                            -DLLVM_ENABLE_THREADS=ON \
                             -DLLVM_ENABLE_ZLIB=OFF
 
 # remove need for port:libxml2 dependency
