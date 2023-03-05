@@ -108,6 +108,11 @@ patchfiles-append \
     0006-ldap-Don-t-depend-on-the-getopt.h-header.diff \
     0007-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
 
+# Remove "CX HACK 21217" in favour of upstreams fix, remove CX23
+patchfiles-append \
+    0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
+    0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
+
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
