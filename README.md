@@ -16,8 +16,8 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `MoltenVK`                *(v1.2.2)*
 - `wine-crossover`          *(v22.1.0)*
 - `wine-stable`             *(v8.0)*
-- `wine-devel`              *(v8.2)*
-- `wine-staging`            *(v8.2)*
+- `wine-devel`              *(v8.3)*
+- `wine-staging`            *(v8.3)*
 - `winetricks`              *(v20221022)*
 
 ## How to use this repository

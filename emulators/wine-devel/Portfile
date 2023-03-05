@@ -17,7 +17,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     8.2
+version                     8.3
 revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  0fb090dbed02ecf799fb661b1a5e59e4274db087 \
-    sha256  d2b279befcd5e374c205f82d552ab7c44b52d6a4d789a57dab65d25e9ff86f27 \
-    size    48134857
+    rmd160  24050239afc5e45ca4758546268d694cbd361b14 \
+    sha256  2f3624f5083b6b3b3cce666644b8dca8d963a8579fbcb7b291b481c499b8ea88 \
+    size    47376041
 
 depends_build \
     port:bison \
@@ -151,6 +151,7 @@ configure.args \
     --with-opengl \
     --without-oss \
     --with-pcap \
+    --without-pcsclite \
     --with-pthread \
     --without-pulse \
     --without-sane \
@@ -225,19 +226,22 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  5b517ea5248515f446c2b6131ba61e97a094d99e \
-        sha256  79e59ba545dad7eafc461ef17ecc73d80b867d9649089a81421a090e4f066a82 \
-        size    9528476
+        rmd160  da2cfe6bc4979e00afd3745fb7874523eb4d9623 \
+        sha256  b8cacb1d441b39747409eab38c494ab5d21166cc809e4ea87b18e107efed655d \
+        size    9523336
+
+    set py_ver              3.11
+    set py_ver_nodot        [string map {. {}} ${py_ver}]
 
     depends_extract-append \
         port:autoconf \
-        port:python311
+        port:python${py_ver_nodot}
 
     # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
     # "eventfd_synchronization" doesn't work on macOS (CX version does)'
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
     post-extract {
-        reinplace -q "s|python3|python3.11|g" ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py
+        reinplace -q "s|python3|python${py_ver}|g" ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py
         system -W ${worksrcpath} \
             "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
