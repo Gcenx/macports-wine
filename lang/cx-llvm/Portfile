@@ -7,7 +7,7 @@ name                        cx-llvm
 
 # This custom compiler is based on llvm|clang-8 but each release adds fixes for newer SDKs.
 version                     22.1.0
-revision                    0
+revision                    1
 epoch                       0
 platforms                   {darwin any >= 18}
 
