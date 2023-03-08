@@ -20,10 +20,15 @@
 #
 
 export CX_INSTALL="@@APPLICATIONS@@/CrossOver-@@CX_VERSION@@.app"
+
+if [ ! -d "${CX_INSTALL}" ]; then
+    export CX_INSTALL="/Applications/CrossOver.app"
+fi
+
 export CX_WINEPATH="${CX_INSTALL}/Contents/SharedSupport/CrossOver/bin"
 export CX_BOTTLE="${CX_BOTTLE:-$HOME/Library/Application Support/CrossOver/Bottles/default}"
 
-if [ ! -d "${CX_BOTTLE}" ]; then
+if [ ! -d "${CX_BOTTLE_PATH}/${CX_BOTTLE}" ]; then
     echo "Please set \$CX_BOTTLE env to your CrossOver Bottle"; exit
 fi
 
@@ -31,6 +36,11 @@ export WINE="$CX_WINEPATH/wine"
 export WINE64="$CX_WINEPATH/wine"
 export WINEPREFIX="${CX_BOTTLE}"
 export WINETRICKS_WINE_VERSION=@@WINE_VERSION@@
+
+if [ "${WINETRICKS_WINE_VERSION}" == "@@WINE_VERSION@@" ]; then
+    read WINETRICKS_WINE_VERSION <<< $(wine --version | awk '/Public Version: / { print $3 }')
+fi
+
 export WINEDEBUG=-all
 
 exec winetricks "${@}"
