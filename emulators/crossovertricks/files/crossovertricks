@@ -38,7 +38,7 @@ export WINEPREFIX="${CX_BOTTLE}"
 export WINETRICKS_WINE_VERSION=@@WINE_VERSION@@
 
 if [ "${WINETRICKS_WINE_VERSION}" == "@@WINE_VERSION@@" ]; then
-    read WINETRICKS_WINE_VERSION <<< $(wine --version | awk '/Public Version: / { print $3 }')
+    read WINETRICKS_WINE_VERSION <<< $(sed -n '2p' $CX_WINEPATH/../share/wine/wine.inf | tr ' ' '\a' | awk -F'\a' '{print $4}')
 fi
 
 export WINEDEBUG=-all
