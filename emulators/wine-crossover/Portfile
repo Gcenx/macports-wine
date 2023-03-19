@@ -234,11 +234,6 @@ default_variants-append     +gstreamer
 
 triplet.add_build           cross
 
-# macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
-# https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
-compiler.limit_flags        yes
-muniversal.arch_flag        no
-muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
@@ -255,6 +250,12 @@ if {${os.major} > 18} {
     configure.cxx           ${prefix}/libexec/cx-llvm/bin/clang++
     configure.cmd           ${worksrcpath}/configure
     configure.compiler.add_deps no
+
+    # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
+    # https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
+    compiler.limit_flags        yes
+    muniversal.arch_flag        no
+    muniversal.arch_compiler    yes
 
     configure.pre_args.i386-append \
         --enable-win32on64 \
