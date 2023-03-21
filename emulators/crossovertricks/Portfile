@@ -15,19 +15,12 @@ long_description            ${description}
 distfiles
 patchfiles
 use_configure               no
-depends_run                 port:winetricks
-
-if {${subport} eq ${name}} {
-    set crossover_version   22.0.1
-    set wine_version        7.7
-    depends_run-append      port:crossover
-}
+depends_run                 port:crossover \
+                            port:winetricks
 
 build {
     copy ${filespath}/crossovertricks                       ${workpath}/crossovertricks
     reinplace -q s|@@APPLICATIONS@@|${applications_dir}|g   ${workpath}/crossovertricks
-    reinplace -q s|@@WINE_VERSION@@|${wine_version}|g       ${workpath}/crossovertricks
-    reinplace -q s|@@CX_VERSION@@|${crossover_version}|g    ${workpath}/crossovertricks
 }
 
 destroot {
