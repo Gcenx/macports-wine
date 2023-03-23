@@ -3,7 +3,7 @@
 PortSystem                  1.0
 PortGroup                   github 1.0
 
-github.setup                The-Wineskin-Project MoltenVK 1.2.2 v
+github.setup                The-Wineskin-Project MoltenVK 1.2.3 v
 github.tarball_from         releases
 
 platforms                   {darwin >= 15}
@@ -24,9 +24,9 @@ dist_subdir                 MoltenVK
 use_xz                      yes
 
 distname                    macos-${version}
-checksums                   rmd160  0cf65beeed25af2bebb23f68b3efb8660bf3c2de \
-                            sha256  36ceee483b6ce9332f8d4e8b0ce3a091807251908ef56c3471f5d39517ec5616 \
-                            size    9912264
+checksums                   rmd160  1fcdbee0d22fc2a025f5b8bac2a28aa7a083c694 \
+                            sha256  39c37a5506f4b27e83457346abc8d9fa97009d786ce7321e739aeab743ed8fd3 \
+                            size    9949644
 
 variant universal           {}
 use_configure               no
