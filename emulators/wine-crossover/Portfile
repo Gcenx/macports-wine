@@ -19,7 +19,7 @@ name                        wine-crossover
 conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     22.1.0
-revision                    0
+revision                    1
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
 categories                  emulators
@@ -112,6 +112,10 @@ patchfiles-append \
 patchfiles-append \
     0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
     0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
+
+# Remove CX22.1.x
+patchfiles-append \
+    0010-fix-ventura.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
