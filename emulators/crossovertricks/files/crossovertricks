@@ -19,18 +19,24 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 #
 
-export CX_INSTALL="@@APPLICATIONS@@/CrossOver-@@CX_VERSION@@.app"
-export CX_WINEPATH="${CX_INSTALL}/Contents/SharedSupport/CrossOver/bin"
-export CX_BOTTLE="${CX_BOTTLE:-$HOME/Library/Application Support/CrossOver/Bottles/default}"
 
-if [ ! -d "${CX_BOTTLE}" ]; then
-    echo "Please set \$CX_BOTTLE env to your CrossOver Bottle"; exit
+export CX_INSTALL="@@APPLICATIONS@@/CrossOver.app"
+export CX_PATH="${CX_INSTALL}/Contents/SharedSupport/CrossOver"
+export CX_BOTTLE="${CX_BOTTLE:-default}"
+export CX_BOTTLE_PATH="${CX_BOTTLE_PATH:-$HOME/Library/Application Support/CrossOver/Bottles}"
+
+if [ ! -d "${CX_BOTTLE_PATH}/${CX_BOTTLE}" ]; then
+    echo ""
+    echo "Please set \$CX_BOTTLE env to your CrossOver Bottle"
+    echo "Or set your desired bottle to default from the CrossOver UI"
+    exit
 fi
 
-export WINE="$CX_WINEPATH/wine"
-export WINE64="$CX_WINEPATH/wine"
-export WINEPREFIX="${CX_BOTTLE}"
-export WINETRICKS_WINE_VERSION=@@WINE_VERSION@@
+export WINE="${CX_PATH}/bin/wine"
+export WINE64="${WINE}"
+export WINESERVER="${WINE}server"
+export WINEPREFIX="${CX_BOTTLE_PATH}/${CX_BOTTLE}"
+export WINETRICKS_WINE_VERSION=$(sed -n '2p' "${CX_PATH}/share/wine/wine.inf" | tr ' ' '\a' | awk -F'\a' '{print $4}')
 export WINEDEBUG=-all
 
 exec winetricks "${@}"
