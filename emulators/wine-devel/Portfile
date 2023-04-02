@@ -160,6 +160,7 @@ configure.args \
     --with-unwind \
     --without-usb \
     --without-v4l2 \
+    --without-wayland \
     --without-x
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
