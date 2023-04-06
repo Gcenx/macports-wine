@@ -18,8 +18,8 @@ legacysupport.use_static yes
 name                        wine-crossover
 conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
-version                     22.1.0
-revision                    1
+version                     22.1.1
+revision                    0
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
 categories                  emulators
@@ -58,9 +58,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  63352b837b4714a953bc06f1057e1087b659b0c7 \
-    sha256  36425ef8e8067784006c775d0e2303bb62301d055cbdaeff639311c662ddd8ea \
-    size    147889427
+    rmd160  e514c407e3b7f75339a60fac84360f00791e97bb \
+    sha256  cdfe282ce33788bd4f969c8bfb1d3e2de060eb6c296fa1c3cdf4e4690b8b1831 \
+    size    147879629
 
 depends_build \
     port:bison \
@@ -112,10 +112,6 @@ patchfiles-append \
 patchfiles-append \
     0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
     0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
-
-# Remove CX22.1.x
-patchfiles-append \
-    0010-fix-ventura.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
