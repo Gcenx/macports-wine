@@ -4,7 +4,7 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 
 ## This repository contains;
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
-- `CrossOver`               *(22.1.0)*
+- `CrossOver`               *(22.1.1)*
 - `cx-llvm`                 *(CodeWeavers custom compiler for -mwine32 targets)*
 - `gl-headers`              *(2019.1.0)*
 - `gstreamer1`              *(1.22.1)*
