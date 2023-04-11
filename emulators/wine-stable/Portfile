@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     8.0
-revision                    0
+revision                    1
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -93,9 +93,10 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-# https://bugs.winehq.org/show_bug.cgi?id=54371, remove wine-8.0.1
+# Remove wine-8.0.1
 patchfiles-append \
-    0004-fix_bug54371.diff
+    0004-fix_bug54371.diff \
+    0005-fix-ventura.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
