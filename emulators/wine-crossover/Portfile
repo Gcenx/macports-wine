@@ -245,9 +245,9 @@ configure.cflags-append     -Wno-deprecated-declarations
 destroot.target             install-lib
 
 if {${os.major} > 18} {
-    depends_build-append    port:cx-llvm
-    configure.cc            ${prefix}/libexec/cx-llvm/bin/clang
-    configure.cxx           ${prefix}/libexec/cx-llvm/bin/clang++
+    depends_build-append    port:llvm-cx
+    configure.cc            ${prefix}/libexec/llvm-cx/bin/clang
+    configure.cxx           ${prefix}/libexec/llvm-cx/bin/clang++
     configure.cmd           ${worksrcpath}/configure
     configure.compiler.add_deps no
 
