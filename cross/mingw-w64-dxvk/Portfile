@@ -6,12 +6,13 @@ PortGroup           github 1.0
 github.setup        gcenx DXVK-macOS 1.10.3 v
 github.tarball_from releases
 
+revision            0
+platforms           {darwin any >= 15}
 categories          cross
-maintainers         {@gcenx}
-platforms           {darwin >= 15}
 license             zlib
-
 supported_archs     noarch
+maintainers         {@gcenx}
+
 description         Vulkan-based implementation of D3D10 and D3D11 for macOS / Wine, MingW version
 long_description    ${description}
 
