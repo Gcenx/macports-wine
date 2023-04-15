@@ -4,33 +4,35 @@ PortSystem              1.0
 PortGroup               github 1.0
 
 github.setup            The-Wineskin-Project winetricks 20221108
-revision                0
-checksums               rmd160  100827f467def7d2b3e630b08c16bf8c5586557c \
-                        sha256  e2e9a9ed15306c5e80a9d2961069f278a82bebd7a4b89ffedbba86f7fa475c42 \
-                        size    692932
+github.tarball_from     archive
 
+revision                0
+platforms               {darwin any}
 categories              emulators
-maintainers             {@gcenx}
 license                 LGPL-2.1+
-homepage                http://www.winetricks.org/
 supported_archs         noarch
-use_configure           no
+maintainers             {@gcenx}
+homepage                http://www.winetricks.org/
 
 description             downloads and installs various redistributable \
                         runtime libraries
 
-long_description        ${name} can help you prepare your system for Windows \
+long_description        ${subport} can help you prepare your system for Windows \
                         applications that mistakenly assume all users' \
                         systems have all the needed redistributable runtime \
                         libraries or fonts.
 
-github.tarball_from     archive
+checksums               rmd160  100827f467def7d2b3e630b08c16bf8c5586557c \
+                        sha256  e2e9a9ed15306c5e80a9d2961069f278a82bebd7a4b89ffedbba86f7fa475c42 \
+                        size    692932
 
-depends_run             port:cabextract \
+depends_run             bin:curl:curl \
+                        port:cabextract \
                         path:bin/openssl:openssl \
-                        bin:curl:curl \
+                        port:p7zip \
                         bin:unzip:unzip
 
+use_configure           no
 build {}
 
 destroot.args           PREFIX=${prefix}
