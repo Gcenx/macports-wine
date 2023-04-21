@@ -17,8 +17,8 @@ legacysupport.use_static yes
 name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     8.0
-revision                    1
+version                     8.0.1
+revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  72039ce3eff47e4fbdbae0c7c8b60408d5cbc51b \
-    sha256  2dc71023778b139234f4987333ec0d58da95c6f9e32952b756f7544280009d78 \
-    size    48004432
+    rmd160  2075176d959fa72f1e508c4e6f6f241960a44541 \
+    sha256  d4c11ca8acbf12ec6705e883c0c419305c22d77a6f0ed5c23aaac36ff3fd592a \
+    size    48017934
 
 depends_build \
     port:bison \
@@ -92,11 +92,6 @@ patchfiles-append \
 # CW HACK 18311: Use VK on 64-bit macOS for d3d10/11
 patchfiles-append \
     0003-CW-HACK-18311.diff
-
-# Remove wine-8.0.1
-patchfiles-append \
-    0004-fix_bug54371.diff \
-    0005-fix-ventura.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
