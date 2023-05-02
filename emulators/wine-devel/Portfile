@@ -17,7 +17,7 @@ legacysupport.use_static yes
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     8.6
+version                     8.7
 revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].x
@@ -54,9 +54,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  d1937e65efd98f9301ee4357c392ad00b0059e1b \
-    sha256  8c62523327d5da7a251a49267707f32d547f622568bb906fb308edc1ab423c06 \
-    size    47564669
+    rmd160  78559a53ac951efc8632fc3993c585dbb9f4c28c \
+    sha256  98ea7afd8479b58085ef71080a8a9e2b73684c3453a06e793a4391ca9e830ca3 \
+    size    47619721
 
 depends_build \
     port:bison \
@@ -215,7 +215,7 @@ subport wine-staging {
         wine-stable wine-devel wine-crossover
 
     set staging_version \
-        ${version}.1
+        ${version}
     set wine_staging_distfile \
         v${staging_version}${extract.suffix}
 
@@ -227,9 +227,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  157f537bc1f908400aef6797e2a80394b4e76036 \
-        sha256  5d412f8917b28787fd45a334c4a19eeb302662453891a7a851f78f43bc815b60 \
-        size    9527141
+        rmd160  2361d8cf67c8e7627a78c17a726834e873c23462 \
+        sha256  673eca331f1b8041f0aaff206d096be3ac46c8aa2fcbbf1616b66d2019d1462d \
+        size    9524736
 
     set py_ver              3.11
     set py_ver_nodot        [string map {. {}} ${py_ver}]
