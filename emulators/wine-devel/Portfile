@@ -93,7 +93,7 @@ patchfiles-append \
 patchfiles-append \
     0003-CW-HACK-18311.diff
 
-if {${os.major} => 23} {
+if {${os.major} >= 23} {
     patchfiles-append       0004-preloader-sonoma.diff
 }
 
