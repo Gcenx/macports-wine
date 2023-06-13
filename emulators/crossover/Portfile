@@ -46,6 +46,10 @@ build {
 
     # Can't remove Sparkle.framework so remove the update url
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
+    
+    # Fix macOS Sonoma
+    delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64-preloader
+    copy ${filespath}/wine64-preloader ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64-preloader
 }
 
 variant mod description {Replace DXVK, MoltenVK & SDL2} {
