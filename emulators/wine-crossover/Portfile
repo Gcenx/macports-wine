@@ -113,6 +113,10 @@ patchfiles-append \
     0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
     0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
 
+# macOS Sonoma
+patchfiles-append \
+    0010-preloader-sonoma.diff
+
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
