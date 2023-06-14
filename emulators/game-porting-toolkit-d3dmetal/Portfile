@@ -26,24 +26,22 @@ checksums           rmd160  ea68d96d36353d5ac90d59dcf6f762acdeab6e10 \
 use_configure       no
 
 pre-fetch {
-    foreach distfile ${distfiles} {
-        if {![file isfile ${distpath}/${distfile}]} {
-            ui_error "This port cannot download the needed files automatically."
-            ui_error "Please log in to your Apple Developer account at:"
-            ui_error ""
-            ui_error "https://developer.apple.com/download/"
-            ui_error ""
-            ui_error "Then paste this URL into your browser:"
-            ui_error ""
-            ui_error "${master_sites}"
-            ui_error ""
-            ui_error "Place the downloaded file in this directory:"
-            ui_error ""
-            ui_error "${distpath}"
-            ui_error ""
-            ui_error "Then retry installing this port."
-            return -code error "distfiles missing"
-        }
+    if {![file isfile ${distpath}/${distfile}]} {
+        ui_error "This port cannot download the needed files automatically."
+        ui_error "Please log in to your Apple Developer account at:"
+        ui_error ""
+        ui_error "https://developer.apple.com/download/"
+        ui_error ""
+        ui_error "Then paste this URL into your browser:"
+        ui_error ""
+        ui_error "${master_sites}"
+        ui_error ""
+        ui_error "Place the downloaded file in this directory:"
+        ui_error ""
+        ui_error "${distpath}"
+        ui_error ""
+        ui_error "Then retry installing this port."
+        return -code error "distfiles missing"
     }
 }
 
