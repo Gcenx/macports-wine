@@ -70,7 +70,7 @@ destroot {
 }
 
 post-destroot {
-    set docdir ${prefix}/share/doc/${name}
+    set docdir ${prefix}/share/doc/game-porting-toolkit/D3DMetal
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
         Acknowledgements.rtf \
@@ -80,7 +80,7 @@ post-destroot {
 }
 
 notes "
-    Please review the License.rtf found at ${prefix}/share/doc/${name}
+    Please review the D3DMetal documentation found at ${docdir}
 "
 
 livecheck.type              none
