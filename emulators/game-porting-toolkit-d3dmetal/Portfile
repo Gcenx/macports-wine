@@ -61,7 +61,7 @@ destroot {
     file copy ${worksrcpath}/gameportingtoolkit-no-hud ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
     reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
 
-    # Not sure why this have an arm64 slice when libd3dshared.dylib is x86_64 only
+    # Not sure why these have an arm64 slice when libd3dshared.dylib is x86_64 only
     system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework} "lipo -thin ${configure.build_arch} D3DMetal -o D3DMetal 2> /dev/null"
     system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libdxccontainer.dylib -o libdxccontainer.dylib 2> /dev/null"
     system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libdxcompiler.dylib -o libdxcompiler.dylib 2> /dev/null"
