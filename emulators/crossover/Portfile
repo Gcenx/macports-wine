@@ -5,7 +5,7 @@ PortSystem              1.0
 name                    CrossOver
 
 version                 22.1.1
-revision                0
+revision                1
 platforms               {darwin >= 17}
 
 categories              emulators
@@ -50,6 +50,12 @@ build {
     # Fix macOS Sonoma
     delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64-preloader
     copy ${filespath}/wine64-preloader ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64-preloader
+
+    # Patch-in support for "Game Porting Toolkit"
+    delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix/winemac.drv.so
+    copy ${filespath}/x86_64-unix/winemac.drv.so ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix/winemac.drv.so
+    delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-windows/winemac.drv
+    copy ${filespath}/x86_64-windows/winemac.drv ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-windows/winemac.drv
 }
 
 variant mod description {Replace DXVK, MoltenVK & SDL2} {
