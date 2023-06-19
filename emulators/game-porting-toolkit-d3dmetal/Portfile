@@ -26,7 +26,7 @@ checksums           rmd160  ea68d96d36353d5ac90d59dcf6f762acdeab6e10 \
 use_configure       no
 
 pre-fetch {
-    if {![file isfile ${distpath}/${distfile}]} {
+    if {![file isfile ${distpath}/${distname}.dmg]} {
         ui_error "This port cannot download the needed files automatically."
         ui_error "Please log in to your Apple Developer account at:"
         ui_error ""
@@ -69,8 +69,9 @@ destroot {
     system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libmetalirconverter.dylib -o libmetalirconverter.dylib 2> /dev/null"
 }
 
+set docdir ${prefix}/share/doc/game-porting-toolkit/D3DMetal
+
 post-destroot {
-    set docdir ${prefix}/share/doc/game-porting-toolkit/D3DMetal
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
         Acknowledgements.rtf \
