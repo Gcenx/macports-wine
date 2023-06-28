@@ -174,7 +174,7 @@ if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
 }
 
 if {${os.major} > 18} {
-    # Avoid weird linker errors with Xcode 10 and later
+    # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
 
     # Build i386 & x86_64 PE binaries for WoW64
