@@ -183,8 +183,8 @@ if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
 }
 
-# Use an older deployment target to avoid new dyld behaviors.
 if {${os.major} > 18} {
+    # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
 }
 
