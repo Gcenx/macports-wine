@@ -183,7 +183,7 @@ if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
 }
 
-# Avoid weird linker errors with Xcode 10 and later
+# Use an older deployment target to avoid new dyld behaviors.
 if {${os.major} > 18} {
     macosx_deployment_target 10.14
 }
