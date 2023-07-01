@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                game-porting-toolkit-d3dmetal
-version             1.0
+version             1.0.2
 categories          devel
 maintainers         {@gcenx}
 platforms           {darwin any >= 23}
@@ -14,14 +14,14 @@ supported_archs     x86_64
 description         Apple Game Porting Toolkit - D3DMetal
 long_description    {*}${description}
 
-master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_beta/Game_porting_toolkit_beta.dmg
+master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_beta_1.0.2/Game_porting_toolkit_beta_1.02.dmg
 
-distname            Game_porting_toolkit_beta
+distname            Game_porting_toolkit_beta_1.02
 use_dmg             yes
 
-checksums           rmd160  ea68d96d36353d5ac90d59dcf6f762acdeab6e10 \
-                    sha256  1c28a0285f39d1326657f45cb33464fb78d704dc43f2ad9be103258ecae3bdaf \
-                    size    53388563
+checksums           rmd160  801e5a4b0e9aafdf1bd20af345716307612eda52 \
+                    sha256  ebf3adb17616597103074fd809516e73d2ac3b6eb2f0d406af7ae6cfd55e24f8 \
+                    size    27858405
 
 use_configure       no
 
@@ -60,13 +60,6 @@ destroot {
     reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${prefix}/bin/gameportingtoolkit-no-esync
     file copy ${worksrcpath}/gameportingtoolkit-no-hud ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
     reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
-
-    # Not sure why these have an arm64 slice when libd3dshared.dylib is x86_64 only
-    system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework} "lipo -thin ${configure.build_arch} D3DMetal -o D3DMetal 2> /dev/null"
-    system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libdxccontainer.dylib -o libdxccontainer.dylib 2> /dev/null"
-    system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libdxcompiler.dylib -o libdxcompiler.dylib 2> /dev/null"
-    system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libdxilconv.dylib -o libdxilconv.dylib 2> /dev/null"
-    system -W ${destroot}${d3dmetal_dir}/external/${d3dmetal_framework}/Resources "lipo -thin ${configure.build_arch} libmetalirconverter.dylib -o libmetalirconverter.dylib 2> /dev/null"
 
     # Remove useless symlink
     delete ${destroot}${d3dmetal_dir}/external/D3DMetal.framework/Headers
