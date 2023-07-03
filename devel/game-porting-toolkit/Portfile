@@ -190,6 +190,8 @@ destroot {
 }
 
 post-destroot {
+    ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
+
     set docdir ${prefix}/share/doc/${name}/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
