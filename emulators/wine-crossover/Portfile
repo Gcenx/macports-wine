@@ -177,14 +177,14 @@ configure.args \
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append    -Wl,-rpath,${prefix}/lib
+configure.ldflags           -Wl,-headerpad_max_install_names -lSystem -Wl,-rpath,${compiler.library_path}
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
 }
 
-# Avoid weird linker errors with Xcode 10 and later
 if {${os.major} > 18} {
+    # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
 }
 
