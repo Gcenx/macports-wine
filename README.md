@@ -4,21 +4,21 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 
 ## This repository contains;
 - `cctools`                 *(973.0.1)*
-- `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `CrossOver`               *(22.1.1)*
+- `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(1.0.2)*
 - `gl-headers`              *(2019.1.0)*
 - `gstreamer1`              *(1.22.1)*
 - `ld64`                    *(609)*
-- `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
+- `mingw-w64-pkgconfig`
+- `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
-- `mingw-w64-pkgconfig`
 - `MoltenVK`                *(v1.2.3)*
 - `wine-crossover`          *(v22.1.1)*
-- `wine-stable`             *(v8.0.1)*
 - `wine-devel`              *(v8.11)*
+- `wine-stable`             *(v8.0.1)*
 - `wine-staging`            *(v8.11)*
 - `winetricks`              *(v20221022)*
 
