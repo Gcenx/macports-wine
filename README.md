@@ -9,6 +9,7 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `game-porting-toolkit`    *(1.0.2)*
 - `gl-headers`              *(2019.1.0)*
 - `gstreamer1`              *(1.22.1)*
+- `ld64`                    *(609)*
 - `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*

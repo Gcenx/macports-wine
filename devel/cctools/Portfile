@@ -70,3 +70,31 @@ if {${subport} eq ${name}} {
     configure.args-append \
         --disable-tapi-support
 }
+
+subport ld64 {
+    version                 609-${commitdate}
+
+    description             ld64 is the new mach-o linker
+    long_description        ld64 combines several object files and libraries, \
+                            resolves references, and produces an ouput file.
+
+    if {${os.major} < 15} {
+        # For a new enough install_name_tool
+        depends_lib-append      port:cctools
+    }
+
+    depends_lib-append      port:libtapi
+    build.dir               ${worksrcdir}/ld64
+
+    destroot {
+        xinstall -d ${destroot}${prefix}/libexec/ld64
+        copy ${worksrcdir}/ld64/src/ld/ld               ${destroot}${prefix}/libexec/ld64/ld
+        copy ${worksrcdir}/ld64/src/ld/ld               ${destroot}${prefix}/bin/ld
+        copy ${worksrcdir}/ld64/src/other/dyldinfo      ${destroot}${prefix}/bin/dyldinfo
+        copy ${worksrcdir}/ld64/src/other/machocheck    ${destroot}${prefix}/bin/machocheck
+        copy ${worksrcdir}/ld64/src/other/ObjectDump    ${destroot}${prefix}/bin/ObjectDump
+        copy ${worksrcdir}/ld64/src/other/unwinddump    ${destroot}${prefix}/bin/unwinddump
+        delete ${worksrcdir}/ld64/doc/man/man1/ld64.1
+        xinstall -m 0664 {*}[glob ${worksrcdir}/ld64/doc/man/man1/*]    ${destroot}${prefix}/share/man/man1
+    }
+}
