@@ -1,0 +1,39 @@
+From 389d998d73c8fee24cf28abdcd2273799a4eb186 Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Wed, 16 Mar 2022 09:41:43 -0400
+Subject: [PATCH] Fix LTO
+
+---
+ cctools/ld64/src/ld/Makefile.am | 2 +-
+ cctools/ld64/src/ld/Makefile.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cctools/ld64/src/ld/Makefile.am b/cctools/ld64/src/ld/Makefile.am
+index fb1766e..2bbb626 100644
+--- a/cctools/ld64/src/ld/Makefile.am
++++ b/cctools/ld64/src/ld/Makefile.am
+@@ -7,7 +7,7 @@ ld_LDADD =  \
+ 	$(top_builddir)/ld64/src/ld/parsers/libParsers.la \
+ 	$(top_builddir)/ld64/src/ld/passes/libPasses.la \
+ 	$(UUID_LIB) \
+-	$(LTO_RPATH) \
++	$(LTO_LIB) \
+ 	$(XAR_LIB) \
+ 	$(DL_LIB) \
+ 	$(TAPI_LIB) \
+diff --git a/cctools/ld64/src/ld/Makefile.in b/cctools/ld64/src/ld/Makefile.in
+index 61f0c85..285ba8a 100644
+--- a/cctools/ld64/src/ld/Makefile.in
++++ b/cctools/ld64/src/ld/Makefile.in
+@@ -407,7 +407,7 @@ ld_LDADD = \
+ 	$(top_builddir)/ld64/src/ld/parsers/libParsers.la \
+ 	$(top_builddir)/ld64/src/ld/passes/libPasses.la \
+ 	$(UUID_LIB) \
+-	$(LTO_RPATH) \
++	$(LTO_LIB) \
+ 	$(XAR_LIB) \
+ 	$(DL_LIB) \
+ 	$(TAPI_LIB) \
+-- 
+2.21.1 (Apple Git-122.3)
+

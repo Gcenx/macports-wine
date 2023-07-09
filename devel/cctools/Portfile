@@ -1,0 +1,72 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+PortGroup           muniversal 1.1
+
+name                cctools
+
+# Xcode 12
+github.setup        tpoechtrager cctools-port 0466329
+
+# Version must use the following scheme <version>-<commit-date>
+set commitdate      20220114
+version             973.0.1-${commitdate}
+revision            0
+
+categories          devel
+platforms           darwin
+maintainers         {@gcenx}
+license             {APSL-2 GPL-2+}
+installs_libs       no
+
+description         Compiler Tools for Mac OS X and Darwin
+long_description    A set of essential tools to support development \
+                    on Mac OS X and Darwin. Conceptually similar \
+                    similar to binutils on other platforms.
+
+dist_subdir         cctools
+worksrcdir          ${worksrcpath}/cctools
+
+homepage \
+    https://opensource.apple.com/source/${name}/
+
+checksums \
+    rmd160  2755ac4961eedbb52eaaa7e7d7432fe1247ef792 \
+    sha256  5df15c3a2018fd29eef958976250c3351f0f6474f69586bed764381af45524c8 \
+    size    2935745
+
+patch.pre_args      -p2
+
+# Open pull-requests that have yet to be merged
+patchfiles-append \
+    pr-116.diff \
+    pr-118.diff
+
+patchfiles-append \
+    0001-fix-builds-with-old-sdks.diff \
+    0002-fixup-for-macports.diff \
+    0003-restore-no_new_main.diff \
+    0004-ld64-remove-i386-architecture-is-deprecated.diff
+
+if {${os.major} < 15} {
+    depends_build-append    port:clang-11-bootstrap
+    configure.cc            ${prefix}/libexec/clang-11-bootstrap/bin/clang
+    configure.cxx           ${configure.cc}++
+    configure.compiler.add_deps no
+}
+
+configure.args-append \
+    --disable-lto-support \
+    --disable-xar-support
+
+if {${subport} eq ${name}} {
+    # ld64 needs to be it's own subport
+    post-patch {
+        reinplace "s|ld64||g" ${worksrcpath}/Makefile.in
+        reinplace "s|-DLD64_VERSION_NUM=609||g" ${worksrcpath}/configure
+    }
+    # Disable for cctools but not ld64
+    configure.args-append \
+        --disable-tapi-support
+}

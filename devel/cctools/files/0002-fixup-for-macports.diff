@@ -1,0 +1,76 @@
+From 2c02c6aad84f75df9c599dc841f0ee39ca1203d0 Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Tue, 15 Mar 2022 21:37:31 -0400
+Subject: [PATCH 2/2] Fixup for macports
+
+---
+ cctools/configure    | 14 --------------
+ cctools/configure.ac | 14 --------------
+ 2 files changed, 28 deletions(-)
+
+diff --git a/cctools/configure b/cctools/configure
+index 06e7668..1bee0b5 100755
+--- a/cctools/configure
++++ b/cctools/configure
+@@ -3141,12 +3141,6 @@ fi
+ 
+ CXXFLAGS="$CXXFLAGS -std=c++1z"
+ 
+-if test "x$build" = "x$host"; then
+-  CFLAGS="$CFLAGS -isystem /usr/local/include -isystem /usr/pkg/include"
+-  CXXFLAGS="$CXXFLAGS -isystem /usr/local/include -isystem /usr/pkg/include"
+-  LDFLAGS="$LDFLAGS -L/usr/local/lib -L/usr/pkg/lib"
+-fi
+-
+ CWARNINGS=""
+ OBJCWARNINGS=""
+ CXXWARNINGS=""
+@@ -3206,14 +3200,6 @@ esac
+ 
+ EXTRAFLAGS="$EXTRAFLAGS -DLD64_VERSION_NUM=609"
+ 
+-case "$CXXVERSION" in
+-  *clang* )
+-    if test "x$isdarwin" = "xyes"; then
+-      CXXFLAGS="$CXXFLAGS -stdlib=libc++"
+-    fi
+-  ;;
+-esac
+-
+ EXTRAFLAGS="$EXTRAFLAGS -fblocks"
+ 
+ case $host_cpu in
+diff --git a/cctools/configure.ac b/cctools/configure.ac
+index 2cf4b8a..cccac5b 100644
+--- a/cctools/configure.ac
++++ b/cctools/configure.ac
+@@ -24,12 +24,6 @@ fi
+ 
+ CXXFLAGS="$CXXFLAGS -std=c++1z"
+ 
+-if test "x$build" = "x$host"; then
+-  CFLAGS="$CFLAGS -isystem /usr/local/include -isystem /usr/pkg/include"
+-  CXXFLAGS="$CXXFLAGS -isystem /usr/local/include -isystem /usr/pkg/include"
+-  LDFLAGS="$LDFLAGS -L/usr/local/lib -L/usr/pkg/lib"
+-fi
+-
+ CWARNINGS=""
+ OBJCWARNINGS=""
+ CXXWARNINGS=""
+@@ -82,14 +76,6 @@ esac
+ 
+ EXTRAFLAGS="$EXTRAFLAGS -DLD64_VERSION_NUM=609"
+ 
+-case "$CXXVERSION" in
+-  *clang* )
+-    if test "x$isdarwin" = "xyes"; then
+-      CXXFLAGS="$CXXFLAGS -stdlib=libc++"
+-    fi
+-  ;;
+-esac
+-
+ EXTRAFLAGS="$EXTRAFLAGS -fblocks"
+ 
+ case $host_cpu in
+-- 
+2.32.0 (Apple Git-132)
