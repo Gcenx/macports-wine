@@ -3,7 +3,7 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            The-Wineskin-Project winetricks 20221108
+github.setup            The-Wineskin-Project winetricks 20230707
 github.tarball_from     archive
 
 revision                0
@@ -22,9 +22,9 @@ long_description        ${subport} can help you prepare your system for Windows 
                         systems have all the needed redistributable runtime \
                         libraries or fonts.
 
-checksums               rmd160  100827f467def7d2b3e630b08c16bf8c5586557c \
-                        sha256  e2e9a9ed15306c5e80a9d2961069f278a82bebd7a4b89ffedbba86f7fa475c42 \
-                        size    692932
+checksums               rmd160  2b3b780bc95cd553bc2b2b3a84f05c3531521201 \
+                        sha256  a36acfb24dc3acd6c8f83cd730188db210fb72cada3ec36a8c850cdb6100c6fc \
+                        size    704537
 
 depends_run             bin:curl:curl \
                         port:cabextract \

@@ -20,7 +20,7 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `wine-devel`              *(v8.11)*
 - `wine-stable`             *(v8.0.1)*
 - `wine-staging`            *(v8.11)*
-- `winetricks`              *(v20221022)*
+- `winetricks`              *(v20230707)*
 
 ## How to use this repository
 After installing macports you'll need a modern version of `git`\
