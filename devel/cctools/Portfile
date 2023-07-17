@@ -84,17 +84,11 @@ subport ld64 {
     }
 
     depends_lib-append      port:libtapi
-    build.dir               ${worksrcdir}/ld64
+    build.cmd               make -C ld64
 
-    destroot {
+    post-destroot {
         xinstall -d ${destroot}${prefix}/libexec/ld64
-        copy ${worksrcdir}/ld64/src/ld/ld               ${destroot}${prefix}/libexec/ld64/ld
-        copy ${worksrcdir}/ld64/src/ld/ld               ${destroot}${prefix}/bin/ld
-        copy ${worksrcdir}/ld64/src/other/dyldinfo      ${destroot}${prefix}/bin/dyldinfo
-        copy ${worksrcdir}/ld64/src/other/machocheck    ${destroot}${prefix}/bin/machocheck
-        copy ${worksrcdir}/ld64/src/other/ObjectDump    ${destroot}${prefix}/bin/ObjectDump
-        copy ${worksrcdir}/ld64/src/other/unwinddump    ${destroot}${prefix}/bin/unwinddump
-        delete ${worksrcdir}/ld64/doc/man/man1/ld64.1
-        xinstall -m 0664 {*}[glob ${worksrcdir}/ld64/doc/man/man1/*]    ${destroot}${prefix}/share/man/man1
+        copy ${worksrcdir}/ld64/src/ld/ld ${destroot}${prefix}/libexec/ld64/ld
+        delete ${destroot}${prefix}/share/man/man1/ld64.1
     }
 }
