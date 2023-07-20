@@ -1,0 +1,37 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           gitlab 1.0
+PortGroup           muniversal 1.1
+
+gitlab.instance     https://salsa.debian.org
+gitlab.setup        rousseau PCSC 2.0.0
+revision            0
+
+name                pcsclite
+categories          security
+platforms           darwin
+maintainers         {@gcenx}
+license             GPL-3
+
+description         Middleware to access a smart card using SCard API
+long_description    {*}${description}
+
+homepage            https://pcsclite.apdu.fr/
+
+worksrcdir          ${workpath}/pcsc-lite-${version}
+
+master_sites        https://pcsclite.apdu.fr/files/
+distfiles           pcsc-lite-${version}.tar.bz2
+use_bzip2           yes
+
+checksums \
+    rmd160  67ee92620fc4be554290f2b04c5aef573d2705ae \
+    sha256  d6c3e2b64510e5ed6fcd3323febf2cc2a8e5fda5a6588c7671f2d77f9f189356 \
+    size    799011
+
+depends_build \
+    bin:flex:flex
+
+configure.args \
+    --disable-libsystemd
