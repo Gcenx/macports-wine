@@ -89,10 +89,6 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
-# CW HACK 18311: Use VK on 64-bit macOS for d3d10/11
-patchfiles-append \
-    0003-CW-HACK-18311.diff
-
 if {${os.major} >= 23} {
     patchfiles-append       0004-preloader-sonoma.diff
 }
