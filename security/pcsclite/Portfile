@@ -36,4 +36,5 @@ depends_build \
     bin:flex:flex
 
 configure.args \
-    --disable-libsystemd
+    --disable-libsystemd \
+    --enable-ipcdir=/var/run/pcscd
