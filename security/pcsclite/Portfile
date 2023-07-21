@@ -17,12 +17,14 @@ license             GPL-3
 description         Middleware to access a smart card using SCard API
 long_description    {*}${description}
 
-homepage            https://pcsclite.apdu.fr/
+homepage            https://pcsclite.apdu.fr
 
-worksrcdir          ${workpath}/pcsc-lite-${version}
+distname            pcsc-lite-${version}
+extract.suffix      .tar.bz2
 
-master_sites        https://pcsclite.apdu.fr/files/
-distfiles           pcsc-lite-${version}.tar.bz2
+worksrcdir          ${workpath}/${distname}
+
+master_sites        ${homepage}/files/
 use_bzip2           yes
 
 checksums \
