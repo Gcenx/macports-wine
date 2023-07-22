@@ -1,0 +1,40 @@
+From a2aba36d47ec5c7d2f1535dd11135000ed9e0418 Mon Sep 17 00:00:00 2001
+From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
+Date: Sat, 22 Jul 2023 12:40:06 -0400
+Subject: [PATCH] configure: Allow libusb on macOS
+
+---
+ configure    | 3 ---
+ configure.ac | 2 --
+ 2 files changed, 5 deletions(-)
+
+diff --git a/configure b/configure
+index 8b0696fc..1967d2ed 100755
+--- a/configure
++++ b/configure
+@@ -5105,9 +5105,6 @@ case "$host" in
+ 	if test "$GCC" = "yes"; then
+ 		CFLAGS="$CFLAGS -no-cpp-precomp"
+ 	fi
+-	use_libusb=no
+-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: libusb disabled on Darwin for pcsc-lite" >&5
+-printf "%s\n" "$as_me: WARNING: libusb disabled on Darwin for pcsc-lite" >&2;}
+ 	;;
+ esac
+ 
+diff --git a/configure.ac b/configure.ac
+index 8e63ec1d..fb89b1d0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -47,8 +47,6 @@ case "$host" in
+ 	if test "$GCC" = "yes"; then
+ 		CFLAGS="$CFLAGS -no-cpp-precomp"
+ 	fi
+-	use_libusb=no
+-	AC_MSG_WARN([libusb disabled on Darwin for pcsc-lite])
+ 	;;
+ esac
+ 
+-- 
+2.39.2 (Apple Git-144)
+
