@@ -49,3 +49,7 @@ configure.args \
 
 destroot.keepdirs \
     ${destroot}${prefix}/lib/pcsc/drivers
+
+notes "
+    USB drop directory:     ${prefix}/lib/pcsc/drivers
+"
