@@ -46,3 +46,6 @@ configure.args \
     --disable-libsystemd \
     --enable-ipcdir=/var/run/pcscd \
     --enable-libusb
+
+destroot.keepdirs \
+    ${destroot}${prefix}/lib/pcsc/drivers
