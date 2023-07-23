@@ -4,14 +4,14 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           muniversal 1.1
 
-name                cctools
+name                ld64-609
 
 # Xcode 12
 github.setup        tpoechtrager cctools-port 0466329
 
 # Version must use the following scheme <version>-<commit-date>
 set commitdate      20220114
-version             973.0.1-${commitdate}
+version             609-${commitdate}
 revision            0
 
 categories          devel
@@ -20,10 +20,11 @@ maintainers         {@gcenx}
 license             {APSL-2 GPL-2+}
 installs_libs       no
 
-description         Compiler Tools for Mac OS X and Darwin
-long_description    A set of essential tools to support development \
-                    on Mac OS X and Darwin. Conceptually similar \
-                    similar to binutils on other platforms.
+description         ld64 is the new mach-o linker
+long_description    ld64 combines several object files and libraries, \
+                    resolves references, and produces an ouput file.
+
+set ld64_ver        609
 
 dist_subdir         cctools
 worksrcdir          ${worksrcpath}/cctools
@@ -51,6 +52,7 @@ patchfiles-append \
 
 if {${os.major} < 15} {
     depends_build-append    port:clang-11-bootstrap
+    depends_lib-append      port:cctools
     configure.cc            ${prefix}/libexec/clang-11-bootstrap/bin/clang
     configure.cxx           ${configure.cc}++
     configure.compiler.add_deps no
@@ -60,35 +62,16 @@ configure.args-append \
     --disable-lto-support \
     --disable-xar-support
 
-if {${subport} eq ${name}} {
-    # ld64 needs to be it's own subport
-    post-patch {
-        reinplace "s|ld64||g" ${worksrcpath}/Makefile.in
-        reinplace "s|-DLD64_VERSION_NUM=609||g" ${worksrcpath}/configure
-    }
-    # Disable for cctools but not ld64
-    configure.args-append \
-        --disable-tapi-support
-}
+depends_lib-append      port:libtapi
+build.cmd               make -C ld64
 
-subport ld64 {
-    version                 609-${commitdate}
-
-    description             ld64 is the new mach-o linker
-    long_description        ld64 combines several object files and libraries, \
-                            resolves references, and produces an ouput file.
-
-    if {${os.major} < 15} {
-        # For a new enough install_name_tool
-        depends_lib-append      port:cctools
-    }
-
-    depends_lib-append      port:libtapi
-    build.cmd               make -C ld64
-
-    post-destroot {
-        xinstall -d ${destroot}${prefix}/libexec/ld64
-        copy ${worksrcdir}/ld64/src/ld/ld ${destroot}${prefix}/libexec/ld64/ld
-        delete ${destroot}${prefix}/share/man/man1/ld64.1
-    }
+post-destroot {
+    xinstall -d ${destroot}${prefix}/libexec/ld64
+    copy ${destroot}${prefix}/bin/ld                ${destroot}${prefix}/libexec/ld64/ld-${ld64_ver}
+    file rename ${destroot}${prefix}/bin/dyldinfo   ${destroot}${prefix}/bin/dyldinfo-${ld64_ver}
+    file rename ${destroot}${prefix}/bin/ld         ${destroot}${prefix}/bin/ld-${ld64_ver}
+    file rename ${destroot}${prefix}/bin/machocheck ${destroot}${prefix}/bin/machocheck-${ld64_ver}
+    file rename ${destroot}${prefix}/bin/ObjectDump ${destroot}${prefix}/bin/ObjectDump-${ld64_ver}
+    file rename ${destroot}${prefix}/bin/unwinddump ${destroot}${prefix}/bin/unwinddump-${ld64_ver}
+    delete ${destroot}${prefix}/share
 }
