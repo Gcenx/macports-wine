@@ -89,10 +89,6 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
-if {${os.major} >= 23} {
-    patchfiles-append       0004-preloader-sonoma.diff
-}
-
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
 if {${os.major} < 14} {
