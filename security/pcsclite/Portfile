@@ -39,10 +39,14 @@ patch.pre_args -p1
 
 configure.args \
     --disable-libsystemd \
-    --enable-ipcdir=/var/run/pcscd
+    --enable-ipcdir=/var/run/pcscd \
+    --enable-usbdropdir=${prefix}/libexec/SmartCardServices/drivers
 
-destroot.keepdirs \
-    ${destroot}${prefix}/lib/pcsc/drivers
+post-destroot {
+    ui_msg "--->  Installing Apples ifd-ccid.bundle into place"
+    xinstall -d ${destroot}${prefix}/libexec/SmartCardServices/drivers
+    file copy /usr/libexec/SmartCardServices/drivers/ifd-ccid.bundle ${destroot}${prefix}/libexec/SmartCardServices/drivers
+}
 
 variant libusb description {Build ${subport} with libusb} {
     depends_lib-append      port:libusb
@@ -51,5 +55,5 @@ variant libusb description {Build ${subport} with libusb} {
 }
 
 notes "
-    USB drop directory:     ${prefix}/lib/pcsc/drivers
+    USB drop directory:     ${prefix}/libexec/SmartCardServices/drivers
 "
