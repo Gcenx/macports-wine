@@ -24,6 +24,7 @@ description         ld64 is the new mach-o linker
 long_description    ld64 combines several object files and libraries, \
                     resolves references, and produces an ouput file.
 
+set cctools_ver     973
 set ld64_ver        609
 
 dist_subdir         cctools
@@ -74,4 +75,25 @@ post-destroot {
     file rename ${destroot}${prefix}/bin/ObjectDump ${destroot}${prefix}/bin/ObjectDump-${ld64_ver}
     file rename ${destroot}${prefix}/bin/unwinddump ${destroot}${prefix}/bin/unwinddump-${ld64_ver}
     delete ${destroot}${prefix}/share
+}
+
+# Turn into a versioned copy of cctools later
+subport cctools {
+    version             973.0.1-${commitdate}
+
+    description         Compiler Tools for Mac OS X and Darwin
+    long_description    A set of essential tools to support development \
+                        on Mac OS X and Darwin. Conceptually similar \
+                        similar to binutils on other platforms.
+
+    post-patch {
+        reinplace "s|ld64||g" ${worksrcpath}/Makefile.in
+        reinplace "s|-DLD64_VERSION_NUM=609||g" ${worksrcpath}/configure
+    }
+
+    configure.args-append --disable-tapi-support
+
+    build.cmd           make
+
+    post-destroot       {}
 }
