@@ -20,7 +20,7 @@ index 3ee23097..e6b8d607 100644
 +		// Likewise with rust compiler_builtins atoms. They may come from a libcompiler_builtins-<hash>.a lib, or from a compiler_builtins-... member of a rust static library.
  		else if ( _haveLLVMObjs && !force && (atom->contentType() !=  ld::Atom::typeLTOtemporary) ) {
 -			if ( isCompilerSupportLib(atom->safeFilePath()) ) {
-+			if ( isCompilerSupportLib(atom->safeFilePath()) || strstr(atom->safeFilePath(), "compiler_builtins") != nullptr ) ) {
++			if ( isCompilerSupportLib(atom->safeFilePath()) || strstr(atom->safeFilePath(), "compiler_builtins") != nullptr ) {
  				_deadStripRoots.insert(atom);
  			}
  		}
