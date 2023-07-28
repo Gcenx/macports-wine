@@ -1,7 +1,7 @@
 From 2c02c6aad84f75df9c599dc841f0ee39ca1203d0 Mon Sep 17 00:00:00 2001
 From: Gcenx <38226388+Gcenx@users.noreply.github.com>
 Date: Tue, 15 Mar 2022 21:37:31 -0400
-Subject: [PATCH 2/2] Fixup for macports
+Subject: [PATCH] Fixup for macports
 
 ---
  cctools/configure    | 14 --------------
