@@ -39,7 +39,7 @@ Next place a copy of the `MacOSX10.13.sdk` into `/Library/Developer/CommandLineT
 Alternatively run `port install MacOSX10.13.sdk`
 
 ## macOS Catalina or later;
-`wine-stable`, `wine-devel` & `wine-staging` will only provide wine64.
+`wine-stable`, `wine-devel` & `wine-staging` will only provide wine used for 32 & 64Bit Windows binaires.
 
 ### Prior project history
 You can find the prior commit history [here](https://github.com/Gcenx/macports-wine/tree/master)
