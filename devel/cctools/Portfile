@@ -55,8 +55,6 @@ patchfiles-append \
     pr-135.diff
 
 post-patch {
-    reinplace "s|-DLD64_VERSION_NUM=609||g" ${worksrcpath}/configure
-    reinplace "s|ld64||g"                   ${worksrcpath}/Makefile.in
     reinplace "s|LD64_VERSION_NUM|609|g"    ${worksrcpath}/ld64/src/3rd/helper.c
 }
 
