@@ -165,7 +165,9 @@ configure.ldflags           -Wl,-headerpad_max_install_names -lSystem -Wl,-rpath
 
 # ld64 is broken from Xcode15-beta3 so we need to force macports-clang to use ld64-609
 if {${os.major} >= 23} {
-    compiler.blacklist-append           clang
+    depends_build-append    port:llvm-cx
+    configure.cc            ${prefix}/libexec/llvm-cx/bin/clang
+    configure.cxx           ${configure.cc}++
 }
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
