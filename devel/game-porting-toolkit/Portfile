@@ -209,4 +209,15 @@ platform darwin arm {
     configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
+post-deactivate {
+    if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-2.47.2] 0]}]} {
+        registry_deactivate_composite mingw-w64-wine-gecko-2.47.2 "" [list ports_nodepcheck 1]
+    }
+
+    if {![catch {set installed [lindex [registry_active game-porting-toolkit-d3dmetal] 0]}]} {
+        registry_deactivate_composite game-porting-toolkit-d3dmetal "" [list ports_nodepcheck 1]
+    }
+
+}
+
 livecheck.type              none
