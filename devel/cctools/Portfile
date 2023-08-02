@@ -44,7 +44,8 @@ patch.pre_args      -p2
 patchfiles \
     0001-fixup-for-macports.diff \
     0002-restore-no_new_main.diff \
-    0003-ld64-remove-i386-architecture-is-deprecated.diff
+    0003-ld64-remove-i386-architecture-is-deprecated.diff \
+    0004-fix-builds-with-old-sdks.diff
 
 # Open pull-requests that have yet to be merged
 patchfiles-append \
