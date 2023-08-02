@@ -14,14 +14,14 @@ supported_archs     x86_64
 description         Apple Game Porting Toolkit - D3DMetal
 long_description    {*}${description}
 
-master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_beta_1.0.2/Game_porting_toolkit_beta_1.02.dmg
+master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_1_beta_3/Game_porting_toolkit_1_beta_3.dmg
 
-distname            Game_porting_toolkit_beta_1.02
+distname            Game_porting_toolkit_1_beta_3
 use_dmg             yes
 
-checksums           rmd160  801e5a4b0e9aafdf1bd20af345716307612eda52 \
-                    sha256  ebf3adb17616597103074fd809516e73d2ac3b6eb2f0d406af7ae6cfd55e24f8 \
-                    size    27858405
+checksums           rmd160  ef48a9bcb2088107b9f6ab4829cb67ccc6d4953b \
+                    sha256  7244e7d87c757f1ea1ebd4b457e04daf22ceeb9de9237f2683c84c869d36f698 \
+                    size    28032374
 
 use_configure       no
 
@@ -49,7 +49,6 @@ build {}
 
 destroot {
     set d3dmetal_dir ${prefix}/libexec/game-porting-toolkit/lib
-    set d3dmetal_framework D3DMetal.framework/Versions/A
     xinstall -d ${destroot}${d3dmetal_dir}
 
     system "ditto ${worksrcpath}/lib ${destroot}${d3dmetal_dir}"
