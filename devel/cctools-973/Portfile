@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           muniversal 1.1
 
-name                cctools
+name                cctools-973
 
 # Xcode 12
 github.setup        tpoechtrager cctools-port f28fb5e
@@ -63,6 +63,11 @@ configure.args \
     --disable-lto-support \
     --disable-tapi-support \
     --disable-xar-support
+
+if {${subport} eq "${name}"} {
+    set sub_prefix          ${prefix}/libexec/cctools-${cctools_ver}
+    configure.pre_args      --prefix=${sub_prefix}
+}
 
 subport ld64-609 {
     version                 609-${commitdate}
