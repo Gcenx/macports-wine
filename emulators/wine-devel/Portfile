@@ -261,11 +261,6 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
-variant pcsclite description {Build ${subport} with pcsclite, to support smart card & smart card readers} {
-    depends_lib-append      port:pcsclite
-    configure.args-replace  --without-pcsclite --with-pcsclite
-}
-
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
 variant usb description {Build ${subport} with USB support} {
