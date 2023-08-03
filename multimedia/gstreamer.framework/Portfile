@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           gitlab 1.0
 
-gitlab.setup        gstreamer gstreamer 1.22.4
+gitlab.setup        gstreamer gstreamer 1.22.5
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
 revision            0
 
@@ -29,13 +29,13 @@ distfiles           ${distname}.${extract.suffix} \
 
 checksums \
     ${distname}.${extract.suffix} \
-    rmd160  1dc2600df40ae4b67185c0aac5b535ec79a2dce7 \
-    sha256  739da4bcb2994e441a1efb8a647e32ce0fd9322a2b99f15ccf3b0fb139a836e2 \
-    size    205925824 \
+    rmd160  4e8fb024ed18fee8283359ef601131d263c4470e \
+    sha256  32a85de62e3d9cf490a1b09804a15f01f4a8a92296516c31e7b8a542504c81d0 \
+    size    207330084 \
     ${headername}.${extract.suffix} \
-    rmd160  0a2a864f3ad798e46bf4332228e3903136683de5 \
-    sha256  7d178f3f14c55db89bcdde9e05787781d3d4277c604a17e7e007c730480bf5d6 \
-    size    438039369
+    rmd160  87f57f1bf4cf0265bea5616a078419dc46bfe6e6 \
+    sha256  2d23dff9cc232fa6ac882a6ca8fc33b36d319d251526947ad5b2f86b10b9004a \
+    size    438195392
 
 extract             {}
 use_configure       no

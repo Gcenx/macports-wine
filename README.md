@@ -8,8 +8,8 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(1.0.3)*
 - `gl-headers`              *(2019.1.0)*
-- `gstreamer1`              *(1.22.4)*
-- `gstreamer.framework`     *(1.22.4)*
+- `gstreamer1`              *(1.22.5)*
+- `gstreamer.framework`     *(1.22.5)*
 - `ld64-609`                *(609 - Xcode12)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
