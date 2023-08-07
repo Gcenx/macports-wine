@@ -59,7 +59,7 @@ checksums \
 depends_build \
     port:bison \
     port:cctools \
-    port:flex \
+    bin:flex:flex \
     port:gettext \
     port:ld64 \
     port:mingw-w64 \
