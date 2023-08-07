@@ -1,0 +1,25 @@
+From daabb19af0d95832bd6046fc05b6c907a4bb280f Mon Sep 17 00:00:00 2001
+From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
+Date: Sat, 20 Aug 2022 19:49:42 -0400
+Subject: [PATCH 5/6] Revert "user32: Redraw children when the combo box is
+ dropped down."
+
+This reverts commit ad7c5e9ced855950228ea3f73bff0624829b66d7.
+---
+ dlls/user32/combo.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/user32/combo.c b/dlls/user32/combo.c
+index aeb7fa08e5f..1b53a2d6ad8 100644
+--- a/dlls/user32/combo.c
++++ b/dlls/user32/combo.c
+@@ -1003,7 +1003,8 @@ static void CBDropDown( LPHEADCOMBO lphc )
+ 
+ 
+    if( !(lphc->wState & CBF_NOREDRAW) )
+-     RedrawWindow( lphc->self, NULL, 0, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW );
++     RedrawWindow( lphc->self, NULL, 0, RDW_INVALIDATE |
++			   RDW_ERASE | RDW_UPDATENOW | RDW_NOCHILDREN );
+ 
+    EnableWindow( lphc->hWndLBox, TRUE );
+    if (GetCapture() != lphc->self)

@@ -15,7 +15,7 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
 name                        wine-devel
-conflicts                   wine-stable wine-staging wine-crossover
+conflicts                   wine-stable wine-stable-6.0.4 wine-staging wine-crossover
 set my_name                 wine
 version                     8.13
 revision                    0
