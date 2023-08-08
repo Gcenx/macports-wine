@@ -15,7 +15,7 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
 name                        wine-devel
-conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-7.22 wine-staging wine-staging-7.22 wine-crossover
+conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
 version                     8.13
 revision                    0
@@ -215,7 +215,7 @@ subport wine-staging {
     name \
         wine-staging
     conflicts \
-        wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-7.22 wine-staging-7.22 wine-crossover
+        wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-7.22 wine-crossover
 
     set staging_version \
         ${version}

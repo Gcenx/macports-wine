@@ -15,7 +15,7 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
 name                        wine-devel-7.22
-conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-staging wine-staging-7.22
+conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-staging
 set my_name                 wine
 version                     7.22
 revision                    0
@@ -216,41 +216,6 @@ if {${os.major} < 15} {
 # wine requires clang >= 3.8
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
-
-subport wine-staging-7.22 {
-    name \
-        wine-staging
-    conflicts \
-        wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-7.22 wine-staging wine-crossover
-
-    set staging_version \
-        ${version}
-    set wine_staging_distfile \
-        v${staging_version}${extract.suffix}
-
-    master_sites-append \
-        https://github.com/wine-staging/wine-staging/archive/:stagingsource
-
-    distfiles-append \
-        ${wine_staging_distfile}:stagingsource
-
-    checksums-append \
-        ${wine_staging_distfile} \
-        rmd160  17fab6b669588b8240dc250182e0a7e2b03a6c50 \
-        sha256  74104b902d2f60c019c62a15b1f475773f939aedafe05cc937d3ba89973bf00f \
-        size    9528424
-
-    depends_build-append \
-        port:autoconf
-
-    # Running "patchinstall.sh" before patchesfiles that get inherited from wine-devel
-    # "eventfd_synchronization" is disabled as macOS doesn't support eventfd
-    # "winemac.drv-no-flicker-patch" is disabled as the patch gets inherited from wine-devel
-    post-extract {
-        system -W ${workpath}/wine-staging-${staging_version}/patches \
-            "sh patchinstall.sh DESTDIR=${worksrcpath} --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
-    }
-}
 
 variant gstreamer description {Build ${subport} with gstreamer support} {
     depends_lib-append      port:gstreamer1-gst-plugins-base
