@@ -85,9 +85,9 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
+# https://bugs.winehq.org/show_bug.cgi?id=52354
 patchfiles-append \
-    0003-preloader-10.7.diff \
-    0004-loader-fix-environ.diff
+    0003-preloader-10.7.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=52354
