@@ -1,0 +1,150 @@
+From 4c7e7ccac9f2b33d8685fd830e9468a1599f33fd Mon Sep 17 00:00:00 2001
+From: Jacek Caban <jacek@codeweavers.com>
+Date: Thu, 8 Dec 2022 17:49:24 +0100
+Subject: [PATCH 1/2] include: Add vadefs.h header.
+
+Based on mingw-w64.
+---
+ include/Makefile.in     |  1 +
+ include/msvcrt/vadefs.h | 52 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 include/msvcrt/vadefs.h
+
+diff --git a/include/Makefile.in b/include/Makefile.in
+index 23a4265a437..c24ba7eff07 100644
+--- a/include/Makefile.in
++++ b/include/Makefile.in
+@@ -527,6 +527,7 @@ SOURCES = \
+ 	msvcrt/time.h \
+ 	msvcrt/uchar.h \
+ 	msvcrt/unistd.h \
++	msvcrt/vadefs.h \
+ 	msvcrt/wchar.h \
+ 	msvcrt/wctype.h \
+ 	mswsock.h \
+diff --git a/include/msvcrt/vadefs.h b/include/msvcrt/vadefs.h
+new file mode 100644
+index 00000000000..2a612fc055c
+--- /dev/null
++++ b/include/msvcrt/vadefs.h
+@@ -0,0 +1,52 @@
++/*
++ * Variable argument definitions
++ *
++ * Copyright 2022 Jacek Caban
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#ifndef _INC_VADEFS
++#define _INC_VADEFS
++
++#ifdef __cplusplus
++#define _ADDRESSOF(v) (&reinterpret_cast<const char &>(v))
++#else
++#define _ADDRESSOF(v) (&(v))
++#endif
++
++#if defined(__GNUC__) || defined(__clang__)
++
++typedef __builtin_va_list va_list;
++#define _crt_va_start(v,l)  __builtin_va_start(v,l)
++#define _crt_va_arg(v,l)    __builtin_va_arg(v,l)
++#define _crt_va_end(v)      __builtin_va_end(v)
++#define _crt_va_copy(d,s)   __builtin_va_copy(d,s)
++
++#else
++
++typedef char *va_list;
++
++#if defined(__i386__)
++#define _INTSIZEOF(n) ((sizeof(n) + sizeof(int) - 1) & ~(sizeof(int) - 1))
++#define _crt_va_start(v,l)  ((v) = (va_list)_ADDRESSOF(l) + _INTSIZEOF(l))
++#define _crt_va_arg(v,l)    (*(l *)(((v) += _INTSIZEOF(l)) - _INTSIZEOF(l)))
++#define _crt_va_end(v)      ((v) = (va_list)0)
++#define _crt_va_copy(d,s)   ((d) = (s))
++#endif
++
++#endif
++
++#endif /* _INC_VADEFS */
+-- 
+GitLab
+
+
+From 4d8091cccc46053c605e68eccd27b94ec297f28e Mon Sep 17 00:00:00 2001
+From: Jacek Caban <jacek@codeweavers.com>
+Date: Thu, 8 Dec 2022 17:52:23 +0100
+Subject: [PATCH 2/2] include: Add stdarg.h header.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=54263
+---
+ include/Makefile.in     |  1 +
+ include/msvcrt/stdarg.h | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 include/msvcrt/stdarg.h
+
+diff --git a/include/Makefile.in b/include/Makefile.in
+index c24ba7eff07..54cbf4d955c 100644
+--- a/include/Makefile.in
++++ b/include/Makefile.in
+@@ -512,6 +512,7 @@ SOURCES = \
+ 	msvcrt/setjmp.h \
+ 	msvcrt/share.h \
+ 	msvcrt/signal.h \
++	msvcrt/stdarg.h \
+ 	msvcrt/stdbool.h \
+ 	msvcrt/stddef.h \
+ 	msvcrt/stdint.h \
+diff --git a/include/msvcrt/stdarg.h b/include/msvcrt/stdarg.h
+new file mode 100644
+index 00000000000..6c6b6048351
+--- /dev/null
++++ b/include/msvcrt/stdarg.h
+@@ -0,0 +1,31 @@
++/*
++ * Variable argument definitions
++ *
++ * Copyright 2022 Jacek Caban
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#ifndef _INC_STDARG
++#define _INC_STDARG
++
++#include <vadefs.h>
++
++#define va_start(v,l)  _crt_va_start(v,l)
++#define va_arg(v,l)    _crt_va_arg(v,l)
++#define va_end(v)      _crt_va_end(v)
++#define va_copy(d,s)   _crt_va_copy(d,s)
++
++#endif /* _INC_STDARG */
+-- 
+GitLab
+
