@@ -58,10 +58,8 @@ checksums \
 
 depends_build \
     port:bison \
-    port:cctools \
     bin:flex:flex \
     port:gettext \
-    port:ld64 \
     port:mingw-w64 \
     port:pkgconfig
 
@@ -209,7 +207,7 @@ variant x11 {
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append        -Wl,-rpath,${prefix}/lib
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 # This stops wine violating destroot
 configure.args.x86_64-append    --libdir=${prefix}/lib
@@ -230,6 +228,8 @@ if {${os.major} >= 15} {
 }
 
 platform darwin 10 {
+    depends_build-append        port:cctools port:ld64
+
     # Need to tracking down when the reamaining breakage happened
     # https://trac.macports.org/ticket/61721
     patchfiles-append           1001-SnowLeopard-Fixes.diff
@@ -299,6 +299,7 @@ variant usb description {Build ${subport} with USB support} {
 
 default_variants            +universal
 
+configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
 

@@ -102,9 +102,9 @@ if {${os.major} < 14} {
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
-    reinplace -q "/PKG_CONFIG_PATH/d"    ${worksrcpath}/configure
-    reinplace -q "/PKG_CONFIG_PATH/d"    ${worksrcpath}/configure.ac
-    reinplace "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
+    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
+    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure.ac
+    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -200,7 +200,7 @@ variant x11 {
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append    -Wl,-rpath,${prefix}/lib
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 # Vulkan is supported on macOS through MoltenVK, since wine-3.13
 if {${os.major} >= 15} {
@@ -243,6 +243,7 @@ variant usb description {Build ${subport} with USB support} {
 
 default_variants            +universal
 
+configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
 

@@ -177,7 +177,7 @@ configure.args \
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags           -Wl,-headerpad_max_install_names -lSystem -Wl,-rpath,${compiler.library_path}
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
     default_variants +universal
