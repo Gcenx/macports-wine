@@ -171,10 +171,6 @@ if {${os.major} >= 23} {
     configure.cxx           ${configure.cc}++
 }
 
-if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
-    default_variants +universal
-}
-
 if {${os.major} > 18} {
     # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
@@ -229,7 +225,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants-append     +gstreamer
+default_variants            +gstreamer +universal
 
 triplet.add_build           cross
 
