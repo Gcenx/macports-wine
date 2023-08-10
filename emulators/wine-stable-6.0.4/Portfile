@@ -14,7 +14,7 @@ legacysupport.newest_darwin_requires_legacy 13
 legacysupport.use_static yes
 
 name                        wine-stable-6.0.4
-conflicts                   wine-stable wine-stable-7.0.2 wine-devel wine-devel-7.22 wine-staging wine-crossover
+conflicts                   wine-stable wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
 version                     6.0.4
 revision                    0

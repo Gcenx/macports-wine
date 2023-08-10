@@ -15,7 +15,7 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel and wine-staging ports as similar as possible.
 
 name                        wine-stable-7.0.2
-conflicts                   wine-stable-6.0.4 wine-devel wine-devel-7.22 wine-staging wine-crossover
+conflicts                   wine-stable-6.0.4 wine-devel wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
 version                     7.0.2
 revision                    0
