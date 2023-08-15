@@ -16,7 +16,6 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
-- `pcsclite`                *(2.0.0)*
 - `wine-crossover`          *(v22.1.1)*
 - `wine-devel`              *(v8.13)*
 - `wine-stable`             *(v8.0.2)*
