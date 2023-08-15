@@ -118,7 +118,7 @@ configure.args.x86_64 \
     --disable-dxgi
 
 # We also need to tell the linker to add Macports to the rpath stack.
-configure.ldflags           -Wl,-headerpad_max_install_names -lSystem -L${compiler.library_path} -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/${name}/lib/external
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/${name}/lib/external
 
 # Use an older deployment target to avoid new dyld behaviors.
 # The custom compiler is too old to accept "13.0", so we use "10.14".
@@ -139,6 +139,7 @@ default_variants-append     +gstreamer
 
 triplet.add_build           cross
 
+configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -O3
 configure.env-append        CROSSCFLAGS=${configure.optflags}
 
@@ -217,7 +218,6 @@ post-deactivate {
     if {![catch {set installed [lindex [registry_active game-porting-toolkit-d3dmetal] 0]}]} {
         registry_deactivate_composite game-porting-toolkit-d3dmetal "" [list ports_nodepcheck 1]
     }
-
 }
 
 livecheck.type              none
