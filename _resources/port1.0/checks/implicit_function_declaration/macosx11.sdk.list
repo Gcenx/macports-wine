@@ -13,7 +13,6 @@ readahead
 sem_timedwait
 setns
 splice
-sprintf
 statx
 sync_file_range
 tee

@@ -15,9 +15,9 @@ legacysupport.use_static yes
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
 name                        wine-stable
-conflicts                   wine-devel wine-staging wine-crossover
+conflicts                   wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
-version                     8.0
+version                     8.0.2
 revision                    0
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].0
@@ -54,16 +54,14 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  72039ce3eff47e4fbdbae0c7c8b60408d5cbc51b \
-    sha256  2dc71023778b139234f4987333ec0d58da95c6f9e32952b756f7544280009d78 \
-    size    48004432
+    rmd160  7689c2ea724ae2c8c5d6f1db1c9df268ac5f044a \
+    sha256  d3b1ead5094e92b8ed888ae1d0c781d53fba11f13ca9cfa405a7ba1127f0544a \
+    size    48040148
 
 depends_build \
     port:bison \
-    port:cctools \
-    port:flex \
+    bin:flex:flex \
     port:gettext \
-    port:ld64 \
     port:mingw-w64 \
     port:pkgconfig
 
@@ -89,13 +87,9 @@ patchfiles-append \
 patchfiles-append \
     0002-crypt32-expand-cert-search-paths.diff
 
-# CW HACK 18311: Use VK on 64-bit macOS for d3d10/11
+# https://bugs.winehq.org/show_bug.cgi?id=54831
 patchfiles-append \
-    0003-CW-HACK-18311.diff
-
-# https://bugs.winehq.org/show_bug.cgi?id=54371, remove wine-8.0.1
-patchfiles-append \
-    0004-fix_bug54371.diff
+    0004-preloader-sonoma.diff
 
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
@@ -111,6 +105,7 @@ if {${os.major} < 14} {
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
+    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure.ac
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
@@ -167,14 +162,17 @@ configure.args \
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append    -Wl,-rpath,${prefix}/lib
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
-    default_variants +universal
+# ld64 is broken from Xcode15-beta3 so we need to force macports-clang to use ld64-609
+if {${os.major} >= 23} {
+    depends_build-append    port:llvm-cx
+    configure.cc            ${prefix}/libexec/llvm-cx/bin/clang
+    configure.cxx           ${configure.cc}++
 }
 
 if {${os.major} > 18} {
-    # Avoid weird linker errors with Xcode 10 and later
+    # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
 
     # Build i386 & x86_64 PE binaries for WoW64
@@ -227,7 +225,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants-append     +gstreamer
+default_variants            +gstreamer +universal
 
 triplet.add_build           cross
 
@@ -238,7 +236,8 @@ muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
-configure.env-append        CROSSCFLAGS=${configure.optflags}
+configure.env-append        i386_CFLAGS=${configure.optflags}
+configure.env-append        x86_64_CFLAGS=${configure.optflags}
 
 # Reduce compilation warnings
 configure.cflags-append     -Wno-deprecated-declarations

@@ -1,0 +1,65 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           gitlab 1.0
+
+gitlab.setup        gstreamer gstreamer 1.22.5
+gitlab.instance     https://gitlab.freedesktop.org/gstreamer
+revision            0
+
+name                ${gitlab.project}.framework
+categories          multimedia
+maintainers         {@gcenx}
+description         GStreamer is a streaming media framework
+long_description    {*}${description}
+
+supported_archs     arm64 x86_64
+platforms           {darwin >= 15}
+license             LGPL-2+
+
+homepage            https://gstreamer.freedesktop.org
+master_sites        ${homepage}/data/pkg/osx/${version}/
+
+distname            gstreamer-1.0-${version}-universal
+set headername      gstreamer-1.0-devel-${version}-universal
+extract.suffix      pkg
+
+distfiles           ${distname}.${extract.suffix} \
+                    ${headername}.${extract.suffix}
+
+checksums \
+    ${distname}.${extract.suffix} \
+    rmd160  4e8fb024ed18fee8283359ef601131d263c4470e \
+    sha256  32a85de62e3d9cf490a1b09804a15f01f4a8a92296516c31e7b8a542504c81d0 \
+    size    207330084 \
+    ${headername}.${extract.suffix} \
+    rmd160  87f57f1bf4cf0265bea5616a078419dc46bfe6e6 \
+    sha256  2d23dff9cc232fa6ac882a6ca8fc33b36d319d251526947ad5b2f86b10b9004a \
+    size    438195392
+
+extract             {}
+use_configure       no
+build               {}
+destroot            {}
+
+pre-build {
+    if {![file exists /Library/Frameworks/GStreamer.framework ]} {
+        elevateToRoot "installer"
+        ui_msg "--->  Installing gstreamer-1.0-${version}-universal.pkg"
+        system -W ${distpath} "installer -pkg gstreamer-1.0-${version}-universal.pkg -target /"
+        ui_msg "--->  Installing gstreamer-1.0-devel-1.22.4-universal.pkg"
+        system -W ${distpath} "installer -pkg gstreamer-1.0-devel-${version}-universal.pkg -target /"
+    }
+}
+
+post-destroot {
+    global destroot prefix
+    set docdir ${destroot}${prefix}/share/doc/${subport}
+    xinstall -d ${docdir}
+    system "echo ${subport} is a stub port > ${docdir}/README"
+}
+
+variant universal {}
+configure.universal_archs {*}${supported_archs}
+default_variants +universal
+variant_set universal

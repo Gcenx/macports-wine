@@ -1,0 +1,32 @@
+From 9adf95ef3b373e3c1608aee80d8dedcf620bc83b Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Thu, 26 Jan 2023 19:56:01 -0500
+Subject: [PATCH] ld64: remove "i386 architecture is deprecated"
+
+---
+ cctools/ld64/src/ld/Options.cpp | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/cctools/ld64/src/ld/Options.cpp b/cctools/ld64/src/ld/Options.cpp
+index 3bb8324..74708eb 100644
+--- a/cctools/ld64/src/ld/Options.cpp
++++ b/cctools/ld64/src/ld/Options.cpp
+@@ -6421,15 +6421,6 @@ void Options::checkIllegalOptionCombinations()
+ 			break;
+ 		}
+ 	}
+-
+-	// ld64-port: addded #if 0
+-#if 0
+-	// <rdar://problem/39095109> Linker warning for i386 macOS binaries
+-	if ( (architecture() == CPU_TYPE_I386) && platforms().contains(ld::Platform::macOS) ) {
+-		if ( !fInternalSDK )
+-			warning("The i386 architecture is deprecated for macOS (remove from the Xcode build setting: ARCHS)");
+-	}
+-#endif
+ }
+ 
+ void Options::inferArchAndPlatform()
+-- 
+2.21.1 (Apple Git-122.3)
+

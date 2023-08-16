@@ -16,9 +16,9 @@ legacysupport.use_static yes
 
 # Crossover-specific bug reports are accepted at info@codeweavers.com
 name                        wine-crossover
-conflicts                   wine-stable wine-devel wine-staging
+conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-staging
 set my_name                 wine
-version                     22.1.0
+version                     22.1.1
 revision                    0
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
@@ -58,14 +58,14 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  63352b837b4714a953bc06f1057e1087b659b0c7 \
-    sha256  36425ef8e8067784006c775d0e2303bb62301d055cbdaeff639311c662ddd8ea \
-    size    147889427
+    rmd160  e514c407e3b7f75339a60fac84360f00791e97bb \
+    sha256  cdfe282ce33788bd4f969c8bfb1d3e2de060eb6c296fa1c3cdf4e4690b8b1831 \
+    size    147879629
 
 depends_build \
     port:bison \
     port:cctools \
-    port:flex \
+    bin:flex:flex \
     port:gettext \
     port:ld64 \
     port:mingw-w64 \
@@ -107,6 +107,15 @@ patchfiles-append \
     0005-libs-Import-code-from-upstream-openldap-2.5.13.diff \
     0006-ldap-Don-t-depend-on-the-getopt.h-header.diff \
     0007-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
+
+# Remove "CX HACK 21217" in favour of upstreams fix, remove CX23
+patchfiles-append \
+    0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
+    0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
+
+# macOS Sonoma
+patchfiles-append \
+    0010-preloader-sonoma.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -168,14 +177,10 @@ configure.args \
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags-append    -Wl,-rpath,${prefix}/lib
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-if {([llength ${supported_archs}] > 1) && (${os.major} < 19)} {
-    default_variants +universal
-}
-
-# Avoid weird linker errors with Xcode 10 and later
 if {${os.major} > 18} {
+    # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
 }
 
@@ -225,15 +230,10 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
 #    configure.args-replace  --without-usb --with-usb
 #}
 
-default_variants-append     +gstreamer
+default_variants            +gstreamer +universal
 
 triplet.add_build           cross
 
-# macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
-# https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
-compiler.limit_flags        yes
-muniversal.arch_flag        no
-muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
@@ -245,11 +245,17 @@ configure.cflags-append     -Wno-deprecated-declarations
 destroot.target             install-lib
 
 if {${os.major} > 18} {
-    depends_build-append    port:cx-llvm
-    configure.cc            ${prefix}/libexec/cx-llvm/bin/clang
-    configure.cxx           ${prefix}/libexec/cx-llvm/bin/clang++
+    depends_build-append    port:llvm-cx
+    configure.cc            ${prefix}/libexec/llvm-cx/bin/clang
+    configure.cxx           ${prefix}/libexec/llvm-cx/bin/clang++
     configure.cmd           ${worksrcpath}/configure
     configure.compiler.add_deps no
+
+    # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
+    # https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
+    compiler.limit_flags        yes
+    muniversal.arch_flag        no
+    muniversal.arch_compiler    yes
 
     configure.pre_args.i386-append \
         --enable-win32on64 \

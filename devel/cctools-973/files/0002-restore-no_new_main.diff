@@ -1,0 +1,74 @@
+From 4b20400ebfc3040667e3f3d66124040ffea5d930 Mon Sep 17 00:00:00 2001
+From: Dean M Greer <38226388+Gcenx@users.noreply.github.com>
+Date: Thu, 8 Sep 2022 20:33:22 -0400
+Subject: [PATCH] ld64: Restore -new_main & -no_new_main args
+
+https: //github.com/Gcenx/homebrew-wine/issues/52#issuecomment-1240886093
+Co-Authored-By: Torrekie Gen <me@torrekie.dev>
+---
+ cctools/ld64/src/ld/Options.cpp | 22 +++++++++++++++++++---
+ cctools/ld64/src/ld/Options.h   |  2 ++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/cctools/ld64/src/ld/Options.cpp b/cctools/ld64/src/ld/Options.cpp
+index 3bb8324..2f84182 100644
+--- a/cctools/ld64/src/ld/Options.cpp
++++ b/cctools/ld64/src/ld/Options.cpp
+@@ -233,6 +233,7 @@ Options::Options(int argc, const char* argv[])
+ 	  fDataInCodeInfoLoadCommand(false), fDataInCodeInfoLoadCommandForcedOn(false), fDataInCodeInfoLoadCommandForcedOff(false),
+ 	  fCanReExportSymbols(false), fObjcCategoryMerging(true), fPageAlignDataAtoms(false), 
+ 	  fNeedsThreadLoadCommand(false), fEntryPointLoadCommand(false),
++      fEntryPointLoadCommandForceOn(false), fEntryPointLoadCommandForceOff(false),
+ 	  fSourceVersionLoadCommand(false),
+ 	  fSourceVersionLoadCommandForceOn(false), fSourceVersionLoadCommandForceOff(false), 
+ 	  fExportDynamic(false), fAbsoluteSymbols(false),
+@@ -4130,9 +4131,14 @@ void Options::parse(int argc, const char* argv[])
+ 			}
+ 			else if (strcmp(arg, "-debug_variant") == 0) {
+ 			    fDebugVariant = true;
++            }
++            else if (strcmp(arg, "-new_main") == 0 ) {
++                fEntryPointLoadCommandForceOn = true;
++                cannotBeUsedWithBitcode(arg);
+             }
+ 			else if (strcmp(arg, "-no_new_main") == 0) {
+-				// HACK until 39514191 is fixed
++                fEntryPointLoadCommandForceOff = true;
++                cannotBeUsedWithBitcode(arg);
+ 			}
+ 			else if (strcmp(arg, "-init_offsets") == 0) {
+ 				fMakeInitializersIntoOffsets = true;
+@@ -5493,8 +5499,18 @@ void Options::reconfigureDefaults()
+ 		case Options::kDynamicExecutable:
+ 			if ( platforms().contains(ld::Platform::driverKit) )
+ 				break;
+-			// <rdar://problem/16310363> Look for "_main" not "start" when building for all recent OS versions and architectures
+-			if ( platforms().minOS(ld::version2012) || (fArchitecture == CPU_TYPE_ARM64)
++            // Revert "-new_main" and "-no_new_main" option
++            if ( fEntryPointLoadCommandForceOn ) {
++                fEntryPointLoadCommand = true;
++                if ( fEntryName == NULL )
++                    fEntryName = "_main";
++            }
++            else if ( fEntryPointLoadCommandForceOff ) {
++                fNeedsThreadLoadCommand = true;
++            if ( fEntryName == NULL )
++                fEntryName = "start";
++            }
++            else if ( platforms().minOS(ld::version2012) || (fArchitecture == CPU_TYPE_ARM64)
+ 		#if SUPPORT_ARCH_arm64_32
+ 													|| (fArchitecture == CPU_TYPE_ARM64_32)
+ 		#endif
+diff --git a/cctools/ld64/src/ld/Options.h b/cctools/ld64/src/ld/Options.h
+index af19f09..3b32f6f 100644
+--- a/cctools/ld64/src/ld/Options.h
++++ b/cctools/ld64/src/ld/Options.h
+@@ -805,6 +805,8 @@ class Options
+ 	bool								fPageAlignDataAtoms;
+ 	bool								fNeedsThreadLoadCommand;
+ 	bool								fEntryPointLoadCommand;
++    bool                                fEntryPointLoadCommandForceOn;
++    bool                                fEntryPointLoadCommandForceOff;
+ 	bool								fSourceVersionLoadCommand;
+ 	bool								fSourceVersionLoadCommandForceOn;
+ 	bool								fSourceVersionLoadCommandForceOff;	

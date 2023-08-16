@@ -16,7 +16,7 @@ build {}
 
 if {${subport} eq ${name}} {
     PortGroup                   stub 1.0
-    version                     2.47.3
+    version                     2.47.4
     revision                    0
     depends_run                 port:mingw-w64-wine-gecko-${version}
 
@@ -26,6 +26,32 @@ if {${subport} eq ${name}} {
             registry_deactivate_composite mingw-w64-wine-gecko-${version} "" [list ports_nodepcheck 1]
         }
     }
+}
+
+subport ${name}-2.47.4 {
+    version                     2.47.4
+    revision                    0
+
+    distname                    wine-gecko-${version}
+    set wine_gecko_distfile     ${distname}-x86.tar.xz
+    set wine_gecko64_distfile   ${distname}-x86_64.tar.xz
+
+    master_sites                http://dl.winehq.org/wine/wine-gecko/${version}/:winegecko
+
+    distfiles                   ${wine_gecko_distfile}:winegecko \
+                                ${wine_gecko64_distfile}:winegecko
+
+    extract.only                ${wine_gecko_distfile} \
+                                ${wine_gecko64_distfile}
+
+    checksums                   ${wine_gecko_distfile} \
+                                rmd160  4d2e02818520ab24c9ead1ec7c9098a217b17ece \
+                                sha256  2cfc8d5c948602e21eff8a78613e1826f2d033df9672cace87fed56e8310afb6 \
+                                size    43025064 \
+                                ${wine_gecko64_distfile} \
+                                rmd160  73ca5f2c80dad6998491d04d831e13e2e63606e7 \
+                                sha256  fd88fc7e537d058d7a8abf0c1ebc90c574892a466de86706a26d254710a82814 \
+                                size    41935496
 }
 
 subport ${name}-2.47.3 {

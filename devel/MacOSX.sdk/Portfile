@@ -3,7 +3,7 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            gcenx macos-sdk 12.3
+github.setup            gcenx macos-sdk 13.3
 github.tarball_from     releases
 
 name                    MacOSX.sdk
@@ -20,6 +20,37 @@ use_bzip2               yes
 
 set sdk_dir             ${prefix}/Developer/SDKs
 set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
+
+subport MacOSX13.3.sdk {
+    set macos_name      {macOS Montery}
+    set xcode_vers      14.3
+    version             13.3
+    revision            0
+    supported_archs     arm64 x86_64
+
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
+
+    checksums           rmd160  66a2ea8860bac4eda3d85f2789540b3228e7898c \
+                        sha256  e6608c69387b19840d2b38a77b2f43edbda8024c892fe4fa34d48f7447b07f8a \
+                        size    69926087
+}
+
+subport MacOSX13.sdk {
+    PortGroup           stub 1.0
+    set macos_name      {macOS Montery}
+    set xcode_vers      14.3
+    version             13.3
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
+    depends_run         port:MacOSX12.3.sdk
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.2.sdk
+        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.1.sdk
+        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.sdk
+    }
+}
 
 subport MacOSX12.3.sdk {
     set macos_name      {macOS Montery}

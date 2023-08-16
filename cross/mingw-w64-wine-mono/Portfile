@@ -16,7 +16,7 @@ long_description    ${subport} is a package containing Mono and other projects, 
 
 if {${subport} eq ${name}} {
     PortGroup                   stub 1.0
-    version                     7.4.0
+    version                     8.0.0
     revision                    0
     depends_run                 port:mingw-w64-wine-mono-${version}
 
@@ -28,10 +28,19 @@ if {${subport} eq ${name}} {
     }
 }
 
+subport ${name}-8.0.0 {
+    version         8.0.0
+    revision        0
+    checksums       rmd160  24c2ed4b56dd365b2ac2575151c93b22f4d784f1 \
+                    sha256  14c7d76780b79dc62d8ed9d1759e7adcfa332bb2406e2e694dee7b2128cc7a77 \
+                    size    42360588
+    use_xz          yes
+    distname        wine-mono-${version}-x86
+}
+
 subport ${name}-7.4.0 {
     version         7.4.0
     revision        0
-    
     checksums       rmd160  8df357ccd7e98c841b13a1eabfe8561f4a4900b8 \
                     sha256  9249ece664bcf2fecb1308ea1d2542c72923df9fe3df891986f137b2266a9ba3 \
                     size    45404344
@@ -42,7 +51,6 @@ subport ${name}-7.4.0 {
 subport ${name}-7.3.0 {
     version         7.3.0
     revision        0
-    
     checksums       rmd160  47b94e94273c0fc6b6e5710fb3bfd3fcfb4de752 \
                     sha256  60314f255031b2f4dc49f22eacfcd2b3b8b2b491120d703b4b62cc1fef0f9bdd \
                     size    43557004
@@ -53,7 +61,6 @@ subport ${name}-7.3.0 {
 subport ${name}-7.2.0 {
     version         7.2.0
     revision        0
-    
     checksums       rmd160  9d0e730bd0c34590b6398c05e63bb594e9c19359 \
                     sha256  25a4d08fee9197be83307e65553da450b6d4446cc9188d0a85212cc2cee2660d \
                     size    42477712
@@ -64,7 +71,6 @@ subport ${name}-7.2.0 {
 subport ${name}-7.1.1 {
     version         7.1.1
     revision        0
-    
     checksums       rmd160  947b06570377169aad3bfca74f9544a542c5f6c4 \
                     sha256  4bafe7eac57adbffbf22450780897108345e48f90a22917ae1460822e2699d64 \
                     size    45220396
@@ -75,7 +81,6 @@ subport ${name}-7.1.1 {
 subport ${name}-7.0.0 {
     version         7.0.0
     revision        0
-    
     checksums       rmd160  96f7316927cef5ea35197389e425c54b0dccc3fb \
                     sha256  2a047893f047b4f0f5b480f1947b7dda546cee3fec080beb105bf5759c563cd3 \
                     size    45085800
@@ -86,7 +91,6 @@ subport ${name}-7.0.0 {
 subport ${name}-6.4.0 {
     version         6.4.0
     revision        0
-    
     checksums       rmd160  d48aee1995af12d180605cf007bbc8b45837acb8 \
                     sha256  0473570207938f983994addb1ff3c3904a30f6cc07ecaa291c7900f5f7e4cc21 \
                     size    44177712
@@ -97,7 +101,6 @@ subport ${name}-6.4.0 {
 subport ${name}-6.3.0 {
     version         6.3.0
     revision        0
-    
     checksums       rmd160  d4a7fc86326c952f50618b475db2c1ade1eab4c8 \
                     sha256  eb67426ff60ed6395b70437e838883ee08b6189cad84faf036b1a4d7366a34e2 \
                     size    44392520
@@ -108,7 +111,6 @@ subport ${name}-6.3.0 {
 subport ${name}-6.2.0 {
     version         6.2.2
     revision        0
-    
     checksums       rmd160  bb88f94c9e372b6c36dbf1cdeffe933b57883233 \
                     sha256  4e70675b15ba36605b98a39067a0e773e61836e64b78632503575f0c0ebc985f \
                     size    42270792
@@ -124,7 +126,6 @@ subport ${name}-6.2.0 {
 subport ${name}-6.1.1 {
     version         6.1.1
     revision        0
-    
     checksums       rmd160  a27137adc908a4eb1a262cc0502ef73d5a1894e2 \
                     sha256  c3bab46c3e69ecdda61532c28c6a94a78aef9c750cc18dbb60151e0697714d6d \
                     size    45702072
@@ -135,7 +136,6 @@ subport ${name}-6.1.1 {
 subport ${name}-6.0.0 {
     version         6.0.0
     revision        0
-    
     checksums       rmd160  0ca3bdd05b78594ac928cbefd77e9e7e4ad164e2 \
                     sha256  3a101983af16aa2652262fff9c6b5365b884866a9d3c65ee6de0c6c1f300134c \
                     size    45485748
@@ -146,7 +146,6 @@ subport ${name}-6.0.0 {
 subport ${name}-5.1.1 {
     version         5.1.1
     revision        0
-    
     checksums       rmd160  9f3b7597ee1d71d9adb656033fea173b964ebd6e \
                     sha256  b17ac815afbf5eef768c4e8d50800be02af75c8b230d668e239bad99616caa82 \
                     size    44710604
@@ -157,7 +156,6 @@ subport ${name}-5.1.1 {
 subport ${name}-5.1.0 {
     version         5.1.0
     revision        0
-    
     checksums       rmd160  2196f9176b8c6cad2e0bde328613af9080a78dff \
                     sha256  7c69355566055121669f7e416e44185a5ccceb4312d0c19587d2303e63b6b63f \
                     size    41627164

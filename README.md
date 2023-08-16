@@ -3,22 +3,24 @@ A macports overlay that provides recent versions of wine on macOS.\
 This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-branch](https://github.com/Gcenx/macports-wine/tree/osx10.6-branch)
 
 ## This repository contains;
+- `cctools-973`             *(973.0.1 - Xcode12)*
+- `CrossOver`               *(22.1.1)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
-- `CrossOver`               *(22.1.0)*
-- `cx-llvm`                 *(CodeWeavers custom compiler for -mwine32 targets)*
+- `game-porting-toolkit`    *(1.0.3)*
 - `gl-headers`              *(2019.1.0)*
-- `gstreamer1`              *(1.22.0)*
-- `mingw-w64-wine-dxvk`     *(1.10.3)*
+- `gstreamer1`              *(1.22.5)*
+- `gstreamer.framework`     *(1.22.5)*
+- `ld64-609`                *(609 - Xcode12)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
+- `mingw-w64-pkgconfig`
+- `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
-- `mingw-w64-pkgconfig`
-- `MoltenVK`                *(v1.2.2)*
-- `wine-crossover`          *(v22.1.0)*
-- `wine-stable`             *(v8.0)*
-- `wine-devel`              *(v8.2)*
-- `wine-staging`            *(v8.2)*
-- `winetricks`              *(v20221022)*
+- `wine-crossover`          *(v22.1.1)*
+- `wine-devel`              *(v8.13)*
+- `wine-stable`             *(v8.0.2)*
+- `wine-staging`            *(v8.13)*
+- `winetricks`              *(v20230707)*
 
 ## How to use this repository
 After installing macports you'll need a modern version of `git`\
@@ -36,7 +38,7 @@ Next place a copy of the `MacOSX10.13.sdk` into `/Library/Developer/CommandLineT
 Alternatively run `port install MacOSX10.13.sdk`
 
 ## macOS Catalina or later;
-`wine-stable`, `wine-devel` & `wine-staging` will only provide wine64.
+`wine-stable`, `wine-devel` & `wine-staging` will only provide wine used for 32 & 64Bit Windows binaires.
 
 ### Prior project history
 You can find the prior commit history [here](https://github.com/Gcenx/macports-wine/tree/master)
