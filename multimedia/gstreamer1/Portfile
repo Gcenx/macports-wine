@@ -877,5 +877,5 @@ subport ${gitlab.project} {
 
     # Help gst-libav find gst-ffmpeg
     configure.pkg_config_path \
-       ${prefix}/libexec/gst-ffmpeg/lib/pkgconfig:${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
+       ${prefix}/libexec/gst-ffmpeg/lib/pkgconfig
 }
