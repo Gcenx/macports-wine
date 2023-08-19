@@ -465,8 +465,7 @@ subport ${name}-gst-plugins-bad {
     pre-configure {
         # applemedia requires APIs added in macOS Mojave
         if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
-            configure.args-delete -Dapplemedia=disabled
-            configure.args-append -Dapplemedia=enabled
+            configure.args-replace -Dapplemedia=disabled -Dapplemedia=enabled
         }
     }
 
