@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        KhronosGroup MoltenVK 1.2.4 v
+github.setup        KhronosGroup MoltenVK 1.2.5 v
 github.tarball_from releases
 
 categories          graphics
@@ -24,9 +24,9 @@ dist_subdir         ${name}/${version}
 distname            MoltenVK-macos
 use_tar             yes
 
-checksums           sha256  168462e4b26a31184497ac7c4a6393708fe23ee4d90da347f00372ed09460714 \
-                    rmd160  c5b41ac440db29e524c01063c9f3cf8554ccbc4a \
-                    size    46776320
+checksums           sha256  bd9fde5a0a10e4b8f85cc2a77a958c560fcf57fa5da39dab85748d31f78ecce2 \
+                    rmd160  42cba8034d4138f90ca562da95c01048b8d775c9 \
+                    size    48031744
 
 variant universal   {}
 use_configure       no
