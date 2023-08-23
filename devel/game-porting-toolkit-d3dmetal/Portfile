@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                game-porting-toolkit-d3dmetal
-version             1.0.3
+version             1.0.4
 categories          devel
 maintainers         {@gcenx}
 platforms           {darwin any >= 23}
@@ -14,14 +14,14 @@ supported_archs     x86_64
 description         Apple Game Porting Toolkit - D3DMetal
 long_description    {*}${description}
 
-master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_1_beta_3/Game_porting_toolkit_1_beta_3.dmg
+master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_1_beta_3/Game_porting_toolkit_1_beta_4.dmg
 
-distname            Game_porting_toolkit_1_beta_3
+distname            Game_porting_toolkit_1_beta_4
 use_dmg             yes
 
-checksums           rmd160  ef48a9bcb2088107b9f6ab4829cb67ccc6d4953b \
-                    sha256  7244e7d87c757f1ea1ebd4b457e04daf22ceeb9de9237f2683c84c869d36f698 \
-                    size    28032374
+checksums           rmd160  73ca2a1d4fd9314812f5c5d51550652b0728f64e \
+                    sha256  11aa39750084b56696a980276c33095eeea850e114d1c1035787a0cdc4ccaac4 \
+                    size    27944205
 
 use_configure       no
 
@@ -48,10 +48,10 @@ pre-fetch {
 build {}
 
 destroot {
-    set d3dmetal_dir ${prefix}/libexec/game-porting-toolkit/lib
+    set d3dmetal_dir ${prefix}/libexec/game-porting-toolkit/redist/lib
     xinstall -d ${destroot}${d3dmetal_dir}
 
-    system "ditto ${worksrcpath}/lib ${destroot}${d3dmetal_dir}"
+    system "ditto ${worksrcpath}/redist/lib ${destroot}${d3dmetal_dir}"
 
     file copy ${worksrcpath}/gameportingtoolkit ${destroot}${prefix}/bin/gameportingtoolkit
     reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${prefix}/bin/gameportingtoolkit

@@ -4,12 +4,12 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx 4138c8d
+github.setup                gcenx winecx 070acf7
 git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
 set my_name                 wine
-version                     1.0.3
+version                     1.0.4
 revision                    0
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
@@ -24,9 +24,9 @@ description                 Apple Game Porting Toolkit
 long_description            {*}${description}
 
 checksums \
-    rmd160  dc9eaac23d5329e7fa3d62aa1378df6a554821df \
-    sha256  011395f1ec23a3ee2dbe405c69dc09f8b62f5d1c8051de951a8334dd9098317d \
-    size    46770258
+    rmd160  2d9d9251fccbb55184928aba9654e120c4b0d7aa \
+    sha256  5e8edaf265369efd9db6019bef6db2a4acdc586b7560fef1e9042f1457087d2d \
+    size    46771646
 
 depends_build \
     port:bison \
@@ -135,7 +135,7 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
-default_variants-append     +gstreamer
+default_variants            +gstreamer
 
 triplet.add_build           cross
 
