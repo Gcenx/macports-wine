@@ -16,10 +16,10 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
-- `wine-crossover`          *(v22.1.1)*
-- `wine-devel`              *(v8.15)*
 - `wine-stable`             *(v8.0.2)*
-- `wine-staging`            *(v8.15)*
+- `wine-devel`              *(v8.16)*
+- `wine-staging`            *(v8.16)*
+- `wine-crossover`          *(v22.1.1)*
 - `winetricks`              *(v20230707)*
 
 ## How to use this repository
