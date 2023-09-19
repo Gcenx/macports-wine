@@ -11,6 +11,7 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `gstreamer1`              *(1.22.5)*
 - `gstreamer.framework`     *(1.22.5)*
 - `ld64-609`                *(609 - Xcode12)*
+- `libinotify`              *(20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
 - `mingw-w64-wine-dxvk`     *(1.10.3)*
