@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 github.setup                libinotify-kqueue libinotify-kqueue 9c20cc1
 # Version must use the following scheme YYYYMMDD
-version                     20230908
+version                     20230608
 name                        libinotify
 
 categories                  graphics
