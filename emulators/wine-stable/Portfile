@@ -18,7 +18,7 @@ name                        wine-stable
 conflicts                   wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
 version                     8.0.2
-revision                    0
+revision                    1
 platforms                   {darwin >= 12}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -91,6 +91,10 @@ patchfiles-append \
 patchfiles-append \
     0004-preloader-sonoma.diff
 
+# https://github.com/marzent/winecx/commit/c97306071c443bdfd426013e36418ae2f98840e2
+patchfiles-append \
+    0005-inotify.diff
+
 # layer backed views only works on macOS Yosemite and later, since wine-7.22
 # https://bugs.winehq.org/show_bug.cgi?id=54327
 if {${os.major} < 14} {
@@ -142,7 +146,7 @@ configure.args \
     --with-gnutls \
     --without-gssapi \
     --without-gstreamer \
-    --without-inotify \
+    --with-inotify \
     --without-krb5 \
     --with-mingw \
     --without-netapi \
