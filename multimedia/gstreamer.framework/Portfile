@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           gitlab 1.0
 
-gitlab.setup        gstreamer gstreamer 1.22.5
+gitlab.setup        gstreamer gstreamer 1.22.6
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
 revision            0
 
@@ -29,13 +29,13 @@ distfiles           ${distname}.${extract.suffix} \
 
 checksums \
     ${distname}.${extract.suffix} \
-    rmd160  4e8fb024ed18fee8283359ef601131d263c4470e \
-    sha256  32a85de62e3d9cf490a1b09804a15f01f4a8a92296516c31e7b8a542504c81d0 \
-    size    207330084 \
+    rmd160  8e65da88b451eb9c85c9acaa54d861b4f64bf7cd \
+    sha256  0257f61d91d59fc5bf1c29272748349a80eff9fdd1b87c0ed0a7c57fe113bd6a \
+    size    206340755 \
     ${headername}.${extract.suffix} \
-    rmd160  87f57f1bf4cf0265bea5616a078419dc46bfe6e6 \
-    sha256  2d23dff9cc232fa6ac882a6ca8fc33b36d319d251526947ad5b2f86b10b9004a \
-    size    438195392
+    rmd160  7962ddb22a3b58df17a4f8e8fabafa81cc4d9b83 \
+    sha256  0aa50e13cc1c71c10a56cf4a93f2a34ef3b0508a48c664c9010064f33fb24b0d \
+    size    438114067
 
 extract             {}
 use_configure       no
@@ -47,7 +47,7 @@ pre-build {
         elevateToRoot "installer"
         ui_msg "--->  Installing gstreamer-1.0-${version}-universal.pkg"
         system -W ${distpath} "installer -pkg gstreamer-1.0-${version}-universal.pkg -target /"
-        ui_msg "--->  Installing gstreamer-1.0-devel-1.22.4-universal.pkg"
+        ui_msg "--->  Installing gstreamer-1.0-devel-${version}-universal.pkg"
         system -W ${distpath} "installer -pkg gstreamer-1.0-devel-${version}-universal.pkg -target /"
     }
 }
