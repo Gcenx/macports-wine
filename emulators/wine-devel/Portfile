@@ -214,6 +214,9 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 subport wine-staging {
     name \
         wine-staging
+    version \
+        8.17.1
+
     conflicts \
         wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-crossover
 
@@ -230,9 +233,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  a77f8f4b0eee5d28981eaaa2053f37f7ab460243 \
-        sha256  335174c2a0ca2a69709754d20d08d5c59ae4feb0efed8398cf68232b1253ad2d \
-        size    9570270
+        rmd160  a2bfd7bc48703b7d65ce7ec264ad957a84f96694 \
+        sha256  e08bab8d23f81f418698e0b197bea8157b3055253618c442cbc6c1cb695533b7 \
+        size    9569937
 
     set py_ver              3.11
     set py_ver_nodot        [string map {. {}} ${py_ver}]

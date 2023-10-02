@@ -19,7 +19,7 @@ This branch supports macOS 10.8 and later, for 10.6 & 10.7 use the [osx10.6-bran
 - `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(v8.0.2)*
 - `wine-devel`              *(v8.17)*
-- `wine-staging`            *(v8.17)*
+- `wine-staging`            *(v8.17.1)*
 - `wine-crossover`          *(v22.1.1)*
 - `winetricks`              *(20230918)*
 
