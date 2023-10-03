@@ -541,7 +541,6 @@ subport ${gitlab.project} {
         port:flac \
         port:gettext-runtime \
         path:lib/pkgconfig/glib-2.0.pc:glib2 \
-        port:gst-ffmpeg \
         port:libfdk-aac \
         port:libmpeg2 \
         port:libogg \
@@ -874,8 +873,4 @@ subport ${gitlab.project} {
 
 
     ## gst-libav (no options to pass?)
-
-    # Help gst-libav find gst-ffmpeg
-    configure.pkg_config_path \
-       ${prefix}/libexec/gst-ffmpeg/lib/pkgconfig
 }
