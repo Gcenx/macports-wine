@@ -92,7 +92,7 @@ patchfiles-append \
 patchfiles-append \
     0004-preloader-sonoma.diff
 
-# https://github.com/marzent/winecx/commit/c97306071c443bdfd426013e36418ae2f98840e2
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/4023
 patchfiles-append \
     0005-inotify.diff
 
