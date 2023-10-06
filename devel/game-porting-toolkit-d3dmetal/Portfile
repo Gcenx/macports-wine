@@ -3,7 +3,8 @@
 PortSystem          1.0
 
 name                game-porting-toolkit-d3dmetal
-version             1.0.4
+version             1.0
+epoch               1
 categories          devel
 maintainers         {@gcenx}
 platforms           {darwin any >= 23}
@@ -14,14 +15,14 @@ supported_archs     x86_64
 description         Apple Game Porting Toolkit - D3DMetal
 long_description    {*}${description}
 
-master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_1_beta_4/Game_porting_toolkit_1_beta_4.dmg
+master_sites        https://download.developer.apple.com/Developer_Tools/Game_porting_toolkit_1.0/Game_porting_toolkit_1.dmg
 
-distname            Game_porting_toolkit_1_beta_4
+distname            Game_porting_toolkit_1
 use_dmg             yes
 
-checksums           rmd160  73ca2a1d4fd9314812f5c5d51550652b0728f64e \
-                    sha256  11aa39750084b56696a980276c33095eeea850e114d1c1035787a0cdc4ccaac4 \
-                    size    27944205
+checksums           rmd160  b3b3bfb98c1bd00e7a9863be24af7322b0eb73e2 \
+                    sha256  4aa54db3fc9df68c28550710e235e77931252ae249a140a806df4193bdb51fbf \
+                    size    27942529
 
 use_configure       no
 
