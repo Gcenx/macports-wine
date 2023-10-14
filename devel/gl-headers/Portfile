@@ -1,8 +1,8 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
-PortGroup           meson 1.0
 PortGroup           gitlab 1.0
+PortGroup           meson 1.0
 
 gitlab.setup        meson-ports gl-headers 5c8c7c0d
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
