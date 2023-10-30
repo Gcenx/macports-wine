@@ -15,10 +15,10 @@ long_description    ${subport} is a package containing Mono and other projects, 
                     for any other purpose.
 
 if {${subport} eq ${name}} {
-    PortGroup                   stub 1.0
-    version                     8.0.0
-    revision                    0
-    depends_run                 port:mingw-w64-wine-mono-${version}
+    PortGroup       stub 1.0
+    version         8.1.0
+    revision        0
+    depends_run     port:mingw-w64-wine-mono-${version}
 
     post-deactivate {
         # When this port is deactivated, mingw-w64-wine-mono-${version} should also be.
@@ -26,6 +26,16 @@ if {${subport} eq ${name}} {
             registry_deactivate_composite mingw-w64-wine-mono-${version} "" [list ports_nodepcheck 1]
         }
     }
+}
+
+subport ${name}-8.1.0 {
+    version         8.1.0
+    revision        0
+    checksums       rmd160  530ca1616f719c6171c55ad0fedcae4dd8c5561b \
+                    sha256  4e3e8a40729e4c9e3e9e651cebe4f1aed8f9a4d22e991e6cd24608687f0eedd4 \
+                    size    40854944
+    use_xz          yes
+    distname        wine-mono-${version}-x86
 }
 
 subport ${name}-8.0.0 {
@@ -181,7 +191,7 @@ subport ${name}-5.0.0 {
                     size    38986060
     use_xz          yes
     distname        wine-mono-${version}-x86
-    
+
     # wine-mono-5.0.0 had regressions that wine-mono-5.0.1 resolved but wine looks for wine-mono-5.0.0
     post-destroot {
         file rename ${destroot}${prefix}/share/wine/mono/wine-mono-${version} ${destroot}${prefix}/share/wine/mono/wine-mono-5.0.0
