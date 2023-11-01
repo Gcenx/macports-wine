@@ -9,7 +9,7 @@ PortGroup                   muniversal 1.1
 name                        wine-devel
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
-version                     8.18
+version                     8.19
 revision                    0
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].x
@@ -46,9 +46,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  5049ff7d44d345831538372a0fe957d36e6cae9e \
-    sha256  ec7fb872d5bb5586baf0269fc67cb412e6a3a0f8a391776cef1d74aed50227a2 \
-    size    48643217
+    rmd160  f1bfdfc604d51ab2eaa8bf35ffc932f8bb9d4414 \
+    sha256  683718337f9e9aa946c1ef233882e9744152dac089b2eb3b89f9cf8f780beec0 \
+    size    48665670
 
 depends_build \
     port:bison \
@@ -67,7 +67,7 @@ depends_lib \
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
-    port:mingw-w64-wine-mono-8.0.0
+    port:mingw-w64-wine-mono-8.1.0
 
 patch.pre_args -p1
 
@@ -202,22 +202,26 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  aa75b99c14962a0ba5d69851a41e398bbb09ab5b \
-        sha256  79cac572a9942962a865584e1b514bcff997ea5c2550b087898a8669cb6254c9 \
-        size    9610710
-
-    set py_ver              3.11
-    set py_ver_nodot        [string map {. {}} ${py_ver}]
+        rmd160  2842d4e1f1176c9398d840864eef3fdb0ec14315 \
+        sha256  bc9f317f243d2f18ed998b8d9116563da94ecc3af3b39864dcd5e99b0f090c12 \
+        size    9606625
 
     depends_extract-append \
-        port:autoconf \
-        port:python${py_ver_nodot}
+        port:autoconf
+
+    if {${os.major} < 19} {
+        set py_ver              3.11
+        set py_ver_nodot        [string map {. {}} ${py_ver}]
+        depends_extract-append port:python${py_ver_nodot}
+    }
 
     # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
     # "eventfd_synchronization" doesn't work on macOS (CX version does)'
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
     post-extract {
-        reinplace -q "s|python3|python${py_ver}|g" ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py
+        if {${os.major} < 19} {
+            reinplace -q "s|python3|python${py_ver}|g" ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py
+        }
         system -W ${worksrcpath} \
             "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
