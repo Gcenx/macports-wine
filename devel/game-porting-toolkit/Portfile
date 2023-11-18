@@ -4,12 +4,12 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx 070acf7
+github.setup                gcenx winecx 853f1f2
 git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
 set my_name                 wine
-version                     1.0.4
+version                     1.1
 revision                    0
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
@@ -24,16 +24,15 @@ description                 Apple Game Porting Toolkit
 long_description            {*}${description}
 
 checksums \
-    rmd160  2d9d9251fccbb55184928aba9654e120c4b0d7aa \
-    sha256  5e8edaf265369efd9db6019bef6db2a4acdc586b7560fef1e9042f1457087d2d \
-    size    46771646
+    rmd160  541277db693b24b7dccbd72f4c8a5c0d5a824b7b \
+    sha256  e9c11fb237f60e4815f2d6c711d779816cb6db0a4d4e927ffb512799a657e440 \
+    size    46762246
 
 depends_build \
     port:bison \
-    port:cctools \
+    port:d3dmetal \
     bin:flex:flex \
     port:gettext \
-    port:ld64 \
     port:mingw-w64 \
     port:pkgconfig
 
@@ -45,8 +44,7 @@ depends_lib \
     port:libsdl2
 
 depends_run \
-    port:mingw-w64-wine-gecko-2.47.2 \
-    port:game-porting-toolkit-d3dmetal
+    port:mingw-w64-wine-gecko-2.47.2
 
 patch.pre_args -p1
 
@@ -203,6 +201,15 @@ post-destroot {
         README \
         README.esync \
         ${destroot}${docdir}
+
+    system "ditto ${prefix}/libexec/d3dmetal/redist/lib ${destroot}${prefix}/libexec/${name}/lib"
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/_d3d9.so      ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d9.so
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/_d3d10.so     ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d10.so
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d9.dll  ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d9.dll
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d10.dll ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d10.dll
+    file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit             ${destroot}${prefix}/bin/gameportingtoolkit
+    file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit-no-esync    ${destroot}${prefix}/bin/gameportingtoolkit-no-esync
+    file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit-no-hud      ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
 }
 
 platform darwin arm {
@@ -210,13 +217,19 @@ platform darwin arm {
     configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
+platform darwin i386 {
+    try {
+        set in_rosetta2 [exec sysctl -n sysctl.proc_translated]
+        if { ${in_rosetta2} == 0 } {
+            ui_error "${name} requires an Apple Silicon mac"
+            return -code error "unsupported platform"
+        }
+    }
+}
+
 post-deactivate {
     if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-2.47.2] 0]}]} {
         registry_deactivate_composite mingw-w64-wine-gecko-2.47.2 "" [list ports_nodepcheck 1]
-    }
-
-    if {![catch {set installed [lindex [registry_active game-porting-toolkit-d3dmetal] 0]}]} {
-        registry_deactivate_composite game-porting-toolkit-d3dmetal "" [list ports_nodepcheck 1]
     }
 }
 
