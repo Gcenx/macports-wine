@@ -142,11 +142,11 @@ configure.args \
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-# ld64 is broken from Xcode15-beta3 so we need to force macports-clang to use ld64-609
-if {${os.major} >= 23} {
-    depends_build-append    port:llvm-cx
-    configure.cc            ${prefix}/libexec/llvm-cx/bin/clang
-    configure.cxx           ${configure.cc}++
+# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
+set xcode_ok [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
+set clt_ok   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
+if { ${xcode_ok} || ${clt_ok} } {
+    configure.ldflags-prepend   -Wl,-ld_classic
 }
 
 if {${os.major} > 18} {

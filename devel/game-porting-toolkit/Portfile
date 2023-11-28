@@ -118,6 +118,13 @@ configure.args.x86_64 \
 # We also need to tell the linker to add Macports to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/${name}/lib/external
 
+# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
+set xcode_ok [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
+set clt_ok   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
+if { ${xcode_ok} || ${clt_ok} } {
+    configure.ldflags-prepend   -Wl,-ld_classic
+}
+
 # Use an older deployment target to avoid new dyld behaviors.
 # The custom compiler is too old to accept "13.0", so we use "10.14".
 macosx_deployment_target    10.14
