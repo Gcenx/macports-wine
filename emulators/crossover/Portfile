@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 23.5.0
+version                 23.7.0
 revision                0
 platforms               {darwin >= 18}
 
@@ -32,17 +32,14 @@ master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
 use_zip                 yes
 use_configure           no
 
-checksums               rmd160  654ba87ced25de1039df6b0c574a04f686c7a55b \
-                        sha256  4a73e25cccb5a16ac7859a4d68b9f9a8761f8e1a6d8b3d000f921465d1257347 \
-                        size    424344883
+checksums               rmd160  aee7c014e411eadd41547ba187293e0602af7fea \
+                        sha256  e8dc46a4736aa491c6a4e93994606d84ef477e96a8d958e8b5412d4d6254c0f9 \
+                        size    432198064
 
 build {
     # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
     delete ${workpath}/CrossOver.app/Contents/CodeResources
     delete ${workpath}/CrossOver.app/Contents/_CodeSignature
-
-    # Remove CrossOver CD Helper
-    delete "${workpath}/CrossOver.app/Contents/Resources/CrossOver CD Helper.app"
 
     # Can't remove Sparkle.framework so remove the update url
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
