@@ -39,10 +39,8 @@ checksums \
 
 extract             {}
 use_configure       no
-build               {}
-destroot            {}
 
-pre-build {
+build {
     if {![file exists /Library/Frameworks/GStreamer.framework ]} {
         elevateToRoot "installer"
         ui_msg "--->  Installing gstreamer-1.0-${version}-universal.pkg"
@@ -52,11 +50,19 @@ pre-build {
     }
 }
 
-post-destroot {
+destroot {
     global destroot prefix
     set docdir ${destroot}${prefix}/share/doc/${subport}
     xinstall -d ${docdir}
     system "echo ${subport} is a stub port > ${docdir}/README"
+}
+
+uninstall {
+    portuninstall::uninstall_main
+    if {[file exists /Library/Frameworks/GStreamer.framework ]} {
+        ui_msg "--->  Removing GStreamer.framework"
+        delete -force /Library/Frameworks/GStreamer.framework
+    }
 }
 
 variant universal {}
