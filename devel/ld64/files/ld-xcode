@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [[ -x /usr/bin/xcrun ]] ; then
-    exec /usr/bin/xcrun ld "${@}"
-elif [[ -x /usr/bin/ld ]] ; then
-    exec /usr/bin/ld "${@}"
-else
-    exec ld "${@}"
-fi
