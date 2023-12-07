@@ -8,6 +8,11 @@
 #
 
 
+# Wrap mode handling for subprojects.
+# Possible values: default, nofallback, nodownload, forcefallback, nopromote
+options meson.wrap_mode
+default meson.wrap_mode     {default}
+
 # meson builds need to be done out-of-source
 default build_dir           {${workpath}/build}
 
@@ -30,10 +35,6 @@ default configure.post_args {[meson::get_post_args]}
 configure.universal_args-delete \
                             --disable-dependency-tracking
 
-# possible values: default, nofallback, nodownload, forcefallback or nopromote
-options wrap_mode
-default wrap_mode           {nodownload}
-
 default build.dir           {${build_dir}}
 default build.cmd           {${prefix}/bin/ninja}
 default build.post_args     {-v}
@@ -46,19 +47,19 @@ default destroot.post_args  ""
 namespace eval meson { }
 
 proc meson::get_post_args {} {
-    global configure.dir build_dir build.dir muniversal.current_arch muniversal.build_arch wrap_mode
+    global configure.dir build_dir build.dir muniversal.current_arch muniversal.build_arch
     if {[info exists muniversal.build_arch]} {
         # muniversal 1.1 PG is being used
         if {[option muniversal.is_cross.[option muniversal.build_arch]]} {
-            return "${configure.dir} ${build.dir} --cross-file=[option muniversal.build_arch]-darwin --wrap-mode=[option wrap_mode]"
+            return "${configure.dir} ${build.dir} --cross-file=[option muniversal.build_arch]-darwin --wrap-mode=[option meson.wrap_mode]"
         } else {
-            return "${configure.dir} ${build.dir} --wrap-mode=[option wrap_mode]"
+            return "${configure.dir} ${build.dir} --wrap-mode=[option meson.wrap_mode]"
         }
     } elseif {[info exists muniversal.current_arch]} {
         # muniversal 1.0 PG is being used
-        return "${configure.dir} ${build_dir}-${muniversal.current_arch} --cross-file=${muniversal.current_arch}-darwin --wrap-mode=[option wrap_mode]"
+        return "${configure.dir} ${build_dir}-${muniversal.current_arch} --cross-file=${muniversal.current_arch}-darwin --wrap-mode=[option meson.wrap_mode]"
     } else {
-        return "${configure.dir} ${build_dir} --wrap-mode=[option wrap_mode]"
+        return "${configure.dir} ${build_dir} --wrap-mode=[option meson.wrap_mode]"
     }
 }
 
