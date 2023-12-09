@@ -9,7 +9,7 @@ PortGroup                   muniversal 1.1
 name                        wine-devel
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
-version                     8.21
+version                     9.0-rc1
 revision                    0
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].x
@@ -46,9 +46,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  80e2e7ab24c3d227b34c3f8e0cf759910ee7da4f \
-    sha256  0696804ae780f0227ce3f36e8b44814772f44f5ca867cb706c6abf7c484661af \
-    size    48775197
+    rmd160  756d57429477e9c4db5f0343e3893e7663da7987 \
+    sha256  edb43b74c64ed07f8252a74f148fd085022d77d6adb048a3e3fc906b97181b63 \
+    size    48898463
 
 depends_build \
     port:bison \
@@ -74,10 +74,6 @@ patch.pre_args -p1
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
-
-# https://gitlab.winehq.org/wine/wine/-/merge_requests/4023
-patchfiles-append \
-    4023.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -194,9 +190,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  d3ed3688029158346a68d6abc921872b52da71ec \
-        sha256  735d3072caa0ba0b528b837bd20e38b5d5f6008b055fff5295d37ea7cae66ce6 \
-        size    9669500
+        rmd160  7d9a84fbebb6728cf4da1bcfbb7e2e85a3b700ce \
+        sha256  d7f87c095261911e93f1fbe705265e678c6432c7cf48b39982c6894ff26674c9 \
+        size    9508128
 
     depends_extract-append \
         port:autoconf
