@@ -1,0 +1,126 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           gitlab 1.0
+PortGroup           meson 1.0
+PortGroup           muniversal 1.1
+
+# Only commit stable updates (even numbered releases)
+gitlab.setup        gstreamer gstreamer 1.22.7
+name                gst-wine
+revision            0
+
+maintainers         {@gcenx}
+categories          multimedia
+license             LGPL-2+
+
+dist_subdir         ${gitlab.project}1
+
+homepage            https://gstreamer.freedesktop.org
+
+checksums \
+    rmd160  7a65402667dfa13adcf156c35fc6efa9408f4ee5 \
+    sha256  dd537710fc39873c9764576ee0974582cf84a59aea256d40c8f80feb13baa9aa \
+    size    25049667
+
+# https://github.com/mesonbuild/meson/issues/1889
+compiler.cxx_standard \
+    2014
+
+# Disable pretty much everything in GStreamer, but re-enable:
+# - tools (like gst-inspect, useful for debugging)
+# - base: audioconvert, audioresample: both used in winegstreamer
+# - base: playback (decodebin), typefind, videoconvert: used in winegstreamer
+# - good: avidemux, deinterlace, videoflip: used in winegstreamer
+# - good: audioparsers, wavparse: used in winegstreamer
+# - good: id3demux, isomp4
+# - bad: applemedia (and gl which it depends on)
+# - bad: videoparsers
+# - ugly: asfdemux
+# - libav: wrap utilities provided by FFmpeg
+subport gst-wine {
+
+    depends_build \
+        port:bison \
+        bin:flex:flex \
+        port:gettext \
+        port:pkgconfig
+
+    depends_lib \
+        port:gettext-runtime
+
+    meson.wrap_mode     forcefallback
+    configure.pre_args  {setup --prefix=${prefix}/libexec/gst-wine}
+
+    # meson core options
+    configure.args-append \
+       -Dauto_features=disabled \
+       -Dstrip=true
+
+    # GStreamer subprojects
+    configure.args-append \
+        -Dbase=enabled \
+        -Dgood=enabled \
+        -Dugly=enabled \
+        -Dbad=enabled \
+        -Dlibav=disabled \
+        -Dges=disabled \
+        -Drtsp_server=disabled
+
+    # gst-plugins-base
+    configure.args-append \
+        -Dgst-plugins-base:audioconvert=enabled \
+        -Dgst-plugins-base:audioresample=enabled \
+        -Dgst-plugins-base:playback=enabled \
+        -Dgst-plugins-base:typefind=enabled \
+        -Dgst-plugins-base:videoconvertscale=enabled
+
+    # gst-plugins-good
+    configure.args-append \
+        -Dgst-plugins-good:avi=enabled \
+        -Dgst-plugins-good:deinterlace=enabled \
+        -Dgst-plugins-good:videofilter=enabled \
+        -Dgst-plugins-good:audioparsers=enabled \
+        -Dgst-plugins-good:wavparse=enabled \
+        -Dgst-plugins-good:id3demux=enabled \
+        -Dgst-plugins-good:isomp4=enabled
+
+    # gst-plugins-ugly
+    configure.args-append \
+        -Dgst-plugins-ugly:asfdemux=enabled
+
+    # gst-plugins-bad
+    configure.args-append \
+        -Dgst-plugins-bad:applemedia=disabled \
+        -Dgst-plugins-base:gl=enabled \
+        -Dgst-plugins-bad:gl=enabled \
+        -Dgst-plugins-bad:videoparsers=enabled
+
+    # gst-libav
+
+    # Other options
+    #configure.args-append \
+    #    -Dbuild-tools-source=system
+
+    # Common options, automatically inherited by subprojects
+    configure.args-append \
+        -Dtools=disabled
+
+    variant libav description {Build ${subport} with gst-libav for using the encoders, decoders, muxers, and demuxers provided by FFmpeg} {
+        configure.args-replace  -Dlibav=disabled -Dlibav=enabled
+        configure.args-append   -DFFmpeg:auto_features=auto
+    }
+
+    variant tools description {Build ${subport} with tools for debugging} {
+        configure.args-replace  -Dtools=disabled -Dtools=enabled
+    }
+
+    # We put this into a pre-configure block so it can be evaluated _after_ platform selection.
+    pre-configure {
+        # applemedia requires APIs added in macOS Mojave
+        if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
+            configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
+        }
+    }
+    destroot.violate_mtree  yes
+}
