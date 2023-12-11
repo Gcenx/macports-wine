@@ -132,19 +132,16 @@ if { ${xcode_ok} || ${clt_ok} } {
 macosx_deployment_target    10.14
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append \
-        port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad \
-        port:gstreamer1-gst-plugins-ugly \
-        port:gstreamer1-gst-libav
+    depends_lib-append      port:gst-wine
     configure.args-replace  --without-gstreamer --with-gstreamer
+    configure.pkg_config_path \
+        ${prefix}/libexec/gst-wine/lib/pkgconfig:${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 }
 
 default_variants            +gstreamer
 
 triplet.add_build           cross
+triplet.add_host            none
 
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -O3

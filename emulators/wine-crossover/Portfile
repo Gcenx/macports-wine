@@ -195,8 +195,10 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 #}
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
+    depends_lib-append      port:gst-wine
     configure.args-replace  --without-gstreamer --with-gstreamer
+    configure.pkg_config_path \
+        ${prefix}/libexec/gst-wine/lib/pkgconfig:${prefix}/lib/pkgconfig:${prefix}/share/pkgconfig
 }
 
 # Uncomment variant for CX23
@@ -208,6 +210,7 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
 default_variants            +gstreamer +universal
 
 triplet.add_build           cross
+triplet.add_host            none
 
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
