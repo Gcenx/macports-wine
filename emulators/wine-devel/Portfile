@@ -9,7 +9,7 @@ PortGroup                   muniversal 1.1
 name                        wine-devel
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-staging wine-crossover
 set my_name                 wine
-version                     9.0-rc1
+version                     9.0-rc2
 revision                    0
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].x
@@ -46,9 +46,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  756d57429477e9c4db5f0343e3893e7663da7987 \
-    sha256  edb43b74c64ed07f8252a74f148fd085022d77d6adb048a3e3fc906b97181b63 \
-    size    48898463
+    rmd160  ad65695d3372aabd388e5cc0d806e5ad02240784 \
+    sha256  57ce2f3ffdbf477d9caaa69b14bbd92db4e5cacb452d4dc9b6a4bf488fcb45c8 \
+    size    48897725
 
 depends_build \
     port:bison \
@@ -190,9 +190,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  7d9a84fbebb6728cf4da1bcfbb7e2e85a3b700ce \
-        sha256  d7f87c095261911e93f1fbe705265e678c6432c7cf48b39982c6894ff26674c9 \
-        size    9508128
+        rmd160  f7b8684c50ff13ae3acb2eba71bac9f420bee4c3 \
+        sha256  ad4a484470114d1c190653970a14df213e6a0f229300cd88802d9bbf20fa0bce \
+        size    9536907
 
     depends_extract-append \
         port:autoconf
