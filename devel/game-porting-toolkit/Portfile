@@ -4,7 +4,7 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx 853f1f2
+github.setup                gcenx winecx 2e232b5
 git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
@@ -24,9 +24,9 @@ description                 Apple Game Porting Toolkit
 long_description            {*}${description}
 
 checksums \
-    rmd160  541277db693b24b7dccbd72f4c8a5c0d5a824b7b \
-    sha256  e9c11fb237f60e4815f2d6c711d779816cb6db0a4d4e927ffb512799a657e440 \
-    size    46762246
+    rmd160  a7b44e258da0024fba89b6192637fb0e914eac6d \
+    sha256  d78871130e2b897366d4778a445e318f60cb0489b47d258c1a46eb4d4673697d \
+    size    46771440
 
 depends_build \
     port:bison \
