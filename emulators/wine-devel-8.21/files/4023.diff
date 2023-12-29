@@ -1,0 +1,102 @@
+From b2ffdb1612fcf3e26b8b707d7cf697e1f9f62e33 Mon Sep 17 00:00:00 2001
+From: Marc-Aurel Zent <marc_aurel@me.com>
+Date: Thu, 5 Oct 2023 14:03:54 +0200
+Subject: [PATCH] server: Add cross-platform get_path_from_fd function.
+
+---
+ server/change.c | 36 +++++++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
+
+diff --git a/server/change.c b/server/change.c
+index 7a806abc017..584df1a0233 100644
+--- a/server/change.c
++++ b/server/change.c
+@@ -721,6 +721,18 @@ static unsigned int filter_from_inode( struct inode *inode, int is_parent )
+     return filter;
+ }
+ 
++static int get_path_from_fd( int fd, char *path )
++{
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
++    return fcntl( fd, F_GETPATH, path );
++#elif defined(linux)
++    sprintf( path, "/proc/self/fd/%u", fd );
++    return 0;
++#else
++    return -1;
++#endif
++}
++
+ static char *inode_get_path( struct inode *inode, int sz )
+ {
+     struct list *head;
+@@ -734,9 +746,15 @@ static char *inode_get_path( struct inode *inode, int sz )
+     if (head)
+     {
+         int unix_fd = get_unix_fd( LIST_ENTRY( head, struct dir, in_entry )->fd );
+-        path = malloc ( 32 + sz );
++        path = malloc ( PATH_MAX );
+         if (path)
+-            sprintf( path, "/proc/self/fd/%u/", unix_fd );
++        {
++            if (get_path_from_fd( unix_fd, path ))
++            {
++                free( path );
++                return NULL;
++            }
++        }
+         return path;
+     }
+ 
+@@ -964,7 +982,7 @@ static int inotify_adjust_changes( struct dir *dir )
+     unsigned int filter;
+     struct inode *inode;
+     struct stat st;
+-    char path[32];
++    char path[PATH_MAX];
+     int wd, unix_fd;
+ 
+     if (!inotify_fd)
+@@ -990,7 +1008,8 @@ static int inotify_adjust_changes( struct dir *dir )
+ 
+     filter = filter_from_inode( inode, 0 );
+ 
+-    sprintf( path, "/proc/self/fd/%u", unix_fd );
++    if (get_path_from_fd( unix_fd, path ))
++        return 0;
+     wd = inotify_add_dir( path, filter );
+     if (wd == -1) return 0;
+ 
+@@ -1042,7 +1061,7 @@ static int dir_add_to_existing_notify( struct dir *dir )
+     struct inode *inode, *parent;
+     unsigned int filter = 0;
+     struct stat st, st_new;
+-    char link[35], *name;
++    char link[PATH_MAX], *name;
+     int wd, unix_fd;
+ 
+     if (!inotify_fd)
+@@ -1058,7 +1077,9 @@ static int dir_add_to_existing_notify( struct dir *dir )
+         return 0;
+ 
+     /* lookup the parent */
+-    sprintf( link, "/proc/self/fd/%u/..", unix_fd );
++    if (get_path_from_fd( unix_fd, link ))
++        return 0;
++    strcat( link, "/.." );
+     if (-1 == stat( link, &st ))
+         return 0;
+ 
+@@ -1079,7 +1100,8 @@ static int dir_add_to_existing_notify( struct dir *dir )
+     if (!filter)
+         return 0;
+ 
+-    sprintf( link, "/proc/self/fd/%u", unix_fd );
++    if (get_path_from_fd( unix_fd, link ))
++        return 0;
+     name = get_basename( link );
+     if (!name)
+         return 0;
+-- 
+GitLab
+
