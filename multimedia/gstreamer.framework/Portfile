@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           gitlab 1.0
 
-gitlab.setup        gstreamer gstreamer 1.22.7
+gitlab.setup        gstreamer gstreamer 1.22.8
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
 revision            0
 
@@ -29,13 +29,13 @@ distfiles           ${distname}.${extract.suffix} \
 
 checksums \
     ${distname}.${extract.suffix} \
-    rmd160  921adaa854f9d11e3fe0f91e9ef31cde57d9d6d8 \
-    sha256  391b8be74ba93acca38b68cba4180f06793a4f0dcf18c17709161be4a1610a78 \
-    size    179627866 \
+    rmd160  77a0f3fb6138b350828b9d90b487d1c81d979dba \
+    sha256  a910f3816dd84e1cc427f7b3cb8fb501c7bc2885167d0fcae467d29add03406e \
+    size    179533070 \
     ${headername}.${extract.suffix} \
-    rmd160  b07687a85a43d4c1eca913f6e36c67abe8db7717 \
-    sha256  1c0c8c9585f6f0e046825071b0f16eb01cff01ec03c4bac5d2e46e37e8aa8921 \
-    size    441873003
+    rmd160  3c41c82060d3db4af5f74eafbb910c01074fd8b0 \
+    sha256  56aa48bedb08c25bdfc025e5a132af0b2545ce1a14185da207d84e38225872a3 \
+    size    441845964
 
 extract             {}
 use_configure       no
@@ -51,7 +51,6 @@ build {
 }
 
 destroot {
-    global destroot prefix
     set docdir ${destroot}${prefix}/share/doc/${subport}
     xinstall -d ${docdir}
     system "echo ${subport} is a stub port > ${docdir}/README"
