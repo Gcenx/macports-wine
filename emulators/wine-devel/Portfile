@@ -196,9 +196,6 @@ subport wine-staging {
     if {${os.major} < 19} {
         set py_ver              3.11
         set py_ver_nodot        [string map {. {}} ${py_ver}]
-        foreach stage {extract configure build destroot test} {
-            ${stage}.env-append     PATH=${frameworks_dir}/Python.framework/Versions/${py_ver}/bin:$env(PATH)
-        }
         depends_extract-append port:python${py_ver_nodot}
     }
 
@@ -206,6 +203,9 @@ subport wine-staging {
     # "eventfd_synchronization" doesn't work on macOS (CX version does)'
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
     post-extract {
+        if {${os.major} < 19} {
+            reinplace -q "s|python3|python${py_ver}|g" ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py
+        }
         system -W ${worksrcpath} \
             "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
     }
