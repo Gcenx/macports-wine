@@ -70,7 +70,6 @@ depends_lib \
     port:libsdl2
 
 depends_run \
-    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-7.2.0
 
@@ -84,39 +83,34 @@ patch.pre_args -p1
 patchfiles-append \
     0001-distversion.diff
 
-# This allows wine to use curl-ca-bundle.crt
-patchfiles-append \
-    0002-crypt32-expand-cert-search-paths.diff
-
 # Remove cxmenu functions
 patchfiles-append \
-    0003-winemenubuilder-remove-cxmenu.diff
+    0002-winemenubuilder-remove-cxmenu.diff
 
 # openal32: Remove dll, remove CX23
 #  It's not part of Windows, so applications have to ship the native version anyway.
 patchfiles-append \
-    0004-openal32-remove-dll.diff
+    0003-openal32-remove-dll.diff
 
 # Import upstreams openldap import, remove CX23
 patchfiles-append \
-    0005-libs-Import-code-from-upstream-openldap-2.5.13.diff \
-    0006-ldap-Don-t-depend-on-the-getopt.h-header.diff \
-    0007-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
+    0004-libs-Import-code-from-upstream-openldap-2.5.13.diff \
+    0005-ldap-Don-t-depend-on-the-getopt.h-header.diff \
+    0006-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
 
 # Remove "CX HACK 21217" in favour of upstreams fix, remove CX23
 patchfiles-append \
-    0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
-    0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
+    0007-server-On-macOS-fake-debug-registers-when-running-un.diff \
+    0008-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
 
 # macOS Sonoma
 patchfiles-append \
-    0010-preloader-sonoma.diff
+    0009-preloader-sonoma.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
