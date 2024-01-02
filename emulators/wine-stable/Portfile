@@ -67,7 +67,6 @@ depends_lib \
     port:libsdl2
 
 depends_run \
-    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:mingw-w64-wine-gecko-2.47.3 \
     port:mingw-w64-wine-mono-7.4.0
 
