@@ -81,23 +81,18 @@ patch.pre_args -p1
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
 
-# This allows wine to use curl-ca-bundle.crt
-patchfiles-append \
-    0002-crypt32-expand-cert-search-paths.diff
-
 # https://bugs.winehq.org/show_bug.cgi?id=54831
 patchfiles-append \
-    0004-preloader-sonoma.diff
+    0002-preloader-sonoma.diff
 
 # https://gitlab.winehq.org/wine/wine/-/merge_requests/4023
 patchfiles-append \
-    0005-inotify.diff
+    0003-inotify.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure.ac
-    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
