@@ -196,7 +196,7 @@ subport wine-staging {
     if {${os.major} < 19} {
         set py_ver              3.11
         set py_ver_nodot        [string map {. {}} ${py_ver}]
-        depends_extract-append port:python${py_ver_nodot}
+        depends_extract-append  port:python${py_ver_nodot}
     }
 
     # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
