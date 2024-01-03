@@ -2,15 +2,7 @@
 
 PortSystem                  1.0
 PortGroup                   compiler_blacklist_versions 1.0
-PortGroup                   legacysupport 1.1
 PortGroup                   muniversal 1.1
-
-# ntdll requires fstatat, since wine-5.9
-# https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
-legacysupport.newest_darwin_requires_legacy 13
-
-# Must be statically linked or wine(64)-preloader breaks
-legacysupport.use_static yes
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
@@ -73,13 +65,17 @@ depends_lib \
     port:freetype \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
+    path:lib/libMoltenVK.dylib:MoltenVK \
     port:libpcap \
     port:libsdl2
 
 depends_run \
-    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-7.2.0
+
+if {"i386" in ${configure.universal_archs}} {
+    depends_skip_archcheck-append MoltenVK
+}
 
 patch.pre_args -p1
 
@@ -87,39 +83,34 @@ patch.pre_args -p1
 patchfiles-append \
     0001-distversion.diff
 
-# This allows wine to use curl-ca-bundle.crt
-patchfiles-append \
-    0002-crypt32-expand-cert-search-paths.diff
-
 # Remove cxmenu functions
 patchfiles-append \
-    0003-winemenubuilder-remove-cxmenu.diff
+    0002-winemenubuilder-remove-cxmenu.diff
 
 # openal32: Remove dll, remove CX23
 #  It's not part of Windows, so applications have to ship the native version anyway.
 patchfiles-append \
-    0004-openal32-remove-dll.diff
+    0003-openal32-remove-dll.diff
 
 # Import upstreams openldap import, remove CX23
 patchfiles-append \
-    0005-libs-Import-code-from-upstream-openldap-2.5.13.diff \
-    0006-ldap-Don-t-depend-on-the-getopt.h-header.diff \
-    0007-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
+    0004-libs-Import-code-from-upstream-openldap-2.5.13.diff \
+    0005-ldap-Don-t-depend-on-the-getopt.h-header.diff \
+    0006-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
 
 # Remove "CX HACK 21217" in favour of upstreams fix, remove CX23
 patchfiles-append \
-    0008-server-On-macOS-fake-debug-registers-when-running-un.diff \
-    0009-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
+    0007-server-On-macOS-fake-debug-registers-when-running-un.diff \
+    0008-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
 
 # macOS Sonoma
 patchfiles-append \
-    0010-preloader-sonoma.diff
+    0009-preloader-sonoma.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
     reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
-    reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -173,6 +164,10 @@ configure.args \
     --without-v4l2 \
     --without-x
 
+configure.args.i386     --without-vulkan
+configure.args.x86_64   --with-vulkan
+configure.env.x86_64    ac_cv_lib_soname_vulkan=
+
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
@@ -187,31 +182,6 @@ if { ${xcode_ok} || ${clt_ok} } {
 if {${os.major} > 18} {
     # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
-}
-
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
-if {${os.major} >= 15} {
-    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
-        depends_skip_archcheck-append MoltenVK
-    }
-    configure.args.i386     --without-vulkan
-    configure.args.x86_64   --with-vulkan
-    configure.env.x86_64    ac_cv_lib_soname_vulkan=
-} else {
-    configure.args-append   --without-vulkan
-}
-
-if {${os.major} < 15} {
-    configure.sdk_version   10.11
-    if {${configure.sdkroot} eq ""} {
-        depends_build-append    port:MacOSX10.11.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-    }
-    # Avoid linking Metal or rev-upgrade will cry
-    # Support GPU initialization via Metal, since wine-4.15
-    # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-    configure.env-append    ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8

@@ -2,15 +2,7 @@
 
 PortSystem                  1.0
 PortGroup                   compiler_blacklist_versions 1.0
-PortGroup                   legacysupport 1.1
 PortGroup                   muniversal 1.1
-
-# ntdll requires fstatat, since wine-5.9
-# https://github.com/wine-staging/wine-staging/commit/762c0e704003f802a5f3470aedd80799cb18c9ef
-legacysupport.newest_darwin_requires_legacy 13
-
-# Must be statically linked or wine(64)-preloader breaks
-legacysupport.use_static yes
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
@@ -19,7 +11,7 @@ conflicts                   wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-
 set my_name                 wine
 version                     8.0.2
 revision                    1
-platforms                   {darwin >= 12}
+platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -70,13 +62,17 @@ depends_lib \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     port:libinotify \
+    path:lib/libMoltenVK.dylib:MoltenVK \
     port:libpcap \
     port:libsdl2
 
 depends_run \
-    path:share/curl/curl-ca-bundle.crt:curl-ca-bundle \
     port:mingw-w64-wine-gecko-2.47.3 \
     port:mingw-w64-wine-mono-7.4.0
+
+if {"i386" in ${configure.universal_archs}} {
+    depends_skip_archcheck-append MoltenVK
+}
 
 patch.pre_args -p1
 
@@ -84,34 +80,18 @@ patch.pre_args -p1
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
 
-# This allows wine to use curl-ca-bundle.crt
-patchfiles-append \
-    0002-crypt32-expand-cert-search-paths.diff
-
 # https://bugs.winehq.org/show_bug.cgi?id=54831
 patchfiles-append \
-    0004-preloader-sonoma.diff
+    0002-preloader-sonoma.diff
 
 # https://gitlab.winehq.org/wine/wine/-/merge_requests/4023
 patchfiles-append \
-    0005-inotify.diff
-
-# layer backed views only works on macOS Yosemite and later, since wine-7.22
-# https://bugs.winehq.org/show_bug.cgi?id=54327
-if {${os.major} < 14} {
-    patchfiles-append \
-        1001-Revert-winemac.drv-Remove-now-unused-WineContentView.diff \
-        1002-Revert-winemac.drv-Set-the-surface-contents-directly.diff \
-        1003-Revert-winemac.drv-Move-GL-context-update-code-to-vi.diff \
-        1004-Revert-winemac.drv-Use-a-mask-layer-to-support-windo.diff \
-        1005-Revert-winemac.drv-Enable-layer-backed-views.diff
-}
+    0003-inotify.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure.ac
-    reinplace -q "s|@@PREFIX@@|${prefix}|g" ${worksrcpath}/dlls/crypt32/unixlib.c
 }
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -165,6 +145,10 @@ configure.args \
     --without-v4l2 \
     --without-x
 
+configure.args.i386     --without-vulkan
+configure.args.x86_64   --with-vulkan
+configure.env.x86_64    ac_cv_lib_soname_vulkan=
+
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
@@ -182,31 +166,6 @@ if {${os.major} > 18} {
 
     # Build i386 & x86_64 PE binaries for WoW64
     configure.pre_args.x86_64-append    --enable-archs=i386,x86_64
-}
-
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
-if {${os.major} >= 15} {
-    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
-        depends_skip_archcheck-append MoltenVK
-    }
-    configure.args.i386     --without-vulkan
-    configure.args.x86_64   --with-vulkan
-    configure.env.x86_64    ac_cv_lib_soname_vulkan=
-} else {
-    configure.args-append   --without-vulkan
-}
-
-if {${os.major} < 15} {
-    configure.sdk_version   10.11
-    if {${configure.sdkroot} eq ""} {
-        depends_build-append    port:MacOSX10.11.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX10.11.sdk
-    }
-    # Avoid linking Metal or rev-upgrade will cry
-    # Support GPU initialization via Metal, since wine-4.15
-    # https://gitlab.winehq.org/wine/wine/-/commit/0699089f0ea65c8d66b2cdcdb0731c432720969e
-    configure.env-append    ac_cv_header_Metal_Metal_h=
 }
 
 # wine requires clang >= 3.8

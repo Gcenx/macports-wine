@@ -62,12 +62,17 @@ depends_lib \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     port:libinotify \
+    path:lib/libMoltenVK.dylib:MoltenVK \
     port:libpcap \
     port:libsdl2
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
     port:mingw-w64-wine-mono-8.1.0
+
+if {"i386" in ${configure.universal_archs}} {
+    depends_skip_archcheck-append MoltenVK
+}
 
 patch.pre_args -p1
 
@@ -138,6 +143,10 @@ configure.args \
     --without-wayland \
     --without-x
 
+configure.args.i386     --without-vulkan
+configure.args.x86_64   --with-vulkan
+configure.env.x86_64    ac_cv_lib_soname_vulkan=
+
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
@@ -155,19 +164,6 @@ if {${os.major} > 18} {
 
     # Build i386 & x86_64 PE binaries for WoW64
     configure.pre_args.x86_64-append    --enable-archs=i386,x86_64
-}
-
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
-if {${os.major} >= 15} {
-    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
-        depends_skip_archcheck-append MoltenVK
-    }
-    configure.args.i386     --without-vulkan
-    configure.args.x86_64   --with-vulkan
-    configure.env.x86_64    ac_cv_lib_soname_vulkan=
-} else {
-    configure.args-append   --without-vulkan
 }
 
 # wine requires clang >= 3.8
