@@ -194,7 +194,7 @@ subport wine-staging {
         port:autoconf
 
     if {${os.major} < 19} {
-        set py_ver              3.11
+        set py_ver              3.12
         set py_ver_nodot        [string map {. {}} ${py_ver}]
         depends_extract-append  port:python${py_ver_nodot}
     }
