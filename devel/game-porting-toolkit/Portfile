@@ -107,7 +107,7 @@ configure.args \
     --without-vulkan \
     --without-x
 
-# We'll be getting these from game-porting-toolkit-d3dmetal
+# We'll be getting these from d3dmetal
 configure.args.x86_64 \
     --disable-d3d9 \
     --disable-d3d10 \
