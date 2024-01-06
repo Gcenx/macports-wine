@@ -4,7 +4,7 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx 2e232b5
+github.setup                gcenx winecx Game-Porting-Toolkit-v1.1
 git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
@@ -17,11 +17,12 @@ categories                  devel
 
 supported_archs             x86_64
 maintainers                 {@gcenx}
-homepage                    https://developer.apple.com/
+homepage                    https://developer.apple.com/games
 dist_subdir                 ${my_name}
 
-description                 Apple Game Porting Toolkit
-long_description            {*}${description}
+description                 Game Porting Toolkit ${version}
+long_description            Use the game porting toolkit to eliminate months of up-front work and \
+                            evaluate how well your game could run on Mac before writing any code.
 
 checksums \
     rmd160  a7b44e258da0024fba89b6192637fb0e914eac6d \
