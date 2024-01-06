@@ -4,12 +4,11 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx Game-Porting-Toolkit-v1.1
+github.setup                gcenx winecx 1.1 Game-Porting-Toolkit-v
 git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
 set my_name                 wine
-version                     1.1
 revision                    0
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
@@ -19,6 +18,7 @@ supported_archs             x86_64
 maintainers                 {@gcenx}
 homepage                    https://developer.apple.com/games
 dist_subdir                 ${my_name}
+distname                    ${github.tag_prefix}${github.version}
 
 description                 Game Porting Toolkit ${version}
 long_description            Use the game porting toolkit to eliminate months of up-front work and \
@@ -62,6 +62,7 @@ configure.checks.implicit_function_declaration.whitelist-append \
 configure.install \
     ${worksrcpath}/tools/install-sh
 
+# Install to libexec to not conflict with wine ports
 configure.pre_args \
     --prefix=${prefix}/libexec/${name}
 
@@ -164,11 +165,6 @@ compiler.limit_flags        yes
 muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 
-pre-configure {
-    file mkdir ${worksrcpath}-x86_64
-    file mkdir ${worksrcpath}-i386
-}
-
 configure {
     set configure.dir ${worksrcpath}-x86_64
     portconfigure::configure_main
@@ -197,22 +193,11 @@ destroot {
 }
 
 post-destroot {
+    # Avoid downloading wine-gecko-2.47.2-x86.msi & wine-gecko-2.47.2-x86_64.msi
     ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
 
-    set docdir ${prefix}/share/doc/${name}/${my_name}
-    xinstall -d ${destroot}${docdir}
-    xinstall -m 0644 -W ${worksrcpath} \
-        ANNOUNCE \
-        AUTHORS \
-        COPYING.LIB \
-        LICENSE \
-        README \
-        README.esync \
-        ${destroot}${docdir}
-
+    # Install d3dmetal files into place
     system "ditto ${prefix}/libexec/d3dmetal/redist/lib ${destroot}${prefix}/libexec/${name}/lib"
-    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/_d3d9.so      ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d9.so
-    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/_d3d10.so     ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d10.so
     file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d9.dll  ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d9.dll
     file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d10.dll ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d10.dll
     file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit             ${destroot}${prefix}/bin/gameportingtoolkit
@@ -227,8 +212,8 @@ platform darwin arm {
 
 platform darwin i386 {
     try {
-        set in_rosetta2 [exec sysctl -n sysctl.proc_translated]
-        if { ${in_rosetta2} == 0 } {
+        set is_rosetta2 [exec sysctl -n sysctl.proc_translated]
+        if { ${is_rosetta2} != 1 } {
             ui_error "${name} requires an Apple Silicon mac"
             return -code error "unsupported platform"
         }
