@@ -38,89 +38,90 @@ compiler.cxx_standard \
 # - bad: videoparsers
 # - ugly: asfdemux
 # - libav: wrap utilities provided by FFmpeg
-subport gst-wine {
 
-    depends_build \
-        port:bison \
-        bin:flex:flex \
-        port:gettext \
-        port:pkgconfig
+depends_build \
+    port:bison \
+    bin:flex:flex \
+    port:gettext \
+    port:pkgconfig
 
-    depends_lib \
-        port:gettext-runtime
+depends_lib \
+    port:gettext-runtime
 
-    meson.wrap_mode     forcefallback
-    configure.pre_args  {setup --prefix=${prefix}/libexec/gst-wine}
+meson.wrap_mode     forcefallback
+configure.pre_args  {setup --prefix=${prefix}/libexec/gst-wine}
 
-    # meson core options
-    configure.args-append \
-       -Dauto_features=disabled \
-       -Dstrip=true
+# meson core options
+configure.args-append \
+    -Dauto_features=disabled \
+    -Dstrip=true
 
-    # GStreamer subprojects
-    configure.args-append \
-        -Dbase=enabled \
-        -Dgood=enabled \
-        -Dugly=enabled \
-        -Dbad=enabled \
-        -Dlibav=disabled \
-        -Dges=disabled \
-        -Drtsp_server=disabled
+# GStreamer subprojects
+configure.args-append \
+    -Dbase=enabled \
+    -Dgood=enabled \
+    -Dugly=enabled \
+    -Dbad=enabled \
+    -Dlibav=disabled \
+    -Dges=disabled \
+    -Drtsp_server=disabled
 
-    # gst-plugins-base
-    configure.args-append \
-        -Dgst-plugins-base:audioconvert=enabled \
-        -Dgst-plugins-base:audioresample=enabled \
-        -Dgst-plugins-base:playback=enabled \
-        -Dgst-plugins-base:typefind=enabled \
-        -Dgst-plugins-base:videoconvertscale=enabled
+# gst-plugins-base
+configure.args-append \
+    -Dgst-plugins-base:audioconvert=enabled \
+    -Dgst-plugins-base:audioresample=enabled \
+    -Dgst-plugins-base:playback=enabled \
+    -Dgst-plugins-base:typefind=enabled \
+    -Dgst-plugins-base:videoconvertscale=enabled
 
-    # gst-plugins-good
-    configure.args-append \
-        -Dgst-plugins-good:avi=enabled \
-        -Dgst-plugins-good:deinterlace=enabled \
-        -Dgst-plugins-good:videofilter=enabled \
-        -Dgst-plugins-good:audioparsers=enabled \
-        -Dgst-plugins-good:wavparse=enabled \
-        -Dgst-plugins-good:id3demux=enabled \
-        -Dgst-plugins-good:isomp4=enabled
+# gst-plugins-good
+configure.args-append \
+    -Dgst-plugins-good:avi=enabled \
+    -Dgst-plugins-good:deinterlace=enabled \
+    -Dgst-plugins-good:videofilter=enabled \
+    -Dgst-plugins-good:audioparsers=enabled \
+    -Dgst-plugins-good:wavparse=enabled \
+    -Dgst-plugins-good:id3demux=enabled \
+    -Dgst-plugins-good:isomp4=enabled
 
-    # gst-plugins-ugly
-    configure.args-append \
-        -Dgst-plugins-ugly:asfdemux=enabled
+# gst-plugins-ugly
+configure.args-append \
+    -Dgst-plugins-ugly:asfdemux=enabled
 
-    # gst-plugins-bad
-    configure.args-append \
-        -Dgst-plugins-bad:applemedia=disabled \
-        -Dgst-plugins-base:gl=enabled \
-        -Dgst-plugins-bad:gl=enabled \
-        -Dgst-plugins-bad:videoparsers=enabled
+# gst-plugins-bad
+configure.args-append \
+    -Dgst-plugins-bad:applemedia=disabled \
+    -Dgst-plugins-base:gl=enabled \
+    -Dgst-plugins-bad:gl=enabled \
+    -Dgst-plugins-bad:videoparsers=enabled
 
-    # gst-libav
+# gst-libav
 
-    # Other options
-    #configure.args-append \
-    #    -Dbuild-tools-source=system
+# Other options
+#configure.args-append \
+#    -Dbuild-tools-source=system
 
-    # Common options, automatically inherited by subprojects
-    configure.args-append \
-        -Dtools=disabled
+# Common options, automatically inherited by subprojects
+configure.args-append \
+    -Dtools=disabled
 
-    variant libav description {Build ${subport} with gst-libav for using the encoders, decoders, muxers, and demuxers provided by FFmpeg} {
-        configure.args-replace  -Dlibav=disabled -Dlibav=enabled
-        configure.args-append   -DFFmpeg:auto_features=auto
-    }
-
-    variant tools description {Build ${subport} with tools for debugging} {
-        configure.args-replace  -Dtools=disabled -Dtools=enabled
-    }
-
-    # We put this into a pre-configure block so it can be evaluated _after_ platform selection.
-    pre-configure {
-        # applemedia requires APIs added in macOS Mojave
-        if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
-            configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
-        }
-    }
-    destroot.violate_mtree  yes
+variant libav description {Build ${subport} with gst-libav for using the encoders, decoders, muxers, and demuxers provided by FFmpeg} {
+    configure.args-replace  -Dlibav=disabled -Dlibav=enabled
+    configure.args-append   -DFFmpeg:auto_features=auto
 }
+
+variant tools description {Build ${subport} with tools for debugging} {
+    configure.args-replace  -Dtools=disabled -Dtools=enabled
+}
+
+default_variants        +libav
+
+# We put this into a pre-configure block so it can be evaluated _after_ platform selection.
+pre-configure {
+    # applemedia requires APIs added in macOS Mojave
+    if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
+        configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
+    }
+}
+
+destroot.violate_mtree  yes
