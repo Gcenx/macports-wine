@@ -109,7 +109,6 @@ configure.args-append \
 
 variant libav description {Build ${subport} with gst-libav for using the encoders, decoders, muxers, and demuxers provided by FFmpeg} {
     configure.args-replace  -Dlibav=disabled -Dlibav=enabled
-    configure.args-append   -DFFmpeg:auto_features=auto
 }
 
 variant tools description {Build ${subport} with tools for debugging} {
