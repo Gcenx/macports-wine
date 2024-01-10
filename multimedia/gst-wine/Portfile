@@ -41,8 +41,10 @@ compiler.cxx_standard \
 
 depends_build \
     port:bison \
+    port:curl \
     bin:flex:flex \
     port:gettext \
+    port:git \
     port:pkgconfig
 
 depends_lib \
