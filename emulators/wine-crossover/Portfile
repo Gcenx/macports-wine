@@ -208,6 +208,7 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
 default_variants            +gstreamer +universal
 
 triplet.add_build           cross
+triplet.add_host            none
 
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
