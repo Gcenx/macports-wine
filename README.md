@@ -2,7 +2,7 @@
 A macports overlay that provides recent versions of wine on macOS.
 
 ## This repository contains
-- `CrossOver`               *(23.7.0)*
+- `CrossOver`               *(23.7.1)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(1.1)*
 - `gl-headers`              *(2019.1.0)*
