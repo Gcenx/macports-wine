@@ -212,7 +212,7 @@ platform darwin arm {
 
 platform darwin i386 {
     try {
-        set is_rosetta2 [exec sysctl -n sysctl.proc_translated]
+        set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
         if { ${is_rosetta2} != 1 } {
             ui_error "${name} requires an Apple Silicon mac"
             return -code error "unsupported platform"
