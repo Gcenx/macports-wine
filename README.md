@@ -11,7 +11,6 @@ A macports overlay that provides recent versions of wine on macOS.
 - `libinotify`              *(20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
-- `mingw-w64-wine-dxvk`     *(1.10.3)*
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(v8.0.2)*
