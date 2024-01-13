@@ -34,6 +34,7 @@ depends_build \
     port:d3dmetal \
     bin:flex:flex \
     port:gettext \
+    port:llvm-cx \
     port:mingw-w64 \
     port:pkgconfig
 
@@ -157,7 +158,6 @@ configure.cflags-append     -Wno-implicit-function-declaration -Wno-format -Wno-
 # Were only installing wine not the development files
 destroot.target             install-lib
 
-depends_build-append        port:llvm-cx
 configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
 configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
 configure.cmd               ${worksrcpath}/configure
