@@ -199,8 +199,8 @@ post-destroot {
 
     # Install d3dmetal files into place
     system "ditto ${prefix}/libexec/d3dmetal/redist/lib ${destroot}${prefix}/libexec/${name}/lib"
-    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d9.dll  ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d9.dll
-    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d10.dll ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/d3d10.dll
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d9.dll  ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/d3d9.dll
+    file rename ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/_d3d10.dll ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-windows/d3d10.dll
     file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit             ${destroot}${prefix}/bin/gameportingtoolkit
     file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit-no-esync    ${destroot}${prefix}/bin/gameportingtoolkit-no-esync
     file copy ${prefix}/libexec/d3dmetal/gameportingtoolkit-no-hud      ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
