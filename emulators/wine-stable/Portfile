@@ -9,8 +9,8 @@ PortGroup                   muniversal 1.1
 name                        wine-stable
 conflicts                   wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging wine-crossover
 set my_name                 wine
-version                     8.0.2
-revision                    1
+version                     9.0
+revision                    0
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -46,9 +46,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  7689c2ea724ae2c8c5d6f1db1c9df268ac5f044a \
-    sha256  d3b1ead5094e92b8ed888ae1d0c781d53fba11f13ca9cfa405a7ba1127f0544a \
-    size    48040148
+    rmd160  8a74032d3612e613ef5b97e9d2908ac612fa8d93 \
+    sha256  90cd86d1203a7b1d304ae15461bbe0cbf1fd24feb407b551d011cc6d2967eb3f \
+    size    48912704
 
 depends_build \
     port:bison \
@@ -67,8 +67,8 @@ depends_lib \
     port:libsdl2
 
 depends_run \
-    port:mingw-w64-wine-gecko-2.47.3 \
-    port:mingw-w64-wine-mono-7.4.0
+    port:mingw-w64-wine-gecko-2.47.4 \
+    port:mingw-w64-wine-mono-8.1.0
 
 if {"i386" in ${configure.universal_archs}} {
     depends_skip_archcheck-append MoltenVK
@@ -79,14 +79,6 @@ patch.pre_args -p1
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
-
-# https://bugs.winehq.org/show_bug.cgi?id=54831
-patchfiles-append \
-    0002-preloader-sonoma.diff
-
-# https://gitlab.winehq.org/wine/wine/-/merge_requests/4023
-patchfiles-append \
-    0003-inotify.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -135,6 +127,7 @@ configure.args \
     --with-opengl \
     --without-oss \
     --with-pcap \
+    --with-pcsclite \
     --with-pthread \
     --without-pulse \
     --without-sane \
@@ -143,6 +136,7 @@ configure.args \
     --with-unwind \
     --without-usb \
     --without-v4l2 \
+    --without-wayland \
     --without-x
 
 configure.args.i386     --without-vulkan
@@ -214,11 +208,11 @@ post-destroot {
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
-        ANNOUNCE \
+        ANNOUNCE.md \
         AUTHORS \
         COPYING.LIB \
         LICENSE \
-        README \
+        README.md \
         ${destroot}${docdir}
 }
 
