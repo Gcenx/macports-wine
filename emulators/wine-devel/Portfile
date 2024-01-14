@@ -253,11 +253,11 @@ post-destroot {
     set docdir ${prefix}/share/doc/${my_name}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
-        ANNOUNCE \
+        ANNOUNCE.md \
         AUTHORS \
         COPYING.LIB \
         LICENSE \
-        README \
+        README.md \
         ${destroot}${docdir}
 }
 
