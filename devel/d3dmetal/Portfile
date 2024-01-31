@@ -50,24 +50,24 @@ pre-fetch {
 
 build {}
 
-set d3dmetal        ${prefix}/libexec/d3dmetal
-set d3dmetal_lib    ${destroot}${prefix}/libexec/d3dmetal/redist/lib
+set d3dmetal        ${destroot}${prefix}/libexec/d3dmetal
+set d3dmetal_lib    ${d3dmetal}/redist/lib
 
 destroot {
-    xinstall -d ${destroot}${d3dmetal}
-    system "ditto ${worksrcpath} ${destroot}${d3dmetal}"
+    xinstall -d ${d3dmetal}
+    system "ditto ${worksrcpath} ${d3dmetal}"
 
     # D3DMetal doesn't support DirectX 9 & 10 so disable the stub dlls
     file rename ${d3dmetal_lib}/wine/x86_64-windows/d3d9.dll   ${d3dmetal_lib}/wine/x86_64-windows/_d3d9.dll
     file rename ${d3dmetal_lib}/wine/x86_64-windows/d3d10.dll  ${d3dmetal_lib}/wine/x86_64-windows/_d3d10.dll
 
-    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${d3dmetal}/gameportingtoolkit
-    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${d3dmetal}/gameportingtoolkit-no-esync
-    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${destroot}${d3dmetal}/gameportingtoolkit-no-hud
+    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${d3dmetal}/gameportingtoolkit
+    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${d3dmetal}/gameportingtoolkit-no-esync
+    reinplace -q "s|`brew --prefix game-porting-toolkit`|${prefix}/libexec/game-porting-toolkit|g"     ${d3dmetal}/gameportingtoolkit-no-hud
 }
 
 notes "
-    Please review the D3DMetal documentation found at ${d3dmetal}
+    Please review the D3DMetal documentation found at ${prefix}/libexec/d3dmetal
 "
 
 platform darwin i386 {
