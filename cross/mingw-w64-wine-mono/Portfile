@@ -16,7 +16,7 @@ long_description    ${subport} is a package containing Mono and other projects, 
 
 if {${subport} eq ${name}} {
     PortGroup       stub 1.0
-    version         8.1.0
+    version         9.0.0
     revision        0
     depends_run     port:mingw-w64-wine-mono-${version}
 
@@ -26,6 +26,16 @@ if {${subport} eq ${name}} {
             registry_deactivate_composite mingw-w64-wine-mono-${version} "" [list ports_nodepcheck 1]
         }
     }
+}
+
+subport ${name}-9.0.0 {
+    version         9.0.0
+    revision        0
+    checksums       rmd160  ea5a5c85b464fbdded518cacadfe26f063d299cb \
+                    sha256  d73d440c08ebd67c93fbd6534f4f1b4e98aa07342f9c7d98c8aaeb74755eb9cf \
+                    size    40970928
+    use_xz          yes
+    distname        wine-mono-${version}-x86
 }
 
 subport ${name}-8.1.0 {
