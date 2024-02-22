@@ -4,9 +4,9 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 23.7.1
+version                 24.0.0
 revision                0
-platforms               {darwin >= 18}
+platforms               {darwin >= 19}
 
 categories              emulators
 license                 Commercial
@@ -32,9 +32,9 @@ master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
 use_zip                 yes
 use_configure           no
 
-checksums               rmd160  18cc130115b0da485f4651d3481829184ebb1af3 \
-                        sha256  c33df0cc20e5b9c9d4ecc148886bc673fb7153fca7e1b2f4d4d8f009bd30428d \
-                        size    432225543
+checksums               rmd160  d5f104212beed20b7d6f2ae5c2f38c79aac3914a \
+                        sha256  4965e0a407c28d9fc3145fdc40bf32e6f64b29f80c2eaec7a4e6d70f2d22e716 \
+                        size    408567257
 
 build {
     # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
