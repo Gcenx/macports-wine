@@ -14,8 +14,8 @@ A macports overlay that provides recent versions of wine on macOS.
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(v9.0)*
-- `wine-devel`              *(v9.2)*
-- `wine-staging`            *(v9.2)*
+- `wine-devel`              *(v9.3)*
+- `wine-staging`            *(v9.3)*
 - `wine-crossover`          *(v22.1.1)*
 - `winetricks`              *(20231004)*
 
