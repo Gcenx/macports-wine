@@ -128,6 +128,13 @@ if { ${xcode_ok} || ${clt_ok} } {
     configure.ldflags-prepend   -Wl,-ld_classic
 }
 
+# Xcode15.3 default SDK causes the build to fail so fallback to a working SDK
+configure.sdk_version       13
+if {${configure.sdkroot} eq ""} {
+    depends_build-append    port:MacOSX13.sdk
+    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX13.sdk
+}
+
 # Use an older deployment target to avoid new dyld behaviors.
 # The custom compiler is too old to accept "13.0", so we use "10.14".
 macosx_deployment_target    10.14
