@@ -339,6 +339,7 @@ subport ${name}-gst-plugins-bad {
         port:libsrtp \
         port:orc \
         port:rtmpdump \
+        port:svt-av1 \
         port:x265
 
     # Enable GstPlay tests that need network access
@@ -362,6 +363,7 @@ subport ${name}-gst-plugins-bad {
         -Daes=disabled \
         -Daom=disabled \
         -Davtp=disabled \
+        -Danalyticsoverlay=disabled \
         -Dandroidmedia=disabled \
         -Dapplemedia=disabled \
         -Dasio=disabled \
@@ -373,6 +375,7 @@ subport ${name}-gst-plugins-bad {
         -Dchromaprint=disabled \
         -Dclosedcaption=disabled \
         -Dcolormanagement=disabled \
+        -Dcodec2json=disabled \
         -Dcurl=disabled \
         -Dcurl-ssh2=disabled \
         -Dd3dvideosink=disabled \
