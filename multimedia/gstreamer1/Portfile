@@ -397,7 +397,6 @@ subport ${name}-gst-plugins-bad {
         -Dipcpipeline=disabled \
         -Dipcpipeline=disabled \
         -Diqa=disabled \
-        -Dkate=disabled \
         -Dkms=disabled \
         -Dladspa=disabled \
         -Dldac=disabled \
