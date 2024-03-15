@@ -40,3 +40,11 @@ activate {
     system "/usr/bin/xattr -drs com.apple.quarantine '${applications_dir}/Wineskin Winery.app'"
     system "/usr/bin/codesign --force --deep -s - '${applications_dir}/Wineskin Winery.app'"
 }
+
+deactivate {
+    portdeactivate::deactivate_main
+    if {[file exists "${applications_dir}/Wineskin Winery.app" ]} {
+        ui_msg "--->  Removing ${applications_dir}/Wineskin Winery.app"
+        delete -force "${applications_dir}/Wineskin Winery.app"
+    }
+}
