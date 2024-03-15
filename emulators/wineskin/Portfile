@@ -1,29 +1,27 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
+github.setup        The-Wineskin-Project Winery 2.0
+github.tarball_from releases
+revision            0
 name                wineskin
-version             1.8.4.2
-
-revision            1
-categories          emulators
-maintainers         {@gcenx}
+platforms           {darwin >= 19}
 license             LGPL-2.1
-platforms           darwin
-description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS/Mac OS X.
+categories          emulators
 
-long_description    ${description}
-
+supported_archs     x86_64
+maintainers         {@gcenx}
 homepage            https://github.com/Gcenx/WineskinServer/
 
-distname            Wineskin.Winery
+description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS.
+long_description    ${description}
+
+distname            wineskin-winery-v${version}
 use_xz              yes
-extract.suffix      .txz
 
-master_sites        https://github.com/Gcenx/WineskinServer/releases/download/V${version}/
-
-checksums           rmd160  deda6f3312048eb9ddf26cde8427cbbb5e04ad2b \
-                    sha256  c20483f096bad16e45d3779d1f92672ebdc05269e3e6cd317ae77135469cbf1d \
-                    size    858720
+checksums           rmd160  b0f4e6e8a6883520f270137d87c18bb262b17332 \
+                    sha256  a065827ab7d30f84a631d0c26431a3c6f2576471f84501daf6455334c5eb7c79 \
+                    size    921052
 
 use_configure       no
 build {}
@@ -33,18 +31,12 @@ notes {
     You need to manually create ~/Applications/Wineskin to avoid this bug
 }
 
-if {${os.major} < 17} {
-    known_fail yes
-    archive_sites
-    distfiles
-    depends_build
-    depends_lib
-    pre-fetch {
-        ui_error "${name} @${version} requires Mac OS X 10.13 or later."
-        return -code error "incompatible Mac OS X version"
-    }
+destroot {
+    file copy "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
 }
 
-destroot {
-        file copy "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
+activate {
+    portactivate::activate_main
+    system "/usr/bin/xattr -drs com.apple.quarantine '${applications_dir}/Wineskin Winery.app'"
+    system "/usr/bin/codesign --force --deep -s - '${applications_dir}/Wineskin Winery.app'"
 }
