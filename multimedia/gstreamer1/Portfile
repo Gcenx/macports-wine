@@ -284,8 +284,6 @@ subport ${name}-gst-plugins-ugly {
     # Feature options for plugins that need external deps
     configure.args-append \
         -Da52dec=disabled \
-        -Damrnb=disabled \
-        -Damrwbdec=disabled \
         -Dcdio=disabled \
         -Ddvdread=disabled \
         -Dmpeg2dec=enabled \
