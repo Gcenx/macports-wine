@@ -26,10 +26,10 @@ checksums           rmd160  b0f4e6e8a6883520f270137d87c18bb262b17332 \
 use_configure       no
 build {}
 
-notes {
+notes "
     Currently ${name} has a bug where it won't created a needed directory\
     You need to manually create ~/Applications/Wineskin to avoid this bug
-}
+"
 
 destroot {
     file copy "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
