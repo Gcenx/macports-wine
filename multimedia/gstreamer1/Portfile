@@ -201,7 +201,10 @@ subport ${name}-gst-plugins-good {
 
     # Feature options for plugins with external deps
     configure.args-append \
+        -Dadaptivedemux2=disabled \
         -Daalib=disabled \
+        -Damrnb=disabled \
+        -Damrwbdec=disabled \
         -Dbz2=disabled \
         -Dcairo=disabled \
         -Ddirectsound=enabled \
