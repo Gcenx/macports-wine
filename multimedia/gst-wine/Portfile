@@ -45,6 +45,7 @@ depends_build \
     bin:flex:flex \
     port:gettext \
     port:git \
+    port:m4 \
     port:pkgconfig
 
 depends_lib \
