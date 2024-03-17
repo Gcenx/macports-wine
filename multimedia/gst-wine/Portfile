@@ -75,7 +75,9 @@ configure.args-append \
     -Dgst-plugins-base:audioresample=enabled \
     -Dgst-plugins-base:playback=enabled \
     -Dgst-plugins-base:typefind=enabled \
-    -Dgst-plugins-base:videoconvertscale=enabled
+    -Dgst-plugins-base:videoconvertscale=enabled \
+    -Dgst-plugins-base:ogg=enabled \
+    -Dgst-plugins-base:vorbis=enabled
 
 # gst-plugins-good
 configure.args-append \
