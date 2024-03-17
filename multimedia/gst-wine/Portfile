@@ -64,7 +64,7 @@ configure.args-append \
     -Dgood=enabled \
     -Dugly=enabled \
     -Dbad=enabled \
-    -Dlibav=disabled \
+    -Dlibav=enabled \
     -Dges=disabled \
     -Drtsp_server=disabled
 
@@ -99,7 +99,7 @@ configure.args-append \
 
 # gst-libav
 
-# Other options
+# Other options (uncomment 1.24.x)
 #configure.args-append \
 #    -Dbuild-tools-source=system
 
@@ -107,15 +107,9 @@ configure.args-append \
 configure.args-append \
     -Dtools=disabled
 
-variant libav description {Build ${subport} with gst-libav for using the encoders, decoders, muxers, and demuxers provided by FFmpeg} {
-    configure.args-replace  -Dlibav=disabled -Dlibav=enabled
-}
-
 variant tools description {Build ${subport} with tools for debugging} {
     configure.args-replace  -Dtools=disabled -Dtools=enabled
 }
-
-default_variants        +libav
 
 # We put this into a pre-configure block so it can be evaluated _after_ platform selection.
 pre-configure {
@@ -123,6 +117,8 @@ pre-configure {
     if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
         configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
     }
+    # remove 1.24.x
+    reinplace "s|subproject('macos-bison-binary')||g" ${worksrcpath}/meson.build
 }
 
 destroot.violate_mtree  yes
