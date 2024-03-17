@@ -118,6 +118,14 @@ subport ${name}-gst-plugins-base {
     # OpenGL integration library options
     #  Leaving (auto)
 
+    # options from gst-wine
+    configure.args-append \
+        -Daudioconvert=enabled \
+        -Daudioresample=enabled \
+        -Dplayback=enabled \
+        -Dtypefind=enabled \
+        -Dvideoconvertscale=enabled
+
     # Feature option for opengl plugin and integration library
     configure.args-append \
         -Dgl=enabled \
@@ -197,7 +205,17 @@ subport ${name}-gst-plugins-good {
     # Feature options for plugins without external deps
     configure.args-append \
         -Ddebugutils=disabled \
-        -Ddtmf=disabled
+        -Ddtmf=disabled \
+
+    # options from gst-wine
+    configure.args-append \
+        -Davi=enabled \
+        -Ddeinterlace=enabled \
+        -Dvideofilter=enabled \
+        -Daudioparsers=enabled \
+        -Dwavparse=enabled \
+        -Did3demux=enabled \
+        -Disomp4=enabled
 
     # Feature options for plugins with external deps
     configure.args-append \
@@ -284,6 +302,10 @@ subport ${name}-gst-plugins-ugly {
     configure.args-append \
         -Ddvdsub=disabled
 
+    # options taken from gst-wine
+    configure.args-append \
+        -Dasfdemux=enabled
+
     # Feature options for plugins that need external deps
     configure.args-append \
         -Da52dec=disabled \
@@ -348,6 +370,10 @@ subport ${name}-gst-plugins-bad {
 
     # Feature options for plugins without external deps
     #  Leaving (auto)
+
+    # optioks taken from gst-wine
+    configure.args-append \
+        -Dvideoparsers=enabled
 
     # Feature options for libraries that need external deps
     configure.args-append \
