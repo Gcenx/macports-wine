@@ -118,7 +118,7 @@ subport ${name}-gst-plugins-base {
     # OpenGL integration library options
     #  Leaving (auto)
 
-    # options from gst-wine
+    # options taken from gst-wine
     configure.args-append \
         -Daudioconvert=enabled \
         -Daudioresample=enabled \
@@ -207,7 +207,7 @@ subport ${name}-gst-plugins-good {
         -Ddebugutils=disabled \
         -Ddtmf=disabled
 
-    # options from gst-wine
+    # options taken from gst-wine
     configure.args-append \
         -Davi=enabled \
         -Ddeinterlace=enabled \
@@ -371,7 +371,7 @@ subport ${name}-gst-plugins-bad {
     # Feature options for plugins without external deps
     #  Leaving (auto)
 
-    # optioks taken from gst-wine
+    # options taken from gst-wine
     configure.args-append \
         -Dvideoparsers=enabled
 
