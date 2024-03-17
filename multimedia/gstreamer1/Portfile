@@ -205,7 +205,7 @@ subport ${name}-gst-plugins-good {
     # Feature options for plugins without external deps
     configure.args-append \
         -Ddebugutils=disabled \
-        -Ddtmf=disabled \
+        -Ddtmf=disabled
 
     # options from gst-wine
     configure.args-append \
