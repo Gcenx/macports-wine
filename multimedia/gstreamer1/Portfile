@@ -25,6 +25,10 @@ checksums \
 compiler.cxx_standard \
     2014
 
+configure.checks.implicit_function_declaration.whitelist-append \
+    sem_timedwait \
+    statx \
+    vdupq_n_s16
 
 subport ${name} {
     description \
