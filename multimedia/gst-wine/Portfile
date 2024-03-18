@@ -11,6 +11,8 @@ name                gst-wine
 revision            0
 
 maintainers         {@gcenx}
+description         gst-wine is a custom GStreamer package for wine.
+long_description    {*}${description}
 categories          multimedia
 license             LGPL-2+
 
@@ -26,18 +28,6 @@ checksums \
 # https://github.com/mesonbuild/meson/issues/1889
 compiler.cxx_standard \
     2014
-
-# Disable pretty much everything in GStreamer, but re-enable:
-# - tools (like gst-inspect, useful for debugging)
-# - base: audioconvert, audioresample: both used in winegstreamer
-# - base: playback (decodebin), typefind, videoconvert: used in winegstreamer
-# - good: avidemux, deinterlace, videoflip: used in winegstreamer
-# - good: audioparsers, wavparse: used in winegstreamer
-# - good: id3demux, isomp4
-# - bad: applemedia (and gl which it depends on)
-# - bad: videoparsers
-# - ugly: asfdemux
-# - libav: wrap utilities provided by FFmpeg
 
 depends_build \
     port:bison \
