@@ -507,7 +507,7 @@ subport ${name}-gst-libav {
     description \
         GStreamer libav Plug-ins a plug-in using the libav library
     long_description \
-        GStreamer libav plug-in contains  elements using the libav library code. It \
+        GStreamer libav plug-in contains elements using the libav library code. It \
         contains most popular decoders as well as very fast \
         colorspace conversion elements.
 
@@ -519,10 +519,12 @@ subport ${name}-gst-libav {
         port:pkgconfig
 
     depends_lib \
-        port:${name}-gst-plugins-base \
-        port:ffmpeg
+        port:${name}-gst-plugins-base
 
     configure.args-append \
         -Ddoc=disabled \
         -Dtests=disabled
+
+    configure.args-appened \
+        --force-fallback-for=FFmpeg
 }
