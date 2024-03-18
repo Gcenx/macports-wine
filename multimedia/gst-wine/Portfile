@@ -6,7 +6,7 @@ PortGroup           meson 1.0
 PortGroup           muniversal 1.1
 
 # Only commit stable updates (even numbered releases)
-gitlab.setup        gstreamer gstreamer 1.22.10
+gitlab.setup        gstreamer gstreamer 1.24.0
 name                gst-wine
 revision            0
 
@@ -19,9 +19,9 @@ dist_subdir         ${gitlab.project}1
 homepage            https://gstreamer.freedesktop.org
 
 checksums \
-    rmd160  8b6220456a300a7820c2cf574134e7d7b359056a \
-    sha256  f75aa4e995399411dda9d202d9c4e447597d581c15839cb8c85b0d040f0871bf \
-    size    25115504
+    rmd160  2aba82b05f35a7afc0acef68aca1958af92a8afb \
+    sha256  91571fc1b30445f63fd45815395a915bebbf49b31235410f54ea8c930a7764bd \
+    size    27146556
 
 # https://github.com/mesonbuild/meson/issues/1889
 compiler.cxx_standard \
@@ -42,14 +42,7 @@ compiler.cxx_standard \
 depends_build \
     port:bison \
     port:curl \
-    bin:flex:flex \
-    port:gettext \
-    port:git \
-    port:m4 \
     port:pkgconfig
-
-depends_lib \
-    port:gettext-runtime
 
 meson.wrap_mode     forcefallback
 configure.pre_args  {setup --prefix=${prefix}/libexec/gst-wine}
@@ -65,11 +58,9 @@ configure.args-append \
     -Dgood=enabled \
     -Dugly=enabled \
     -Dbad=enabled \
-    -Dlibav=enabled \
-    -Dges=disabled \
-    -Drtsp_server=disabled
+    -Dlibav=enabled
 
-# gst-plugins-base
+## gst-plugins-base
 configure.args-append \
     -Dgst-plugins-base:audioconvert=enabled \
     -Dgst-plugins-base:audioresample=enabled \
@@ -79,7 +70,7 @@ configure.args-append \
     -Dgst-plugins-base:ogg=enabled \
     -Dgst-plugins-base:vorbis=enabled
 
-# gst-plugins-good
+## gst-plugins-good
 configure.args-append \
     -Dgst-plugins-good:avi=enabled \
     -Dgst-plugins-good:deinterlace=enabled \
@@ -89,22 +80,22 @@ configure.args-append \
     -Dgst-plugins-good:id3demux=enabled \
     -Dgst-plugins-good:isomp4=enabled
 
-# gst-plugins-ugly
+## gst-plugins-ugly
 configure.args-append \
     -Dgst-plugins-ugly:asfdemux=enabled
 
-# gst-plugins-bad
+## gst-plugins-bad
 configure.args-append \
     -Dgst-plugins-bad:applemedia=disabled \
     -Dgst-plugins-base:gl=enabled \
     -Dgst-plugins-bad:gl=enabled \
     -Dgst-plugins-bad:videoparsers=enabled
 
-# gst-libav
+## gst-libav
 
-# Other options (uncomment 1.24.x)
-#configure.args-append \
-#    -Dbuild-tools-source=system
+# Other options
+configure.args-append \
+    -Dbuild-tools-source=system
 
 # Common options, automatically inherited by subprojects
 configure.args-append \
@@ -120,8 +111,6 @@ pre-configure {
     if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
         configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
     }
-    # remove 1.24.x
-    reinplace "s|subproject('macos-bison-binary')||g" ${worksrcpath}/meson.build
 }
 
 destroot.violate_mtree  yes
