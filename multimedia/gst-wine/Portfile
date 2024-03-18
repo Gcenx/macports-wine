@@ -54,6 +54,7 @@ configure.args-append \
 configure.args-append \
     -Dgst-plugins-base:audioconvert=enabled \
     -Dgst-plugins-base:audioresample=enabled \
+    -Dgst-plugins-base:gl=enabled \
     -Dgst-plugins-base:playback=enabled \
     -Dgst-plugins-base:typefind=enabled \
     -Dgst-plugins-base:videoconvertscale=enabled \
@@ -77,7 +78,6 @@ configure.args-append \
 ## gst-plugins-bad
 configure.args-append \
     -Dgst-plugins-bad:applemedia=disabled \
-    -Dgst-plugins-base:gl=enabled \
     -Dgst-plugins-bad:gl=enabled \
     -Dgst-plugins-bad:videoparsers=enabled
 
