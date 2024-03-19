@@ -6,8 +6,9 @@ PortGroup           meson 1.0
 PortGroup           muniversal 1.1
 
 # Only commit stable updates (even numbered releases)
-gitlab.setup        gstreamer gstreamer 1.24.0
+gitlab.setup        gstreamer gstreamer 1.22.10
 name                ${gitlab.project}1
+epoch               1
 revision            0
 
 maintainers         {@gcenx}
@@ -17,9 +18,9 @@ license             LGPL-2+
 homepage            https://gstreamer.freedesktop.org
 
 checksums \
-    rmd160  2aba82b05f35a7afc0acef68aca1958af92a8afb \
-    sha256  91571fc1b30445f63fd45815395a915bebbf49b31235410f54ea8c930a7764bd \
-    size    27146556
+    rmd160  8b6220456a300a7820c2cf574134e7d7b359056a \
+    sha256  f75aa4e995399411dda9d202d9c4e447597d581c15839cb8c85b0d040f0871bf \
+    size    25115504
 
 # https://github.com/mesonbuild/meson/issues/1889
 compiler.cxx_standard \
@@ -29,6 +30,7 @@ configure.checks.implicit_function_declaration.whitelist-append \
     sem_timedwait \
     statx \
     vdupq_n_s16
+
 
 subport ${name} {
     description \
@@ -205,10 +207,7 @@ subport ${name}-gst-plugins-good {
 
     # Feature options for plugins with external deps
     configure.args-append \
-        -Dadaptivedemux2=disabled \
         -Daalib=disabled \
-        -Damrnb=disabled \
-        -Damrwbdec=disabled \
         -Dbz2=disabled \
         -Dcairo=disabled \
         -Ddirectsound=enabled \
@@ -291,6 +290,8 @@ subport ${name}-gst-plugins-ugly {
     # Feature options for plugins that need external deps
     configure.args-append \
         -Da52dec=disabled \
+        -Damrnb=disabled \
+        -Damrwbdec=disabled \
         -Dcdio=disabled \
         -Ddvdread=disabled \
         -Dmpeg2dec=enabled \
@@ -343,7 +344,6 @@ subport ${name}-gst-plugins-bad {
         port:libsrtp \
         port:orc \
         port:rtmpdump \
-        port:svt-av1 \
         port:x265
 
     # Enable GstPlay tests that need network access
@@ -367,7 +367,6 @@ subport ${name}-gst-plugins-bad {
         -Daes=disabled \
         -Daom=disabled \
         -Davtp=disabled \
-        -Danalyticsoverlay=disabled \
         -Dandroidmedia=disabled \
         -Dapplemedia=disabled \
         -Dasio=disabled \
@@ -379,7 +378,6 @@ subport ${name}-gst-plugins-bad {
         -Dchromaprint=disabled \
         -Dclosedcaption=disabled \
         -Dcolormanagement=disabled \
-        -Dcodec2json=disabled \
         -Dcurl=disabled \
         -Dcurl-ssh2=disabled \
         -Dd3dvideosink=disabled \
@@ -405,6 +403,7 @@ subport ${name}-gst-plugins-bad {
         -Dipcpipeline=disabled \
         -Dipcpipeline=disabled \
         -Diqa=disabled \
+        -Dkate=disabled \
         -Dkms=disabled \
         -Dladspa=disabled \
         -Dldac=disabled \
