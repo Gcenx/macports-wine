@@ -1,0 +1,108 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           gitlab 1.0
+PortGroup           meson 1.0
+PortGroup           muniversal 1.1
+
+# Only commit stable updates (even numbered releases)
+gitlab.setup        gstreamer gstreamer 1.24.1
+name                gst-wine
+revision            0
+platforms           {darwin >= 17}
+
+supported_archs     arm64 i386 x86_64
+maintainers         {@gcenx}
+description         gst-wine is a custom GStreamer package for wine.
+long_description    {*}${description}
+categories          multimedia
+license             LGPL-2+
+
+dist_subdir         ${gitlab.project}1
+
+homepage            https://gstreamer.freedesktop.org
+
+checksums \
+    rmd160  d4f8b42358f704772565c4fe77fbbdb11f836028 \
+    sha256  8bb3f93e3f4bdbff27266aed982a96062b0dcb5d5005e8dd2cdc1fc054ba5850 \
+    size    27150735
+
+# https://github.com/mesonbuild/meson/issues/1889
+compiler.cxx_standard \
+    2014
+
+depends_build \
+    port:bison \
+    port:curl \
+    port:pkgconfig
+
+meson.wrap_mode     forcefallback
+configure.pre_args  {setup --prefix=${prefix}/libexec/gst-wine}
+
+# meson core options
+configure.args-append \
+    -Dauto_features=disabled \
+    -Dstrip=true
+
+# GStreamer subprojects
+configure.args-append \
+    -Dbase=enabled \
+    -Dgood=enabled \
+    -Dugly=enabled \
+    -Dbad=enabled \
+    -Dlibav=enabled
+
+## gst-plugins-base
+configure.args-append \
+    -Dgst-plugins-base:audioconvert=enabled \
+    -Dgst-plugins-base:audioresample=enabled \
+    -Dgst-plugins-base:gl=enabled \
+    -Dgst-plugins-base:playback=enabled \
+    -Dgst-plugins-base:typefind=enabled \
+    -Dgst-plugins-base:videoconvertscale=enabled \
+    -Dgst-plugins-base:ogg=enabled \
+    -Dgst-plugins-base:vorbis=enabled
+
+## gst-plugins-good
+configure.args-append \
+    -Dgst-plugins-good:avi=enabled \
+    -Dgst-plugins-good:deinterlace=enabled \
+    -Dgst-plugins-good:videofilter=enabled \
+    -Dgst-plugins-good:audioparsers=enabled \
+    -Dgst-plugins-good:wavparse=enabled \
+    -Dgst-plugins-good:id3demux=enabled \
+    -Dgst-plugins-good:isomp4=enabled
+
+## gst-plugins-ugly
+configure.args-append \
+    -Dgst-plugins-ugly:asfdemux=enabled
+
+## gst-plugins-bad
+configure.args-append \
+    -Dgst-plugins-bad:applemedia=disabled \
+    -Dgst-plugins-bad:gl=enabled \
+    -Dgst-plugins-bad:videoparsers=enabled
+
+## gst-libav
+
+# Other options
+configure.args-append \
+    -Dbuild-tools-source=system
+
+# Common options, automatically inherited by subprojects
+configure.args-append \
+    -Dtools=disabled
+
+variant tools description {Build ${subport} with tools for debugging} {
+    configure.args-replace  -Dtools=disabled -Dtools=enabled
+}
+
+# We put this into a pre-configure block so it can be evaluated _after_ platform selection.
+pre-configure {
+    # applemedia requires APIs added in macOS Mojave
+    if {[vercmp $macosx_deployment_target 10.14] >= 0 } {
+        configure.args-replace -Dgst-plugins-bad:applemedia=disabled -Dgst-plugins-bad:applemedia=enabled
+    }
+}
+
+destroot.violate_mtree  yes
