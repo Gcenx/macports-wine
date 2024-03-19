@@ -80,6 +80,9 @@ patch.pre_args -p1
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
 
+patchfiles-append \
+    0002-ntdll-workarond-sendmsg-bug-on-macOS.diff
+
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
     reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
