@@ -22,17 +22,17 @@ master_sites        ${homepage}/data/pkg/osx/${version}/
 
 distname            gstreamer-1.0-${version}-universal
 set headername      gstreamer-1.0-devel-${version}-universal
-extract.suffix      pkg
+extract.suffix      .pkg
 
-distfiles           ${distname}.${extract.suffix} \
-                    ${headername}.${extract.suffix}
+distfiles           ${distname}${extract.suffix} \
+                    ${headername}${extract.suffix}
 
 checksums \
-    ${distname}.${extract.suffix} \
+    ${distname}${extract.suffix} \
     rmd160  0c5002d3482461d3673aa6b01def24f3492cc9e6 \
     sha256  8c59ff2e454620c90fc27a4e17ef18d35963097ae57829471e8ffb2fd8f32521 \
     size    177452250 \
-    ${headername}.${extract.suffix} \
+    ${headername}${extract.suffix} \
     rmd160  2fbf658d852bf97dad30e24f8337b968478b6568 \
     sha256  a04f1e74a219c79ea5fe6be679a75dd3d23278326fe096bd21878086a6d9a8e9 \
     size    534891062
@@ -43,10 +43,10 @@ use_configure       no
 build {
     if {![file exists /Library/Frameworks/GStreamer.framework ]} {
         elevateToRoot "installer"
-        ui_msg "--->  Installing gstreamer-1.0-${version}-universal.pkg"
-        system -W ${distpath} "installer -pkg gstreamer-1.0-${version}-universal.pkg -target /"
-        ui_msg "--->  Installing gstreamer-1.0-devel-${version}-universal.pkg"
-        system -W ${distpath} "installer -pkg gstreamer-1.0-devel-${version}-universal.pkg -target /"
+        ui_msg "--->  Installing ${distname}${extract.suffix}"
+        system -W ${distpath} "installer -pkg ${distname}${extract.suffix} -target /"
+        ui_msg "--->  Installing ${headername}${extract.suffix}"
+        system -W ${distpath} "installer -pkg ${headername}${extract.suffix} -target /"
     }
 }
 
