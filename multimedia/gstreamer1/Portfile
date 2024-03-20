@@ -538,7 +538,7 @@ subport ${name}-gst-libav {
         file copy ${workpath}/gstreamer-${version}/subprojects/FFmpeg.wrap ${worksrcdir}/subprojects
     }
 
-    # We're' only intrested in libgstlibav
+    # We're only interested in libgstlibav
     destroot.target \
         install --tags runtime
 }
