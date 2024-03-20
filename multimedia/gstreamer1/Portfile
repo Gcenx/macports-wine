@@ -8,7 +8,7 @@ PortGroup           muniversal 1.1
 # Only commit stable updates (even numbered releases)
 gitlab.setup        gstreamer gstreamer 1.24.0
 name                ${gitlab.project}1
-revision            0
+revision            1
 
 maintainers         {@gcenx}
 categories          multimedia
