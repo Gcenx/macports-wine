@@ -9,7 +9,7 @@ PortGroup                   muniversal 1.1
 name                        wine-devel
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging wine-crossover
 set my_name                 wine
-version                     9.4
+version                     9.5
 revision                    0
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].x
@@ -46,9 +46,9 @@ distfiles \
 
 checksums \
     ${wine_distfile} \
-    rmd160  aa108497e6a57119adc35964c96d1cae83b742ed \
-    sha256  1b768aafe9284edeb61c2f76f02e15d51044cda730fcc7ee3b1e03c3f585b817 \
-    size    49153303
+    rmd160  becc28077a6c6c24bce7577b9d8eb851860e7a79 \
+    sha256  092e2baab8aa529a8198c02c85c9729c2a452f0fe6f5ecc7facdf25f0a75b009 \
+    size    49301186
 
 depends_build \
     port:bison \
@@ -141,7 +141,9 @@ configure.args \
 
 configure.args.i386     --without-vulkan
 configure.args.x86_64   --with-vulkan
-configure.env.x86_64    ac_cv_lib_soname_vulkan=
+
+# https://bugs.winehq.org/show_bug.cgi?id=56469
+configure.env.x86_64    ac_cv_lib_soname_vulkan=libMoltenVK.dylib
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
@@ -186,9 +188,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  4e1749c2b83fe78b03ebf6dcb1e23b2025a5ea58 \
-        sha256  41870d98414a636848c102af6a3530f8bb15b7542de75efa3f217f02415611ef \
-        size    9481864
+        rmd160  c45f96b59c2919cd2c1bdfb9afcefd01dae7332c \
+        sha256  950dc87325ae418dc590559b3c4c4c09f917ebdb5fcf9629839dadf65228c345 \
+        size    9526239
 
     depends_extract-append \
         port:autoconf
