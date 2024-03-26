@@ -29,24 +29,19 @@ long_description        ${name} runs thousands of different Windows apps \
 homepage                https://www.codeweavers.com/products/crossover-mac/
 
 master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
+distname                crossover-${version}
 use_zip                 yes
-use_configure           no
 
 checksums               rmd160  109907a5bf5a1db855ae40d068d2063f6eb55fcd \
                         sha256  8ccf4869f408cc4ceb740db685f51e4e34b041e5b42aea4406dd529f4a4fcf1a \
                         size    406346185
 
-build {
-    # Remove these to avoid gatekeeper crying, due to needed modifications (rev-upgrade)
-    delete ${workpath}/CrossOver.app/Contents/CodeResources
-    delete ${workpath}/CrossOver.app/Contents/_CodeSignature
-
-    # Can't remove Sparkle.framework so remove the update url
-    reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
-}
-
-distname    crossover-${version}
+use_configure           no
+build {}
 
 destroot {
-    copy ${workpath}/CrossOver.app ${destroot}${applications_dir}/CrossOver.app
+    # Can't remove Sparkle.framework so remove the update url
+    reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
+    move ${workpath}/CrossOver.app ${destroot}${applications_dir}/CrossOver.app
+    system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'CrossOver.app'"
 }
