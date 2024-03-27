@@ -140,14 +140,11 @@ if {${configure.sdkroot} eq ""} {
 macosx_deployment_target    10.14
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append \
-        port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad \
-        port:gstreamer1-gst-plugins-ugly \
-        port:gstreamer1-gst-libav
+    depends_lib-append      port:gst-wine
     configure.args-replace  --without-gstreamer --with-gstreamer
+
+    configure.env-append    "GSTREAMER_CFLAGS=-I${prefix}/libexec/gst-wine/include/gstreamer-1.0 -I${prefix}/libexec/gst-wine/include -I${prefix}/libexec/gst-wine/include/gstreamer-1.0 -I${prefix}/libexec/gst-wine/include -I${prefix}/libexec/gst-wine/include/glib-2.0 -I${prefix}/libexec/gst-wine/lib/glib-2.0/include -I${prefix}/libexec/gst-wine/include"
+    configure.env-append    "GSTREAMER_LIBS=-L${prefix}/libexec/gst-wine/lib -lgstvideo-1.0 -lgstaudio-1.0 -lgstbase-1.0 -lgsttag-1.0 -lgstreamer-1.0 -Wl,-rpath,${prefix}/libexec/gst-wine/lib -lgobject-2.0 -lglib-2.0 -lintl"
 }
 
 default_variants            +gstreamer
