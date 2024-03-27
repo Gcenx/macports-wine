@@ -87,18 +87,18 @@ patchfiles-append \
 patchfiles-append \
     0002-winemenubuilder-remove-cxmenu.diff
 
-# openal32: Remove dll, remove CX23
+# openal32: Remove dll
 #  It's not part of Windows, so applications have to ship the native version anyway.
 patchfiles-append \
     0003-openal32-remove-dll.diff
 
-# Import upstreams openldap import, remove CX23
+# Import upstreams openldap import
 patchfiles-append \
     0004-libs-Import-code-from-upstream-openldap-2.5.13.diff \
     0005-ldap-Don-t-depend-on-the-getopt.h-header.diff \
     0006-ldap-Mark-ldap_int_destroy_global_options-as-a-destr.diff
 
-# Remove "CX HACK 21217" in favour of upstreams fix, remove CX23
+# Remove "CX HACK 21217" in favour of upstreams fix
 patchfiles-append \
     0007-server-On-macOS-fake-debug-registers-when-running-un.diff \
     0008-ntdll-Add-a-WARN-when-setting-debug-registers-fails-.diff
@@ -106,6 +106,9 @@ patchfiles-append \
 # macOS Sonoma
 patchfiles-append \
     0009-preloader-sonoma.diff
+
+patchfiles.x86_64 \
+    1001-remove-cross_compiling-check.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -197,22 +200,10 @@ if {${os.major} > 18} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
-# Uncomment variant for CX23
-#variant gphoto description {Build ${subport} with support for digital cameras} {
-#    depends_lib-append      port:libgphoto2
-#    configure.args-replace  --without-gphoto --with-gphoto
-#}
-
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
-
-# Uncomment variant for CX23
-#variant usb description {Build ${subport} with USB support} {
-#    depends_lib-append      port:libusb
-#    configure.args-replace  --without-usb --with-usb
-#}
 
 default_variants            +gstreamer +universal
 
@@ -329,10 +320,7 @@ if {[option universal_possible] && [variant_isset universal]} {
 }
 
 platform darwin arm {
-    patchfiles.x86_64                 1001-remove-cross_compiling-check.diff
     configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
-livecheck.type              regex
-livecheck.url               https://media.codeweavers.com/pub/crossover/source/
-livecheck.regex             crossover-sources-(\[0-9.\]+)\\.tar.gz
+livecheck.type              none
