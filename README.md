@@ -24,6 +24,7 @@ A macports overlay that provides recent versions of wine on macOS.
 - `wine-stable-7.0.2`       *(supports macOS 10.8)*
 - `wine-devel-7.22`         *(supports macOS 10.8)*
 - `wine-devel-8.21`         *(supports macOS 10.11)*
+- `wine-crossover-22`       *(supports macOS 10.13)*
 
 ## How to use this repository
 After installing macports you need a modern version of `git`\
