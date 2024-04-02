@@ -10,7 +10,7 @@ name                        wine-devel
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging wine-crossover
 set my_name                 wine
 version                     9.5
-revision                    0
+revision                    1
 platforms                   {darwin >= 15}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -219,7 +219,8 @@ variant gphoto description {Build ${subport} with support for digital cameras} {
 }
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
+    depends_lib-append port:gst-plugins-good port:gst-plugins-bad port:gst-plugins-ugly port:gst-libav
+    configure.pkg_config_path-prepend ${prefix}/libexec/gstreamer/lib/pkgconfig
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
