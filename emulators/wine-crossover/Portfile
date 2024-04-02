@@ -11,7 +11,7 @@ name                        wine-crossover
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging
 set my_name                 wine
 version                     22.1.1
-revision                    0
+revision                    1
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
 categories                  emulators
@@ -201,7 +201,8 @@ if {${os.major} > 18} {
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
+    depends_lib-append port:gst-plugins-good port:gst-plugins-bad port:gst-plugins-ugly port:gst-libav
+    configure.pkg_config_path-prepend ${prefix}/libexec/gstreamer/lib/pkgconfig
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
