@@ -3,9 +3,9 @@
 PortSystem          1.0
 PortGroup           muniversal 1.1
 
-name                libmpeg2
+name                gst-libmpeg2
 version             0.5.1
-revision            3
+revision            0
 categories          multimedia
 license             GPL-2+
 maintainers         {@gcenx}
@@ -25,29 +25,14 @@ checksums           rmd160  00b2d669655ed3f7a176f5eecc925045159a0301 \
 use_autoreconf      yes
 autoreconf.args     -fiv
 
-configure.args      --enable-shared \
+configure.args      --prefix=${prefix}/libexec/gstreamer \
+                    --enable-shared \
                     --disable-sdl \
                     --without-x \
-                    --mandir=${prefix}/share/man
+                    --mandir=${prefix}/libexec/gstreamer/share/man
 
 configure.cflags-append \
                     -std=gnu89
-
-variant sdl description {Use sdl12-compat} {
-    depends_lib-append      port:sdl12-compat
-    configure.args-replace  --disable-sdl --enable-sdl
-}
-
-variant x11 {
-    depends_lib-append      port:xorg-libXv \
-                            port:xorg-libX11 \
-                            port:xorg-libXext \
-                            port:xorg-libice \
-                            port:xorg-libsm
-    configure.args-replace  --without-x --with-x
-    configure.args-append   --x-includes=${prefix}/include \
-                            --x-libraries=${prefix}/lib
-}
 
 livecheck.type      regex
 livecheck.url       ${homepage}downloads.html
