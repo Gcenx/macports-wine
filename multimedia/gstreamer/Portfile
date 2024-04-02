@@ -7,7 +7,6 @@ PortGroup           muniversal 1.1
 
 # Only commit stable updates (even numbered releases)
 gitlab.setup        gstreamer gstreamer 1.24.1
-name                ${gitlab.project}1
 revision            0
 
 maintainers         {@gcenx}
@@ -29,6 +28,9 @@ configure.checks.implicit_function_declaration.whitelist-append \
     sem_timedwait \
     statx \
     vdupq_n_s16
+
+configure.pre_args {setup --prefix=${prefix}/libexec/${name}}
+configure.pkg_config_path-prepend ${prefix}/libexec/${name}/lib/pkgconfig
 
 subport ${name} {
     description \
@@ -54,8 +56,7 @@ subport ${name} {
         port:pkgconfig
 
     depends_lib \
-        port:gettext-runtime \
-        path:lib/pkgconfig/glib-2.0.pc:glib2
+        port:gettext-runtime
 
     configure.args-append \
         -Dgst_debug=true \
@@ -89,10 +90,19 @@ subport ${name} {
     # Common options
     configure.args-append \
         -Ddoc=disabled
+
+    # meson options
+    configure.args-append \
+        --force-fallback-for=glib
+
+    post-extract {
+        file mkdir ${worksrcdir}/subprojects
+        file copy ${workpath}/gstreamer-${version}/subprojects/glib.wrap ${worksrcdir}/subprojects
+    }
 }
 
 
-subport ${name}-gst-plugins-base {
+subport gst-plugins-base {
     description \
         GStreamer Base Plug-ins a basic collection of elements
     long_description \
@@ -168,13 +178,13 @@ subport ${name}-gst-plugins-base {
 
     # gst-plugins-bad applemedia can't find gstglconfig.h so move it
     post-destroot {
-        move ${destroot}${prefix}/lib/gstreamer-1.0/include/gst/gl/gstglconfig.h ${destroot}${prefix}/include/gstreamer-1.0/gst/gl/gstglconfig.h
-        reinplace "s| -I\${\libdir}\/gstreamer-1.0/include||g" ${destroot}${prefix}/lib/pkgconfig/gstreamer-gl-1.0.pc
+        move ${destroot}${prefix}/lib/gstreamer-1.0/include/gst/gl/gstglconfig.h ${destroot}${prefix}/libexec/${name}/include/gstreamer-1.0/gst/gl/gstglconfig.h
+        reinplace "s| -I\${\libdir}\/gstreamer-1.0/include||g" ${destroot}${prefix}/libexec/${name}/lib/pkgconfig/gstreamer-gl-1.0.pc
     }
 }
 
 
-subport ${name}-gst-plugins-good {
+subport gst-plugins-good {
     description \
         GStreamer Good Plug-ins a set of good-quality plug-ins under our preferred license, LGPL
     long_description \
@@ -192,7 +202,7 @@ subport ${name}-gst-plugins-good {
     depends_lib \
         port:flac \
         port:gettext-runtime \
-        port:${name}-gst-plugins-base \
+        port:gst-plugins-base \
         path:lib/pkgconfig/vpx.pc:libvpx \
         port:mpg123 \
         port:orc
@@ -261,7 +271,7 @@ subport ${name}-gst-plugins-good {
 }
 
 
-subport ${name}-gst-plugins-ugly {
+subport gst-plugins-ugly {
     description \
         GStreamer Ugly Plug-ins a set of good-quality plug-ins with license or patent problems.
     long_description \
@@ -279,8 +289,8 @@ subport ${name}-gst-plugins-ugly {
 
     depends_lib \
         port:gettext-runtime \
-        port:${name}-gst-plugins-base \
-        port:libmpeg2 \
+        port:gst-plugins-base \
+        port:gst-libmpeg2 \
         port:x264
 
     # Feature options for plugins without external deps
@@ -315,7 +325,7 @@ subport ${name}-gst-plugins-ugly {
 }
 
 
-subport ${name}-gst-plugins-bad {
+subport gst-plugins-bad {
     description \
         GStreamer Bad Plug-ins a set of lower-quality plug-ins that need some love.
     long_description \
@@ -335,7 +345,7 @@ subport ${name}-gst-plugins-bad {
         port:faac \
         port:faad2 \
         port:gettext-runtime \
-        port:${name}-gst-plugins-base \
+        port:gst-plugins-base \
         port:libfdk-aac \
         port:libusrsctp \
         port:libopus \
@@ -506,7 +516,7 @@ subport ${name}-gst-plugins-bad {
 }
 
 
-subport ${name}-gst-libav {
+subport gst-libav {
     description \
         GStreamer libav Plug-ins a plug-in using the libav library
     long_description \
@@ -522,7 +532,7 @@ subport ${name}-gst-libav {
         port:pkgconfig
 
     depends_lib \
-        port:${name}-gst-plugins-base
+        port:gst-plugins-base
 
     configure.args-append \
         -Ddoc=disabled \
