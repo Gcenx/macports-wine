@@ -9,7 +9,7 @@ git.branch                  game-porting-toolkit
 
 name                        game-porting-toolkit
 set my_name                 wine
-revision                    0
+revision                    1
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
@@ -140,13 +140,8 @@ if {${configure.sdkroot} eq ""} {
 macosx_deployment_target    10.14
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append \
-        port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad \
-        port:gstreamer1-gst-plugins-ugly \
-        port:gstreamer1-gst-libav
+    depends_lib-append port:gst-plugins-good port:gst-plugins-bad port:gst-plugins-ugly port:gst-libav
+    configure.pkg_config_path-prepend ${prefix}/libexec/gstreamer/lib/pkgconfig
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
