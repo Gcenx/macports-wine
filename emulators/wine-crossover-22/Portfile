@@ -136,7 +136,7 @@ configure.pre_args.x86_64 \
     --enable-win64
 
 configure.args \
-    --prefix=${install_prefix}
+    --prefix=${install_prefix} \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
