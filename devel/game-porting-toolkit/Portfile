@@ -4,8 +4,7 @@ PortSystem                  1.0
 PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
-github.setup                gcenx winecx 1.1 Game-Porting-Toolkit-v
-git.branch                  game-porting-toolkit
+github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
 
 name                        game-porting-toolkit
 set my_name                 wine
@@ -25,9 +24,9 @@ long_description            Use the game porting toolkit to eliminate months of 
                             evaluate how well your game could run on Mac before writing any code.
 
 checksums \
-    rmd160  a7b44e258da0024fba89b6192637fb0e914eac6d \
-    sha256  d78871130e2b897366d4778a445e318f60cb0489b47d258c1a46eb4d4673697d \
-    size    46771440
+    rmd160  6f48c677bc99bf6584fc4043855f050f8f0c9958 \
+    sha256  8dc978cb2dae0af50d8f2c1b4db637c6fa8261ecc68369e3c5efcf8e84a011a8 \
+    size    46782010
 
 depends_build \
     port:bison \
