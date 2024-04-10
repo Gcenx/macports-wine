@@ -5,8 +5,8 @@ A macports overlay that provides recent versions of wine on macOS.
 - `CrossOver`               *(24.0.1)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(1.1)*
-- `gstreamer1`              *(1.24.1)*
-- `gstreamer.framework`     *(1.24.1)*
+- `gstreamer1`              *(1.24.2)*
+- `gstreamer.framework`     *(1.24.2)*
 - `libinotify`              *(20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
