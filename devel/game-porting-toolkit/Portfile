@@ -8,7 +8,7 @@ github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
 
 name                        game-porting-toolkit
 set my_name                 wine
-revision                    0
+revision                    1
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
@@ -48,6 +48,14 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.2
 
 patch.pre_args -p1
+
+# Replace CXHACK-21217 with upstreams fix
+patchfiles-append \
+    0001-remove-cxhack-21217.diff
+
+# Default to Win10 19043
+patchfiles-append \
+    0002-default-win10-19043.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -131,8 +139,11 @@ if { ${xcode150} || ${clt150} } {
 set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
 set clt_153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
 if { ${xcode153} || ${clt153} } {
-    depends_build-append    port:MacOSX13.sdk
-    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX13.sdk
+    configure.sdk_version       13
+    if {${configure.sdkroot} eq ""} {
+        depends_build-append    port:MacOSX13.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX13.sdk
+    }
 }
 
 # Use an older deployment target to avoid new dyld behaviors.
