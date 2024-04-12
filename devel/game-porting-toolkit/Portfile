@@ -58,9 +58,9 @@ patchfiles-append \
 patchfiles-append \
     0002-default-win10-19043.diff
 
-# Update to wine-mono-4.7.1
+# Update to wine-mono-7.4.1
 patchfiles-append \
-    0003-mscoree-update-wine-mono-to-4.7.1.diff
+    0003-mscoree-update-wine-mono-to-7.4.1.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99

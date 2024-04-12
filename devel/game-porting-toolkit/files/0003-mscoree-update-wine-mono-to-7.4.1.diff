@@ -1,15 +1,7 @@
-From 619b7e07d7ee1a20bb816ebec8e40eaedc47f870 Mon Sep 17 00:00:00 2001
-From: Vincent Povirk <vincent@codeweavers.com>
-Date: Tue, 1 Aug 2017 13:54:27 -0500
-Subject: [PATCH] mscoree: Update Wine Mono to 4.7.1.
-
-This has some bug fixes from Mono, and it no longer ships
-debug symbols for the whole managed class library, which were
-accidentally included in 4.7.0.
-
-Signed-off-by: Vincent Povirk <vincent@codeweavers.com>
-Signed-off-by: Alexandre Julliard <julliard@winehq.org>
-
+From 4493b10d17ecff23f483ed486127a123e90b3cc2 Mon Sep 17 00:00:00 2001
+From: Esme Povirk <esme@codeweavers.com>
+Date: Sat, 22 Oct 2022 16:02:38 -0500
+Subject: [PATCH] mscoree: Update Wine Mono to 7.4.1.
 
 based on commit https://github.com/ValveSoftware/wine/commit/619b7e07d7ee1a20bb816ebec8e40eaedc47f870
 ---
