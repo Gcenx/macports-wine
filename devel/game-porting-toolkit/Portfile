@@ -223,8 +223,9 @@ destroot {
 }
 
 post-destroot {
-    # Avoid downloading wine-gecko-2.47.2-x86.msi & wine-gecko-2.47.2-x86_64.msi
+    # Avoid downloading wine-gecko & wine-mono
     ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
+    ln -sf ${prefix}/share/wine/mono ${destroot}${prefix}/libexec/${name}/share/wine/mono
 
     # Install d3dmetal files into place
     system "ditto ${prefix}/libexec/d3dmetal/redist/lib ${destroot}${prefix}/libexec/${name}/lib"
