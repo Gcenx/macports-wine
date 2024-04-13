@@ -5,31 +5,31 @@ PortSystem                  1.0
 name                        MacOSX10.14u.sdk
 version                     1.0
 categories                  devel
-supported_archs             i386 x86_64
-platforms                   {darwin == 18}
 maintainers                 {@gcenx}
-
+homepage                    https://developer.apple.com/documentation/xcode-release-notes/xcode-10-release-notes
+platforms                   {darwin == 18}
 license                     Restrictive Nomirror
+supported_archs             i386 x86_64
 
-homepage                    https://developer.apple.com/macos/
+description                 Creates a stub SDK that supports i386 & x86_64
+long_description            {*}${description} by using\
+                            by using macOS_SDK_headers_for_macOS_10.14.pkg thats part of Xcode10 Command Line Tools.
 
 set sdk_dir                 ${prefix}/Developer/SDKs
 set sdk_dir2                /Library/Developer/CommandLineTools/SDKs
-use_configure               no
-destroot.violate_mtree      yes
+
+master_sites                http://swcdn.apple.com/content/downloads/41/57/061-26573-A_JMOA8GZGDR/lj8yrtu8dgs40fw9k8f5fkoviwkp0og6vs
 
 distname                    CLTools_Executables
-extract.suffix              pkg
+extract.suffix              .pkg
 
-distfiles                   ${distname}.${extract.suffix}
-
+distfiles                   ${distname}${extract.suffix}
 checksums                   rmd160  8cd648ba0ed42f5bd0a973ee5b445dc01cbf3ce9 \
                             sha256  d838087fb0d414a50fe4e0748b927bb148b5e8fa93fd5fdb2ae835068d42f8b7 \
                             size    177616317
 
-master_sites                http://swcdn.apple.com/content/downloads/41/57/061-26573-A_JMOA8GZGDR/lj8yrtu8dgs40fw9k8f5fkoviwkp0og6vs
-
 extract {}
+use_configure no
 
 pre-build {
     if {![file exists /usr/include ]} {
@@ -51,14 +51,10 @@ build {
     ln -s /Library ${workpath}/${name}/Library
 }
 
-pre-destroot {
+destroot {
     xinstall -d ${destroot}${sdk_dir}
     xinstall -d ${destroot}${sdk_dir2}
-}
 
-description         ${name}
-long_description    This port installs the ${name}.
-destroot {
     move ${workpath}/${name} ${destroot}${sdk_dir}
 
     # Check if the SDK exits before adding a symlink
@@ -67,6 +63,8 @@ destroot {
         ln -sf ${sdk_dir}/${name} ${destroot}${sdk_dir2}/${name}
     }
 }
+
+destroot.violate_mtree      yes
 
 variant universal {}
 configure.universal_archs {*}${supported_archs}
