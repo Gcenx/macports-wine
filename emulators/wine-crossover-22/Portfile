@@ -10,7 +10,7 @@ PortGroup                   muniversal 1.1
 name                        wine-crossover-22
 set my_name                 wine
 version                     22.1.1
-revision                    0
+revision                    1
 platforms                   {darwin >= 17}
 license                     LGPL-2.1+
 categories                  emulators
@@ -205,7 +205,9 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
-    configure.args-replace  --without-gstreamer --with-gstreamer
+    configure.args-delete           --without-gstreamer
+    configure.args.i386-append      --without-gstreamer
+    configure.args.x86_64-append    --with-gstreamer
 }
 
 default_variants            +gstreamer +universal
@@ -250,8 +252,9 @@ if {${os.major} > 18} {
         portconfigure::configure_main
 
         configure.pre_args.x86_64-delete --enable-win64
+        configure.args.x86_64
         set configure.dir ${worksrcpath}-i386
-        configure.args ${configure.pre_args.i386} ${configure.args}
+        configure.args ${configure.pre_args.i386} ${configure.args} ${configure.args.i386}
         portconfigure::configure_main
     }
 
