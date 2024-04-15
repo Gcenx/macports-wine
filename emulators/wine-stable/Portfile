@@ -11,13 +11,11 @@ conflicts                   wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-
 set my_name                 wine
 version                     9.0
 revision                    0
-platforms                   {darwin >= 15}
+platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
-
-# arm64 compile of wine will only support arm64 Windows binaries
-supported_archs             i386 x86_64
+supported_archs             x86_64
 maintainers                 {@gcenx}
 homepage                    https://www.winehq.org
 distname                    ${my_name}-${version}
@@ -70,10 +68,6 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
     port:mingw-w64-wine-mono-8.1.0
 
-if {"i386" in ${configure.universal_archs}} {
-    depends_skip_archcheck-append MoltenVK
-}
-
 patch.pre_args -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
@@ -102,10 +96,8 @@ configure.checks.implicit_function_declaration.whitelist-append \
 configure.install \
     ${worksrcpath}/tools/install-sh
 
-configure.pre_args.i386 \
-    --with-wine64=${workpath}/${worksrcdir}-x86_64
-
 configure.pre_args.x86_64 \
+    --enable-archs=i386,x86_64 \
     --enable-win64
 
 configure.args \
@@ -142,7 +134,6 @@ configure.args \
     --without-wayland \
     --without-x
 
-configure.args.i386     --without-vulkan
 configure.args.x86_64   --with-vulkan
 configure.env.x86_64    ac_cv_lib_soname_vulkan=
 
@@ -151,18 +142,15 @@ configure.env.x86_64    ac_cv_lib_soname_vulkan=
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 # Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
-set xcode_ok [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
-set clt_ok   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
-if { ${xcode_ok} || ${clt_ok} } {
+set xcode150 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
+set clt150   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
+if { ${xcode150} || ${clt150} } {
     configure.ldflags-prepend   -Wl,-ld_classic
 }
 
 if {${os.major} > 18} {
     # Use an older deployment target to avoid new dyld behaviors.
     macosx_deployment_target 10.14
-
-    # Build i386 & x86_64 PE binaries for WoW64
-    configure.pre_args.x86_64-append    --enable-archs=i386,x86_64
 }
 
 # wine requires clang >= 3.8
@@ -177,13 +165,6 @@ variant gphoto description {Build ${subport} with support for digital cameras} {
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
-}
-
-# wine(64)-preloader claims usb interface for no reason
-# https://github.com/Gcenx/WineskinServer/discussions/280
-variant usb description {Build ${subport} with USB support} {
-    depends_lib-append      port:libusb
-    configure.args-replace  --without-usb --with-usb
 }
 
 default_variants            +gstreamer +universal
@@ -217,22 +198,6 @@ post-destroot {
         LICENSE \
         README.md \
         ${destroot}${docdir}
-}
-
-if {[option universal_possible] && [variant_isset universal]} {
-    notes-append "
-        \n
-        Wine supports both 32-bit and 64-bit now. It is compatible with your\
-        existing 32-bit wine prefix, but it will now default to 64-bit when you\
-        create a new wine prefix. The architecture can be selected using the\
-        WINEARCH environment variable which can be set to either \"win32\" or\
-        \"win64\".
-
-        To create a new pure 32-bit prefix, you can run:
-            \$ WINEARCH=win32 WINEPREFIX=~/.wine32 winecfg
-
-        See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
-    "
 }
 
 platform darwin arm {
