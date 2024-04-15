@@ -37,11 +37,149 @@ checksums               rmd160  109907a5bf5a1db855ae40d068d2063f6eb55fcd \
                         size    406346185
 
 use_configure           no
-build {}
-
-destroot {
+build {
     # Can't remove Sparkle.framework so remove the update url
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
+}
+
+variant gstreamer description {Modify ${subport} to use GStreamer.framework} {
+    depends_run             port:gstreamer-runtime
+
+    post-build {
+        # Replace icon
+        delete ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
+        xinstall -m 0644 ${filespath}/CrossOver.icns ${workpath}/CrossOver.app/Contents/Resources/CrossOver.icns
+
+        # Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
+        system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
+
+        # Required libraires
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgnutls.30.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.6.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmp.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.so
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgnutls.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmp.10.dylib
+
+        # GStreamer
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmodule-2.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgthread-2.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstplayer-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstaudio-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstsdp-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstmpegts-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstnet-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstmpegts-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstrtsp-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libffi.8.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstreamer-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsttranscoder-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstisoff-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstphotography-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstsdp-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstplay-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstplay-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgobject-2.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstreamer-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcodecs-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libpcre2-8.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstwebrtc-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcontroller-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcodecparsers-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbadaudio-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libglib-2.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstrtp-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstwebrtc-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsttag-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstinsertbin-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstisoff-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstfft-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbadaudio-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgio-2.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libglib-2.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgobject-2.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsttag-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstvideo-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsttranscoder-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstrtp-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstapp-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstrtsp-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libintl.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstvideo-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstfft-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstadaptivedemux-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmodule-2.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbasecamerabinsrc-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstsctp-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libintl.8.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstphotography-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsturidownloader-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstpbutils-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbase-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstallocators-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libpcre2-posix.3.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libffi.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcontroller-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcodecparsers-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgthread-2.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libpcre2-8.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstriff-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstadaptivedemux-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstnet-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstriff-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgsturidownloader-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbasecamerabinsrc-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstaudio-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstinsertbin-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstcodecs-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbase-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstgl-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstgl-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstallocators-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstplayer-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstpbutils-1.0.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libpcre2-posix.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstsctp-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstapp-1.0.dylib
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgio-2.0.0.dylib
+
+        # GStreamer plugin directory
+        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0
+
+        # GStreamer plugins
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideofilter.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstplayback.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstwavparse.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioparsers.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstisomp4.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstdeinterlace.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioresample.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstapplemedia.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstasf.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstid3demux.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstopengl.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideoparsersbad.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstcoreelements.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgsttypefindfunctions.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioconvert.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstavi.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideoconvertscale.dylib
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst/gl
+        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst/gl/gstglconfig.h
+
+        # Use GStreamer.framework
+        system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix "/usr/bin/install_name_tool -add_rpath /Library/Frameworks/GStreamer.framework/Libraries winegstreamer.so"
+    }
+}
+
+destroot {
     move ${workpath}/CrossOver.app ${destroot}${applications_dir}/CrossOver.app
     system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'CrossOver.app'"
 }
