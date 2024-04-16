@@ -107,7 +107,7 @@ subport ${name}-gst-plugins-base {
 
     depends_build \
         port:gettext \
-        port:gl-headers \
+        path:include/GL/glext.h:gl-headers \
         port:pkgconfig
 
     depends_lib \
