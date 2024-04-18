@@ -34,6 +34,6 @@ destroot {
 }
 
 notes "
-    Currently ${name} has a bug where it won't created a needed directory\
-    You need to manually create ~/Applications/Wineskin to avoid this bug
+    Currently ${name} has a bug where it won't create a needed directory\
+    you'll need to manually create it ~/Applications/Wineskin.
 "
