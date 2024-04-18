@@ -7,7 +7,7 @@ github.setup        The-Wineskin-Project Winery 2.0.1
 github.tarball_from releases
 revision            0
 name                wineskin
-platforms           {darwin >= 19}
+platforms           {darwin >= 19.4}
 license             LGPL-2.1
 categories          emulators
 
