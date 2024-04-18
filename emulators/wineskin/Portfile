@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        The-Wineskin-Project Winery 2.0
+github.setup        The-Wineskin-Project Winery 2.0.1
 github.tarball_from releases
 revision            0
 name                wineskin
@@ -21,9 +21,9 @@ long_description    {*}${description}
 distname            wineskin-winery-v${version}
 use_xz              yes
 
-checksums           rmd160  b0f4e6e8a6883520f270137d87c18bb262b17332 \
-                    sha256  a065827ab7d30f84a631d0c26431a3c6f2576471f84501daf6455334c5eb7c79 \
-                    size    921052
+checksums           rmd160  453720e9256f26293d9e5cfe28a000804c28d612 \
+                    sha256  1dbbc539f9a2263d6d7725e3a8057b4a06240ec043260cce9feb6609900e9e0e \
+                    size    928192
 
 use_configure       no
 build {}

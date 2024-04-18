@@ -17,6 +17,7 @@ A macports overlay that provides recent versions of wine on macOS.
 - `wine-staging`            *(v9.6)*
 - `wine-crossover`          *(v23.7.1)*
 - `winetricks`              *(20240320)*
+- `wineskin`                *(v2.0.1)*
 
 ## Legacy wine versions
 - `wine-stable-6.0.4`       *(supports macOS 10.6.8)*
