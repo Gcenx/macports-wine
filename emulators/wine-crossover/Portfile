@@ -11,7 +11,7 @@ name                        wine-crossover
 conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging
 set my_name                 wine
 version                     23.7.1
-revision                    0
+revision                    1
 platforms                   {darwin >= 19}
 license                     LGPL-2.1+
 categories                  emulators
@@ -143,17 +143,17 @@ configure.env.x86_64        ac_cv_lib_soname_vulkan=
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
-configure.ldflags           -Wl,-rpath,${compiler.library_path}
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
-set xcode_ok [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
-set clt_ok   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
-if { ${xcode_ok} || ${clt_ok} } {
-    configure.ldflags-prepend   -Wl,-ld_classic
+if {${os.major} >= 23} {
+    set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
+
+    if {${os.arch} eq "arm" || ${is_rosetta2} == 1} {
+        depends_lib-append  port:d3dmetal
+        patchfiles-append   1001-hack-ntdll-non-native-code-regions.diff
+        configure.ldflags-append   -Wl,-rpath,${prefix}/libexec/d3dmetal/lib/external
+    }
 }
-
-# Use an older deployment target to avoid new dyld behaviors.
-macosx_deployment_target 10.14
 
 # wine requires clang >= 3.8
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
