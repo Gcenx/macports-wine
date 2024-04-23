@@ -1,0 +1,89 @@
+From 3f7bf531bb9591276cb9ebb567aa8173c0a3a2c3 Mon Sep 17 00:00:00 2001
+From: Gcenx <38226388+Gcenx@users.noreply.github.com>
+Date: Fri, 7 Jan 2022 23:06:10 -0500
+Subject: [PATCH 1/5] Revert "winemac.drv: Remove now unused -[WineContentView
+ drawRect:]."
+
+This reverts commit 3f845b34deada0dd58e3674119af47ce85851c24.
+---
+ dlls/winemac.drv/cocoa_window.m | 64 +++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
+index 7708157a9924..836b1104145e 100644
+--- a/dlls/winemac.drv/cocoa_window.m
++++ b/dlls/winemac.drv/cocoa_window.m
+@@ -543,6 +543,70 @@ - (void) viewWillDraw
+         [pendingGlContexts removeAllObjects];
+     }
+ 
++    - (void) drawRect:(NSRect)rect
++    {
++        WineWindow* window = (WineWindow*)[self window];
++
++        if ([window contentView] != self)
++            return;
++
++        if (window.surface && window.surface_mutex &&
++            !pthread_mutex_lock(window.surface_mutex))
++        {
++            const CGRect* rects;
++            int count;
++
++            if (get_surface_blit_rects(window.surface, &rects, &count))
++            {
++                CGRect dirtyRect = cgrect_win_from_mac(NSRectToCGRect(rect));
++                NSAffineTransform* xform = [NSAffineTransform transform];
++                CGContextRef context;
++                int i;
++
++                [xform translateXBy:0.0 yBy:self.bounds.size.height];
++                [xform scaleXBy:1.0 yBy:-1.0];
++                [xform concat];
++
++                context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
++                CGContextSetBlendMode(context, kCGBlendModeCopy);
++                CGContextSetInterpolationQuality(context, retina_on ? kCGInterpolationHigh : kCGInterpolationNone);
++
++                for (i = 0; i < count; i++)
++                {
++                    CGRect imageRect;
++                    CGImageRef image;
++
++                    imageRect = CGRectIntersection(rects[i], dirtyRect);
++                    image = create_surface_image(window.surface, &imageRect, FALSE, window.colorKeyed,
++                                                 window.colorKeyRed, window.colorKeyGreen, window.colorKeyBlue);
++
++                    if (image)
++                    {
++                        // Account for the flipped coordinate system.
++                        imageRect = cgrect_mac_from_win(imageRect);
++                        imageRect.origin.y = self.bounds.size.height - imageRect.origin.y - imageRect.size.height;
++                        CGContextDrawImage(context, imageRect, image);
++
++                        CGImageRelease(image);
++                    }
++                }
++
++                [window windowDidDrawContent];
++            }
++
++            pthread_mutex_unlock(window.surface_mutex);
++        }
++
++        // If the window may be transparent, then we have to invalidate the
++        // shadow every time we draw.  Also, if this is the first time we've
++        // drawn since changing from transparent to opaque.
++        if (window.drawnSinceShown && (window.colorKeyed || window.usePerPixelAlpha || window.shapeChangedSinceLastDraw))
++        {
++            window.shapeChangedSinceLastDraw = FALSE;
++            [window invalidateShadow];
++        }
++    }
++
+     - (void) addGLContext:(WineOpenGLContext*)context
+     {
+         BOOL hadContext = _everHadGLContext;
+-- 
+2.21.1 (Apple Git-122.3)
+
