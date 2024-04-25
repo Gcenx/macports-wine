@@ -7,11 +7,11 @@ PortGroup                   muniversal 1.1
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
 name                        wine-devel
-conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging wine-crossover
+conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
 version                     9.7
 revision                    0
-platforms                   {darwin >= 19}
+platforms                   {darwin >= 19.4}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators

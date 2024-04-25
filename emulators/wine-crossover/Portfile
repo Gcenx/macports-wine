@@ -8,11 +8,11 @@ PortGroup                   muniversal 1.1
 
 # Crossover-specific bug reports are accepted at info@codeweavers.com
 name                        wine-crossover
-conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-devel-7.22 wine-devel-8.21 wine-staging
+conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     23.7.1
 revision                    1
-platforms                   {darwin >= 19}
+platforms                   {darwin >= 19.4}
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
