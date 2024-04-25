@@ -19,7 +19,7 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `wine-staging`            *(v9.7)*
 - `wine-crossover`          *(v23.7.1)*
 - `winetricks`              *(20240320)*
-- `wineskin`                *(v2.0.1)*
+- `wineskin`                *(v2.0.2)*
 
 ## How to use this repository
 After installing macports you need a modern version of `git`\
