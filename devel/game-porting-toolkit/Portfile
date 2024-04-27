@@ -148,7 +148,7 @@ if { ${xcode150} || ${clt150} } {
 
 # Xcode15.3 default SDK causes the build to fail so fallback to a working SDK
 set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
-set clt_153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
+set clt153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
 if { ${xcode153} || ${clt153} } {
     configure.sdk_version       13
     if {${configure.sdkroot} eq ""} {
