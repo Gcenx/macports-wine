@@ -1,0 +1,66 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           gitlab 1.0
+
+gitlab.setup        gstreamer gstreamer 1.24.2
+gitlab.instance     https://gitlab.freedesktop.org/gstreamer
+revision            0
+
+name                ${gitlab.project}-runtime
+categories          multimedia
+maintainers         {@gcenx}
+description         GStreamer is a streaming media framework
+long_description    {*}${description}
+
+supported_archs     arm64 x86_64
+platforms           {darwin >= 17}
+license             LGPL-2+
+
+homepage            https://gstreamer.freedesktop.org
+master_sites        ${homepage}/data/pkg/osx/${version}/
+
+dist_subdir         ${gitlab.project}
+distname            gstreamer-1.0-${version}-universal
+extract.suffix      .pkg
+
+checksums \
+    rmd160  a7f51a8f37af58ae9d351cafd322b14591adab14 \
+    sha256  8ee811ccf764823d5700f7c1a4525cbd216b689f0efcc966f42224f2a77ca372 \
+    size    178247247
+
+extract             {}
+use_configure       no
+
+build               {}
+
+destroot {
+    set docdir ${destroot}${prefix}/share/doc/${subport}
+    xinstall -d ${docdir}
+    system "echo ${subport} is a stub port > ${docdir}/README"
+}
+
+activate {
+    portactivate::activate_main
+    elevateToRoot "installer"
+    ui_msg "--->  Installing ${distname}${extract.suffix}"
+    system -W ${distpath} "installer -pkg ${distname}${extract.suffix} -target /"
+    system "xattr -drs com.apple.quarantine /Library/Frameworks/GStreamer.framework"
+    system "codesign --force --deep --sign - /Library/Frameworks/GStreamer.framework"
+}
+
+deactivate {
+    portdeactivate::deactivate_main
+    if {![catch {set installed [lindex [registry_active gstreamer-development] 0]}]} {
+        registry_deactivate_composite gstreamer-development "" [list ports_nodepcheck 1]
+    }
+    if {[file exists /Library/Frameworks/GStreamer.framework ]} {
+        ui_msg "--->  Removing GStreamer.framework"
+        delete -force /Library/Frameworks/GStreamer.framework
+    }
+}
+
+variant universal {}
+configure.universal_archs {*}${supported_archs}
+default_variants +universal
+variant_set universal
