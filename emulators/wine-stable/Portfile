@@ -100,11 +100,9 @@ configure.checks.implicit_function_declaration.whitelist-append \
 configure.install \
     ${worksrcpath}/tools/install-sh
 
-configure.pre_args.x86_64 \
-    --enable-archs=i386,x86_64 \
-    --enable-win64
-
 configure.args \
+    --enable-archs=i386,x86_64 \
+    --enable-win64 \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -135,11 +133,11 @@ configure.args \
     --with-unwind \
     --without-usb \
     --without-v4l2 \
+    --with-vulkan \
     --without-wayland \
     --without-x
 
-configure.args.x86_64   --with-vulkan
-configure.env.x86_64    ac_cv_lib_soname_vulkan=
+configure.env-append        ac_cv_lib_soname_vulkan=
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
@@ -161,6 +159,12 @@ if {${os.major} > 18} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+# This makes destroot take an extreme amout of time
+variant dev description {Install ${subport} development environment} {
+    build.target            all
+    destroot.target-append  install-dev
+}
+
 variant gphoto description {Build ${subport} with support for digital cameras} {
     depends_lib-append      port:libgphoto2
     configure.args-replace  --without-gphoto --with-gphoto
@@ -171,7 +175,14 @@ variant gstreamer description {Build ${subport} with GStreamer, for multimedia s
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
-default_variants            +gstreamer +universal
+variant kerberos description {Build ${subport} with Kerberos, for network authentication protocol support} {
+    depends_lib-append      port:kerberos5
+    configure.args-replace  --without-krb5 --with-krb5
+}
+
+variant quartz {}
+
+default_variants            +gstreamer +quartz
 
 triplet.add_build           cross
 triplet.add_host            none
@@ -187,7 +198,9 @@ configure.env-append        i386_CFLAGS=${configure.optflags}
 configure.env-append        x86_64_CFLAGS=${configure.optflags}
 
 # Reduce compilation warnings
-configure.cflags-append     -Wno-deprecated-declarations
+configure.cflags-append \
+    -Wno-deprecated-declarations \
+    -Wno-unused-command-line-argument
 
 # Were only installing wine not the development files
 destroot.target             install-lib
@@ -202,10 +215,6 @@ post-destroot {
         LICENSE \
         README.md \
         ${destroot}${docdir}
-}
-
-platform darwin arm {
-    configure.pre_args.x86_64-prepend [muniversal::get_triplets x86_64]
 }
 
 livecheck.url               ${homepage}
