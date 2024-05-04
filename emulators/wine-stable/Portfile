@@ -10,7 +10,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     9.0
-revision                    0
+revision                    1
 platforms                   {darwin >= 19.4}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -76,6 +76,10 @@ patchfiles-append \
 
 patchfiles-append \
     0002-ntdll-workarond-sendmsg-bug-on-macOS.diff
+
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/5572
+patchfiles-append \
+    5572.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
