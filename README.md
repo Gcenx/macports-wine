@@ -1,6 +1,6 @@
 # macports-wine
 A macports overlay that provides recent versions of wine on macOS.\
-This branch only supports macOS Catalina 10.15.4.\
+This branch only supports macOS Catalina 10.15.4 & later.\
 For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-wine/tree/legacy) branch
 
 ## This repository contains
