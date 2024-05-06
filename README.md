@@ -8,7 +8,9 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(1.1)*
 - `gstreamer1`              *(1.24.2)*
-- `gstreamer.framework`     *(1.24.2)*
+- `gstreamer.framework`     *(stub)*
+- `gstreamer-runtime`       *(1.24.3)*
+- `gstreamer-development`   *(1.24.3)*
 - `libinotify`              *(20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
