@@ -134,20 +134,24 @@ configure.args \
     --without-vulkan \
     --without-x
 
+configure.args-append \
+    --disable-winedbg \
+    --disable-winemenubuilder
+
 # We also need to tell the linker to add Macports to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
 
 # Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
-set xcode150 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
 set clt150   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
-if { ${xcode150} || ${clt150} } {
+set xcode150 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
+if { ${clt150} || ${xcode150} } {
     configure.ldflags-prepend   -Wl,-ld_classic
 }
 
 # Xcode15.3 default SDK causes the build to fail so fallback to a working SDK
-set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
 set clt153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
-if { ${xcode153} || ${clt153} } {
+set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
+if { ${clt153} || ${xcode153} } {
     configure.sdk_version       13
     if {${configure.sdkroot} eq ""} {
         depends_build-append    port:MacOSX13.sdk
@@ -160,13 +164,8 @@ if { ${xcode153} || ${clt153} } {
 macosx_deployment_target    10.14
 
 variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append \
-        port:gstreamer1 \
-        port:gstreamer1-gst-plugins-base \
-        port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad \
-        port:gstreamer1-gst-plugins-ugly \
-        port:gstreamer1-gst-libav
+    depends_lib-append  port:gstreamer1-gst-plugins-good port:gstreamer1-gst-plugins-bad \
+                        port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
     configure.args-delete           --without-gstreamer
     configure.args.i386-append      --without-gstreamer
     configure.args.x86_64-append    --with-gstreamer
@@ -182,7 +181,10 @@ configure.optflags          -O3
 configure.env-append        CROSSCFLAGS=${configure.optflags}
 
 # Common compiler flags for both Mach-O and PE binaries.
-configure.cflags-append     -Wno-implicit-function-declaration -Wno-format -Wno-deprecated-declarations -Wno-incompatible-pointer-types
+configure.cflags-append \
+    -Wno-implicit-function-declaration \
+    -Wno-format -Wno-deprecated-declarations \
+    -Wno-incompatible-pointer-types
 
 # Were only installing wine not the development files
 destroot.target             install-lib
