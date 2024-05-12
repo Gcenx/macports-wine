@@ -65,7 +65,7 @@ depends_lib \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     path:lib/libMoltenVK.dylib:MoltenVK \
     port:libpcap \
-    port:libsdl2 \
+    port:libsdl2
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.3 \
@@ -80,6 +80,9 @@ patchfiles-append \
 # Remove cxmenu functions
 patchfiles-append \
     0002-winemenubuilder-remove-cxmenu.diff
+
+patchfiles-append \
+    1001-hack-ntdll-non-native-code-regions.diff
 
 post-patch {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -147,11 +150,9 @@ configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 if {${os.major} >= 23} {
     set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
-
     if {${os.arch} eq "arm" || ${is_rosetta2} == 1} {
-        depends_lib-append  port:d3dmetal
-        patchfiles-append   1001-hack-ntdll-non-native-code-regions.diff
-        configure.ldflags-append   -Wl,-rpath,${prefix}/libexec/d3dmetal/lib/external
+        depends_run-append  port:d3dmetal
+        configure.ldflags-append   -Wl,-rpath,${prefix}/libexec/d3dmetal/external
     }
 }
 
