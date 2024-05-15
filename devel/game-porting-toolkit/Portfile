@@ -243,9 +243,7 @@ platform darwin i386 {
         if {${os.major} >= 23} {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
-                # Change arch to arm64 to make it unsupported on Intel
-                # yes this is a nasty hack.
-                supported_archs arm64
+                known_fail yes
             }
         }
     }
