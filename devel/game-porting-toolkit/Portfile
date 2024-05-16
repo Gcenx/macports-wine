@@ -136,21 +136,17 @@ configure.args \
     --without-vulkan \
     --without-x
 
-configure.args-append \
-    --disable-winedbg \
-    --disable-winemenubuilder
-
 # We also need to tell the linker to add Macports to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
 
-# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
+# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine.
 set clt150   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
 set xcode150 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
 if { ${clt150} || ${xcode150} } {
     configure.ldflags-prepend   -Wl,-ld_classic
 }
 
-# Xcode15.3 default SDK causes the build to fail so fallback to a working SDK
+# Xcode15.3 default SDK causes the build to fail so fallback to a working SDK.
 set clt153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
 set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
 if { ${clt153} || ${xcode153} } {
@@ -193,7 +189,7 @@ configure.optflags          -O3
 configure.cflags-append     -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-int-conversion
 configure.env-append        CROSSCFLAGS=${configure.cflags}
 
-# Were only installing wine not the development files
+# Were only installing wine not the development files.
 destroot.target             install-lib
 
 configure {
@@ -224,7 +220,7 @@ destroot {
 }
 
 post-destroot {
-    # Avoid downloading wine-gecko & wine-mono
+    # Avoid downloading wine-gecko & wine-mono.
     ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
     ln -sf ${prefix}/share/wine/mono ${destroot}${prefix}/libexec/${name}/share/wine/mono
 
@@ -242,7 +238,7 @@ platform darwin i386 {
         pre-fetch {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
-                error "$name does not work on Intel hardware"
+                error "${subport} does not work on Intel hardware"
             }
         }
     }
