@@ -101,6 +101,8 @@ configure.pre_args.i386 \
 configure.args \
     --enable-win64 \
     --disable-tests \
+    --disable-winedbg \
+    --disable-winemenubuilder \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -176,19 +178,6 @@ default_variants            +gstreamer
 triplet.add_build           cross
 triplet.add_host            none
 
-configure.ldflags-delete    -L${compiler.library_path}
-configure.optflags          -O3
-configure.env-append        CROSSCFLAGS=${configure.optflags}
-
-# Common compiler flags for both Mach-O and PE binaries.
-configure.cflags-append \
-    -Wno-implicit-function-declaration \
-    -Wno-format -Wno-deprecated-declarations \
-    -Wno-incompatible-pointer-types
-
-# Were only installing wine not the development files
-destroot.target             install-lib
-
 configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
 configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
 configure.cmd               ${worksrcpath}/configure
@@ -196,6 +185,16 @@ configure.compiler.add_deps no
 compiler.limit_flags        yes
 muniversal.arch_flag        no
 muniversal.arch_compiler    yes
+
+configure.ldflags-delete    -L${compiler.library_path}
+configure.optflags          -O3
+
+# Common compiler flags for both Mach-O and PE binaries.
+configure.cflags-append     -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-int-conversion
+configure.env-append        CROSSCFLAGS=${configure.cflags}
+
+# Were only installing wine not the development files
+destroot.target             install-lib
 
 configure {
     set configure.dir ${worksrcpath}-x86_64
