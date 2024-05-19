@@ -234,8 +234,8 @@ post-destroot {
 }
 
 platform darwin i386 {
-    if {${os.major} >= 23} {
-        pre-fetch {
+    pre-fetch {
+        if {${os.major} >= 23} {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
                 error "${subport} does not work on Intel hardware"
