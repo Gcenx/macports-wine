@@ -17,8 +17,8 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `mingw-w64-wine-gecko`    *(Multiple versions)*
 - `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(v9.0)*
-- `wine-devel`              *(v9.8)*
-- `wine-staging`            *(v9.8)*
+- `wine-devel`              *(v9.9)*
+- `wine-staging`            *(v9.9)*
 - `wine-crossover`          *(v23.7.1)*
 - `winetricks`              *(20240320)*
 - `wineskin`                *(v2.0.2)*
