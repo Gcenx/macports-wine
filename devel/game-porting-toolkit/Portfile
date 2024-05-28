@@ -9,7 +9,7 @@ github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
 
 name                        game-porting-toolkit
 set my_name                 wine
-revision                    3
+revision                    4
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
@@ -35,7 +35,7 @@ depends_build \
     port:gettext \
     port:llvm-cx \
     port:mingw-w64 \
-    port:pkgconfig
+    path:bin/pkg-config:pkgconfig
 
 depends_lib \
     port:freetype \
@@ -45,11 +45,10 @@ depends_lib \
     port:libsdl2
 
 depends_run \
-    port:d3dmetal \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-7.4.1
 
-patch.pre_args -p1
+patch.pre_args-replace -p0 -p1
 
 # Replace CXHACK-21217 with upstreams fix
 patchfiles-append \
@@ -89,7 +88,7 @@ configure.checks.implicit_function_declaration.whitelist-append \
 configure.install \
     ${worksrcpath}/tools/install-sh
 
-# Install to libexec to not conflict with wine ports
+# Installing into libexec to not confict with wine
 configure.pre_args \
     --prefix=${prefix}/libexec/${name}
 
@@ -136,17 +135,17 @@ configure.args \
     --without-vulkan \
     --without-x
 
-# We also need to tell the linker to add Macports to the rpath stack.
+# We need to tell the linker to add MacPorts & d3dmetal to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
 
-# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine.
+# Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
 set clt150   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.0"] } ]
 set xcode150 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.0"] } ]
 if { ${clt150} || ${xcode150} } {
     configure.ldflags-prepend   -Wl,-ld_classic
 }
 
-# Xcode15.3 default SDK causes the build to fail so fallback to a working SDK.
+# Xcode15.3 default SDK causes the build to fail so fallback to a working SDK
 set clt153   [expr { ${xcodeversion} eq "none" && ${xcodecltversion} ne "none" && [vercmp ${xcodecltversion} >= "15.3"] } ]
 set xcode153 [expr { ${xcodeversion} ne "none" && [vercmp ${xcodeversion} >= "15.3"] } ]
 if { ${clt153} || ${xcode153} } {
@@ -161,9 +160,9 @@ if { ${clt153} || ${xcode153} } {
 # The custom compiler is too old to accept "13.0", so we use "10.14".
 macosx_deployment_target    10.14
 
-variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
-    depends_lib-append  port:gstreamer1-gst-plugins-good port:gstreamer1-gst-plugins-bad \
-                        port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
+variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
+    depends_lib-append      port:gstreamer1 port:gstreamer1-gst-plugins-base port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-plugins-bad port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
     configure.args-delete           --without-gstreamer
     configure.args.i386-append      --without-gstreamer
     configure.args.x86_64-append    --with-gstreamer
@@ -189,7 +188,7 @@ configure.optflags          -O3
 configure.cflags-append     -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-int-conversion
 configure.env-append        CROSSCFLAGS=${configure.cflags}
 
-# Were only installing wine not the development files.
+# Were only installing wine not the development files
 destroot.target             install-lib
 
 configure {
@@ -224,13 +223,23 @@ post-destroot {
     ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
     ln -sf ${prefix}/share/wine/mono ${destroot}${prefix}/libexec/${name}/share/wine/mono
 
-    file copy ${filespath}/gameportingtoolkit           ${destroot}${prefix}/bin/gameportingtoolkit
-    file copy ${filespath}/gameportingtoolkit-no-esync  ${destroot}${prefix}/bin/gameportingtoolkit-no-esync
-    file copy ${filespath}/gameportingtoolkit-no-hud    ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
+    file copy ${destroot}${prefix}/libexec/${name}/bin/wine64           ${destroot}${prefix}/libexec/${name}/bin/wine
+    file copy ${destroot}${prefix}/libexec/${name}/bin/wine64-preloader ${destroot}${prefix}/libexec/${name}/bin/wine-preloader
 
-    reinplace -q "s|@@PREFIX@@|${prefix}|g"             ${destroot}${prefix}/bin/gameportingtoolkit \
-                                                        ${destroot}${prefix}/bin/gameportingtoolkit-no-esync \
-                                                        ${destroot}${prefix}/bin/gameportingtoolkit-no-hud
+    xinstall -W ${filespath} \
+        gameportingtoolkit \
+        gameportingtoolkit-no-esync \
+        gameportingtoolkit-no-hud \
+        ${destroot}${prefix}/bin/
+
+    reinplace -W ${destroot}${prefix}/bin "s|@@PREFIX@@|${prefix}|g" \
+        gameportingtoolkit \
+        gameportingtoolkit-no-esync \
+        gameportingtoolkit-no-hud
+}
+
+platform darwin arm {
+    depends_run-append      port:d3dmetal
 }
 
 platform darwin i386 {
@@ -238,7 +247,7 @@ platform darwin i386 {
         if {${os.major} >= 23} {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
-                error "${subport} does not work on Intel hardware"
+                error "${name} does not work on Intel hardware"
             }
         }
     }
