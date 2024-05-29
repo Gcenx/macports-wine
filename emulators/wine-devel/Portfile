@@ -1,7 +1,6 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
-PortGroup                   compiler_blacklist_versions 1.0
 PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
@@ -53,7 +52,7 @@ depends_build \
     bin:flex:flex \
     port:gettext \
     port:mingw-w64 \
-    port:pkgconfig
+    path:bin/pkg-config:pkgconfig
 
 depends_lib \
     port:freetype \
@@ -68,17 +67,11 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
     port:mingw-w64-wine-mono-9.1.0
 
-patch.pre_args -p1
+patch.pre_args-replace -p0 -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
-
-post-patch {
-    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
-    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure
-    reinplace -q "/PKG_CONFIG_LIBDIR/d"     ${worksrcpath}/configure.ac
-}
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -133,13 +126,8 @@ configure.args \
 
 configure.env-append    ac_cv_lib_soname_vulkan=
 
-# Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
-# https://bugs.winehq.org/show_bug.cgi?id=49199
+# We need to tell the linker to add MacPorts to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
-
-# wine requires clang >= 3.8
-# FSF GCC cannot compile code using Apple's "blocks" language extensions
-compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
 subport wine-staging {
     name \
@@ -169,7 +157,7 @@ subport wine-staging {
         port:autoconf
 
     # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
-    # "eventfd_synchronization" doesn't work on macOS (CX version does)'
+    # "eventfd_synchronization" doesn't work on macOS (CX version does)
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
     post-extract {
         system -W ${worksrcpath} \
@@ -178,29 +166,27 @@ subport wine-staging {
 }
 
 # This makes destroot take an extreme amout of time
-variant dev description {Install ${subport} development environment} {
+variant dev description "Install ${subport} development environment" {
     build.target            all
     destroot.target-append  install-dev
 }
 
-variant gphoto description {Build ${subport} with support for digital cameras} {
+variant gphoto description "Build ${subport} with support for digital cameras" {
     depends_lib-append      port:libgphoto2
     configure.args-replace  --without-gphoto --with-gphoto
 }
 
-variant gstreamer description {Build ${subport} with GStreamer, for multimedia support} {
+variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
     depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
-variant kerberos description {Build ${subport} with Kerberos, for network authentication protocol support} {
+variant kerberos description "Build ${subport} with Kerberos, for network authentication protocol support" {
     depends_lib-append      port:kerberos5
     configure.args-replace  --without-krb5 --with-krb5
 }
 
-variant quartz {}
-
-default_variants            +gstreamer +quartz
+default_variants            +gstreamer
 
 triplet.add_build           cross
 triplet.add_host            none
@@ -213,9 +199,6 @@ muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 configure.env-append        CROSSCFLAGS=${configure.optflags}
-
-# Common compiler flags for both Mach-O and PE binaries.
-configure.cflags-append     -Wno-deprecated-declarations -Wno-unused-command-line-argument
 
 # Were only installing wine not the development files
 destroot.target             install-lib
