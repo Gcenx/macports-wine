@@ -69,9 +69,6 @@ patchfiles-append \
     1001-remove-cross_compiling-check.diff
 
 post-patch {
-    # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
-    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure
-    reinplace -q "/PKG_CONFIG_PATH/d"       ${worksrcpath}/configure.ac
     reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
 }
 
@@ -184,9 +181,8 @@ muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -O3
 
-# Common compiler flags for both Mach-O and PE binaries.
-configure.cflags-append     -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-int-conversion
-configure.env-append        CROSSCFLAGS=${configure.cflags}
+# Compiler flags for PE binaries.
+configure.env-append        "CROSSCFLAGS=${configure.optflags} -Wno-incompatible-pointer-types -Wno-int-conversion"
 
 # Were only installing wine not the development files
 destroot.target             install-lib
@@ -248,6 +244,8 @@ platform darwin i386 {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
                 error "${name} does not work on Intel hardware"
+            } else {
+                depends_run-append  port:d3dmetal
             }
         }
     }
