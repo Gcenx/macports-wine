@@ -9,7 +9,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 version                     9.0
-revision                    1
+revision                    2
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -69,16 +69,14 @@ depends_run \
 
 patch.pre_args-replace -p0 -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
-    0001-winemac.drv-No-Flicker-patch.diff
+    0001-winemac.drv-no-flicker.diff \
+    0002-ntdll-workarond-sendmsg-bug-on-macos.diff \
+    0003-winemac.drv-fix_use-after-free_in_macdrv_copy_pasteboard_types.diff
 
+# Some required hacks to make wine work better on macOS & Rosetta2
 patchfiles-append \
-    0002-ntdll-workarond-sendmsg-bug-on-macOS.diff
-
-# https://gitlab.winehq.org/wine/wine/-/merge_requests/5572
-patchfiles-append \
-    5572.diff
+    macos_hacks.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \

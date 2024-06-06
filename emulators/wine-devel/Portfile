@@ -9,7 +9,7 @@ name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
 version                     9.10
-revision                    0
+revision                    1
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -69,9 +69,12 @@ depends_run \
 
 patch.pre_args-replace -p0 -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
     0001-winemac.drv-No-Flicker-patch.diff
+
+# Some required hacks to make wine work better on macOS & Rosetta2
+patchfiles-append \
+    macos_hacks.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
