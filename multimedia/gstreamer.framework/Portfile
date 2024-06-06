@@ -14,7 +14,7 @@ maintainers         {@gcenx}
 description         GStreamer is a streaming media framework
 long_description    {*}${description}
 
-supported_archs     none
+supported_archs     noarch
 platforms           {darwin >= 17}
 license             LGPL-2+
 
