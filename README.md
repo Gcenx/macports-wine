@@ -6,7 +6,6 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 ## This repository contains
 - `CrossOver`               *(24.0.3)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
-- `game-porting-toolkit`    *(1.1)*
 - `gstreamer1`              *(1.24.3)*
 - `gstreamer.framework`     *(stub)*
 - `gstreamer-runtime`       *(1.24.3)*
