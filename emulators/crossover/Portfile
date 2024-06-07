@@ -6,7 +6,7 @@ name                    CrossOver
 
 version                 24.0.3
 revision                0
-platforms               {darwin >= 19}
+platforms               {darwin any >= 19}
 
 categories              emulators
 license                 Commercial
