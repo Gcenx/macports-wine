@@ -13,8 +13,6 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `libinotify`              *(20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
-- `mingw-w64-wine-gecko`    *(Multiple versions)*
-- `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(v9.0)*
 - `wine-devel`              *(v9.10)*
 - `wine-staging`            *(v9.10)*
