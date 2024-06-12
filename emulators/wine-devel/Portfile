@@ -134,9 +134,6 @@ configure.env-append    ac_cv_lib_soname_vulkan=
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 subport wine-staging {
-    name \
-        wine-staging
-
     conflicts \
         wine-stable wine-devel wine-crossover
 
