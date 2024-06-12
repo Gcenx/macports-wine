@@ -110,6 +110,7 @@ configure.args \
     --without-krb5 \
     --with-mingw \
     --without-netapi \
+    --without-odbc \
     --with-opencl \
     --with-opengl \
     --without-oss \
