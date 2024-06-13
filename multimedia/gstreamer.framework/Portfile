@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           gitlab 1.0
 PortGroup           stub 1.0
 
-gitlab.setup        gstreamer gstreamer 1.24.3
+gitlab.setup        gstreamer gstreamer 1.24.4
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
 revision            0
 
