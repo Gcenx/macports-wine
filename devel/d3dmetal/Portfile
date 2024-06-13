@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                d3dmetal
-version             1.1
+version             2.0_beta_1
 epoch               0
 categories          devel
 maintainers         {@Gcenx gmail.com:gcenx83}
@@ -14,13 +14,14 @@ license             Restrictive
 supported_archs     x86_64
 description         Direct3D to Metal translation layer
 long_description    {*}${description}
-master_sites        https://download.developer.apple.com/Developer_Tools/Game_Porting_Toolkit_${version}
-distname            Game_Porting_Toolkit_${version}
+master_sites        https://download.developer.apple.com/Developer_Tools/Game_Porting_Toolkit_1.1
+
+distname            Evaluation_environment_for_Windows_games_${version}
 use_dmg             yes
 
-checksums           rmd160  0f40a2f7c4bf6a319fff915dacbceb8e473df1b1 \
-                    sha256  2a86518d7fce89c304266654a76107d395a9a7557225096b73a834893482b7f1 \
-                    size    27956812
+checksums           rmd160  8c67265cb981087d46ba07599c936b9852efdeb1 \
+                    sha256  a180bd5280c324ce921242ca5f3098adf44d9b0ed939993f7918e2116947140d \
+                    size    28660245
 
 fetch {
     if {![file isfile ${distpath}/${distfiles}]} {
@@ -68,8 +69,8 @@ notes "
 "
 
 platform darwin i386 {
-    pre-fetch {
-        if {${os.major} >= 23} {
+    if {${os.major} >= 23} {
+        pre-fetch {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
                 error "$name does not work on Intel hardware"
