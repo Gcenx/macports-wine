@@ -4,22 +4,22 @@ This branch only supports macOS Catalina 10.15.4 & later.\
 For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-wine/tree/legacy) branch
 
 ## This repository contains
-- `CrossOver`               *(24.0.3)*
+- `CrossOver`               *(v24.0.3)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `D3DMetal`                *(v2.0 beta1)*
 - `game-porting-toolkit`    *(v1.1)*
-- `gstreamer1`              *(1.24.4)*
+- `gstreamer1`              *(v1.24.4)*
 - `gstreamer.framework`     *(stub)*
-- `gstreamer-runtime`       *(1.24.4)*
-- `gstreamer-development`   *(1.24.4)*
-- `libinotify`              *(20230908)*
+- `gstreamer-runtime`       *(v1.24.4)*
+- `gstreamer-development`   *(v1.24.4)*
+- `libinotify`              *(v20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
 - `wine-stable`             *(v9.0)*
 - `wine-devel`              *(v9.10)*
 - `wine-staging`            *(v9.10)*
 - `wine-crossover`          *(v23.7.1)*
-- `winetricks`              *(20240320)*
+- `winetricks`              *(v20240320)*
 - `wineskin`                *(v2.0.2)*
 
 ## How to use this repository
