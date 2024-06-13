@@ -92,10 +92,8 @@ proc meson::get_post_args {} {
 
 proc meson::add_depends {} {
     depends_build-delete    port:meson \
-                            port:ninja \
-                            port:python${py_ver_nodot}
+                            port:ninja
     depends_build-append    port:meson \
-                            port:ninja \
-                            port:python${py_ver_nodot}
+                            port:ninja
 }
 port::register_callback meson::add_depends
