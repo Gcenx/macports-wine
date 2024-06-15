@@ -1,26 +1,26 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
+PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
+github.setup                wine-mirror wine 9.11 wine-
+github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-version                     9.10
-revision                    1
+revision                    0
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
-maintainers                 {@gcenx}
+maintainers                 {@Gcenx gmail.com:gcenx83}
 homepage                    https://www.winehq.org
-distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
-set wine_distfile           ${distname}${extract.suffix}
-worksrcdir                  wine-${distname}
 
 description \
     A Windows API implementation
@@ -35,17 +35,11 @@ long_description \
     of other methods and allowing you to cleanly \
     integrate Windows applications into your desktop.
 
-master_sites \
-    https://github.com/wine-mirror/wine/archive/:winesource
-
-distfiles \
-    ${wine_distfile}:winesource
-
 checksums \
-    ${wine_distfile} \
-    rmd160  1c78a5448e9f5b67f2596ddad047924d26d75e7e \
-    sha256  21888fe11fad645934a5a03c9a4c515821d293af2341321e129e1f779945a24f \
-    size    49438484
+    ${distname}${extract.suffix} \
+    rmd160  9f45723d664c16a89a7d35450ceb7df252e29d8f \
+    sha256  b2b199fb2f95f6c9d61f2e9bbd038c1cc803f5a6d4b63c69b2707a0021140370 \
+    size    49452646
 
 depends_build \
     port:bison \
@@ -128,45 +122,41 @@ configure.args \
     --without-wayland \
     --without-x
 
-configure.env-append    ac_cv_lib_soname_vulkan=
+configure.env-append        ac_cv_lib_soname_vulkan=
 
 # We need to tell the linker to add MacPorts to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
+# wine requires clang >= 3.8
+# FSF GCC cannot compile code using Apple's "blocks" language extensions
+compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
+
 subport wine-staging {
-    conflicts \
-        wine-stable wine-devel wine-crossover
-
-    set staging_version \
-        ${version}
-    set wine_staging_distfile \
-        v${staging_version}${extract.suffix}
-
-    master_sites-append \
-        https://github.com/wine-staging/wine-staging/archive/:stagingsource
-
-    distfiles-append \
-        ${wine_staging_distfile}:stagingsource
+    conflicts               wine-stable wine-devel wine-crossover
+    set staging_version     ${version}
+    set wine_staging_distfile v${staging_version}${extract.suffix}
+    distfiles-append        ${wine_staging_distfile}:stagingsource
+    master_sites-append     https://github.com/wine-staging/wine-staging/archive/:stagingsource
+    worksrcdir              wine-${distname}
+    extract.rename          no
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  b3418e632fb9163a9242f9b3bc44f08c4eed5b8b \
-        sha256  79af9a7f18cc975a38ec831903bd62cf509e9445600600aac5d5ed8569bb75d5 \
-        size    9436968
+        rmd160  fa43f49144181ef03ef18e6791c2daa69b2c5033 \
+        sha256  5edfa88452afd9a52dd9c978ec9ca6a713ad3d645d08d8baa318d35583e7a975 \
+        size    9460666
 
-    depends_extract-append \
-        port:autoconf
+    depends_extract-append port:autoconf
 
     # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
-    # "eventfd_synchronization" doesn't work on macOS (CX version does)
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
     post-extract {
         system -W ${worksrcpath} \
-            "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W winemac.drv-no-flicker-patch"
+            "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W winemac.drv-no-flicker-patch"
     }
 }
 
-# This makes destroot take an extreme amout of time
+# Makes destroot take significantly longer
 variant dev description "Install ${subport} development environment" {
     build.target            all
     destroot.target-append  install-dev
@@ -178,7 +168,8 @@ variant gphoto description "Build ${subport} with support for digital cameras" {
 }
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
+    depends_lib-append      port:gstreamer1 port:gstreamer1-gst-plugins-base port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-plugins-bad port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
