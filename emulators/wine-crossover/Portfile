@@ -72,12 +72,8 @@ depends_run \
 
 patch.pre_args-replace -p0 -p1
 
-# Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers
 patchfiles-append \
-    0001-distversion.diff
-
-# Remove cxmenu functions
-patchfiles-append \
+    0001-distversion.diff \
     0002-winemenubuilder-remove-cxmenu.diff
 
 patchfiles-append \
