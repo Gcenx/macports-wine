@@ -187,10 +187,10 @@ post-destroot {
 }
 
 pre-activate {
-	if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
-		ui_error "You must first update to macOS 10.15.4."
-		return -code error "You must first update to macOS 10.15.4."
-	}
+    if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
+        ui_error "You must first update to macOS 10.15.4."
+	return -code error "You must first update to macOS 10.15.4."
+    }
 }
 
 post-deactivate {
