@@ -1,26 +1,26 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem                  1.0
+PortGroup                   compiler_blacklist_versions 1.0
+PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
+github.setup                wine-mirror wine 9.0 wine-
+github.tarball_from         archive
 name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
-version                     9.0
-revision                    2
+revision                    0
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
-maintainers                 {@gcenx}
+maintainers                 {@Gcenx gmail.com:gcenx83}
 homepage                    https://www.winehq.org
-distname                    ${my_name}-${version}
 dist_subdir                 ${my_name}
-set wine_distfile           ${distname}${extract.suffix}
-worksrcdir                  wine-${distname}
 
 description \
     A Windows API implementation
@@ -35,14 +35,7 @@ long_description \
     of other methods and allowing you to cleanly \
     integrate Windows applications into your desktop.
 
-master_sites \
-    https://github.com/wine-mirror/wine/archive/:winesource
-
-distfiles \
-    ${wine_distfile}:winesource
-
 checksums \
-    ${wine_distfile} \
     rmd160  8a74032d3612e613ef5b97e9d2908ac612fa8d93 \
     sha256  90cd86d1203a7b1d304ae15461bbe0cbf1fd24feb407b551d011cc6d2967eb3f \
     size    48912704
@@ -77,6 +70,11 @@ patchfiles-append \
 # Some required hacks to make wine work better on macOS & Rosetta2
 patchfiles-append \
     macos_hacks.diff
+
+# ntdll: Fix macOS build errors with Xcode 16.
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/5871
+patchfiles-append \
+    5871.patch
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -134,7 +132,11 @@ configure.env-append        ac_cv_lib_soname_vulkan=
 # We need to tell the linker to add MacPorts to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-# This makes destroot take an extreme amout of time
+# wine requires clang >= 3.8
+# FSF GCC cannot compile code using Apple's "blocks" language extensions
+compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
+
+# Makes destroot take significantly longer
 variant dev description "Install ${subport} development environment" {
     build.target            all
     destroot.target-append  install-dev
@@ -146,7 +148,8 @@ variant gphoto description "Build ${subport} with support for digital cameras" {
 }
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_lib-append      port:gstreamer1-gst-plugins-good port:gstreamer1-gst-libav
+    depends_lib-append      port:gstreamer1 port:gstreamer1-gst-plugins-base port:gstreamer1-gst-plugins-good \
+        port:gstreamer1-gst-plugins-bad port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
     configure.args-replace  --without-gstreamer --with-gstreamer
 }
 
@@ -167,7 +170,7 @@ muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
-configure.env-append        CROSSCFLAGS=${configure.optflags}
+configure.env-append        "CROSSCFLAGS=${configure.optflags}"
 
 # Were only installing wine not the development files
 destroot.target             install-lib
