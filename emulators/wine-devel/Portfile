@@ -196,7 +196,7 @@ muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
 # gcc14.1 now sets -Werror-incompatible-pointer-types
-configure.env-append        "CROSSCFLAGS=${configure.optflags} -Wno-incompatible-pointer-types"
+configure.env-append        "CROSSCFLAGS=${configure.optflags} -Wno-error=incompatible-pointer-types"
 
 # Were only installing wine not the development files
 destroot.target             install-lib
