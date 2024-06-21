@@ -53,7 +53,7 @@ depends_lib \
     port:gettext-runtime \
     path:lib/pkgconfig/gnutls.pc:gnutls \
     port:libinotify \
-    path:lib/libMoltenVK.dylib:MoltenVK \
+    path:lib/libMoltenVK.dylib:MoltenVK-latest \
     port:libpcap \
     port:libsdl2
 
