@@ -55,7 +55,8 @@ patchfiles-append \
     1002-server-remove-cxhack-21217.diff \
     1003-default-win10-19043.diff \
     1004-mscoree-update-wine-mono-to-7.4.1.diff \
-    1005-ntdll-d3dmetal-env.diff
+    1005-ntdll-d3dmetal-env.diff \
+    1006-build_fixes.diff
 
 post-patch {
     reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
@@ -229,3 +230,5 @@ platform darwin i386 {
         }
     }
 }
+
+livecheck   none
