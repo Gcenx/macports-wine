@@ -3,13 +3,13 @@
 PortSystem          1.0
 PortGroup           gitlab 1.0
 
-gitlab.setup        gstreamer gstreamer 1.24.4
+gitlab.setup        gstreamer gstreamer 1.24.5
 gitlab.instance     https://gitlab.freedesktop.org/gstreamer
 revision            0
 
 name                ${gitlab.project}-development
 categories          multimedia
-maintainers         {@gcenx}
+maintainers         {@Gcenx}
 description         GStreamer is a streaming media framework
 long_description    {*}${description}
 
@@ -25,9 +25,9 @@ distname            gstreamer-1.0-devel-${version}-universal
 extract.suffix      .pkg
 
 checksums \
-    rmd160  9834cec3e3047bdc96794d53c5e59893d69d346a \
-    sha256  5ad936d055d0634002b3664a12231b47df516803ecce3835c028eea1e8a949da \
-    size    532482242
+    rmd160  f18e763a8d192aabe043bb7476713772a64834ab \
+    sha256  c025d40af7925c1bd315f7ef6e81da7587481768b6f02814edd766e0209a3bd4 \
+    size    538898129
 
 depends_lib         port:gstreamer-runtime
 
