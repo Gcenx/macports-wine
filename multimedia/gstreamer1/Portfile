@@ -193,7 +193,6 @@ subport ${name}-gst-plugins-good {
         port:flac \
         port:gettext-runtime \
         port:${name}-gst-plugins-base \
-        path:lib/pkgconfig/vpx.pc:libvpx \
         port:mpg123 \
         port:orc
 
@@ -233,7 +232,7 @@ subport ${name}-gst-plugins-good {
         -Dspeex=disabled \
         -Dtaglib=disabled \
         -Dtwolame=disabled \
-        -Dvpx=enabled \
+        -Dvpx=disabled \
         -Dwaveform=disabled \
         -Dwavpack=disabled
 
