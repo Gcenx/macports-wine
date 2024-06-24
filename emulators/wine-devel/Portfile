@@ -153,8 +153,9 @@ subport wine-staging {
 
     depends_patch-append    port:autoconf
 
-    # Running "patchinstall.py" before 'patchfiles' get inherited from wine-devel
+    # Applying staging after other patchfiles to avoid problems
     # "winemac.drv-no-flicker-patch" gets inherited from wine-devel
+    # "1001-msync" needs to applied after staging
     post-patch {
         system -W ${worksrcpath} \
             "${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W winemac.drv-no-flicker-patch"
