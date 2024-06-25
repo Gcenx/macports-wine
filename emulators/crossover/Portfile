@@ -10,7 +10,7 @@ platforms               {darwin any >= 19}
 
 categories              emulators
 license                 Commercial
-maintainers             {@gcenx}
+maintainers             {@Gcenx}
 
 supported_archs         x86_64
 description             CodeWeavers commercial version of wine
@@ -42,7 +42,7 @@ build {
     reinplace s|https://www.codeweavers.com/xml/versions/cxmac.xml||g ${workpath}/CrossOver.app/Contents/Info.plist
 }
 
-variant gstreamer description {Modify ${subport} to use GStreamer.framework} {
+variant gstreamer description "Modify ${subport} to use GStreamer.framework" {
     depends_run             port:gstreamer-runtime
 
     post-build {
@@ -52,17 +52,6 @@ variant gstreamer description {Modify ${subport} to use GStreamer.framework} {
 
         # Required by WINE (doesn't handle VK_ERROR_DEVICE_LOST correctly)
         system "echo MVK_CONFIG_RESUME_LOST_DEVICE=1 >> ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/share/crossover/bottle_data/cxbottle.conf"
-
-        # Required libraires
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgnutls.30.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.6.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmp.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.so
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgnutls.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libMoltenVK.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libcxfreetype.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmp.10.dylib
 
         # GStreamer
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmodule-2.0.dylib
@@ -151,31 +140,9 @@ variant gstreamer description {Modify ${subport} to use GStreamer.framework} {
         # GStreamer plugin directory
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0
 
-        # GStreamer plugins
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideofilter.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstplayback.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstwavparse.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioparsers.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstisomp4.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstdeinterlace.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioresample.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstapplemedia.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstasf.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstid3demux.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstopengl.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideoparsersbad.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstcoreelements.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgsttypefindfunctions.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstaudioconvert.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstavi.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/libgstvideoconvertscale.dylib
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst/gl
-        #delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/gstreamer-1.0/include/gst/gl/gstglconfig.h
-
         # Use GStreamer.framework
-        system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix "/usr/bin/install_name_tool -add_rpath /Library/Frameworks/GStreamer.framework/Libraries winegstreamer.so"
+        system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix \
+            "/usr/bin/install_name_tool -add_rpath /Library/Frameworks/GStreamer.framework/Libraries winegstreamer.so"
     }
 }
 
