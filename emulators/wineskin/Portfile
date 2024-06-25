@@ -7,7 +7,7 @@ github.setup        The-Wineskin-Project Winery 2.0.2
 github.tarball_from releases
 revision            0
 name                wineskin
-platforms           {darwin >= 19.4}
+platforms           {darwin >= 19}
 license             LGPL-2.1
 categories          emulators
 
@@ -31,6 +31,13 @@ build {}
 destroot {
     move "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
     system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'Wineskin Winery.app'"
+}
+
+pre-activate {
+    if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
+        ui_error "You must first update to macOS 10.15.4."
+	return -code error "You must first update to macOS 10.15.4."
+    }
 }
 
 notes "
