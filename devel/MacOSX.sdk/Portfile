@@ -248,8 +248,6 @@ subport QuickTime.framework {
 
 use_configure           no
 
-destroot.violate_mtree  yes
-
 # Placed here so we can override the version
 distname                MacOSX${version}
 master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
@@ -262,6 +260,10 @@ pre-destroot {
 }
 
 if {${subport} eq "MacOSX10.13.sdk"} {
+    if {${os.major} == 18} {
+        destroot.violate_mtree  yes
+    }
+
     set macos_version   [lindex [split ${version} -] 0]
     set macos_build     [lindex [split ${version} -] 1]
     set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
@@ -271,10 +273,10 @@ if {${subport} eq "MacOSX10.13.sdk"} {
     destroot {
         move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
 
-        # Check if the SDK exits before adding a symlink
-        # can't use ${developer_dir}/SDKs as that could return Xcode
-        if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
-            ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+        if {${os.major} == 18} {
+            if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
+                ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+            }
         }
     }
 } elseif {${subport} eq "QuickTime.framework"} {
