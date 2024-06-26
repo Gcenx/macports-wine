@@ -142,9 +142,9 @@ if {${os.major} >= 24} {
     configure.compiler.add_deps no
 
     configure.sdk_version       13
-    if {${configure.sdkroot} eq ""} {
-        depends_build-append    port:MacOSX13.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX13.sdk
+    if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
+        depends_build-append    port:MacOSX${configure.sdk_version}.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
     }
 
     macosx_deployment_target    10.14
