@@ -43,7 +43,7 @@ subport MacOSX13.sdk {
     revision            0
     supported_archs     arm64 x86_64
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
-    depends_run         port:MacOSX12.3.sdk
+    depends_run         port:MacOSX13.3.sdk
     post-build {
         xinstall -d ${destroot}${sdk_dir}
         ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.2.sdk
@@ -261,7 +261,23 @@ pre-destroot {
     xinstall -d ${destroot}${sdk_dir2}
 }
 
-if {${subport} eq "QuickTime.framework"} {
+if {${subport} eq "MacOSX10.13.sdk"} {
+    set macos_version   [lindex [split ${version} -] 0]
+    set macos_build     [lindex [split ${version} -] 1]
+    set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
+
+    description         ${macos_name} v${macos_version} (${macos_build}) SDK
+    long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
+    destroot {
+        move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
+
+        # Check if the SDK exits before adding a symlink
+        # can't use ${developer_dir}/SDKs as that could return Xcode
+        if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
+            ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
+        }
+    }
+} elseif {${subport} eq "QuickTime.framework"} {
     description         QuickTime is an extensible multimedia framework developed by Apple Inc.
     long_description    ${description}
 
@@ -287,12 +303,6 @@ if {${subport} eq "QuickTime.framework"} {
     long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
     destroot {
         move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
-
-        # Check if the SDK exits before adding a symlink
-        # can't use ${developer_dir}/SDKs as that could return Xcode
-        if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
-            ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
-        }
     }
 }
 
