@@ -11,7 +11,7 @@ conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     23.7.1
 revision                    1
-platforms                   {darwin >= 19}
+platforms                   {darwin >= 19 < 24}
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
