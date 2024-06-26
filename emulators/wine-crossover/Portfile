@@ -11,7 +11,7 @@ conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     23.7.1
 revision                    1
-platforms                   {darwin >= 19 < 24}
+platforms                   {darwin >= 19}
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
@@ -132,6 +132,23 @@ configure.env-append        ac_cv_lib_soname_vulkan=
 
 # We need to tell the linker to add MacPorts & d3dmetal to the rpath stack.
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
+
+# Can't build using Xcode16+
+if {${os.major} >= 24} {
+    build_depends-append        port:llvm-cx
+    configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
+    configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
+    configure.cmd               ${worksrcpath}/configure
+    configure.compiler.add_deps no
+
+    configure.sdk_version       13
+    if {${configure.sdkroot} eq ""} {
+        depends_build-append    port:MacOSX13.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX13.sdk
+    }
+
+    macosx_deployment_target    10.14
+}
 
 if {${os.major} >= 23} {
     set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
