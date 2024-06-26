@@ -135,7 +135,7 @@ configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${pre
 
 # Can't build using Xcode16+
 if {${os.major} >= 24} {
-    build_depends-append        port:llvm-cx
+    depends_build-append        port:llvm-cx
     configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
     configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
     configure.cmd               ${worksrcpath}/configure
