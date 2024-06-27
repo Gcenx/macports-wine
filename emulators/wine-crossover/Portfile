@@ -138,7 +138,6 @@ if {${os.major} >= 24} {
     depends_build-append        port:llvm-cx
     configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
     configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
-    configure.cmd               ${worksrcpath}/configure
     configure.compiler.add_deps no
 
     configure.sdk_version       13
