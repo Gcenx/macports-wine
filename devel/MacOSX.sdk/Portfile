@@ -19,9 +19,8 @@ dist_subdir             MacOSX.sdk
 use_bzip2               yes
 
 set sdk_dir             ${prefix}/Developer/SDKs
-set sdk_dir2            /Library/Developer/CommandLineTools/SDKs
 
-subport MacOSX13.3.sdk {
+subport MacOSX13.sdk {
     set macos_name      {macOS Montery}
     set xcode_vers      14.3
     version             13.3
@@ -33,17 +32,7 @@ subport MacOSX13.3.sdk {
     checksums           rmd160  66a2ea8860bac4eda3d85f2789540b3228e7898c \
                         sha256  e6608c69387b19840d2b38a77b2f43edbda8024c892fe4fa34d48f7447b07f8a \
                         size    69926087
-}
 
-subport MacOSX13.sdk {
-    PortGroup           stub 1.0
-    set macos_name      {macOS Montery}
-    set xcode_vers      14.3
-    version             13.3
-    revision            0
-    supported_archs     arm64 x86_64
-    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
-    depends_run         port:MacOSX13.3.sdk
     post-build {
         xinstall -d ${destroot}${sdk_dir}
         ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.2.sdk
@@ -52,7 +41,7 @@ subport MacOSX13.sdk {
     }
 }
 
-subport MacOSX12.3.sdk {
+subport MacOSX12.sdk {
     set macos_name      {macOS Montery}
     set xcode_vers      13.3
     version             12.3
@@ -64,17 +53,7 @@ subport MacOSX12.3.sdk {
     checksums           rmd160  a461015180833f888df142ed184b9c09f7a0d189 \
                         sha256  e951a52b9a1d3304f85aa93a45bbbe2237e0634efdb37d16a5bcbaaff8d4b210 \
                         size    67238967
-}
 
-subport MacOSX12.sdk {
-    PortGroup           stub 1.0
-    set macos_name      {macOS Montery}
-    set xcode_vers      13.3
-    version             12.3
-    revision            0
-    supported_archs     arm64 x86_64
-    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-12_3-release-notes
-    depends_run         port:MacOSX12.3.sdk
     post-build {
         xinstall -d ${destroot}${sdk_dir}
         ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.2.sdk
@@ -83,7 +62,7 @@ subport MacOSX12.sdk {
     }
 }
 
-subport MacOSX11.3.sdk {
+subport MacOSX11.sdk {
     set macos_name      {macOS Big Sur}
     set xcode_vers      12.5
     version             11.3
@@ -95,17 +74,7 @@ subport MacOSX11.3.sdk {
     checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
                         sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
                         size    75910500
-}
 
-subport MacOSX11.sdk {
-    PortGroup           stub 1.0
-    set macos_name      {macOS Big Sur}
-    set xcode_vers      12.5
-    version             11.3
-    revision            0
-    supported_archs     arm64 x86_64
-    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
-    depends_run         port:MacOSX11.3.sdk
     post-build {
         xinstall -d ${destroot}${sdk_dir}
         ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.2.sdk
@@ -154,16 +123,6 @@ subport MacOSX10.13.sdk {
     checksums           rmd160  255ee173939065c9d1b7433f287163cdd00e0033 \
                         sha256  27943fb63c35e262b2da1cb4cc60d7427702a40caf20ec15c9d773919c6e409b \
                         size    32183283
-
-    variant quicktime description "Remove stub and install QuickTime.framework from MacOSX10.11.SDK" {
-        depends_lib-append              port:QuickTime.framework
-        depends_skip_archcheck-append   QuickTime.framework
-
-        post-destroot {
-            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
-            ln -sf ${frameworks_dir}/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
-        }
-    }
 }
 
 subport MacOSX10.12.sdk {
@@ -189,16 +148,6 @@ subport MacOSX10.12.sdk {
 
         # ContactsAgent.framework contains a .tbd stub and a binary within /Executables remove it (rev-upgrade)
         file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/ContactsAgent.framework/Executables
-    }
-
-    variant quicktime description "Remove stub and install QuickTime.framework from MacOSX10.11.SDK" {
-        depends_lib-append              port:QuickTime.framework
-        depends_skip_archcheck-append   QuickTime.framework
-
-        post-destroot {
-            file delete -force ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework
-            ln -sf ${frameworks_dir}/QuickTime.framework ${destroot}${sdk_dir}/MacOSX${version}.sdk/System/Library/Frameworks
-        }
     }
 }
 
@@ -230,20 +179,6 @@ subport MacOSX10.11.sdk {
     }
 }
 
-subport QuickTime.framework {
-    set macos_name      {OS X El Capitan}
-    set xcode_vers      7.3
-    version             10.11
-    revision            0
-
-    # Can't set archs i386 or macports will refuse to install on 64Bit only versions of macOS
-    #supported_archs     i386
-
-    checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
-                        sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
-                        size    36006642
-}
-
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
 
 use_configure           no
@@ -256,37 +191,10 @@ build {}
 
 pre-destroot {
     xinstall -d ${destroot}${sdk_dir}
-    xinstall -d ${destroot}${sdk_dir2}
 }
 
-if {${subport} eq "MacOSX10.13.sdk"} {
-    if {${os.major} == 18} {
-        destroot.violate_mtree  yes
-    }
-
-    set macos_version   [lindex [split ${version} -] 0]
-    set macos_build     [lindex [split ${version} -] 1]
-    set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
-
-    description         ${macos_name} v${macos_version} (${macos_build}) SDK
-    long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
-    destroot {
-        move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
-
-        if {${os.major} == 18} {
-            if {![file exists ${sdk_dir2}/MacOSX${version}.sdk ]} {
-                ln -sf ${sdk_dir}/MacOSX${version}.sdk ${destroot}${sdk_dir2}/MacOSX${version}.sdk
-            }
-        }
-    }
-} elseif {${subport} eq "QuickTime.framework"} {
-    description         QuickTime is an extensible multimedia framework developed by Apple Inc.
-    long_description    ${description}
-
-    destroot {
-        move ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/QuickTime.framework ${destroot}${frameworks_dir}
-    }
-} elseif {${subport} eq ${name}} {
+if {${subport} eq ${name}} {
+    version             13
     revision            0
     description         latest macOS SDK
     long_description    This port installs a symlink to the latest macOS SDK.
