@@ -140,7 +140,7 @@ if {${os.major} >= 24} {
     configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
     configure.compiler.add_deps no
 
-    configure.sdk_version       13
+    configure.sdk_version       14
     if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
         depends_build-append    port:MacOSX${configure.sdk_version}.sdk
         configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
