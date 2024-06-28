@@ -224,7 +224,7 @@ pre-activate {
 }
 
 # macOS Sequoia
-platfrom darwin 24 {
+platform darwin 24 {
     # Xcode16 default SDK causes the build to fail so fallback to a working SDK
     configure.sdk_version       14
     if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
