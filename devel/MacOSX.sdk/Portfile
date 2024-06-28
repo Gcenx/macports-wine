@@ -3,7 +3,7 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            gcenx macos-sdk 13.3
+github.setup            gcenx macos-sdk 14.5
 github.tarball_from     releases
 
 name                    MacOSX.sdk
@@ -19,6 +19,27 @@ dist_subdir             MacOSX.sdk
 use_bzip2               yes
 
 set sdk_dir             ${prefix}/Developer/SDKs
+
+subport MacOSX14.sdk {
+    set macos_name      {macOS Montery}
+    set xcode_vers      15.4
+    version             14.5
+    revision            0
+    supported_archs     arm64 x86_64
+
+    homepage            https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-15_4-release-notes
+
+    checksums           rmd160  139e70af8afdd602bbae1eddcdb7f35263e985bf \
+                        sha256  0aa945fa4f3f0e8d53c791f4468b61d35ac36dbc10753544c5d066596fb39fbc \
+                        size    79527486
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.4.sdk
+        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.2.sdk
+        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.sdk
+    }
+}
 
 subport MacOSX13.sdk {
     set macos_name      {macOS Montery}
@@ -194,7 +215,7 @@ pre-destroot {
 }
 
 if {${subport} eq ${name}} {
-    version             13
+    version             14
     revision            0
     description         latest macOS SDK
     long_description    This port installs a symlink to the latest macOS SDK.
