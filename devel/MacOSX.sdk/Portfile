@@ -9,26 +9,26 @@ github.tarball_from     releases
 name                    MacOSX.sdk
 categories              devel
 platforms               {darwin >= 12}
-maintainers             {@gcenx}
+maintainers             {@Gcenx}
 license                 Restrictive Nomirror
 installs_libs           no
-
 homepage                https://developer.apple.com/macos/
-
 dist_subdir             MacOSX.sdk
 use_bzip2               yes
-
 set sdk_dir             ${prefix}/Developer/SDKs
 
+use_configure           no
+build {}
+
 subport MacOSX14.sdk {
+    github.setup        gcenx macos-sdk 14.5
     set macos_name      {macOS Montery}
     set xcode_vers      15.4
-    version             14.5
     revision            0
     supported_archs     arm64 x86_64
-
     homepage            https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-15_4-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  139e70af8afdd602bbae1eddcdb7f35263e985bf \
                         sha256  0aa945fa4f3f0e8d53c791f4468b61d35ac36dbc10753544c5d066596fb39fbc \
                         size    79527486
@@ -42,14 +42,14 @@ subport MacOSX14.sdk {
 }
 
 subport MacOSX13.sdk {
+    github.setup        gcenx macos-sdk 13.3
     set macos_name      {macOS Montery}
     set xcode_vers      14.3
-    version             13.3
     revision            0
     supported_archs     arm64 x86_64
-
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  66a2ea8860bac4eda3d85f2789540b3228e7898c \
                         sha256  e6608c69387b19840d2b38a77b2f43edbda8024c892fe4fa34d48f7447b07f8a \
                         size    69926087
@@ -63,14 +63,14 @@ subport MacOSX13.sdk {
 }
 
 subport MacOSX12.sdk {
+    github.setup        gcenx macos-sdk 12.3
     set macos_name      {macOS Montery}
     set xcode_vers      13.3
-    version             12.3
     revision            0
     supported_archs     arm64 x86_64
-
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-12_3-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  a461015180833f888df142ed184b9c09f7a0d189 \
                         sha256  e951a52b9a1d3304f85aa93a45bbbe2237e0634efdb37d16a5bcbaaff8d4b210 \
                         size    67238967
@@ -84,14 +84,14 @@ subport MacOSX12.sdk {
 }
 
 subport MacOSX11.sdk {
+    github.setup        gcenx macos-sdk 11.3
     set macos_name      {macOS Big Sur}
     set xcode_vers      12.5
-    version             11.3
     revision            0
     supported_archs     arm64 x86_64
-
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
                         sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
                         size    75910500
@@ -105,56 +105,56 @@ subport MacOSX11.sdk {
 }
 
 subport MacOSX10.15.sdk {
+    github.setup        gcenx macos-sdk 10.15
     set macos_name      {macOS Catalina}
     set xcode_vers      12
-    version             10.15
     revision            0
     supported_archs     x86_64
-
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-catalina-10_15-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  580ec054e9d38fe846ce597a0f775d3fc46526b5 \
                         sha256  bb548125ebf5cf4ae6c80d226f40ad39e155564ca78bc00554a2e84074d0180e \
                         size    41636648
 }
 
 subport MacOSX10.14.sdk {
+    github.setup        gcenx macos-sdk 10.14
     set macos_name      {macOS Mojave}
     set xcode_vers      10.3
-    version             10.14
     revision            0
     supported_archs     x86_64
-
     homepage            https://developer.apple.com/documentation/macos-release-notes/macos-mojave-10_14-release-notes
 
+    distname            MacOSX${version}
     checksums           rmd160  7684478f171e30842274fafb784b91a8e79485dd \
                         sha256  e0a9747ae9838aeac70430c005f9757587aa055c690383d91165cf7b4a80401d \
                         size    31704241
 }
 
 subport MacOSX10.13.sdk {
+    github.setup        gcenx macos-sdk 10.13
     set macos_name      {macOS High Sierra}
     set xcode_vers      9.3
-    version             10.13
     revision            0
     supported_archs     i386 x86_64
+    homepage            https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13
 
-    homepage            https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13/
-
+    distname            MacOSX${version}
     checksums           rmd160  255ee173939065c9d1b7433f287163cdd00e0033 \
                         sha256  27943fb63c35e262b2da1cb4cc60d7427702a40caf20ec15c9d773919c6e409b \
                         size    32183283
 }
 
 subport MacOSX10.12.sdk {
+    github.setup        gcenx macos-sdk 10.12
     set macos_name      {macOS Sierra}
     set xcode_vers      8.3
-    version             10.12
     revision            0
     supported_archs     i386 x86_64
-
     homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_12Notes
 
+    distname            MacOSX${version}
     checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
                         sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
                         size    36301027
@@ -173,14 +173,14 @@ subport MacOSX10.12.sdk {
 }
 
 subport MacOSX10.11.sdk {
+    github.setup        gcenx macos-sdk 10.11
     set macos_name      {OS X El Capitan}
     set xcode_vers      7.3
-    version             10.11
     revision            0
     supported_archs     i386 x86_64
-
     homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_11Notes
 
+    distname            MacOSX${version}
     checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
                         sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
                         size    36006642
@@ -201,14 +201,6 @@ subport MacOSX10.11.sdk {
 }
 
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
-
-use_configure           no
-
-# Placed here so we can override the version
-distname                MacOSX${version}
-master_sites            https://github.com/${github.author}/${github.project}/${github.tarball_from}/download/${version}/
-
-build {}
 
 pre-destroot {
     xinstall -d ${destroot}${sdk_dir}
@@ -235,6 +227,7 @@ if {${subport} eq ${name}} {
     destroot {
         move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
     }
+    livecheck           none
 }
 
 if {[llength ${supported_archs}] > 1} {
