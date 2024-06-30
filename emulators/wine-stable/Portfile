@@ -132,6 +132,8 @@ configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+# Setting an older deployment target avoids build error with MacOSX15.sdk
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/5935#note_74758
 macosx_deployment_target    10.15
 
 # Makes destroot take significantly longer
