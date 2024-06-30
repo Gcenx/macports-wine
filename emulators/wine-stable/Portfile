@@ -65,16 +65,12 @@ patch.pre_args-replace -p0 -p1
 patchfiles-append \
     0001-winemac.drv-no-flicker.diff \
     0002-ntdll-workarond-sendmsg-bug-on-macos.diff \
-    0003-winemac.drv-fix_use-after-free_in_macdrv_copy_pasteboard_types.diff
+    0003-winemac.drv-fix_use-after-free_in_macdrv_copy_pasteboard_types.diff \
+    0004-ntdll-make__wine_syscall_dispatcher_return_a_separate_function.diff
 
 # Some required hacks to make wine work better on macOS & Rosetta2
 patchfiles-append \
     macos_hacks.diff
-
-# ntdll: Fix macOS build errors with Xcode 16.
-# https://gitlab.winehq.org/wine/wine/-/merge_requests/5871
-patchfiles-append \
-    5871.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -136,6 +132,8 @@ configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
+macosx_deployment_target    10.15
+
 # Makes destroot take significantly longer
 variant dev description "Install ${subport} development environment" {
     build.target            all
@@ -191,16 +189,6 @@ pre-activate {
     if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
         ui_error "You must first update to macOS 10.15.4."
         return -code error "You must first update to macOS 10.15.4."
-    }
-}
-
-# macOS Sequoia
-platform darwin 24 {
-    # Xcode16 default SDK causes the build to fail so fallback to a working SDK
-    configure.sdk_version       14
-    if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
-        depends_build-append    port:MacOSX${configure.sdk_version}.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
     }
 }
 
