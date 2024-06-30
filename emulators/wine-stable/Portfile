@@ -204,6 +204,4 @@ platform darwin 24 {
     }
 }
 
-livecheck.url               ${homepage}
-livecheck.type              regex
-livecheck.regex             {"/announce/([0-9]+\.0(\.[0-9]+)*)"}
+github.livecheck.branch     stable
