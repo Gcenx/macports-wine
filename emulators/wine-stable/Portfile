@@ -66,7 +66,7 @@ patchfiles-append \
     0001-winemac.drv-no-flicker.diff \
     0002-ntdll-workarond-sendmsg-bug-on-macos.diff \
     0003-winemac.drv-fix_use-after-free_in_macdrv_copy_pasteboard_types.diff \
-    0004-ntdll-make__wine_syscall_dispatcher_return_a_separate_function_to_fix_xcode16_build_errors.diff
+    0004-ntdll-make__wine_syscall_dispatcher_return_a_separate_function.diff
 
 # Some required hacks to make wine work better on macOS & Rosetta2
 patchfiles-append \
