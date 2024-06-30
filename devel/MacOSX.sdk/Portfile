@@ -22,7 +22,7 @@ build {}
 
 subport MacOSX14.sdk {
     github.setup        gcenx macos-sdk 14.5
-    set macos_name      {macOS Montery}
+    set macos_name      {macOS Sonoma}
     set xcode_vers      15.4
     revision            0
     supported_archs     arm64 x86_64
