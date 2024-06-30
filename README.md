@@ -8,7 +8,6 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `D3DMetal`                *(v2.0 beta1)*
 - `game-porting-toolkit`    *(v1.1)*
-- `gstreamer1`              *(v1.24.5)*
 - `gstreamer.framework`     *(v1.24.5)*
 - `gstreamer-runtime`       *(v1.24.5)*
 - `gstreamer-development`   *(v1.24.5)*
