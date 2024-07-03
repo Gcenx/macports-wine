@@ -28,6 +28,8 @@ checksums                   rmd160  8cd648ba0ed42f5bd0a973ee5b445dc01cbf3ce9 \
                             sha256  d838087fb0d414a50fe4e0748b927bb148b5e8fa93fd5fdb2ae835068d42f8b7 \
                             size    177616317
 
+archive_sites
+
 extract {}
 use_configure no
 
