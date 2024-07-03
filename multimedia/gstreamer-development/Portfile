@@ -29,6 +29,8 @@ checksums \
     sha256  c025d40af7925c1bd315f7ef6e81da7587481768b6f02814edd766e0209a3bd4 \
     size    538898129
 
+archive_sites
+
 depends_lib         port:gstreamer-runtime
 
 extract             {}
