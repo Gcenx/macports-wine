@@ -26,5 +26,10 @@ After installing macports you need a modern version of `git`\
 git clone the repository into /opt then follow [4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)\
 Next run `port -v sync` you can now install any of the provided Ports.
 
-### Prior project history
+### Force x86_64
+Due to macports-ports bugs we need to force MacPorts to only install for x86_64
+
+> echo "build_arch x86_64" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
+
+## Prior project history
 You can find the prior commit history [here](https://github.com/Gcenx/macports-wine/tree/master)
