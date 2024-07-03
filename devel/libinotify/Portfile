@@ -14,7 +14,7 @@ maintainers                 {@gcenx}
 license                     MIT
 
 description                 Inotify shim for macOS and BSD
-long_description            ${description}
+long_description            {*}${description}
 
 checksums                   rmd160  5b7d74de8102f8c419d10e29b0c029ec3752b252 \
                             sha256  d001caa852a3acba7a41a50984e6c776582bbec9e5f85ec98607ec692060d9d8 \
