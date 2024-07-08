@@ -12,13 +12,13 @@ github.tarball_from         archive
 name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
-revision                    1
+revision                    2
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
 supported_archs             x86_64
-maintainers                 {@Gcenx gmail.com:gcenx83}
+maintainers                 {@Gcenx}
 homepage                    https://www.winehq.org
 dist_subdir                 ${my_name}
 
@@ -148,9 +148,18 @@ variant gphoto description "Build ${subport} with support for digital cameras" {
 }
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_lib-append      port:gstreamer1 port:gstreamer1-gst-plugins-base port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
+    depends_build-append    port:gstreamer-development
+    depends_lib-append      port:gstreamer-runtime
     configure.args-replace  --without-gstreamer --with-gstreamer
+
+    pre-configure {
+        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
+        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
+    }
+
+    post-configure {
+        reinplace -q "s|Versions/1.0/lib/pkgconfig/../../lib|Libraries|g" ${worksrcpath}/config.status
+    }
 }
 
 variant kerberos description "Build ${subport} with Kerberos, for network authentication protocol support" {
