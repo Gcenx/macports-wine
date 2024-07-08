@@ -9,13 +9,13 @@ github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
 
 name                        game-porting-toolkit
 set my_name                 wine
-revision                    4
+revision                    5
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
 
 supported_archs             x86_64
-maintainers                 {@Gcenx gmail.com:gcenx83}
+maintainers                 {@Gcenx}
 homepage                    https://developer.apple.com/games
 dist_subdir                 ${my_name}
 distname                    ${github.tag_prefix}${github.version}
@@ -140,9 +140,19 @@ if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version
 macosx_deployment_target    10.14
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_lib-append      port:gstreamer1 port:gstreamer1-gst-plugins-base port:gstreamer1-gst-plugins-good \
-        port:gstreamer1-gst-plugins-bad port:gstreamer1-gst-plugins-ugly port:gstreamer1-gst-libav
+    depends_build-append    port:gstreamer-development
+    depends_lib-append      port:gstreamer-runtime
     configure.args-replace  --without-gstreamer --with-gstreamer
+
+    pre-configure {
+        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
+        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
+    }
+
+    post-configure {
+        reinplace -q "s|Versions/1.0/lib/pkgconfig/../../lib|Libraries|g" ${worksrcpath}-i386/config.status
+        reinplace -q "s|Versions/1.0/lib/pkgconfig/../../lib|Libraries|g" ${worksrcpath}-x86_64/config.status
+    }
 }
 
 default_variants            +gstreamer
