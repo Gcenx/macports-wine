@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        KhronosGroup MoltenVK 1.2.9 v
+github.setup        KhronosGroup MoltenVK 1.2.10 v
 github.tarball_from releases
 name                ${github.project}-latest
 platforms           {darwin any} {macosx any >= 17}
@@ -23,9 +23,9 @@ dist_subdir         ${github.project}/${version}
 distname            ${github.project}-macos
 use_tar             yes
 
-checksums           sha256  93369586b116bc027ef7121fd713ff32fcd856febcb4622b6ba527edcadd68ea \
-                    rmd160  85fc04a7f88bcfa1cbf6c7b764fef8efd20d720c \
-                    size    66262016
+checksums           sha256  ea09ff62f4fdd662d3bf5751bc4e61f064afd9a14e821c3aa431d1ac5a097340 \
+                    rmd160  dc586d9e40ee9c9a10d7a035bf232cac1d0a8c8b \
+                    size    67131904
 
 # MoltenVK would build for i386, but it uses Metal which only works on
 # x86_64 and arm64 (also, Metal was introduced in OS X 10.11)
