@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        The-Wineskin-Project gstreamer 1.24.5
+github.setup        Kegworks-App gstreamer 1.24.6
 github.tarball_from releases
 revision            0
 
@@ -23,9 +23,9 @@ dist_subdir         ${github.project}
 distname            ${name}-1.0-${github.version}-x86_64
 use_xz              yes
 
-checksums           rmd160  ba778c19f14fb76bd18cec01a5efc6a0db0c8331 \
-                    sha256  6eaf271dda39efec167bb6b2c1e61adbed60d935f1ce8badffecffd1040db84e \
-                    size    140177820
+checksums           rmd160  d84e6d75d6ddfeb09073deef92e7a2f02df861fe \
+                    sha256  7d11d79826b37a43132d8093fcbefe74e09a183c848e929956f970e6a7957d5a \
+                    size    143155492
 
 use_configure       no
 build {}
