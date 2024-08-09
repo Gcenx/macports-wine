@@ -12,7 +12,7 @@ github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-revision                    0
+revision                    1
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -121,6 +121,9 @@ configure.args \
     --with-vulkan \
     --without-wayland \
     --without-x
+
+# Need to disable -no_huge, remove wine-9.15
+configure.env-append        ac_cv_cflags__Wl__no_huge=no
 
 configure.env-append        ac_cv_lib_soname_vulkan=
 
