@@ -11,7 +11,7 @@ index 78b3fdf94aa..061c730bf63 100644
  	unix/loadorder.c \
  	unix/process.c \
 diff --git a/dlls/ntdll/unix/esync.c b/dlls/ntdll/unix/esync.c
-index 85d3db0cb8c..b63a386ee96 100644
+index f4748e405ef..2e116a56f4b 100644
 --- a/dlls/ntdll/unix/esync.c
 +++ b/dlls/ntdll/unix/esync.c
 @@ -51,6 +51,7 @@
@@ -70,10 +70,10 @@ index 85d3db0cb8c..b63a386ee96 100644
          /* Try to check objects now, so we can obviate poll() at least. */
          for (i = 0; i < count; i++)
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index ae7e2e8e6ec..a7175b35ae6 100644
+index d8f289054d4..67485a863f5 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
-@@ -89,6 +89,7 @@ extern char **environ;
+@@ -91,6 +91,7 @@
  #include "winternl.h"
  #include "unix_private.h"
  #include "esync.h"
@@ -81,7 +81,7 @@ index ae7e2e8e6ec..a7175b35ae6 100644
  #include "wine/list.h"
  #include "ntsyscalls.h"
  #include "wine/debug.h"
-@@ -1896,6 +1897,7 @@ static void start_main_thread(void)
+@@ -1859,6 +1860,7 @@ static void start_main_thread(void)
      signal_alloc_thread( teb );
      dbg_init();
      startup_info_size = server_init_process();
@@ -91,10 +91,10 @@ index ae7e2e8e6ec..a7175b35ae6 100644
      init_cpu_info();
 diff --git a/dlls/ntdll/unix/msync.c b/dlls/ntdll/unix/msync.c
 new file mode 100644
-index 00000000000..90e785f6df2
+index 00000000000..2eef30dd0f2
 --- /dev/null
 +++ b/dlls/ntdll/unix/msync.c
-@@ -0,0 +1,1661 @@
+@@ -0,0 +1,1689 @@
 +/*
 + * mach semaphore-based synchronization objects
 + *
@@ -412,7 +412,7 @@ index 00000000000..90e785f6df2
 +
 +static const mach_msg_bits_t msgh_bits_send = MACH_MSGH_BITS_REMOTE(MACH_MSG_TYPE_COPY_SEND);
 +
-+static inline void server_register_wait( semaphore_t sem, unsigned int msgh_id,
++static inline mach_msg_return_t server_register_wait( semaphore_t sem, unsigned int msgh_id,
 +                                         struct msync **wait_objs, const int count )
 +{
 +    int i, is_mutex;
@@ -444,10 +444,11 @@ index 00000000000..90e785f6df2
 +
 +    if (mr != MACH_MSG_SUCCESS)
 +        ERR("Failed to send server register wait: %#x\n", mr);
++
++    return mr;
 +}
 +
-+static inline void server_remove_wait( semaphore_t sem, unsigned int msgh_id,
-+                                       struct msync **wait_objs, const int count )
++static inline void server_remove_wait( unsigned int msgh_id, struct msync **wait_objs, const int count )
 +{
 +    int i;
 +    mach_msg_return_t mr;
@@ -504,19 +505,19 @@ index 00000000000..90e785f6df2
 +}
 +
 +static inline NTSTATUS msync_wait_single( struct msync *wait_obj,
-+                                          ULONGLONG *end )
++                                          ULONGLONG *end, int tid )
 +{
 +    int ret, val = 0;
 +    void *addr = wait_obj->shm;
 +    ULONGLONG ns_timeleft = 0;
 +
-+    do 
++    do
 +    {
 +        if (wait_obj->type == MSYNC_MUTEX)
 +        {
 +            val = __atomic_load_n( (int *)addr, __ATOMIC_ACQUIRE );
 +            if (!val || val == ~0)
-+                val = GetCurrentThreadId();
++                val = tid;
 +        }
 +
 +        if (__atomic_load_n( (int *)addr, __ATOMIC_ACQUIRE ) != val)
@@ -577,27 +578,51 @@ index 00000000000..90e785f6df2
 +}
 +
 +static NTSTATUS msync_wait_multiple( struct msync **wait_objs,
-+                                     int count, ULONGLONG *end )
++                                     int count, ULONGLONG *end, int tid )
 +{
-+    int tid;
 +    semaphore_t *sem;
 +    kern_return_t kr;
++    mach_msg_return_t mr;
 +    unsigned int msgh_id;
 +    __thread static struct msync *objs[MAXIMUM_WAIT_OBJECTS + 1];
 +
 +    count = resize_wait_objs( wait_objs, objs, count );
 +
-+    if (count == 1 && __ulock_wait2) return msync_wait_single( objs[0], end );
++    if (count == 1 && __ulock_wait2) return msync_wait_single( objs[0], end, tid );
 +    if (!count) return destroyed_wait( end );
-+
-+    tid = GetCurrentThreadId();
 +
 +    if (check_shm_contention( objs, count, tid ))
 +        return STATUS_PENDING;
 +
 +    sem = semaphore_pool_alloc();
 +    msgh_id = (tid << 8) | count;
-+    server_register_wait( *sem, msgh_id, objs, count );
++    mr = server_register_wait( *sem, msgh_id, objs, count );
++
++    if (mr != MACH_MSG_SUCCESS)
++    {
++        /* The os failed to send the mach message, which is either because
++         * we lost the wineserver process or the semaphore from semaphore_pool_alloc
++         * is not valid...
++         * To avoid pooling in a dead port, recreate it here.
++         * Worst case, this will behave effectively like a spinlock. */
++        semaphore_destroy( mach_task_self(), *sem) ;
++        kr = semaphore_create( mach_task_self(), sem, SYNC_POLICY_FIFO, 0 );
++
++        if (kr != KERN_SUCCESS)
++        {
++            ERR("Cannot create semaphore: %#x %s\n", kr, mach_error_string(kr));
++            semaphore_pool_free( sem );
++            return STATUS_PENDING;
++        }
++
++        mr = server_register_wait( *sem, msgh_id, objs, count );
++
++        if (mr != MACH_MSG_SUCCESS)
++        {
++            semaphore_pool_free( sem );
++            return STATUS_PENDING;
++        }
++    }
 +
 +    do
 +    {
@@ -613,7 +638,7 @@ index 00000000000..90e785f6df2
 +    if (is_destroyed( objs, count ))
 +        return destroyed_wait( end );
 +
-+    server_remove_wait( *sem, msgh_id, objs, count );
++    server_remove_wait( msgh_id, objs, count );
 +
 +    switch (kr) {
 +        case KERN_SUCCESS:
@@ -1220,7 +1245,7 @@ index 00000000000..90e785f6df2
 +    return STATUS_SUCCESS;
 +}
 +
-+static NTSTATUS do_single_wait( struct msync *obj, ULONGLONG *end, BOOLEAN alertable )
++static NTSTATUS do_single_wait( struct msync *obj, ULONGLONG *end, BOOLEAN alertable, int tid )
 +{
 +    NTSTATUS status;
 +    struct msync *wait_objs[2];
@@ -1241,14 +1266,14 @@ index 00000000000..90e785f6df2
 +
 +        wait_objs[1] = &apc_obj;
 +
-+        status = msync_wait_multiple( wait_objs, 2, end );
++        status = msync_wait_multiple( wait_objs, 2, end, tid );
 +
 +        if (__atomic_load_n( apc_addr, __ATOMIC_SEQ_CST ))
 +            return STATUS_USER_APC;
 +    }
 +    else
 +    {
-+        status = msync_wait_multiple( wait_objs, 1, end );
++        status = msync_wait_multiple( wait_objs, 1, end, tid );
 +    }
 +    return status;
 +}
@@ -1258,6 +1283,7 @@ index 00000000000..90e785f6df2
 +{
 +    static const LARGE_INTEGER zero = {0};
 +
++    __thread static int current_tid = 0;
 +    __thread static struct msync *objs[MAXIMUM_WAIT_OBJECTS + 1];
 +    struct msync apc_obj;
 +    int has_msync = 0, has_server = 0;
@@ -1267,6 +1293,8 @@ index 00000000000..90e785f6df2
 +    DWORD waitcount;
 +    ULONGLONG end;
 +    int i, ret;
++
++    current_tid = current_tid ? current_tid : GetCurrentThreadId();
 +
 +    /* Grab the APC idx if we don't already have it. */
 +    if (alertable && !ntdll_get_thread_data()->msync_apc_addr)
@@ -1386,7 +1414,7 @@ index 00000000000..90e785f6df2
 +                        struct mutex *mutex = obj->shm;
 +                        int tid;
 +
-+                        if (mutex->tid == GetCurrentThreadId())
++                        if (mutex->tid == current_tid)
 +                        {
 +                            TRACE("Woken up by handle %p [%d].\n", handles[i], i);
 +                            mutex->count++;
@@ -1394,13 +1422,13 @@ index 00000000000..90e785f6df2
 +                        }
 +
 +                        tid = 0;
-+                        if (__atomic_compare_exchange_n(&mutex->tid, &tid, GetCurrentThreadId(), 0, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED))
++                        if (__atomic_compare_exchange_n(&mutex->tid, &tid, current_tid, 0, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED))
 +                        {
 +                            TRACE("Woken up by handle %p [%d].\n", handles[i], i);
 +                            mutex->count = 1;
 +                            return i;
 +                        }
-+                        else if (tid == ~0 && __atomic_compare_exchange_n(&mutex->tid, &tid, GetCurrentThreadId(), 0, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED))
++                        else if (tid == ~0 && __atomic_compare_exchange_n(&mutex->tid, &tid, current_tid, 0, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED))
 +                        {
 +                            TRACE("Woken up by abandoned mutex %p [%d].\n", handles[i], i);
 +                            mutex->count = 1;
@@ -1463,7 +1491,7 @@ index 00000000000..90e785f6df2
 +                return STATUS_TIMEOUT;
 +            }
 +
-+            ret = msync_wait_multiple( objs, waitcount, timeout ? &end : NULL );
++            ret = msync_wait_multiple( objs, waitcount, timeout ? &end : NULL, current_tid );
 +
 +            if (ret == STATUS_TIMEOUT)
 +            {
@@ -1514,12 +1542,12 @@ index 00000000000..90e785f6df2
 +                {
 +                    struct mutex *mutex = obj->shm;
 +
-+                    if (mutex->tid == GetCurrentThreadId())
++                    if (mutex->tid == current_tid)
 +                        continue;
 +
 +                    while (__atomic_load_n( &mutex->tid, __ATOMIC_SEQ_CST ))
 +                    {
-+                        status = do_single_wait( obj, timeout ? &end : NULL, alertable );
++                        status = do_single_wait( obj, timeout ? &end : NULL, alertable, current_tid );
 +                        if (status != STATUS_PENDING)
 +                            break;
 +                    }
@@ -1531,7 +1559,7 @@ index 00000000000..90e785f6df2
 +
 +                    while (!__atomic_load_n( &event->signaled, __ATOMIC_SEQ_CST ))
 +                    {
-+                        status = do_single_wait( obj, timeout ? &end : NULL, alertable );
++                        status = do_single_wait( obj, timeout ? &end : NULL, alertable, current_tid );
 +                        if (status != STATUS_PENDING)
 +                            break;
 +                    }
@@ -1557,7 +1585,7 @@ index 00000000000..90e785f6df2
 +                    struct mutex *mutex = obj->shm;
 +                    int tid = __atomic_load_n( &mutex->tid, __ATOMIC_SEQ_CST );
 +
-+                    if (tid && tid != ~0 && tid != GetCurrentThreadId())
++                    if (tid && tid != ~0 && tid != current_tid)
 +                        goto tryagain;
 +                }
 +                else if (obj)
@@ -1580,11 +1608,11 @@ index 00000000000..90e785f6df2
 +                {
 +                    struct mutex *mutex = obj->shm;
 +                    int tid = __atomic_load_n( &mutex->tid, __ATOMIC_SEQ_CST );
-+                    if (tid == GetCurrentThreadId())
++                    if (tid == current_tid)
 +                        break;
 +                    if (tid && tid != ~0)
 +                        goto tooslow;
-+                    if (__sync_val_compare_and_swap( &mutex->tid, tid, GetCurrentThreadId() ) != tid)
++                    if (__sync_val_compare_and_swap( &mutex->tid, tid, current_tid ) != tid)
 +                        goto tooslow;
 +                    if (tid == ~0)
 +                        abandoned = TRUE;
@@ -1835,7 +1863,7 @@ index 77aa995326c..f45db2f3090 100644
          esync_close( handle );
  
 diff --git a/dlls/ntdll/unix/sync.c b/dlls/ntdll/unix/sync.c
-index a52327841d2..4d4644f9c8c 100644
+index a52327841d2..3e3d2ea1fb4 100644
 --- a/dlls/ntdll/unix/sync.c
 +++ b/dlls/ntdll/unix/sync.c
 @@ -67,6 +67,7 @@
@@ -1846,15 +1874,6 @@ index a52327841d2..4d4644f9c8c 100644
  
  WINE_DEFAULT_DEBUG_CHANNEL(sync);
  
-@@ -120,7 +121,7 @@ static inline int futex_wait( const LONG *addr, int val, struct timespec *timeou
-             long tv_nsec;
-         } timeout32 = { timeout->tv_sec, timeout->tv_nsec };
- 
--        return syscall( __NR_futex, addr, FUTEX_WAIT_PRIVATE, val, &timeout32, 0, 0 );
-+        return syscall( __NR_futex, addr, FUTEX_WAIT_PRIVATE| futex_private, val, &timeout32, 0, 0 );
-     }
- #endif
-     return syscall( __NR_futex, addr, FUTEX_WAIT_PRIVATE, val, timeout, 0, 0 );
 @@ -320,6 +321,9 @@ NTSTATUS WINAPI NtCreateSemaphore( HANDLE *handle, ACCESS_MASK access, const OBJ
      if (max <= 0 || initial < 0 || initial > max) return STATUS_INVALID_PARAMETER;
      if ((ret = alloc_object_attributes( attr, &objattr, &len ))) return ret;
@@ -2046,7 +2065,7 @@ index a52327841d2..4d4644f9c8c 100644
      if (!timeout || timeout->QuadPart == TIMEOUT_INFINITE)  /* sleep forever */
      {
 diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
-index 791b7b88c62..dc194eb09ac 100644
+index 0f92988d9d5..8f62d380cc4 100644
 --- a/dlls/ntdll/unix/unix_private.h
 +++ b/dlls/ntdll/unix/unix_private.h
 @@ -104,6 +104,8 @@ struct ntdll_thread_data
@@ -2059,10 +2078,10 @@ index 791b7b88c62..dc194eb09ac 100644
      int                reply_fd;      /* fd for receiving server replies */
      int                wait_fd[2];    /* fd for sleeping server requests */
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index efccfac76d0..8247b82852d 100644
+index 75088a2036d..8f55f14ca66 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -3737,6 +3737,8 @@ static TEB *init_teb( void *ptr, BOOL is_wow )
+@@ -3700,6 +3700,8 @@ static TEB *init_teb( void *ptr, BOOL is_wow )
      teb->StaticUnicodeString.MaximumLength = sizeof(teb->StaticUnicodeBuffer);
      thread_data = (struct ntdll_thread_data *)&teb->GdiTebBatch;
      thread_data->esync_apc_fd = -1;
@@ -2072,10 +2091,10 @@ index efccfac76d0..8247b82852d 100644
      thread_data->reply_fd   = -1;
      thread_data->wait_fd[0] = -1;
 diff --git a/include/wine/server_protocol.h b/include/wine/server_protocol.h
-index d3399268d00..c38120548ab 100644
+index 44f18710766..e6610d3cab5 100644
 --- a/include/wine/server_protocol.h
 +++ b/include/wine/server_protocol.h
-@@ -5828,6 +5828,92 @@ struct get_esync_apc_fd_reply
+@@ -5830,6 +5830,92 @@ struct get_esync_apc_fd_reply
      struct reply_header __header;
  };
  
@@ -2168,7 +2187,7 @@ index d3399268d00..c38120548ab 100644
  
  enum request
  {
-@@ -6123,6 +6209,11 @@ enum request
+@@ -6125,6 +6211,11 @@ enum request
      REQ_esync_msgwait,
      REQ_set_keyboard_repeat,
      REQ_get_esync_apc_fd,
@@ -2180,7 +2199,7 @@ index d3399268d00..c38120548ab 100644
      REQ_NB_REQUESTS
  };
  
-@@ -6422,6 +6513,11 @@ union generic_request
+@@ -6424,6 +6515,11 @@ union generic_request
      struct esync_msgwait_request esync_msgwait_request;
      struct set_keyboard_repeat_request set_keyboard_repeat_request;
      struct get_esync_apc_fd_request get_esync_apc_fd_request;
@@ -2192,7 +2211,7 @@ index d3399268d00..c38120548ab 100644
  };
  union generic_reply
  {
-@@ -6719,11 +6815,16 @@ union generic_reply
+@@ -6721,11 +6817,16 @@ union generic_reply
      struct esync_msgwait_reply esync_msgwait_reply;
      struct set_keyboard_repeat_reply set_keyboard_repeat_reply;
      struct get_esync_apc_fd_reply get_esync_apc_fd_reply;
@@ -2205,8 +2224,8 @@ index d3399268d00..c38120548ab 100644
  
  /* ### protocol_version begin ### */
  
--#define SERVER_PROTOCOL_VERSION 837
-+#define SERVER_PROTOCOL_VERSION 838
+-#define SERVER_PROTOCOL_VERSION 838
++#define SERVER_PROTOCOL_VERSION 839
  
  /* ### protocol_version end ### */
  
@@ -2223,7 +2242,7 @@ index 87103cb2002..85b7b8f6693 100644
  	hook.c \
  	mach.c \
 diff --git a/server/async.c b/server/async.c
-index b0f9fe42ad1..b7270394579 100644
+index bea720b1f19..2dff610f4bd 100644
 --- a/server/async.c
 +++ b/server/async.c
 @@ -78,6 +78,7 @@ static const struct object_ops async_ops =
@@ -2920,10 +2939,10 @@ index ab4d0e9dd31..0bbdcc5aa88 100644
      no_signal,                    /* signal */
      no_get_fd,                    /* get_fd */
 diff --git a/server/mailslot.c b/server/mailslot.c
-index 4cf9b73f784..d04fc2f4edc 100644
+index a8258328364..6301cdf06c1 100644
 --- a/server/mailslot.c
 +++ b/server/mailslot.c
-@@ -75,6 +75,7 @@ static const struct object_ops mailslot_ops =
+@@ -82,6 +82,7 @@ static const struct object_ops mailslot_ops =
      remove_queue,              /* remove_queue */
      default_fd_signaled,       /* signaled */
      NULL,                      /* get_esync_fd */
@@ -2931,7 +2950,7 @@ index 4cf9b73f784..d04fc2f4edc 100644
      no_satisfied,              /* satisfied */
      no_signal,                 /* signal */
      mailslot_get_fd,           /* get_fd */
-@@ -135,6 +136,7 @@ static const struct object_ops mail_writer_ops =
+@@ -144,6 +145,7 @@ static const struct object_ops mail_writer_ops =
      NULL,                       /* remove_queue */
      NULL,                       /* signaled */
      NULL,                       /* get_esync_fd */
@@ -2939,7 +2958,7 @@ index 4cf9b73f784..d04fc2f4edc 100644
      NULL,                       /* satisfied */
      no_signal,                  /* signal */
      mail_writer_get_fd,         /* get_fd */
-@@ -199,6 +201,7 @@ static const struct object_ops mailslot_device_ops =
+@@ -210,6 +212,7 @@ static const struct object_ops mailslot_device_ops =
      NULL,                           /* remove_queue */
      NULL,                           /* signaled */
      NULL,                           /* get_esync_fd */
@@ -2947,7 +2966,7 @@ index 4cf9b73f784..d04fc2f4edc 100644
      no_satisfied,                   /* satisfied */
      no_signal,                      /* signal */
      no_get_fd,                      /* get_fd */
-@@ -230,6 +233,7 @@ static const struct object_ops mailslot_device_file_ops =
+@@ -241,6 +244,7 @@ static const struct object_ops mailslot_device_file_ops =
      remove_queue,                           /* remove_queue */
      default_fd_signaled,                    /* signaled */
      NULL,                                   /* get_esync_fd */
@@ -4064,7 +4083,7 @@ index 4785a830e92..6a60adee0bd 100644
      mutex_signal,              /* signal */
      no_get_fd,                 /* get_fd */
 diff --git a/server/named_pipe.c b/server/named_pipe.c
-index a90ec606226..d8d17fa95f7 100644
+index 8ba8126563a..6396ea532b0 100644
 --- a/server/named_pipe.c
 +++ b/server/named_pipe.c
 @@ -120,6 +120,7 @@ static const struct object_ops named_pipe_ops =
@@ -4217,10 +4236,10 @@ index bedd8bb4586..24276142a63 100644
  
  /* process functions */
 diff --git a/server/protocol.def b/server/protocol.def
-index 1e4171c56ef..7ad9129f5d4 100644
+index 47c76c17c5b..5475a51639d 100644
 --- a/server/protocol.def
 +++ b/server/protocol.def
-@@ -4022,3 +4022,57 @@ enum esync_type
+@@ -4023,3 +4023,57 @@ enum esync_type
  /* Retrieve the fd to wait on for user APCs. */
  @REQ(get_esync_apc_fd)
  @END
@@ -4279,7 +4298,7 @@ index 1e4171c56ef..7ad9129f5d4 100644
 +    unsigned int shm_idx;
 +@END
 diff --git a/server/queue.c b/server/queue.c
-index 109610b3d31..8a5bdd077f5 100644
+index ef4283e27df..c6dd91f8d4a 100644
 --- a/server/queue.c
 +++ b/server/queue.c
 @@ -45,6 +45,7 @@
@@ -4290,7 +4309,7 @@ index 109610b3d31..8a5bdd077f5 100644
  
  #define WM_NCMOUSEFIRST WM_NCMOUSEMOVE
  #define WM_NCMOUSELAST  (WM_NCMOUSEFIRST+(WM_MOUSELAST-WM_MOUSEFIRST))
-@@ -139,6 +140,8 @@ struct msg_queue
+@@ -137,6 +138,8 @@ struct msg_queue
      unsigned int           ignore_post_msg; /* ignore post messages newer than this unique id */
      int                    esync_fd;        /* esync file descriptor (signalled on message) */
      int                    esync_in_msgwait; /* our thread is currently waiting on us */
@@ -4299,7 +4318,7 @@ index 109610b3d31..8a5bdd077f5 100644
  };
  
  struct hotkey
-@@ -156,6 +159,7 @@ static int msg_queue_add_queue( struct object *obj, struct wait_queue_entry *ent
+@@ -154,6 +157,7 @@ static int msg_queue_add_queue( struct object *obj, struct wait_queue_entry *ent
  static void msg_queue_remove_queue( struct object *obj, struct wait_queue_entry *entry );
  static int msg_queue_signaled( struct object *obj, struct wait_queue_entry *entry );
  static int msg_queue_get_esync_fd( struct object *obj, enum esync_type *type );
@@ -4307,7 +4326,7 @@ index 109610b3d31..8a5bdd077f5 100644
  static void msg_queue_satisfied( struct object *obj, struct wait_queue_entry *entry );
  static void msg_queue_destroy( struct object *obj );
  static void msg_queue_poll_event( struct fd *fd, int event );
-@@ -172,6 +176,7 @@ static const struct object_ops msg_queue_ops =
+@@ -170,6 +174,7 @@ static const struct object_ops msg_queue_ops =
      msg_queue_remove_queue,    /* remove_queue */
      msg_queue_signaled,        /* signaled */
      msg_queue_get_esync_fd,    /* get_esync_fd */
@@ -4315,7 +4334,7 @@ index 109610b3d31..8a5bdd077f5 100644
      msg_queue_satisfied,       /* satisfied */
      no_signal,                 /* signal */
      no_get_fd,                 /* get_fd */
-@@ -210,6 +215,7 @@ static const struct object_ops thread_input_ops =
+@@ -208,6 +213,7 @@ static const struct object_ops thread_input_ops =
      NULL,                         /* remove_queue */
      NULL,                         /* signaled */
      NULL,                         /* get_esync_fd */
@@ -4323,7 +4342,7 @@ index 109610b3d31..8a5bdd077f5 100644
      NULL,                         /* satisfied */
      no_signal,                    /* signal */
      no_get_fd,                    /* get_fd */
-@@ -324,6 +330,8 @@ static struct msg_queue *create_msg_queue( struct thread *thread, struct thread_
+@@ -322,6 +328,8 @@ static struct msg_queue *create_msg_queue( struct thread *thread, struct thread_
          queue->ignore_post_msg = 0;
          queue->esync_fd        = -1;
          queue->esync_in_msgwait = 0;
@@ -4332,7 +4351,7 @@ index 109610b3d31..8a5bdd077f5 100644
          list_init( &queue->send_result );
          list_init( &queue->callback_result );
          list_init( &queue->pending_timers );
-@@ -349,6 +357,9 @@ static struct msg_queue *create_msg_queue( struct thread *thread, struct thread_
+@@ -347,6 +355,9 @@ static struct msg_queue *create_msg_queue( struct thread *thread, struct thread_
          if (do_esync())
              queue->esync_fd = esync_create_fd( 0, 0 );
  
@@ -4342,7 +4361,7 @@ index 109610b3d31..8a5bdd077f5 100644
          thread->queue = queue;
  
          if ((desktop = get_thread_desktop( thread, 0 )))
-@@ -737,6 +748,9 @@ static inline void clear_queue_bits( struct msg_queue *queue, unsigned int bits
+@@ -754,6 +765,9 @@ static inline void clear_queue_bits( struct msg_queue *queue, unsigned int bits
          queue->keystate_lock = 0;
      }
  
@@ -4352,7 +4371,7 @@ index 109610b3d31..8a5bdd077f5 100644
      if (do_esync() && !is_signaled( queue ))
          esync_clear( queue->esync_fd );
  }
-@@ -1228,6 +1242,9 @@ static int is_queue_hung( struct msg_queue *queue )
+@@ -1245,6 +1259,9 @@ static int is_queue_hung( struct msg_queue *queue )
              return 0;  /* thread is waiting on queue -> not hung */
      }
  
@@ -4362,7 +4381,7 @@ index 109610b3d31..8a5bdd077f5 100644
      if (do_esync() && queue->esync_in_msgwait)
          return 0;   /* thread is waiting on queue in absentia -> not hung */
  
-@@ -1292,6 +1309,13 @@ static int msg_queue_get_esync_fd( struct object *obj, enum esync_type *type )
+@@ -1309,6 +1326,13 @@ static int msg_queue_get_esync_fd( struct object *obj, enum esync_type *type )
      return queue->esync_fd;
  }
  
@@ -4376,7 +4395,7 @@ index 109610b3d31..8a5bdd077f5 100644
  static void msg_queue_satisfied( struct object *obj, struct wait_queue_entry *entry )
  {
      struct msg_queue *queue = (struct msg_queue *)obj;
-@@ -1349,6 +1373,8 @@ static void msg_queue_destroy( struct object *obj )
+@@ -1366,6 +1390,8 @@ static void msg_queue_destroy( struct object *obj )
      if (queue->fd) release_object( queue->fd );
      if (queue->shared) free_shared_object( queue->shared );
      if (do_esync()) close( queue->esync_fd );
@@ -4385,19 +4404,27 @@ index 109610b3d31..8a5bdd077f5 100644
  }
  
  static void msg_queue_poll_event( struct fd *fd, int event )
-@@ -3121,6 +3147,11 @@ DECL_HANDLER(set_queue_mask)
-             }
+@@ -3152,6 +3178,9 @@ DECL_HANDLER(set_queue_mask)
              else wake_up( &queue->obj, 0 );
          }
+ 
 +        if (do_msync() && !is_signaled( queue ))
 +            msync_clear( &queue->obj );
 +
-+        if (do_msync() && !is_signaled( queue ))
-+            msync_clear( &queue->obj );
- 
          if (do_esync() && !is_signaled( queue ))
              esync_clear( queue->esync_fd );
-@@ -3416,6 +3447,9 @@ DECL_HANDLER(get_message)
+     }
+@@ -3175,6 +3204,9 @@ DECL_HANDLER(get_queue_status)
+         }
+         SHARED_WRITE_END;
+ 
++        if (do_msync() && !is_signaled( queue ))
++            msync_clear( &queue->obj );
++
+         if (do_esync() && !is_signaled( queue ))
+             esync_clear( queue->esync_fd );
+     }
+@@ -3446,6 +3478,9 @@ DECL_HANDLER(get_message)
  
      set_error( STATUS_PENDING );  /* FIXME */
  
@@ -4407,7 +4434,7 @@ index 109610b3d31..8a5bdd077f5 100644
      if (do_esync() && !is_signaled( queue ))
          esync_clear( queue->esync_fd );
  
-@@ -4220,6 +4254,23 @@ DECL_HANDLER(esync_msgwait)
+@@ -4248,6 +4283,23 @@ DECL_HANDLER(esync_msgwait)
          set_fd_events( queue->fd, req->in_msgwait ? POLLIN : 0 );
  }
  
@@ -4456,7 +4483,7 @@ index 8e7d88a0d4c..3287b16170d 100644
      no_signal,                     /* signal */
      no_get_fd,                     /* get_fd */
 diff --git a/server/request.h b/server/request.h
-index a68983ef6dc..32fd61d7903 100644
+index b8a3f24f521..a73b9bdd2f3 100644
 --- a/server/request.h
 +++ b/server/request.h
 @@ -411,6 +411,11 @@ DECL_HANDLER(get_esync_fd);
@@ -4483,7 +4510,7 @@ index a68983ef6dc..32fd61d7903 100644
  };
  
  C_ASSERT( sizeof(abstime_t) == 8 );
-@@ -2386,6 +2396,34 @@ C_ASSERT( sizeof(struct set_keyboard_repeat_request) == 24 );
+@@ -2387,6 +2397,34 @@ C_ASSERT( sizeof(struct set_keyboard_repeat_request) == 24 );
  C_ASSERT( FIELD_OFFSET(struct set_keyboard_repeat_reply, enable) == 8 );
  C_ASSERT( sizeof(struct set_keyboard_repeat_reply) == 16 );
  C_ASSERT( sizeof(struct get_esync_apc_fd_request) == 16 );
@@ -4555,7 +4582,7 @@ index 55cd6aa037e..e86ad49df8e 100644
      no_signal,                /* signal */
      no_get_fd,                /* get_fd */
 diff --git a/server/sock.c b/server/sock.c
-index 7be912b3b50..af92f134538 100644
+index 3110a125add..3b6fb723548 100644
 --- a/server/sock.c
 +++ b/server/sock.c
 @@ -454,6 +454,7 @@ static const struct object_ops sock_ops =
@@ -4566,7 +4593,7 @@ index 7be912b3b50..af92f134538 100644
      no_satisfied,                 /* satisfied */
      no_signal,                    /* signal */
      sock_get_fd,                  /* get_fd */
-@@ -3562,6 +3563,7 @@ static const struct object_ops ifchange_ops =
+@@ -3564,6 +3565,7 @@ static const struct object_ops ifchange_ops =
      NULL,                    /* remove_queue */
      NULL,                    /* signaled */
      NULL,                    /* get_esync_fd */
@@ -4574,7 +4601,7 @@ index 7be912b3b50..af92f134538 100644
      no_satisfied,            /* satisfied */
      no_signal,               /* signal */
      ifchange_get_fd,         /* get_fd */
-@@ -3784,6 +3786,7 @@ static const struct object_ops socket_device_ops =
+@@ -3786,6 +3788,7 @@ static const struct object_ops socket_device_ops =
      NULL,                       /* remove_queue */
      NULL,                       /* signaled */
      NULL,                       /* get_esync_fd */
@@ -4837,7 +4864,7 @@ index e40ba10f9aa..1101c7224b9 100644
      no_signal,                 /* signal */
      no_get_fd,                 /* get_fd */
 diff --git a/server/trace.c b/server/trace.c
-index 89e9c0b3aa1..f692e86a878 100644
+index fd224685bfb..0d7eac7dc60 100644
 --- a/server/trace.c
 +++ b/server/trace.c
 @@ -4712,6 +4712,63 @@ static void dump_get_esync_apc_fd_request( const struct get_esync_apc_fd_request
@@ -4941,7 +4968,7 @@ index 89e9c0b3aa1..f692e86a878 100644
  
  static const struct
 diff --git a/server/window.c b/server/window.c
-index 13318b75fe2..85ee8d8f9b2 100644
+index 7e8055bac4a..f91794e278f 100644
 --- a/server/window.c
 +++ b/server/window.c
 @@ -107,6 +107,7 @@ static const struct object_ops window_ops =
