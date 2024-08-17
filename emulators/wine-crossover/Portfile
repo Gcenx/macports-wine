@@ -10,7 +10,7 @@ name                        wine-crossover
 conflicts                   wine-stable wine-devel wine-staging
 set my_name                 wine
 version                     23.7.1
-revision                    2
+revision                    3
 platforms                   {darwin >= 19}
 license                     LGPL-2.1+
 categories                  emulators
@@ -76,9 +76,6 @@ patchfiles-append \
     0001-distversion.diff \
     0002-winemenubuilder-remove-cxmenu.diff
 
-patchfiles-append \
-    1001-hack-ntdll-non-native-code-regions.diff
-
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
     fallocate \
@@ -130,29 +127,19 @@ configure.args \
 
 configure.env-append        ac_cv_lib_soname_vulkan=
 
-# We need to tell the linker to add MacPorts & d3dmetal to the rpath stack.
-configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
+# We need to tell the linker to add MacPorts to the rpath stack.
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
-# Can't build using Xcode16+
-if {${os.major} >= 24} {
-    depends_build-append        port:llvm-cx
-    configure.cc                ${prefix}/libexec/llvm-cx/bin/clang
-    configure.cxx               ${prefix}/libexec/llvm-cx/bin/clang++
-    configure.compiler.add_deps no
-
-    configure.sdk_version       14
-    if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
-        depends_build-append    port:MacOSX${configure.sdk_version}.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
-    }
-
-    macosx_deployment_target    10.14
-}
+# Setting an older deployment target avoids build error with MacOSX15.sdk
+# https://gitlab.winehq.org/wine/wine/-/merge_requests/5935#note_74758
+macosx_deployment_target    10.15
 
 if {${os.major} >= 23} {
     set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
     if {${os.arch} eq "arm" || ${is_rosetta2} == 1} {
         depends_run-append  port:d3dmetal
+        patchfiles-append   1001-hack-ntdll-non-native-code-regions.diff
+        configure.ldflags-append -Wl,-rpath,${prefix}/libexec/d3dmetal/external
     }
 }
 
