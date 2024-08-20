@@ -17,7 +17,6 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `wine-stable`             *(v9.0)*
 - `wine-devel`              *(v9.15)*
 - `wine-staging`            *(v9.15)*
-- `wine-crossover`          *(v23.7.1)*
 - `winetricks`              *(v20240704)*
 - `wineskin`                *(v2.0.2)*
 
