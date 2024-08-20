@@ -9,8 +9,6 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `D3DMetal`                *(v2.0 beta1)*
 - `game-porting-toolkit`    *(v1.1)*
 - `gstreamer.framework`     *(v1.24.6)*
-- `gstreamer-runtime`       *(v1.24.6)*
-- `gstreamer-development`   *(v1.24.6)*
 - `libinotify`              *(v20230908)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
