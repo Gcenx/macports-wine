@@ -3,9 +3,6 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            gcenx macos-sdk 14.5
-github.tarball_from     releases
-
 name                    MacOSX.sdk
 categories              devel
 platforms               {darwin >= 12}
@@ -201,6 +198,8 @@ subport MacOSX10.11.sdk {
 }
 
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
+
+github.tarball_from     releases
 
 pre-destroot {
     xinstall -d ${destroot}${sdk_dir}
