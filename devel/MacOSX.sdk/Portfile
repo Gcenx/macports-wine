@@ -199,8 +199,6 @@ subport MacOSX10.11.sdk {
 
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
 
-github.tarball_from     releases
-
 pre-destroot {
     xinstall -d ${destroot}${sdk_dir}
 }
@@ -217,6 +215,7 @@ if {${subport} eq ${name}} {
         ln -s MacOSX${version}.sdk ${destroot}${sdk_dir}/MacOSX.sdk
     }
 } else {
+    github.tarball_from releases
     set macos_version   [lindex [split ${version} -] 0]
     set macos_build     [lindex [split ${version} -] 1]
     set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
