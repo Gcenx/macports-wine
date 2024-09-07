@@ -44,7 +44,7 @@ subport ${name}-9.3.0 {
     use_xz          yes
 }
 
-# wine-devel (9.13)
+# wine-devel (9.12)
 subport ${name}-9.2.0 {
     version         9.2.0
     revision        0
