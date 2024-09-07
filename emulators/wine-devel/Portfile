@@ -7,12 +7,12 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 9.16 wine-
+github.setup                wine-mirror wine 9.17 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-revision                    1
+revision                    0
 platforms                   {darwin >= 19}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
@@ -37,9 +37,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  d8a37ecef52b2a3f091365725544cdbc468eb7d5 \
-    sha256  f5bbf6f0008e42f2bae3f46f67dfb8bcb96bd741f94e24d3e6f8a8f7991c685e \
-    size    49763292
+    rmd160  2293c1c6b36d74e18a6b460d3a9c0ce4ad032c95 \
+    sha256  a5933231567c07f4afafaab410e90d4a69717e080e2ce539a1364192297dd024 \
+    size    49839986
 
 depends_build \
     port:bison \
@@ -59,7 +59,7 @@ depends_lib \
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
-    port:mingw-w64-wine-mono-9.2.0
+    port:mingw-w64-wine-mono-9.3.0
 
 patch.pre_args-replace -p0 -p1
 
