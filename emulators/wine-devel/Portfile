@@ -150,9 +150,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  0dcc1d1154aae29b8d35ec9bc5afdc75837ec8b6 \
-        sha256  fdff5f26fb2b872ab702d540c86248f09c971c8e7b80ba3899d4e5c19a12f7c3 \
-        size    9506127
+        rmd160  872d7c3be456d1abe7ed948a7c67f4a597b7673b \
+        sha256  8b75c8fe4802eb00084b7b7c274a9941f06b28ed6496efa612476b9760852392 \
+        size    9383269
 
     depends_patch-append    port:autoconf
 
