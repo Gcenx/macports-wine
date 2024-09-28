@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        Kegworks-App gstreamer 1.24.7
+github.setup        Kegworks-App gstreamer 1.24.8
 github.tarball_from releases
 revision            0
 
@@ -23,13 +23,15 @@ dist_subdir         ${github.project}
 distname            ${name}-1.0-${github.version}-x86_64
 use_xz              yes
 
-checksums           rmd160  9fb67d363dff88e6119e02fb97b56199632a69e5 \
-                    sha256  13ebd64726ec2ed57ec9712417dcf4eb3358bca47034998668c1aad4feaf6a3e \
-                    size    143521036
+checksums           rmd160  76b27cee79cefbc405e129c9d914ca22976ae643 \
+                    sha256  85b6621f85f383d69c248c6a3eafb7da6fe1aeeb5b015117102ea90f889d21f6 \
+                    size    143974580
 
 use_configure       no
 build {}
 
 destroot {
     copy ${workpath}/GStreamer.framework ${destroot}${frameworks_dir}
+    system -W ${destroot}${frameworks_dir} \
+        "codesign --force --deep --sign - GStreamer.framework"
 }
