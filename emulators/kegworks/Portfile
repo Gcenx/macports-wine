@@ -7,9 +7,9 @@ github.setup        Kegworks-App Winery 2.0.3 v
 github.tarball_from releases
 revision            0
 name                kegworks
-platforms           {darwin >= 19.4}
-# wine itself is LGPL-2
-license             {LGPL-2 Restrictive/Distributable}
+platforms           {darwin >= 19}
+# wine is LGPL-2.1+, kegworks is closed source
+license             {LGPL-2.1+ Restrictive/Distributable}
 categories          emulators
 
 supported_archs     x86_64
