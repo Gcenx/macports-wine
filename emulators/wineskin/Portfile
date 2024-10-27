@@ -1,46 +1,13 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 
 PortSystem          1.0
-PortGroup           github 1.0
+PortGroup           obsolete 1.0
 
-github.setup        The-Wineskin-Project Winery 2.0.2
-github.tarball_from releases
-revision            0
+replaced_by         kegworks
 name                wineskin
-platforms           {darwin >= 19}
+version             2.0.2
+revision            1
 license             LGPL-2.1
 categories          emulators
 
-supported_archs     x86_64
-maintainers         {@gcenx}
 homepage            https://github.com/Gcenx/WineskinServer/
-
-description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS.
-long_description    {*}${description}
-
-distname            wineskin-winery-v${version}
-use_xz              yes
-
-checksums           rmd160  8c877ad59db25d23aa891f157e3c4075fe2e108c \
-                    sha256  51e088f5c22deadd60069656e91fd98c4a5855492bca1038b5753bd251df9981 \
-                    size    921396
-
-use_configure       no
-build {}
-
-destroot {
-    move "${workpath}/Wineskin Winery.app" "${destroot}${applications_dir}/Wineskin Winery.app"
-    system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'Wineskin Winery.app'"
-}
-
-pre-activate {
-    if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
-        ui_error "You must first update to macOS 10.15.4."
-	return -code error "You must first update to macOS 10.15.4."
-    }
-}
-
-notes "
-    Currently ${name} has a bug where it won't create a needed directory\
-    you'll need to manually create it ~/Applications/Wineskin.
-"
