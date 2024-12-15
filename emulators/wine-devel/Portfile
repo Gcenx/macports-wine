@@ -7,7 +7,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 9.22 wine-
+github.setup                wine-mirror wine 10.0-rc1 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -37,9 +37,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  821aa2d2df03cb9f8fe9c839f2e0460f48310506 \
-    sha256  748f54a675307a4d1bb46807c7db6201ecf2dedbe8204c37c5f9729d2f2f0f94 \
-    size    51800426
+    rmd160  752366acf6db2e093eff05f490cd27e40b1f9dba \
+    sha256  b929966bbf0130ca641ca0341302182d65647ee6f35a44f2c91ded4c324e7d68 \
+    size    51935497
 
 depends_build \
     port:bison \
@@ -59,7 +59,7 @@ depends_lib \
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
-    port:mingw-w64-wine-mono-9.3.0
+    port:mingw-w64-wine-mono-9.4.0
 
 patch.pre_args-replace -p0 -p1
 
@@ -153,9 +153,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  9d37c8d2b06f7419b0d3c3f5215fce6cf0c7e297 \
-        sha256  3836e62600650de749c728075d648f80731a85b441daf632eeb4227f1b57a8b4 \
-        size    9541167
+        rmd160  af860ca0d22cb267b526040052184a4954289ec5 \
+        sha256  9476a811efe6b4cb79e82cfa5dd930fe5160bf4247b2eff25edd10b20b07e0de \
+        size    9394496
 
     depends_patch-append    port:autoconf
 
