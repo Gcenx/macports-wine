@@ -18,7 +18,7 @@ conflicts                   wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-dev
 set my_name                 wine
 version                     6.0.4
 revision                    0
-platforms                   {darwin > 9 < 17}
+platforms                   {darwin > 9 < 18}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
