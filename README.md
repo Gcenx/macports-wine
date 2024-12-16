@@ -4,8 +4,6 @@ This branch supports macOS 10.6.8 to macOS 10.14
 
 ## This repository contains
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
-- `mingw-w64-wine-gecko`    *(Multiple versions)*
-- `mingw-w64-wine-mono`     *(Multiple versions)*
 - `wine-stable`             *(stub)*
 - `wine-stable-6.0.4`       *(v6.0.6)*
 - `wine-stable-7.0.2`       *(v7.0.2)*
