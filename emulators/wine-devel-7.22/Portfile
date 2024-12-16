@@ -19,7 +19,7 @@ conflicts                   wine-stable wine-stable-6.0.4 wine-stable-7.0.2 wine
 set my_name                 wine
 version                     7.22
 revision                    0
-platforms                   {darwin >= 12 < 18}
+platforms                   {darwin > 11 < 18}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators
@@ -62,7 +62,7 @@ depends_build \
     bin:flex:flex \
     port:gettext \
     port:mingw-w64 \
-    port:pkgconfig
+    path:bin/pkg-config:pkgconfig
 
 depends_lib \
     port:freetype \
@@ -227,11 +227,6 @@ if {${os.major} < 15} {
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
-variant gstreamer description {Build ${subport} with gstreamer support} {
-    depends_lib-append      port:gstreamer1-gst-plugins-base
-    configure.args-replace  --without-gstreamer --with-gstreamer
-}
-
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
 variant usb description {Build ${subport} with USB support} {
@@ -239,7 +234,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants            +gstreamer +universal +x11
+default_variants            +universal +x11
 
 # macports-base injects a number of flags that now propagate to mingw-gcc this causes the build to fail since, wine-7.21
 # https://gitlab.winehq.org/wine/wine/-/commit/b1f59bc679a8c2dea18a6789a5b9b1a1ae825129
@@ -284,15 +279,6 @@ if {${universal_possible} && [variant_isset universal]} {
 } else {
     supported_archs         i386
     configure.pre_args.i386
-}
-
-post-deactivate {
-    if {![catch {set installed [lindex [registry_active mingw-w64-wine-gecko-2.47.3] 0]}]} {
-        registry_deactivate_composite mingw-w64-wine-gecko-2.47.3 "" [list ports_nodepcheck 1]
-    }
-    if {![catch {set installed [lindex [registry_active mingw-w64-wine-mono-7.4.0] 0]}]} {
-        registry_deactivate_composite mingw-w64-wine-mono-7.4.0 "" [list ports_nodepcheck 1]
-    }
 }
 
 livecheck.type              none

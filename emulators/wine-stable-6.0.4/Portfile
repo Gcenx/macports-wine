@@ -18,7 +18,7 @@ conflicts                   wine-stable-7.0.2 wine-devel wine-devel-6.8 wine-dev
 set my_name                 wine
 version                     6.0.4
 revision                    0
-platforms                   {darwin >= 10 < 17}
+platforms                   {darwin > 9 < 17}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
 categories                  emulators
@@ -61,7 +61,7 @@ depends_build \
     bin:flex:flex \
     port:gettext \
     port:mingw-w64 \
-    port:pkgconfig
+    path:bin/pkg-config:pkgconfig
 
 depends_lib \
     port:FAudio \
@@ -285,11 +285,6 @@ platform darwin 10 {
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 compiler.fallback-append    macports-clang-5.0
 
-variant gstreamer description {Build ${subport} with gstreamer support} {
-    depends_lib-append      port:gstreamer1-gst-plugins-base
-    configure.args-replace  --without-gstreamer --with-gstreamer
-}
-
 # wine(64)-preloader claims usb interface for no reason
 # https://github.com/Gcenx/WineskinServer/discussions/280
 variant usb description {Build ${subport} with USB support} {
@@ -297,7 +292,7 @@ variant usb description {Build ${subport} with USB support} {
     configure.args-replace  --without-usb --with-usb
 }
 
-default_variants            +gstreamer +universal +x11
+default_variants            +universal +x11
 
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -g -O2
