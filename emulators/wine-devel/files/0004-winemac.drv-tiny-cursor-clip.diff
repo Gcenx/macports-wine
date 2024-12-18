@@ -1,0 +1,53 @@
+diff --git a/dlls/winemac.drv/macdrv_cocoa.h b/dlls/winemac.drv/macdrv_cocoa.h
+index 44614ae3e8a..bac618f2da6 100644
+--- a/dlls/winemac.drv/macdrv_cocoa.h
++++ b/dlls/winemac.drv/macdrv_cocoa.h
+@@ -158,6 +158,7 @@
+ extern int retina_enabled;  /* Whether Retina mode is enabled via registry setting. */
+ extern int retina_on;       /* Whether Retina mode is currently active (enabled and display is in default mode). */
+ extern int enable_app_nap;
++extern int tiny_cursor_clip;
+ 
+ static inline CGRect cgrect_mac_from_win(CGRect rect)
+ {
+diff --git a/dlls/winemac.drv/macdrv_main.c b/dlls/winemac.drv/macdrv_main.c
+index 923a6fc2ef5..5992c1661f1 100644
+--- a/dlls/winemac.drv/macdrv_main.c
++++ b/dlls/winemac.drv/macdrv_main.c
+@@ -60,6 +60,7 @@ int gl_surface_mode = GL_SURFACE_IN_FRONT_OPAQUE;
+ int retina_enabled = FALSE;
+ int enable_app_nap = FALSE;
+ BOOL force_backing_store = FALSE;
++int tiny_cursor_clip = FALSE;
+ 
+ UINT64 app_icon_callback = 0;
+ UINT64 app_quit_request_callback = 0;
+@@ -362,6 +363,9 @@ static void setup_options(void)
+     if (!get_config_key(hkey, appkey, "UsePreciseScrolling", buffer, sizeof(buffer)))
+         use_precise_scrolling = IS_OPTION_TRUE(buffer[0]);
+ 
++    if (!get_config_key(hkey, appkey, "TinyCursorClip", buffer, sizeof(buffer)))
++        tiny_cursor_clip = IS_OPTION_TRUE(buffer[0]);
++
+     if (!get_config_key(hkey, appkey, "OpenGLSurfaceMode", buffer, sizeof(buffer)))
+     {
+         static const WCHAR transparentW[] = {'t','r','a','n','s','p','a','r','e','n','t',0};
+diff --git a/dlls/winemac.drv/mouse.c b/dlls/winemac.drv/mouse.c
+index a87654e9885..2f910f1182e 100644
+--- a/dlls/winemac.drv/mouse.c
++++ b/dlls/winemac.drv/mouse.c
+@@ -669,8 +669,12 @@ BOOL macdrv_ClipCursor(const RECT *clip, BOOL reset)
+ 
+     if (clip)
+     {
+-        rect = CGRectMake(clip->left, clip->top, max(1, clip->right - clip->left),
+-                          max(1, clip->bottom - clip->top));
++        if (tiny_cursor_clip) {
++            rect = CGRectMake(max(1, (clip->right - clip->left) / 2), max(1, (clip->bottom - clip->top) / 2), 1, 1);
++        } else {
++            rect = CGRectMake(clip->left, clip->top, max(1, clip->right - clip->left),
++                              max(1, clip->bottom - clip->top));
++        }
+     }
+     else
+         rect = CGRectInfinite;
