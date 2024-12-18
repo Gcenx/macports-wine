@@ -73,6 +73,9 @@ patchfiles-append \
 patchfiles-append \
     0003-winemac.drv-export-essential-apis.diff
 
+patchfiles-append \
+    0004-winemac.drv-tiny-cursor-clip.diff
+
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
     fallocate \
