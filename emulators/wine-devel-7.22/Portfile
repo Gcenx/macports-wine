@@ -75,7 +75,7 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.3 \
     port:mingw-w64-wine-mono-7.4.0
 
-patch.pre_args -p1
+patch.pre_args-replace -p0 -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
@@ -157,61 +157,12 @@ configure.args \
     --with-unwind \
     --without-usb \
     --without-v4l2 \
+    --without-vulkan \
     --without-x
-
-# winemac.drv is the native display driver, since wine-1.5.26
-variant x11 {
-    depends_lib-append \
-        port:libGLU \
-        port:mesa \
-        port:xorg-libX11 \
-        port:xorg-libXcomposite \
-        port:xorg-libXcursor \
-        port:xorg-libXext \
-        port:xorg-libXi \
-        port:xorg-libXinerama \
-        port:xorg-libXrandr \
-        port:xorg-libXxf86vm \
-        port:xorg-libsm \
-        port:xorg-xorgproto \
-        port:xrender
-
-    configure.args-delete \
-        --without-x
-
-    configure.args-append \
-        --with-osmesa \
-        --with-xcomposite \
-        --with-xcursor \
-        --with-xfixes \
-        --with-xinerama \
-        --with-xinput \
-        --with-xinput2 \
-        --with-xrandr \
-        --with-xrender \
-        --with-xshape \
-        --with-xxf86vm \
-        --with-x \
-        --x-include=${prefix}/include \
-        --x-lib=${prefix}/lib
-}
 
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
-
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
-if {${os.major} >= 15} {
-    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
-        depends_skip_archcheck-append MoltenVK
-    }
-    configure.args.i386     --without-vulkan
-    configure.args.x86_64   --with-vulkan
-    configure.env.x86_64    ac_cv_lib_soname_vulkan=
-} else {
-    configure.args-append   --without-vulkan
-}
 
 if {${os.major} < 15} {
     depends_build-append    port:MacOSX10.11.sdk
