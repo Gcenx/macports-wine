@@ -85,7 +85,7 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-5.1.1
 
-patch.pre_args -p1
+patch.pre_args-replace -p0 -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
