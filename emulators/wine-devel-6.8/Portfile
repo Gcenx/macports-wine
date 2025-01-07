@@ -86,7 +86,7 @@ depends_run \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-6.1.1
 
-patch.pre_args -p1
+patch.pre_args-replace -p0 -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
@@ -170,64 +170,14 @@ configure.args \
     --without-usb \
     --without-v4l2 \
     --without-vkd3d \
+    --without-vulkan \
     --with-xml \
     --with-xslt \
     --without-x
 
-# wine has a native display driver, since wine-1.5.26
-variant x11 {
-    depends_lib-append \
-        port:libGLU \
-        port:mesa \
-        port:xorg-libX11 \
-        port:xorg-libXcomposite \
-        port:xorg-libXcursor \
-        port:xorg-libXext \
-        port:xorg-libXi \
-        port:xorg-libXinerama \
-        port:xorg-libXrandr \
-        port:xorg-libXxf86vm \
-        port:xorg-libsm \
-        port:xorg-xorgproto \
-        port:xrender
-
-    configure.args-delete \
-        --without-x
-
-    configure.args-append \
-        --with-osmesa \
-        --with-xcomposite \
-        --with-xcursor \
-        --with-xfixes \
-        --with-xinerama \
-        --with-xinput \
-        --with-xinput2 \
-        --with-xrandr \
-        --with-xrender \
-        --with-xshape \
-        --with-xshm \
-        --with-xxf86vm \
-        --with-x \
-        --x-include=${prefix}/include \
-        --x-lib=${prefix}/lib
-}
-
 # Standard dlopen() is used so wine(64) no longer finds dylibs, since wine-5.6
 # https://bugs.winehq.org/show_bug.cgi?id=49199
 configure.ldflags-append        -Wl,-rpath,${compiler.library_path}
-
-# Vulkan is supported on macOS through MoltenVK, since wine-3.13
-if {${os.major} >= 15} {
-    depends_lib-append      path:lib/libMoltenVK.dylib:MoltenVK
-    if {"i386" in ${configure.universal_archs}} {
-        depends_skip_archcheck-append MoltenVK
-    }
-    configure.args.i386     --without-vulkan
-    configure.args.x86_64   --with-vulkan
-    configure.env.x86_64    ac_cv_lib_soname_vulkan=
-} else {
-    configure.args-append   --without-vulkan
-}
 
 # MacOSX10.7.SDK opencl isn't new enough, since wine-6.5
 # https://gitlab.winehq.org/wine/wine/-/commit/6b15f4d614fd33ec2c81b377fe6609f2bb7bfa6c
