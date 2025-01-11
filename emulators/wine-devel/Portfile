@@ -219,6 +219,13 @@ variant hacks description "Build ${subport} with additional patchsets" {
 }
 
 if {${os.major} < 19} {
+    # CodeWeavers only tests i386 using MacOSX10.13sdk
+    configure.sdk_version       10.13
+    if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
+        depends_build-append    port:MacOSX${configure.sdk_version}.sdk
+        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
+    }
+
     default_variants            +universal
 
     if {${universal_possible} && [variant_isset universal]} {
