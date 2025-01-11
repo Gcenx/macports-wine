@@ -33,7 +33,6 @@ if [ ! -d "${CX_BOTTLE_PATH}/${CX_BOTTLE}" ]; then
 fi
 
 export WINE="${CX_PATH}/bin/wine"
-export WINE64="${WINE}"
 export WINESERVER="${WINE}server"
 export WINEPREFIX="${CX_BOTTLE_PATH}/${CX_BOTTLE}"
 export WINETRICKS_WINE_VERSION=$(sed -n '2p' "${CX_PATH}/share/wine/wine.inf" | tr ' ' '\a' | awk -F'\a' '{print $4}')
