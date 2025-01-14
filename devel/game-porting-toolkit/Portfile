@@ -9,7 +9,7 @@ github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
 
 name                        game-porting-toolkit
 set my_name                 wine
-revision                    5
+revision                    6
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
@@ -56,7 +56,8 @@ patchfiles-append \
     1003-default-win10-19043.diff \
     1004-mscoree-update-wine-mono-to-7.4.1.diff \
     1005-ntdll-d3dmetal-env.diff \
-    1006-build_fixes.diff
+    1006-build_fixes.diff \
+    1007-steam.diff
 
 post-patch {
     reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
