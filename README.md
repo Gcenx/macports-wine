@@ -15,8 +15,8 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
 - `wine-stable`             *(v9.0)*
-- `wine-devel`              *(v10.0-rc5)*
-- `wine-staging`            *(v10.0-rc5)*
+- `wine-devel`              *(v10.0-rc6)*
+- `wine-staging`            *(v10.0-rc6)*
 - `winetricks`              *(v20250104)*
 - `kegworks`                *(v2.0.3)*
 
