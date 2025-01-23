@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 24.0.5
+version                 24.0.6
 revision                0
 platforms               {darwin any >= 19}
 
@@ -32,9 +32,9 @@ master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
 distname                crossover-${version}
 use_zip                 yes
 
-checksums               rmd160  b62d769ff644122c56c3aef383f76ca8b1c1baa5 \
-                        sha256  b8e9660612c2ce6eed662e1e4b70b3a55070dfdfc0c0db3f726d8ce26da3d2bf \
-                        size    393105596
+checksums               rmd160  9b190781cda8d7bb28649544b0497c3ed5328f3c \
+                        sha256  2f8290d9c4dc32c509616d33dc3dd3de94201514304aefb7bb81abde4ed6b874 \
+                        size    393150147
 
 use_configure           no
 build {
