@@ -7,7 +7,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.0-rc6 wine-
+github.setup                wine-mirror wine 10.0 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -38,9 +38,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  513e07419e01135adc26272d4b2a0669256d7623 \
-    sha256  ae6bd6d52f0748c48f433b395ebe94417007e355d1f0ad24189076ea673cf4b1 \
-    size    51937317
+    rmd160  0807d7f380af0851151b7abd04490a9636b187f1 \
+    sha256  b3edf134a5698d55bd210f11c3ae833c943abcece75810f6aa8cbd7a9f293ff7 \
+    size    51935194
 
 depends_build \
     port:bison \
@@ -159,9 +159,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  4e6a364648ecdeb0225b243d4d693b2a02af1c85 \
-        sha256  453175fb43bf7dc0b17fbe7d2c34a8eebf557d4ba84ed4ed10e612cca191debc \
-        size    9488315
+        rmd160  7c2cac03da0a1d90ae866f28499c53115e3f72b6 \
+        sha256  59eb36a2d9786d28242901458b282d49430bdbacf801af575566dcfc6c2943ea \
+        size    9490601
 
     depends_patch-append    port:autoconf
 
@@ -238,10 +238,10 @@ if {${os.major} < 19} {
             create a new wine prefix. The architecture can be selected using the\
             WINEARCH environment variable which can be set to either \"win32\" or\
             \"win64\".
-
+            \n
             To create a new pure 32-bit prefix, you can run:
                 \$ WINEARCH=win32 WINEPREFIX=~/.wine32 winecfg
-
+            \n
             See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
         "
     } else {
