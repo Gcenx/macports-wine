@@ -70,7 +70,7 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
-    0001-winemac.drv-no-flicker-patch.diff
+    0001-winemac.drv-no-flicker.diff
 
 # Some required hacks to make wine work better on macOS & Rosetta2
 patchfiles-append \
