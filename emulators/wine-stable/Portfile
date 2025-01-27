@@ -54,6 +54,7 @@ depends_lib \
     port:gettext-runtime \
     port:gnutls-devel \
     port:libinotify \
+    port:libpcap \
     port:libsdl2
 
 depends_run \
@@ -114,7 +115,7 @@ configure.args \
     --with-opencl \
     --with-opengl \
     --without-oss \
-    --without-pcap \
+    --with-pcap \
     --with-pcsclite \
     --with-pthread \
     --without-pulse \
