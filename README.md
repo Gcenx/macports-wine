@@ -4,7 +4,7 @@ This branch supports macOS Sierra & later.\
 For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-wine/tree/legacy) branch
 
 ## This repository contains
-- `CrossOver`               *(v24.0.6)*
+- `CrossOver`               *(v24.0.7)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(v1.1)*
 - `gstreamer.framework`     *(v1.24.11)*
