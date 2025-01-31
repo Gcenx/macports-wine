@@ -10,7 +10,7 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `gstreamer.framework`     *(v1.24.11)*
 - `gstreamer-runtime`       *(v1.24.11)*
 - `gstreamer-development`   *(v1.24.11)*
-- `libinotify`              *(v20230908)*
+- `libinotify`              *(v20240724)*
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
 - `wine-stable`             *(v10.0)*
