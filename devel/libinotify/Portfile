@@ -5,8 +5,7 @@ PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
 github.setup                libinotify-kqueue libinotify-kqueue 20240724
-github.tarball_from         releases
-distname                    libinotify-20240724
+github.tarball_from         archive
 # Version must use the following scheme YYYYMMDD
 version                     20240724
 name                        libinotify
@@ -18,9 +17,9 @@ license                     MIT
 description                 Inotify shim for macOS and BSD
 long_description            {*}${description}
 
-checksums                   rmd160  709a954ce0c6c1882b9b6da2626a595d7a4f4626 \
-                            sha256  5cc3fb7af407b17b7daa871cc98bb882716c4b5c296fadfb66bfe86c37cc599c \
-                            size    462788
+checksums                   rmd160  fd1cd0d82b4e0f8e013a67cc27802616535709fd \
+                            sha256  120398ff95336d04f3ce7ac820e0490059625976264100dcc9af9d11e992b0ca \
+                            size    77857
 
 use_autoreconf              yes
 
