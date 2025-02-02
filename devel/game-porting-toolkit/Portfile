@@ -6,9 +6,9 @@ PortGroup                   muniversal 1.1
 
 # Using custom mirror to avoid embedding huge patchfiles
 github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
+github.tarball_from         archive
 
 name                        game-porting-toolkit
-set my_name                 wine
 revision                    6
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
@@ -17,17 +17,16 @@ categories                  devel
 supported_archs             x86_64
 maintainers                 {@Gcenx}
 homepage                    https://developer.apple.com/games
-dist_subdir                 ${my_name}
-distname                    ${github.tag_prefix}${github.version}
+dist_subdir                 wine
 
 description                 Game Porting Toolkit ${version}
 long_description            Use the game porting toolkit to eliminate months of up-front work and \
                             evaluate how well your game could run on Mac before writing any code.
 
 checksums \
-    rmd160  6f48c677bc99bf6584fc4043855f050f8f0c9958 \
-    sha256  8dc978cb2dae0af50d8f2c1b4db637c6fa8261ecc68369e3c5efcf8e84a011a8 \
-    size    46782010
+    rmd160  8784b39cfdbb6d9438227897211cea731e0aedae \
+    sha256  e0c79a0492925c6b8303d778ae88e813f6c49626d8b82e2084568d8b67fcd5bc \
+    size    46785674
 
 depends_build \
     port:bison \
