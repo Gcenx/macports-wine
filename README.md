@@ -1,9 +1,7 @@
 # macports-wine
-A macports overlay that provides recent versions of wine on macOS.\
-This branch supports macOS Sierra & later.\
-For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-wine/tree/legacy) branch
+A MacPorts overlay that provides recent versions of wine.
 
-## This repository contains
+## This repository provides
 - `CrossOver`               *(v24.0.7)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
 - `game-porting-toolkit`    *(v1.1)*
@@ -20,7 +18,7 @@ For older versions of macOS use the [legacy](https://github.com/Gcenx/macports-w
 - `kegworks`                *(v2.0.3)*
 
 ## How to use this repository
-After installing macports you need a modern version of `git`\
+After installing MacPorts you need a modern version of `git`\
 git clone the repository into /opt then follow [4.6. Local Portfile Repositories](https://guide.macports.org/#development.local-repositories)\
 Next run `port -v sync` you can now install any of the provided Ports.
 
