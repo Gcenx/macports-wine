@@ -7,7 +7,7 @@ github.setup        Kegworks-App Winery 2.0.3 v
 github.tarball_from releases
 revision            0
 name                kegworks
-platforms           {darwin >= 19.4}
+platforms           {darwin >= 19}
 license             LGPL-2.1
 categories          emulators
 
@@ -31,4 +31,11 @@ build {}
 destroot {
     move "${workpath}/Winery.app" "${destroot}${applications_dir}/Kegworks Winery.app"
     system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'Kegworks Winery.app'"
+}
+
+pre-activate {
+    if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
+        ui_error "You must first update to macOS 10.15.4."
+        return -code error "You must first update to macOS 10.15.4."
+    }
 }
