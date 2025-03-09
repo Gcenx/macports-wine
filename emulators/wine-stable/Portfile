@@ -144,6 +144,7 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
 # Makes destroot take significantly longer
 variant dev description "Install ${subport} development environment" {
+    configure.optflags-prepend -g
     build.target            all
     destroot.target-append  install-dev
 }
@@ -235,7 +236,7 @@ compiler.limit_flags        yes
 muniversal.arch_flag        no
 muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
-configure.optflags          -g -O2
+configure.optflags          -O2
 configure.env-append        "CROSSCFLAGS=${configure.optflags}"
 
 # Were only installing wine not the development files
