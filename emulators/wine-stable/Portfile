@@ -76,6 +76,10 @@ patchfiles-append \
 patchfiles-append \
     0002-macos_hacks.diff
 
+# Use the Vulkan renderer on macOS for d3d10/11 applications
+patchfiles-append \
+    0003-wined3d-cwhack-18311.diff
+
 # https://bugs.winehq.org/show_bug.cgi?id=57819
 patchfiles-append \
     MR7328.diff

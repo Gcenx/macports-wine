@@ -82,6 +82,10 @@ patchfiles-append \
 patchfiles-append \
     0004-winemac.drv-tiny-cursor-clip.diff
 
+# Use the Vulkan renderer on macOS for d3d10/11 applications
+patchfiles-append \
+    0005-wined3d-cwhack-18311.diff
+
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
     fallocate \
