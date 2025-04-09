@@ -167,8 +167,8 @@ subport wine-staging {
     set py_ver_nodot        [string map {. {}} ${py_ver}]
     depends_patch-append    port:python${py_ver_nodot}
 
-    # Applying staging after other patchfiles to avoid problems
-    post-patch {
+    # Applying staging before other patchfiles
+    pre-patch {
         system -W ${worksrcpath} \
             "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W ntdll-Syscall_Emulation -W winemac.drv-no-flicker-patch"
     }
