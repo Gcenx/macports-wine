@@ -130,6 +130,10 @@ configure.args \
     --without-wayland \
     --without-x
 
+configure.args-append \
+    --disable-winebth_sys \
+    --disable-winemenubuilder
+
 configure.env-append        ac_cv_lib_soname_vulkan=
 
 # We need to tell the linker to add MacPorts to the rpath stack.
