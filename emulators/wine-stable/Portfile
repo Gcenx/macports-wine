@@ -72,7 +72,8 @@ patch.pre_args-replace -p0 -p1
 patchfiles-append \
     0001-winemac.drv-no-flicker.diff \
     0002-winehq_macos_hacks.diff \
-    0003-wined3d-cwhack-18311.diff
+    0003-wined3d-cwhack-18311.diff \
+    0004-winemac.drv-export-essential-apis.diff
 
 patchfiles-append \
     MR6866.diff \
