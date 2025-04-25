@@ -32,9 +32,9 @@ master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
 distname                crossover-${version}
 use_zip                 yes
 
-checksums               rmd160  b9db4b917552f7d57cd90113eb02a8ce4e22fc8f \
-                        sha256  4a9f190f5792a435b62be1cf58133f2120ab670fc0aabfb767a461ac3900ad94 \
-                        size    378166892
+checksums               rmd160  d61d70ca025eece5e31b8b4a26294b5ca6661096 \
+                        sha256  cf980ff0b2774eec403ed7395509a15913a1450391da0fd3ba4bee6f1ba477e3 \
+                        size    378196156
 
 use_configure           no
 build {
