@@ -70,18 +70,12 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
-    0001-winemac.drv-no-flicker.diff
-
-# Some required hacks to make wine work better on macOS & Rosetta2
-patchfiles-append \
-    0002-macos_hacks.diff
-
-# Use the Vulkan renderer on macOS for d3d10/11 applications
-patchfiles-append \
+    0001-winemac.drv-no-flicker.diff \
+    0002-winehq_macos_hacks.diff \
     0003-wined3d-cwhack-18311.diff
 
-# https://bugs.winehq.org/show_bug.cgi?id=57819
 patchfiles-append \
+    MR6866.diff \
     MR7328.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -101,7 +95,6 @@ configure.args.x86_64 \
     --enable-win64
 
 configure.args \
-    --disable-tests \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -138,6 +131,7 @@ configure.args \
     --without-x
 
 configure.args-append \
+    --disable-tests \
     --disable-winebth_sys \
     --disable-winemenubuilder
 
