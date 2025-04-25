@@ -71,14 +71,9 @@ patch.pre_args-replace -p0 -p1
 
 # https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
-    0001-winemac.drv-no-flicker-patch.diff
-
-# Some required hacks to make wine work better on macOS & Rosetta2
-patchfiles-append \
-    0002-macos_hacks.diff
-
-# Required for DXMT
-patchfiles-append \
+    0001-winemac.drv-no-flicker-patch.diff \
+    0002-winehq_macos_hacks.diff \
+    0003-wined3d-cwhack-18311.diff \
     0004-winemac.drv-export-essential-apis.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
@@ -250,9 +245,6 @@ if {${os.major} < 19} {
 
 if {${os.major} > 18} {
     depends_lib-append          path:lib/libMoltenVK.dylib:MoltenVK-latest
-
-    # Use the Vulkan renderer on macOS for d3d10/11 applications
-    patchfiles-append           0003-wined3d-cwhack-18311.diff
 
     configure.args.x86_64-append --enable-archs=i386,x86_64
     configure.args-replace      --without-vulkan --with-vulkan
