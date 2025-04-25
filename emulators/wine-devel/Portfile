@@ -98,7 +98,6 @@ configure.args.x86_64 \
     --enable-win64
 
 configure.args \
-    --disable-tests \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -135,6 +134,7 @@ configure.args \
     --without-x
 
 configure.args-append \
+    --disable-tests \
     --disable-winebth_sys \
     --disable-winemenubuilder
 
