@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 25.0.0
+version                 25.0.1
 revision                0
 platforms               {darwin any >= 19}
 
