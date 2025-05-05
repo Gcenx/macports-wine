@@ -24,9 +24,9 @@ dist_subdir         ${gitlab.project}
 distname            gstreamer-1.0-${version}-universal
 extract.suffix      .pkg
 
-checksums           rmd160  716403a09ab8ea063304a5048b4ba7ecfbb2d99c \
-                    sha256  ffd347927d700c21e3efe052c331b31875451d997d2a2112e0b42911d2a7a6e4 \
-                    size    174750352
+checksums           rmd160  43ba25061bfaf1a86bc2d0dad7cd1fef3b8c8e59 \
+                    sha256  0ca7afacc374e3ad14bd4b839e44317f213aaf6355929d9ff6cf0eef615d1db3 \
+                    size    278008541
 
 extract             {}
 use_configure       no
