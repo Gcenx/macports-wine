@@ -164,10 +164,10 @@ variant gstreamer description "Build ${subport} with GStreamer, for multimedia s
     configure.args-replace  --without-gstreamer --with-gstreamer
 
     pre-configure {
-        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
-        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
         configure.env-append    "FFMPEG_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags libavutil libavformat libavcodec]"
         configure.env-append    "FFMPEG_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs libavutil libavformat libavcodec]"
+        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
+        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
     }
 
     post-configure {
