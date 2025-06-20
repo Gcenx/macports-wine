@@ -74,7 +74,8 @@ patchfiles-append \
     0001-winemac.drv-no-flicker-patch.diff \
     0002-winehq_macos_hacks.diff \
     0003-wined3d-cwhack-18311.diff \
-    0004-winemac.drv-export-essential-apis.diff
+    0004-winemac.drv-export-essential-apis.diff \
+    0005-wined3d-cwhack-18838.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
