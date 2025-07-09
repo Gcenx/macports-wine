@@ -174,7 +174,7 @@ subport wine-staging {
     # Applying staging before other patchfiles
     pre-patch {
         system -W ${worksrcpath} \
-            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W eventfd_synchronization -W ntdll-Syscall_Emulation -W winemac.drv-no-flicker-patch"
+            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W ntdll-Syscall_Emulation -W winemac.drv-no-flicker-patch"
     }
 }
 
