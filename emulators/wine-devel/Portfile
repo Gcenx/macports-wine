@@ -7,7 +7,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.11 wine-
+github.setup                wine-mirror wine 10.12 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -38,9 +38,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  8c8f58fd7e971cbf679980b4d504356820bbfdaa \
-    sha256  585a3db9be3da0357758a4f1538f2f0398206f12045c78e3c162528c9cdc21f7 \
-    size    52853514
+    rmd160  b18fa0fc817b5616f083f7dc3f15f4376cc73f03 \
+    sha256  b34c00352e7d5aa2509e11323c73ee9bbcd67125b33c42cc9ba91e0f7ca7886d \
+    size    52903039
 
 depends_build \
     port:bison \
@@ -69,13 +69,11 @@ post-extract {
 
 patch.pre_args-replace -p0 -p1
 
-# https://bugs.winehq.org/show_bug.cgi?id=34166#c103
 patchfiles-append \
-    0001-winemac.drv-no-flicker-patch.diff \
-    0002-winehq_macos_hacks.diff \
-    0003-wined3d-cwhack-18311.diff \
-    0004-winemac.drv-export-essential-apis.diff \
-    0005-wined3d-cwhack-18838.diff
+    0001-winehq_macos_hacks.diff \
+    0002-wined3d-cwhack-18311.diff \
+    0003-wined3d-cwhack-18838.diff \
+    0004-winemac.drv-export-essential-apis.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -158,9 +156,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  7076708ce665097e3754213d3636b37716ffa906 \
-        sha256  de0e30ebb11bd4cdcf5f70d1349dc26bf1ed2ac6e089d91be7a18ce13855ebc3 \
-        size    9513801
+        rmd160  327d2400904ef854725f2d70d1bf5432e8715b52 \
+        sha256  f08ddb0f5a39f24bf7ddbd8e78b52a04c48b9bed50ac10144c9aceca5d45ed28 \
+        size    9508211
 
     depends_patch-append    port:autoconf
 
@@ -174,7 +172,7 @@ subport wine-staging {
     # Applying staging before other patchfiles
     pre-patch {
         system -W ${worksrcpath} \
-            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W ntdll-Syscall_Emulation -W winemac.drv-no-flicker-patch"
+            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W ntdll-Syscall_Emulation"
     }
 }
 
