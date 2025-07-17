@@ -12,7 +12,7 @@ github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-revision                    0
+revision                    1
 # MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina 10.15.4
 platforms                   {darwin > 15 != 18.*}
 set branch                  [lindex [split ${version} .] 0].x
@@ -71,9 +71,8 @@ patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
     0001-winehq_macos_hacks.diff \
-    0002-wined3d-cwhack-18311.diff \
-    0003-wined3d-cwhack-18838.diff \
-    0004-winemac.drv-export-essential-apis.diff
+    0002-ntdll-winedllpath-env.diff \
+    0003-winemac.drv-export-essential-apis.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -141,10 +140,6 @@ configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 # FSF GCC cannot compile code using Apple's "blocks" language extensions
 compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
-#if {${subport} eq "wine-devel"} {
-#    patchfiles-append       1001-devel-msync.diff
-#}
-
 subport wine-staging {
     conflicts               wine-stable wine-devel wine-crossover
     set staging_version     ${version}
@@ -162,8 +157,7 @@ subport wine-staging {
 
     depends_patch-append    port:autoconf
 
-    #patchfiles-append       1001-staging-msync.diff
-    patchfiles-append       1002-staging-macos_hacks.diff
+    patchfiles-append       1001-staging-macos_hacks.diff
 
     set py_ver              3.13
     set py_ver_nodot        [string map {. {}} ${py_ver}]
