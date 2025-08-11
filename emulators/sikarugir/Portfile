@@ -3,10 +3,10 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        Kegworks-App Winery 2.0.4 v
+github.setup        Sikarugir-App Creator 1.0 v 
 github.tarball_from releases
 revision            0
-name                kegworks
+name                sikarugir
 platforms           {darwin >= 19}
 # Winery is LGPL-2.1 but will be changed later once the new codebase it finished
 license             LGPL-2.1
@@ -14,12 +14,12 @@ categories          emulators
 
 supported_archs     x86_64
 maintainers         {@Gcenx}
-homepage            https://github.com/Kegworks-App/Kegworks/
+homepage            https://github.com/Sikarugir-App/Sikarugir/
 
 description         ${name} is a user-friendly tool used to make ports of Microsoft Windows software to Apple's macOS.
 long_description    {*}${description}
 
-distname            winery-v${version}
+distname            creator-v${version}
 use_xz              yes
 
 checksums           rmd160  b9dfd427ae09246a12f28a780c538bfc3f94a109 \
