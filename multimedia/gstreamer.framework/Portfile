@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        Kegworks-App gstreamer 1.26.2
+github.setup        Kegworks-App gstreamer 1.26.5
 github.tarball_from releases
 revision            0
 
@@ -23,9 +23,9 @@ dist_subdir         ${github.project}
 distname            ${name}-1.0-${github.version}-x86_64
 use_xz              yes
 
-checksums           rmd160  4e43443e7f021db321b1984bb8f5c900bc8aacd9 \
-                    sha256  67c2b4df407775968cd0d13e8ec4f3dac1cd137acceec7fabba447ab8e20171c \
-                    size    157992676
+checksums           rmd160  42aecb3874cca200fb4c6f7d8ca06eea1805dd08 \
+                    sha256  7f02be831ec3564d98d5f7f460f7273a059155e9ce3d7fcc0a8e6f775651cb81 \
+                    size    179463232
 
 use_configure       no
 build {}
