@@ -6,12 +6,12 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.12 wine-
+github.setup                wine-mirror wine 10.13 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 set my_name                 wine
-revision                    1
+revision                    0
 # MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina 10.15.4
 platforms                   {darwin > 15 != 18.*}
 set branch                  [lindex [split ${version} .] 0].x
@@ -37,9 +37,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  b18fa0fc817b5616f083f7dc3f15f4376cc73f03 \
-    sha256  b34c00352e7d5aa2509e11323c73ee9bbcd67125b33c42cc9ba91e0f7ca7886d \
-    size    52903039
+    rmd160  28870ac212fe76c012fa2accf082ecc2b816ee83 \
+    sha256  dcc97cafaefe12467cf1035f161bf8c2146e0daa7acae12eec4570a93cbf7217 \
+    size    53019259
 
 depends_build \
     port:bison \
@@ -69,9 +69,7 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
-    0001-winehq_macos_hacks.diff \
-    0002-ntdll-winedllpath-env.diff \
-    0003-winemac.drv-export-essential-apis.diff
+    0001-winehq_macos_hacks.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -150,9 +148,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  327d2400904ef854725f2d70d1bf5432e8715b52 \
-        sha256  f08ddb0f5a39f24bf7ddbd8e78b52a04c48b9bed50ac10144c9aceca5d45ed28 \
-        size    9508211
+        rmd160  02d9f6b8c5f2c38ac15b5867da5e0251f5658e5a \
+        sha256  e8e7133ede1c5e7a0ec85fdf54a6e0292d3d15a2830d8a31f0bdbdd7b0532bb8 \
+        size    9586213
 
     depends_patch-append    port:autoconf
 
