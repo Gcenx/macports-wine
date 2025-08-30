@@ -21,7 +21,7 @@ build {}
 
 if {${subport} eq ${name}} {
     PortGroup       stub 1.0
-    version         10.1.0
+    version         10.2.0
     revision        0
     depends_run     port:mingw-w64-wine-mono-${version}
 
@@ -31,6 +31,17 @@ if {${subport} eq ${name}} {
             registry_deactivate_composite mingw-w64-wine-mono-${version} "" [list ports_nodepcheck 1]
         }
     }
+}
+
+# wine-devel (10.14)
+subport ${name}-10.2.0 {
+    version         10.2.0
+    revision        0
+    distname        wine-mono-${version}-x86
+    checksums       rmd160  6b1e0ad2fbf4589daf6990da2486a0efa03b46e6 \
+                    sha256  ba12894e566944be8a04fdae62e0ebe0908a159020ab9a4e72ac4db774732de0 \
+                    size    39565980
+    use_xz          yes
 }
 
 # wine-devel (10.10)
