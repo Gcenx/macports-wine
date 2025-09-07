@@ -258,6 +258,8 @@ post-destroot {
     if {[variant_isset gstreamer]} {
         system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${compiler.library_path}/wine/x86_64-unix/winedmo.so"
         system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${compiler.library_path}/wine/x86_64-unix/winegstreamer.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --deep --force --sign - winedmo.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --deep --force --sign - winegstreamer.so"
     }
 }
 
