@@ -19,7 +19,7 @@ build {}
 
 subport MacOSX15.sdk {
     github.setup        gcenx macos-sdk 15.5
-    set macos_name      {macOS Sequoia ${version}}
+    set macos_name      {macOS Sequoia}
     set xcode_vers      16.4
     revision            0
     supported_archs     arm64 x86_64
@@ -38,7 +38,7 @@ subport MacOSX15.sdk {
 
 subport MacOSX14.sdk {
     github.setup        gcenx macos-sdk 14.5
-    set macos_name      {macOS Sonoma ${version}}
+    set macos_name      {macOS Sonoma}
     set xcode_vers      15.4
     revision            0
     supported_archs     arm64 x86_64
@@ -57,7 +57,7 @@ subport MacOSX14.sdk {
 
 subport MacOSX13.sdk {
     github.setup        gcenx macos-sdk 13.3
-    set macos_name      {macOS Ventura ${version}}
+    set macos_name      {macOS Ventura}
     set xcode_vers      14.3
     revision            0
     supported_archs     arm64 x86_64
@@ -76,7 +76,7 @@ subport MacOSX13.sdk {
 
 subport MacOSX12.sdk {
     github.setup        gcenx macos-sdk 12.3
-    set macos_name      {macOS Montery ${version}}
+    set macos_name      {macOS Montery}
     set xcode_vers      13.3
     revision            0
     supported_archs     arm64 x86_64
@@ -95,7 +95,7 @@ subport MacOSX12.sdk {
 
 subport MacOSX11.sdk {
     github.setup        gcenx macos-sdk 11.3
-    set macos_name      {macOS Big Sur ${version}}
+    set macos_name      {macOS Big Sur}
     set xcode_vers      12.5
     revision            0
     supported_archs     arm64 x86_64
