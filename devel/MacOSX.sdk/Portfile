@@ -17,9 +17,28 @@ set sdk_dir             ${prefix}/Developer/SDKs
 use_configure           no
 build {}
 
+subport MacOSX15.sdk {
+    github.setup        gcenx macos-sdk 15.5
+    set macos_name      {macOS Sequoia ${version}}
+    set xcode_vers      16.4
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-16_4-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  06eb1bf497d8b2923b83b97c07d9eb665b8c3578 \
+                        sha256  ed6c699c840f27bf0f3bdfb4ee83977c2baf830fa66680226b0c1ce9eae48e81 \
+                        size    75733323
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX15.5.sdk ${destroot}${sdk_dir}/MacOSX15.sdk
+    }
+}
+
 subport MacOSX14.sdk {
     github.setup        gcenx macos-sdk 14.5
-    set macos_name      {macOS Sonoma}
+    set macos_name      {macOS Sonoma ${version}}
     set xcode_vers      15.4
     revision            0
     supported_archs     arm64 x86_64
@@ -32,15 +51,13 @@ subport MacOSX14.sdk {
 
     post-build {
         xinstall -d ${destroot}${sdk_dir}
-        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.4.sdk
-        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.2.sdk
         ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.sdk
     }
 }
 
 subport MacOSX13.sdk {
     github.setup        gcenx macos-sdk 13.3
-    set macos_name      {macOS Montery}
+    set macos_name      {macOS Ventura ${version}}
     set xcode_vers      14.3
     revision            0
     supported_archs     arm64 x86_64
@@ -53,15 +70,13 @@ subport MacOSX13.sdk {
 
     post-build {
         xinstall -d ${destroot}${sdk_dir}
-        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.2.sdk
-        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.1.sdk
         ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.sdk
     }
 }
 
 subport MacOSX12.sdk {
     github.setup        gcenx macos-sdk 12.3
-    set macos_name      {macOS Montery}
+    set macos_name      {macOS Montery ${version}}
     set xcode_vers      13.3
     revision            0
     supported_archs     arm64 x86_64
@@ -74,15 +89,13 @@ subport MacOSX12.sdk {
 
     post-build {
         xinstall -d ${destroot}${sdk_dir}
-        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.2.sdk
-        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.1.sdk
         ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.sdk
     }
 }
 
 subport MacOSX11.sdk {
     github.setup        gcenx macos-sdk 11.3
-    set macos_name      {macOS Big Sur}
+    set macos_name      {macOS Big Sur ${version}}
     set xcode_vers      12.5
     revision            0
     supported_archs     arm64 x86_64
@@ -95,8 +108,6 @@ subport MacOSX11.sdk {
 
     post-build {
         xinstall -d ${destroot}${sdk_dir}
-        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.2.sdk
-        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.1.sdk
         ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.sdk
     }
 }
@@ -143,60 +154,6 @@ subport MacOSX10.13.sdk {
                         size    32183283
 }
 
-subport MacOSX10.12.sdk {
-    github.setup        gcenx macos-sdk 10.12
-    set macos_name      {macOS Sierra}
-    set xcode_vers      8.3
-    revision            0
-    supported_archs     i386 x86_64
-    homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_12Notes
-
-    distname            MacOSX${version}
-    checksums           rmd160  282f73e728c72406b936ce6a658786e63c7897ba \
-                        sha256  fd4e1151056f34f76b5930cb45b9cd859414acbc3f6529c0c0ecaaf2566823ff \
-                        size    36301027
-
-    post-build {
-        # AMDil_r700.dylib is not a valid dylib and also links to
-        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk (rev-upgrade)
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
-
-        # ContactsAgent.framework contains a .tbd stub and a binary within /Executables remove it (rev-upgrade)
-        file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/ContactsAgent.framework/Executables
-    }
-}
-
-subport MacOSX10.11.sdk {
-    github.setup        gcenx macos-sdk 10.11
-    set macos_name      {OS X El Capitan}
-    set xcode_vers      7.3
-    revision            0
-    supported_archs     i386 x86_64
-    homepage            https://developer.apple.com/library/archive/releasenotes/Foundation/RN-FoundationOlderNotes/index.html#X10_11Notes
-
-    distname            MacOSX${version}
-    checksums           rmd160  174d1ecd797d50eea7a067e8396ae12dbc4d0b26 \
-                        sha256  2e28c2eeb716236d89ea3d12a228e291bdab875c50f013a909f3592007f21484 \
-                        size    36006642
-
-    post-build {
-        # AMDil_r700.dylib is not a valid dylib and also links to
-        # /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/Legacy/libLLVMContainer.dylib
-        # The following dylib files were removed from Xcode_9.3 MacOSX10.13.sdk (rev-upgrade)
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil_r700.dylib
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/AMDil.dylib
-        file delete ${workpath}/MacOSX${version}.sdk/System/Library/Frameworks/OpenCL.framework/Versions/A/Libraries/IGIL.dylib
-
-        # iTunesAccess.framework contains a binary not a .tbd stub (rev-upgrade)
-        if {${os.major} > 18} {
-            file delete -force ${workpath}/MacOSX${version}.sdk/System/Library/PrivateFrameworks/iTunesAccess.framework
-        }
-    }
-}
-
 # Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
 
 pre-destroot {
@@ -204,7 +161,7 @@ pre-destroot {
 }
 
 if {${subport} eq ${name}} {
-    version             14
+    version             15
     revision            0
     description         latest macOS SDK
     long_description    This port installs a symlink to the latest macOS SDK.
