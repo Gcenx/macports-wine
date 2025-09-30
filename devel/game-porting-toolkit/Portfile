@@ -5,7 +5,7 @@ PortGroup                   github 1.0
 PortGroup                   muniversal 1.1
 
 # Using custom mirror to avoid embedding huge patchfiles
-github.setup                gcenx game-porting-toolkit 1.1 Game-Porting-Toolkit-
+github.setup                gcenx wine 3a8755fc3e6067fb55b5156812b7418696ef0407
 github.tarball_from         archive
 
 name                        game-porting-toolkit
@@ -24,9 +24,9 @@ long_description            Use the game porting toolkit to eliminate months of 
                             evaluate how well your game could run on Mac before writing any code.
 
 checksums \
-    rmd160  8784b39cfdbb6d9438227897211cea731e0aedae \
-    sha256  e0c79a0492925c6b8303d778ae88e813f6c49626d8b82e2084568d8b67fcd5bc \
-    size    46785674
+    rmd160  505178f6a42b53fe1c7297ba7ba2249fbf7d0b99 \
+    sha256  972ff467cc73dcd3d69448f6baf013693c5841d28107959c266504058651c8c0 \
+    size    46810271
 
 depends_build \
     port:bison \
@@ -51,11 +51,8 @@ patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
     1001-configure-remove-cross_compiling-check.diff \
-    1002-server-remove-cxhack-21217.diff \
-    1003-default-win10-19043.diff \
-    1004-mscoree-update-wine-mono-to-7.4.1.diff \
-    1005-ntdll-d3dmetal-env.diff \
-    1006-build_fixes.diff
+    1002-ntdll-d3dmetal-env.diff \
+    1003-build_fixes.diff
 
 post-patch {
     reinplace -q "s|;(cw)||g"               ${worksrcpath}/loader/wine.inf.in
