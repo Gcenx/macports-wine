@@ -172,7 +172,8 @@ configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -O3
 
 # Compiler flags for PE binaries.
-configure.env-append        "CROSSCFLAGS=${configure.optflags} -Wno-error=incompatible-pointer-types -Wno-error=int-conversion"
+# GCC 15 now uses -std=gnu23 causing build failures
+configure.env-append        "CROSSCFLAGS=${configure.optflags} -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -std=gnu17"
 
 # Were only installing wine not the development files
 destroot.target             install-lib
