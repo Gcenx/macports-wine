@@ -9,6 +9,7 @@ github.setup                gcenx wine 3a8755fc3e6067fb55b5156812b7418696ef0407
 github.tarball_from         archive
 
 name                        game-porting-toolkit
+version                     1.1
 revision                    6
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
