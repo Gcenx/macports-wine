@@ -10,7 +10,7 @@ github.tarball_from         archive
 
 name                        game-porting-toolkit
 version                     1.1
-revision                    6
+revision                    7
 platforms                   {darwin >= 23}
 license                     LGPL-2.1+
 categories                  devel
