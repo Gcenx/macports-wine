@@ -8,6 +8,8 @@ github.tarball_from releases
 revision            0
 name                sikarugir
 platforms           {darwin >= 19}
+# Winery is LGPL-2.1 but will be changed later once the new codebase it finished
+license             LGPL-2.1
 categories          emulators
 
 supported_archs     x86_64
