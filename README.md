@@ -14,8 +14,8 @@ A MacPorts overlay that provides recent versions of wine.
 - `MacOSX.sdk`              *(Multiple MacOSX SDKs)*
 - `mingw-w64-pkgconfig`
 - `wine-stable`             *(v10.0)*
-- `wine-devel`              *(v10.15)*
-- `wine-staging`            *(v10.15)*
+- `wine-devel`              *(v10.16)*
+- `wine-staging`            *(v10.16)*
 - `winetricks`              *(v20250415)*
 - `sikarugir`               *(v1.0)*
 
