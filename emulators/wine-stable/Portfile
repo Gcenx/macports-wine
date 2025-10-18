@@ -12,7 +12,7 @@ name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
 set my_name                 wine
 revision                    0
-# MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina 10.15.4
+# MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina
 platforms                   {darwin > 15 != 18.*}
 set branch                  [lindex [split ${version} .] 0].0
 license                     LGPL-2.1+
@@ -157,16 +157,15 @@ variant gphoto description "Build ${subport} with support for digital cameras" {
 }
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_build-append    port:gstreamer-development
-    depends_lib-append      port:gstreamer-runtime
+    depends_lib-append      path:Library/Frameworks/GStreamer.framework:gstreamer.framework
     configure.args-replace  --without-ffmpeg --with-ffmpeg
     configure.args-replace  --without-gstreamer --with-gstreamer
 
     pre-configure {
-        configure.env-append    "FFMPEG_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags libavutil libavformat libavcodec]"
-        configure.env-append    "FFMPEG_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs libavutil libavformat libavcodec]"
-        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
-        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
+        configure.env-append    "FFMPEG_CFLAGS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --cflags libavutil libavformat libavcodec]"
+        configure.env-append    "FFMPEG_LIBS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --libs libavutil libavformat libavcodec]"
+        configure.env-append    "GSTREAMER_CFLAGS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
+        configure.env-append    "GSTREAMER_LIBS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0]"
     }
 
     post-configure {
@@ -256,18 +255,9 @@ post-destroot {
         ${destroot}${docdir}
 
     if {[variant_isset gstreamer]} {
-        system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${compiler.library_path}/wine/x86_64-unix/winedmo.so"
-        system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${compiler.library_path}/wine/x86_64-unix/winegstreamer.so"
-        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --deep --force --sign - winedmo.so"
-        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --deep --force --sign - winegstreamer.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winedmo.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winegstreamer.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --force --sign - winedmo.so"
+        system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/codesign --force --sign - winegstreamer.so"
     }
 }
-
-pre-activate {
-    if {${os.major} == 19 && ${os.minor} < 4 && ${os.platform} eq "darwin"} {
-        ui_error "You must first update to macOS 10.15.4."
-        return -code error "You must first update to macOS 10.15.4."
-    }
-}
-
-github.livecheck.branch     stable

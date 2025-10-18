@@ -133,13 +133,12 @@ if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version
 macosx_deployment_target    10.14
 
 variant gstreamer description "Build ${subport} with GStreamer, for multimedia support" {
-    depends_build-append    port:gstreamer-development
-    depends_lib-append      port:gstreamer-runtime
+    depends_lib-append      path:Library/Frameworks/GStreamer.framework:gstreamer.framework
     configure.args-replace  --without-gstreamer --with-gstreamer
 
     pre-configure {
-        configure.env-append    "GSTREAMER_CFLAGS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
-        configure.env-append    "GSTREAMER_LIBS=[exec /Library/Frameworks/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
+        configure.env-append    "GSTREAMER_CFLAGS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --cflags gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
+        configure.env-append    "GSTREAMER_LIBS=[exec ${frameworks_dir}/GStreamer.framework/Commands/pkg-config --libs gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0]"
     }
 
     post-configure {
@@ -217,12 +216,12 @@ post-destroot {
         gameportingtoolkit-no-hud
 
     if {[variant_isset gstreamer]} {
-        system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/winegstreamer.so"
-        system "install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix/winegstreamer.so"
-        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/codesign --deep --force --sign - winegstreamer.so"
-        system "install_name_tool -delete_rpath ${compiler.library_path} ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix/winegstreamer.so"
-        system "install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix/winegstreamer.so"
-        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/codesign --deep --force --sign - winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/codesign --force --sign - winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external winegstreamer.so"
+        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/codesign --force --sign - winegstreamer.so"
     }
 }
 
