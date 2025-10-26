@@ -45,6 +45,7 @@ depends_lib \
     port:libsdl2
 
 depends_run \
+    port:d3dmetal \
     port:mingw-w64-wine-gecko-2.47.2 \
     port:mingw-w64-wine-mono-7.4.1
 
@@ -225,19 +226,12 @@ post-destroot {
     }
 }
 
-platform darwin arm {
-    depends_run-append      port:d3dmetal
-}
-
-# MacPorts arm buildbots won't build for x86_64 so don't error out on Intel so the Intel buildbot can build it
 platform darwin i386 {
     pre-fetch {
         if {${os.major} >= 23} {
             set is_rosetta2 [exec sysctl -in sysctl.proc_translated]
             if { ${is_rosetta2} != 1 } {
                 error "${name} does not work on Intel hardware"
-            } else {
-                depends_run-append  port:d3dmetal
             }
         }
     }
