@@ -9,7 +9,7 @@ index d5901d86..676799c9 100644
  static void set_dll_path(void)
  {
      char *p, *path = getenv( "WINEDLLPATH" );
-+    char *path_prepend = getenv( "D3DMETALPATH" );
++    char *path_prepend = getenv( "WINEDLLPATH_PREPEND" );
      int i, count = 0;
  
 -    if (path) for (p = path, count = 1; *p; p++) if (*p == ':') count++;
