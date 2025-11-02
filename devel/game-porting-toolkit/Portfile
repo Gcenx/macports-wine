@@ -7,14 +7,12 @@ PortGroup                   muniversal 1.1
 # Using custom mirror to avoid embedding huge patchfiles
 github.setup                gcenx wine 3a8755fc3e6067fb55b5156812b7418696ef0407
 github.tarball_from         archive
-
 name                        game-porting-toolkit
 version                     1.1
 revision                    7
 platforms                   {darwin any >= 23}
 license                     LGPL-2.1+
 categories                  devel
-
 supported_archs             x86_64
 maintainers                 {@Gcenx}
 homepage                    https://developer.apple.com/games
@@ -78,11 +76,10 @@ configure.pre_args.i386 \
     --enable-win32on64 \
     --disable-loader
 
+configure.args.x86_64 \
+    --enable-win64
+
 configure.args \
-    --enable-win64 \
-    --disable-tests \
-    --disable-winedbg \
-    --disable-winemenubuilder \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -116,8 +113,13 @@ configure.args \
     --without-vulkan \
     --without-x
 
-# We need to tell the linker to add MacPorts & d3dmetal to the rpath stack.
-configure.ldflags-append    -Wl,-rpath,${compiler.library_path} -Wl,-rpath,${prefix}/libexec/d3dmetal/external
+configure.args-append \
+    --disable-tests \
+    --disable-winedbg \
+    --disable-winemenubuilder
+
+# We need to tell the linker to add MacPorts to the rpath stack.
+configure.ldflags-append    -Wl,-rpath,${compiler.library_path}
 
 # Xcode15 linker requires -ld_classic to enable legacy behaviours required to build wine
 configure.ldflags-prepend   -Wl,-ld_classic
@@ -202,9 +204,6 @@ post-destroot {
     ln -sf ${prefix}/share/wine/gecko ${destroot}${prefix}/libexec/${name}/share/wine/gecko
     ln -sf ${prefix}/share/wine/mono ${destroot}${prefix}/libexec/${name}/share/wine/mono
 
-    file copy ${destroot}${prefix}/libexec/${name}/bin/wine64           ${destroot}${prefix}/libexec/${name}/bin/wine
-    file copy ${destroot}${prefix}/libexec/${name}/bin/wine64-preloader ${destroot}${prefix}/libexec/${name}/bin/wine-preloader
-
     xinstall -W ${filespath} \
         gameportingtoolkit \
         gameportingtoolkit-no-esync \
@@ -216,12 +215,19 @@ post-destroot {
         gameportingtoolkit-no-esync \
         gameportingtoolkit-no-hud
 
+    system -W ${destroot}${prefix}/libexec/${name}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64"
+    system -W ${destroot}${prefix}/libexec/${name}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64-preloader"
+    system -W ${destroot}${prefix}/libexec/${name}/bin "/usr/bin/codesign --force --sign - wine64"
+    system -W ${destroot}${prefix}/libexec/${name}/bin "/usr/bin/codesign --force --sign - wine64-preloader"
+
+    # Help ntdll.so find libd3dshared.dylib
+    system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/install_name_tool -add_rpath ${prefix}/libexec/d3dmetal/external ntdll.so"
+    system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/codesign --force --sign - ntdll.so"
+
     if {[variant_isset gstreamer]} {
         system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winegstreamer.so"
-        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external winegstreamer.so"
         system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_64-unix "/usr/bin/codesign --force --sign - winegstreamer.so"
         system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winegstreamer.so"
-        system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/install_name_tool -delete_rpath ${prefix}/libexec/d3dmetal/external winegstreamer.so"
         system -W ${destroot}${prefix}/libexec/${name}/lib/wine/x86_32on64-unix "/usr/bin/codesign --force --sign - winegstreamer.so"
     }
 }
