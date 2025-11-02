@@ -6,11 +6,10 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.17 wine-
+github.setup                wine-mirror wine 10.18 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
-set my_name                 wine
 revision                    0
 # MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina
 platforms                   {darwin > 15 != 18.*}
@@ -20,7 +19,7 @@ categories                  emulators
 supported_archs             i386 x86_64
 maintainers                 {@Gcenx}
 homepage                    https://www.winehq.org
-dist_subdir                 ${my_name}
+dist_subdir                 wine
 
 description \
     A Windows API implementation
@@ -37,9 +36,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  7b4ed63a195a225283527ed8c601ce8f6a48d75e \
-    sha256  644fb67dd9c46b7435ab96873b7838481a36f866481596268b68b20af80e1e3e \
-    size    53372449
+    rmd160  c11be56aa7d3380805d2fdb4c94dbf516615a7ef \
+    sha256  3c0f135d78aaded9bd1368eeb74b2a13906eaba1647dc92e13fcce3c0468461a \
+    size    53449832
 
 depends_build \
     port:bison \
@@ -148,9 +147,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  efbe3231c41291937c3614d9f397400bcbe71f62 \
-        sha256  1f6e9dd47f3ccdc6ecc77d5e769d937123440faa6fea34617bbd065f11acbcd6 \
-        size    9445094
+        rmd160  027c17381345b113b10d50c805292ffa38dee526 \
+        sha256  e8f3a522e9c02b2caff15d857ab12071f10a47101f68b8d2b17c846aec2f4bb9 \
+        size    9450101
 
     depends_patch-append    port:autoconf
 
@@ -261,7 +260,7 @@ configure.env-append        "CROSSCFLAGS=${configure.optflags}"
 destroot.target             install-lib
 
 post-destroot {
-    set docdir ${prefix}/share/doc/${my_name}
+    set docdir ${prefix}/share/doc/${subport}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
         ANNOUNCE.md \
@@ -270,6 +269,24 @@ post-destroot {
         LICENSE \
         README.md \
         ${destroot}${docdir}
+
+    system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine"
+    system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine"
+
+    if {[file exists ${destroot}${prefix}/bin/wine-preloader]} {
+        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine-preloader"
+        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine-preloader"
+    }
+
+    if {[file exists ${destroot}${prefix}/bin/wine64]} {
+        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64"
+        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine64"
+    }
+
+    if {[file exists ${destroot}${prefix}/bin/wine64-preloader]} {
+        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64-preloader"
+        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine64-preloader"
+    }
 
     if {[variant_isset gstreamer]} {
         system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winedmo.so"
