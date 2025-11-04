@@ -377,88 +377,10 @@ index 6f05212c32d..21fb196532f 100644
      sig_act.sa_flags = SA_SIGINFO | SA_RESTART | SA_ONSTACK;
  
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index 9589c5072fd..fff502a0c2c 100644
+index 9589c5072fd..4b7567dece6 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -71,6 +71,7 @@
- # include <mach/thread_state.h>
- # include <mach/vm_map.h>
- #undef host_page_size
-+# include <sys/utsname.h> /* CrossOver Hack #22011 */
- #endif
- 
- #if defined(HAVE_LINUX_USERFAULTFD_H) && defined(HAVE_LINUX_FS_H)
-@@ -1977,6 +1978,42 @@ static int mprotect_range( void *base, size_t size, BYTE set, BYTE clear )
- }
- 
- 
-+#ifdef __APPLE__
-+static BOOL is_catalina_or_later(void)
-+{
-+    static int result = -1;
-+    struct utsname name;
-+    unsigned major, minor;
-+
-+    if (result == -1)
-+    {
-+        result = (uname(&name) == 0 &&
-+                  sscanf(name.release, "%u.%u", &major, &minor) == 2 &&
-+                  major >= 19 /* macOS 10.15 Catalina */);
-+    }
-+    return (result == 1) ? TRUE : FALSE;
-+}
-+#endif
-+
-+
-+static void *wine_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
-+{
-+#if defined(__APPLE__) && defined(__x86_64__)
-+    // In Catalina-and-later, mapping files with execute permissions can make
-+    // Gatekeeper prompt the user, or just fail outright.
-+    if (!(flags & MAP_ANON) && fd >= 0 && prot & PROT_EXEC && is_catalina_or_later())
-+    {
-+        void *ret = mmap(addr, len, prot & ~PROT_EXEC, flags, fd, offset);
-+
-+        if (ret != MAP_FAILED && mprotect(ret, len, prot))
-+            WARN("failed to mprotect region: %d\n", errno);
-+        return ret;
-+    }
-+#endif
-+    return mmap(addr, len, prot, flags, fd, offset);
-+}
-+
-+
- /***********************************************************************
-  *           set_vprot
-  *
-@@ -2393,7 +2430,7 @@ static NTSTATUS map_file_into_view( struct file_view *view, int fd, size_t start
-        and if alignment is correct */
-     if ((!removable || (flags & MAP_SHARED)) && host_addr == map_addr && host_size == map_size)
-     {
--        if (mmap( host_addr, host_size, prot, flags, fd, offset ) != MAP_FAILED)
-+        if (wine_mmap( host_addr, host_size, prot, flags, fd, offset ) != MAP_FAILED)
-             return STATUS_SUCCESS;
- 
-         switch (errno)
-@@ -2751,7 +2788,7 @@ static NTSTATUS map_pe_header( void *ptr, size_t size, size_t map_size, int fd,
- 
-     if (!*removable && map_size)
-     {
--        if (mmap( ptr, map_size, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, fd, 0 ) != MAP_FAILED)
-+        if (wine_mmap( ptr, map_size, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, fd, 0 ) != MAP_FAILED)
-         {
-             if (size > map_size) pread( fd, (char *)ptr + map_size, size - map_size, map_size );
-             return STATUS_SUCCESS;
-@@ -4417,7 +4454,7 @@ void virtual_map_user_shared_data(void)
-         exit(1);
-     }
-     if ((res = server_get_unix_fd( section, 0, &fd, &needs_close, NULL, NULL )) ||
--        (user_shared_data != mmap( user_shared_data, page_size, PROT_READ, MAP_SHARED|MAP_FIXED, fd, 0 )))
-+        (user_shared_data != wine_mmap( user_shared_data, page_size, PROT_READ, MAP_SHARED|MAP_FIXED, fd, 0 )))
-     {
-         ERR( "failed to remap the process USD: %d\n", res );
-         exit(1);
-@@ -4566,6 +4603,27 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4566,6 +4566,27 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
          WARN( "treating read fault in a readable page as a write fault, addr %p\n", addr );
          err = EXCEPTION_WRITE_FAULT;
      }
@@ -486,16 +408,18 @@ index 9589c5072fd..fff502a0c2c 100644
  #endif
  
      if (!is_inside_signal_stack( stack ) && (vprot & VPROT_GUARD))
-@@ -4602,6 +4660,8 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4602,6 +4623,10 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
                  ret = STATUS_SUCCESS;
          }
      }
 +
++#ifdef __APPLE__
 +done:
++#endif
      mutex_unlock( &virtual_mutex );
      rec->ExceptionCode = ret;
      return ret;
-@@ -6726,6 +6786,56 @@ NTSTATUS WINAPI NtReadVirtualMemory( HANDLE process, const void *addr, void *buf
+@@ -6726,6 +6751,56 @@ NTSTATUS WINAPI NtReadVirtualMemory( HANDLE process, const void *addr, void *buf
      return status;
  }
  
@@ -552,7 +476,7 @@ index 9589c5072fd..fff502a0c2c 100644
  
  /***********************************************************************
   *             NtWriteVirtualMemory   (NTDLL.@)
-@@ -7090,6 +7200,10 @@ NTSTATUS WINAPI NtWow64ReadVirtualMemory64( HANDLE process, ULONG64 addr, void *
+@@ -7090,6 +7165,10 @@ NTSTATUS WINAPI NtWow64ReadVirtualMemory64( HANDLE process, ULONG64 addr, void *
              if ((status = wine_server_call( req ))) size = 0;
          }
          SERVER_END_REQ;
