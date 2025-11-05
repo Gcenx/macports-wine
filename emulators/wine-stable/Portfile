@@ -69,10 +69,7 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 patchfiles-append \
-    0001-winemac.drv-no-flicker.diff \
-    0002-winehq_macos_hacks.diff \
-    0003-wined3d-cwhack-18311.diff \
-    0004-winemac.drv-export-essential-apis.diff
+    0001-winehq_macos_hacks.diff
 
 patchfiles-append \
     MR6866.diff \
@@ -169,12 +166,6 @@ variant gstreamer description "Build ${subport} with GStreamer, for multimedia s
 variant kerberos description "Build ${subport} with Kerberos, for network authentication protocol support" {
     depends_lib-append      port:kerberos5
     configure.args-replace  --without-krb5 --with-krb5
-}
-
-variant hacks description "Build ${subport} with additional patchsets" {
-    patchfiles-append \
-        2001-win32u-HACK-Allow-faking-HAGS-in-QueryAdapterInfo.diff \
-        2002-win32u-Support-DisplayConfigGetDeviceInfo-DISPLAYCON.diff
 }
 
 if {${os.major} < 19} {
