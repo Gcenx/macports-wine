@@ -170,13 +170,6 @@ subport wine-staging {
     }
 }
 
-# Makes destroot take significantly longer
-variant dev description "Install ${subport} development environment" {
-    configure.optflags-prepend -g
-    build.target            all
-    destroot.target-append  install-dev
-}
-
 variant gphoto description "Build ${subport} with support for digital cameras" {
     depends_lib-append      port:libgphoto2
     configure.args-replace  --without-gphoto --with-gphoto
