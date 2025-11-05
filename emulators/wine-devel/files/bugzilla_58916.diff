@@ -1,0 +1,36 @@
+From 7d81e4647da609658371adf27f58d1edff1b6738 Mon Sep 17 00:00:00 2001
+From: Tim Clem <tclem@codeweavers.com>
+Date: Tue, 4 Nov 2025 11:56:30 -0800
+Subject: [PATCH] winemac.drv: Explicitly add an ivar for contentViewMaskLayer.
+
+Required for @synthesize when building with older compilers.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=58916
+---
+ dlls/winemac.drv/cocoa_window.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/dlls/winemac.drv/cocoa_window.h b/dlls/winemac.drv/cocoa_window.h
+index 1d7b31007f5..0f4e5b44836 100644
+--- a/dlls/winemac.drv/cocoa_window.h
++++ b/dlls/winemac.drv/cocoa_window.h
+@@ -19,6 +19,7 @@
+  */
+ 
+ #import <AppKit/AppKit.h>
++#import <QuartzCore/QuartzCore.h>
+ 
+ 
+ @class WineEventQueue;
+@@ -81,6 +82,8 @@ @interface WineWindow : NSPanel <NSWindowDelegate>
+     BOOL ignore_windowDeminiaturize;
+     BOOL ignore_windowResize;
+     BOOL fakingClose;
++
++    CAShapeLayer* contentViewMaskLayer;
+ }
+ 
+ @property (retain, readonly, nonatomic) WineEventQueue* queue;
+-- 
+2.49.0
+

@@ -70,6 +70,10 @@ patch.pre_args-replace -p0 -p1
 patchfiles-append \
     0001-winehq_macos_hacks.diff
 
+# https://bugs.winehq.org/show_bug.cgi?id=58916
+patchfiles-append \
+    bugzilla_58916.diff
+
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
     fallocate \
@@ -269,24 +273,6 @@ post-destroot {
         LICENSE \
         README.md \
         ${destroot}${docdir}
-
-    system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine"
-    system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine"
-
-    if {[file exists ${destroot}${prefix}/bin/wine-preloader]} {
-        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine-preloader"
-        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine-preloader"
-    }
-
-    if {[file exists ${destroot}${prefix}/bin/wine64]} {
-        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64"
-        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine64"
-    }
-
-    if {[file exists ${destroot}${prefix}/bin/wine64-preloader]} {
-        system -W ${destroot}${prefix}/bin "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} wine64-preloader"
-        system -W ${destroot}${prefix}/bin "/usr/bin/codesign --force --sign - wine64-preloader"
-    }
 
     if {[variant_isset gstreamer]} {
         system -W ${destroot}${compiler.library_path}/wine/x86_64-unix "/usr/bin/install_name_tool -delete_rpath ${compiler.library_path} winedmo.so"
