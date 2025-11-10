@@ -11,8 +11,7 @@ github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 revision                    0
-# MacPorts does not support i386 on macOS Mojave and new WoW64 requires macOS Catalina
-platforms                   {darwin > 15 != 18.*}
+platforms                   {darwin > 15}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators
@@ -225,6 +224,13 @@ if {${os.major} < 19} {
         "
     } else {
         supported_archs         i386
+    }
+}
+
+# MacPorts does not support i386 on macOS Mojave by default
+if {${os.major} == 18} {
+    if {[vercmp ${macosx_deployment_target} != 10.13]} {
+        platforms {darwin > 15 != 18.*}
     }
 }
 
