@@ -1,8 +1,8 @@
 diff --git a/dlls/kernelbase/process.c b/dlls/kernelbase/process.c
-index f4a9a3aa5ae..9a8e1907b03 100644
+index d89b2f1405a..2020d91fea4 100644
 --- a/dlls/kernelbase/process.c
 +++ b/dlls/kernelbase/process.c
-@@ -499,6 +499,36 @@ done:
+@@ -500,6 +500,36 @@ done:
      return ret;
  }
  
@@ -39,7 +39,7 @@ index f4a9a3aa5ae..9a8e1907b03 100644
  /**********************************************************************
   *           CreateProcessInternalW   (kernelbase.@)
   */
-@@ -515,6 +545,7 @@ BOOL WINAPI DECLSPEC_HOTPATCH CreateProcessInternalW( HANDLE token, const WCHAR
+@@ -516,6 +546,7 @@ BOOL WINAPI DECLSPEC_HOTPATCH CreateProcessInternalW( HANDLE token, const WCHAR
      RTL_USER_PROCESS_PARAMETERS *params = NULL;
      RTL_USER_PROCESS_INFORMATION rtl_info = { 0 };
      HANDLE parent = 0, debug = 0;
@@ -47,7 +47,7 @@ index f4a9a3aa5ae..9a8e1907b03 100644
      ULONG nt_flags = 0;
      USHORT machine = 0;
      NTSTATUS status;
-@@ -540,6 +571,20 @@ BOOL WINAPI DECLSPEC_HOTPATCH CreateProcessInternalW( HANDLE token, const WCHAR
+@@ -541,6 +572,20 @@ BOOL WINAPI DECLSPEC_HOTPATCH CreateProcessInternalW( HANDLE token, const WCHAR
          app_name = name;
      }
  
@@ -69,12 +69,12 @@ index f4a9a3aa5ae..9a8e1907b03 100644
  
      if (flags & (IDLE_PRIORITY_CLASS | HIGH_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS |
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index 6f05212c32d..21fb196532f 100644
+index 8c7c6cdc8d6..dd27df88990 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -93,6 +93,15 @@ static USHORT cs64_sel;  /* selector for %cs in 64-bit mode */
- static USHORT ds64_sel;  /* selector for %ds/%es/%ss in 64-bit mode */
- static USHORT fs32_sel;  /* selector for %fs in 32-bit mode */
+@@ -88,6 +88,15 @@ WINE_DECLARE_DEBUG_CHANNEL(seh);
+ 
+ #include "dwarf.h"
  
 +#ifdef __APPLE__
 +/* CW Hack 24256 */
@@ -85,13 +85,13 @@ index 6f05212c32d..21fb196532f 100644
 +static BOOL sequoia_or_later = FALSE;
 +#endif
 +
- /***********************************************************************
-  * signal context platform-specific definitions
-  */
+ static USHORT cs32_sel;  /* selector for %cs in 32-bit mode */
+ static USHORT cs64_sel;  /* selector for %cs in 64-bit mode */
+ static USHORT ds64_sel;  /* selector for %ds/%es/%ss in 64-bit mode */
 @@ -1008,6 +1017,13 @@ static void save_context( struct xcontext *xcontext, const ucontext_t *sigcontex
  
          context->ContextFlags |= CONTEXT_FLOATING_POINT;
-         context->FltSave = *FPU_sig(sigcontext);
+         memcpy( &context->FltSave, FPU_sig(sigcontext), sizeof(context->FltSave) );
 +#ifdef __APPLE__
 +        /* CW Hack 24256: mxcsr in signal contexts is incorrect in Rosetta.
 +           In Rosetta only, the actual value of the register from within the
@@ -312,7 +312,7 @@ index 6f05212c32d..21fb196532f 100644
          rec.ExceptionCode = EXCEPTION_ILLEGAL_INSTRUCTION;
          break;
      case TRAP_x86_STKFLT:  /* Stack fault */
-@@ -2542,6 +2738,15 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2545,6 +2741,15 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
  
  
  #ifdef __APPLE__
@@ -328,19 +328,23 @@ index 6f05212c32d..21fb196532f 100644
  /**********************************************************************
   *		sigsys_handler
   *
-@@ -2569,6 +2774,23 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2572,6 +2777,27 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
          frame->restore_flags |= CONTEXT_CONTROL;
      }
      RIP_sig(ucontext) = (ULONG64)__wine_syscall_dispatcher_prolog_end_ptr;
 +
 +    /* CW Hack 24265 */
-+    if (is_rosetta2)
++    if (is_rosetta2 && FPU_sig(ucontext))
 +    {
++        XMM_SAVE_AREA32 fpu;
 +        unsigned int direct_mxcsr;
 +        __asm__ volatile( "stmxcsr %0" : "=m" (direct_mxcsr) );
-+        if (direct_mxcsr != FPU_sig(ucontext)->MxCsr)
++        memcpy( &fpu, FPU_sig(ucontext), sizeof(fpu) );
++
++        if (direct_mxcsr != fpu.MxCsr)
 +        {
-+            FPU_sig(ucontext)->MxCsr = direct_mxcsr;
++            fpu.MxCsr = direct_mxcsr;
++            memcpy( FPU_sig(ucontext), &fpu, sizeof(fpu) );
 +
 +            /* On the M3, Rosetta will restore mxcsr to the initial, incorrect
 +               value from the sigcontext, even if we change it. So we jump to a
@@ -352,7 +356,7 @@ index 6f05212c32d..21fb196532f 100644
  }
  #endif
  
-@@ -2719,6 +2941,23 @@ void signal_init_process(void)
+@@ -2722,6 +2948,23 @@ void signal_init_process(void)
  
      signal_alloc_thread( NtCurrentTeb() );
  
@@ -377,10 +381,10 @@ index 6f05212c32d..21fb196532f 100644
      sig_act.sa_flags = SA_SIGINFO | SA_RESTART | SA_ONSTACK;
  
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index 9589c5072fd..4b7567dece6 100644
+index a564af6e6f9..9598e6523f7 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -4566,6 +4566,27 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4578,6 +4578,27 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
          WARN( "treating read fault in a readable page as a write fault, addr %p\n", addr );
          err = EXCEPTION_WRITE_FAULT;
      }
@@ -408,7 +412,7 @@ index 9589c5072fd..4b7567dece6 100644
  #endif
  
      if (!is_inside_signal_stack( stack ) && (vprot & VPROT_GUARD))
-@@ -4602,6 +4623,10 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4614,6 +4635,10 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
                  ret = STATUS_SUCCESS;
          }
      }
@@ -419,7 +423,7 @@ index 9589c5072fd..4b7567dece6 100644
      mutex_unlock( &virtual_mutex );
      rec->ExceptionCode = ret;
      return ret;
-@@ -6726,6 +6751,56 @@ NTSTATUS WINAPI NtReadVirtualMemory( HANDLE process, const void *addr, void *buf
+@@ -6738,6 +6763,56 @@ NTSTATUS WINAPI NtReadVirtualMemory( HANDLE process, const void *addr, void *buf
      return status;
  }
  
@@ -476,8 +480,8 @@ index 9589c5072fd..4b7567dece6 100644
  
  /***********************************************************************
   *             NtWriteVirtualMemory   (NTDLL.@)
-@@ -7090,6 +7165,10 @@ NTSTATUS WINAPI NtWow64ReadVirtualMemory64( HANDLE process, ULONG64 addr, void *
-             if ((status = wine_server_call( req ))) size = 0;
+@@ -6759,6 +6834,10 @@ NTSTATUS WINAPI NtWriteVirtualMemory( HANDLE process, void *addr, const void *bu
+             size = reply->written;
          }
          SERVER_END_REQ;
 +
