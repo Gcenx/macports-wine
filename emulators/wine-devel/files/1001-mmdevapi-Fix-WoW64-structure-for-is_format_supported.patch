@@ -1,8 +1,7 @@
-From e2388c09c4cdfe3c9f5a4a5a22d84326193aaa28 Mon Sep 17 00:00:00 2001
+From c5a90f3e7e24ac939bc4428e6c4b69b2670f0a3c Mon Sep 17 00:00:00 2001
 From: Giovanni Mascellani <gmascellani@codeweavers.com>
 Date: Mon, 17 Nov 2025 11:17:40 +0100
-Subject: [PATCH] wine{alsa,coreaudio,oss,pulse}.drv: Fix WoW64 structure for
- is_format_supported.
+Subject: [PATCH] mmdevapi: Fix WoW64 structure for is_format_supported.
 
 Fixes: 18ce7964203b486c8236f2c16a370ae27539d2f0
 Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=58971
@@ -14,7 +13,7 @@ Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=58971
  4 files changed, 4 deletions(-)
 
 diff --git a/dlls/winealsa.drv/alsa.c b/dlls/winealsa.drv/alsa.c
-index 524ede37172..aea4ddfa326 100644
+index 524ede37172b..aea4ddfa326f 100644
 --- a/dlls/winealsa.drv/alsa.c
 +++ b/dlls/winealsa.drv/alsa.c
 @@ -2610,7 +2610,6 @@ static NTSTATUS alsa_wow64_is_format_supported(void *args)
@@ -26,7 +25,7 @@ index 524ede37172..aea4ddfa326 100644
      } *params32 = args;
      struct is_format_supported_params params =
 diff --git a/dlls/winecoreaudio.drv/coreaudio.c b/dlls/winecoreaudio.drv/coreaudio.c
-index 947cf441f10..9d85cde34d4 100644
+index 947cf441f107..9d85cde34d47 100644
 --- a/dlls/winecoreaudio.drv/coreaudio.c
 +++ b/dlls/winecoreaudio.drv/coreaudio.c
 @@ -1961,7 +1961,6 @@ static NTSTATUS unix_wow64_is_format_supported(void *args)
@@ -38,7 +37,7 @@ index 947cf441f10..9d85cde34d4 100644
      } *params32 = args;
      struct is_format_supported_params params =
 diff --git a/dlls/wineoss.drv/oss.c b/dlls/wineoss.drv/oss.c
-index 1d74017b848..bcdcc72ba0a 100644
+index 1d74017b8484..bcdcc72ba0a6 100644
 --- a/dlls/wineoss.drv/oss.c
 +++ b/dlls/wineoss.drv/oss.c
 @@ -1846,7 +1846,6 @@ static NTSTATUS oss_wow64_is_format_supported(void *args)
@@ -50,7 +49,7 @@ index 1d74017b848..bcdcc72ba0a 100644
      } *params32 = args;
      struct is_format_supported_params params =
 diff --git a/dlls/winepulse.drv/pulse.c b/dlls/winepulse.drv/pulse.c
-index 6fabc396ebe..7c8d872c604 100644
+index 6fabc396ebe8..7c8d872c604b 100644
 --- a/dlls/winepulse.drv/pulse.c
 +++ b/dlls/winepulse.drv/pulse.c
 @@ -2713,7 +2713,6 @@ static NTSTATUS pulse_wow64_is_format_supported(void *args)

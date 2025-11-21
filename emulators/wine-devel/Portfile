@@ -66,12 +66,28 @@ post-extract {
 
 patch.pre_args-replace -p0 -p1
 
+# Upstream bug fixes here
 patchfiles-append \
-    0001-winehq_macos_hacks.diff
+    1001-mmdevapi-Fix-WoW64-structure-for-is_format_supported.patch \
+    1002-win32u-Only-delete-subkeys-when-clearing-DirectX-key.patch
 
-# https://bugs.winehq.org/show_bug.cgi?id=58971
+# Rosetta2 hacks here
 patchfiles-append \
-    bugzilla_58971.diff
+    0001-ntdll-CW-HACK-18947.patch \
+    0002-ntdll-CW-HACK-20186.patch \
+    0003-wow64cpu-CW-HACK-20760.patch \
+    0004-ntdll-CW-HACK-22131.patch \
+    0005-ntdll-CW-HACK-23427.patch \
+    0006-ntdll-CW-Hack-24256.patch \
+    0007-ntdll-CW-HACK-24265.patch \
+    0008-ntdll-CW-HACK-24945.patch \
+    0009-ntdll-CW-HACK-25719.patch \
+    0010-ntdll-HACK-Winehq-Bug-56441.patch
+
+# steamwebhelper.exe injection hack to make Steam work on macOS
+patchfiles-append \
+    0011-kernelbase-HACK-Add-hack_append_command_line.patch \
+    0012-kernelbase-CW-HACK-13322-17315-21883.patch
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -155,8 +171,6 @@ subport wine-staging {
         size    9399642
 
     depends_patch-append    port:autoconf
-
-    patchfiles-append       1001-staging-macos_hacks.diff
 
     set py_ver              3.13
     set py_ver_nodot        [string map {. {}} ${py_ver}]
