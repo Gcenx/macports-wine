@@ -3,7 +3,7 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            Kegworks-App winetricks 20250415
+github.setup            Sikarugir-App winetricks 20251121
 github.tarball_from     archive
 
 revision                0
@@ -22,9 +22,9 @@ long_description        ${subport} can help you prepare your system for Windows 
                         systems have all the needed redistributable runtime \
                         libraries or fonts.
 
-checksums               rmd160  3cd243f69f586e4c42d3759fe6ef0280baf6b5df \
-                        sha256  3a59d0e0a1bcb6298442c584057be65d0fd9e4295860651ea7b398ff2b2f5aa4 \
-                        size    657045
+checksums               rmd160  e5542f14cbc8a1ac194c87114350013bb7be9ad6 \
+                        sha256  72b95406a8cd615ea06916aaec01db49233042823be17eb0134a26a08ff28540 \
+                        size    688756
 
 depends_run             bin:curl:curl \
                         port:cabextract \
