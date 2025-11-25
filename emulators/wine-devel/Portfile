@@ -68,8 +68,8 @@ patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
 patchfiles-append \
-    1001-mmdevapi-Fix-WoW64-structure-for-is_format_supported.patch \
-    1002-win32u-Only-delete-subkeys-when-clearing-DirectX-key.patch
+    mmdevapi-Fix-WoW64-structure-for-is_format_supported.patch \
+    win32u-Only-delete-subkeys-when-clearing-DirectX-key.patch
 
 # Rosetta2 hacks here
 patchfiles-append \
@@ -171,6 +171,7 @@ subport wine-staging {
         size    9399642
 
     depends_patch-append    port:autoconf
+    patchfiles-append       1001-kernelbase-CW-HACK-19610.patch
 
     set py_ver              3.13
     set py_ver_nodot        [string map {. {}} ${py_ver}]
@@ -179,7 +180,7 @@ subport wine-staging {
     # Applying staging before other patchfiles
     pre-patch {
         system -W ${worksrcpath} \
-            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all -W ntdll-Syscall_Emulation"
+            "${frameworks_dir}/Python.framework/Versions/${py_ver}/bin/python3 ${workpath}/wine-staging-${staging_version}/staging/patchinstall.py --all"
     }
 }
 
