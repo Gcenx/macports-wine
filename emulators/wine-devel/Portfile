@@ -86,6 +86,11 @@ patchfiles-append \
     0011-kernelbase-HACK-Add-hack_append_command_line.patch \
     0012-kernelbase-CW-HACK-13322-17315-21883.patch
 
+# DXMT hacks here
+patchfiles-append \
+    0013-ntdll-CW-HACK-22435.patch \
+    0014-winemac.drv-CW-HACK-22435.patch
+
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
     fallocate \
