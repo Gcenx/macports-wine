@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.19 wine-
+github.setup                wine-mirror wine 10.20 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  933a5674c8d9b2d311fd572a09fc479f899e3eef \
-    sha256  d31375440fd7f1b941a065c5d7699e63c973bbfa9d0c19ad46ee7820ddd692a7 \
-    size    53559516
+    rmd160  f31a64210e4c45b7e959057b97486fc5cea228eb \
+    sha256  b53683fb89b891fa1d5e3c7ca8c2f7f023ee0b6e397edc6084fb75519eb047df \
+    size    53765986
 
 depends_build \
     port:bison \
@@ -67,9 +67,6 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
-patchfiles-append \
-    mmdevapi-Fix-WoW64-structure-for-is_format_supported.patch \
-    win32u-Only-delete-subkeys-when-clearing-DirectX-key.patch
 
 # Rosetta2 hacks here
 patchfiles-append \
@@ -166,9 +163,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  4862310812d68eaa38858ae2e2ba1dbb975036c0 \
-        sha256  502448197e4f7a69a67f243eb8437d1b8b346f46a5fad41403068b67f6fab892 \
-        size    9399642
+        rmd160  05304eaedfbf9b3ee37ae57408157277863dca92 \
+        sha256  83d0d97b1f4b7ee9d61b58c7a87657b768a635d2f3bd5c6435fe337419be0c7a \
+        size    9261811
 
     depends_patch-append    port:autoconf
     patchfiles-append       1001-kernelbase-CW-HACK-19610.patch
