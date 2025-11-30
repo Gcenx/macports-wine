@@ -81,7 +81,7 @@ patchfiles-append \
     0009-ntdll-CW-HACK-25719.patch \
     0010-ntdll-HACK-Winehq-Bug-56441.patch
 
-# steamwebhelper.exe injection hack to make Steam work on macOS
+# Steam hacks here
 patchfiles-append \
     0011-kernelbase-HACK-Add-hack_append_command_line.patch \
     0012-kernelbase-CW-HACK-13322-17315-21883.patch
@@ -168,6 +168,8 @@ subport wine-staging {
         size    9261811
 
     depends_patch-append    port:autoconf
+
+    # Battle.net hacks here
     patchfiles-append       1001-kernelbase-CW-HACK-19610.patch
 
     set py_ver              3.13
