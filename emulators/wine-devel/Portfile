@@ -247,13 +247,6 @@ if {${os.major} < 19} {
     }
 }
 
-# MacPorts does not support i386 on macOS Mojave by default
-if {${os.major} == 18} {
-    if {[vercmp ${macosx_deployment_target} != 10.13]} {
-        platforms {darwin > 15 != 18.*}
-    }
-}
-
 if {${os.major} > 18} {
     depends_lib-append          path:lib/libMoltenVK.dylib:MoltenVK-latest
 
