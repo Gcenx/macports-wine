@@ -89,7 +89,7 @@ patchfiles-append \
 # DXMT hacks here
 patchfiles-append \
     0013-ntdll-CW-HACK-22435.patch \
-    0014-winemac.drv-DXMT-export.patch \
+    0014-winemac-DXMT-export.patch \
     0015-winemetal-new-stub.patch
 
 configure.checks.implicit_function_declaration.whitelist-append \
