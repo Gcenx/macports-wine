@@ -98,7 +98,6 @@ variant gstreamer description "Modify ${subport} to use GStreamer.framework" {
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstvideo-1.0.dylib
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstfft-1.0.dylib
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstadaptivedemux-1.0.dylib
-        delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2.dylib
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgmodule-2.0.0.dylib
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstbasecamerabinsrc-1.0.dylib
         delete ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libgstsctp-1.0.0.dylib
