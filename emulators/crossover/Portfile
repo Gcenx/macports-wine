@@ -149,6 +149,8 @@ post-build {
 
         # Use GStreamer.framework
         system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix \
+            "/usr/bin/install_name_tool -delete_rpath @loader_path/../../../lib64 winegstreamer.so"
+        system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix \
             "/usr/bin/install_name_tool -add_rpath /Library/Frameworks/GStreamer.framework/Libraries winegstreamer.so"
     }
 }
