@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 11.0-rc3 wine-
+github.setup                wine-mirror wine 11.0-rc4 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  0ebf8c05ce33e955cd1b9e3af74a5d0dcabd686b \
-    sha256  2898271aed7150474a12b30c52d4b76c39d4890827b03c2a22a0076f614cb9cf \
-    size    53777661
+    rmd160  2c99e7c33c2e60c8e9a4ab22bcbd1001272cf87a \
+    sha256  878f9d967273df24d7464fb2fdc420027519b0bee83e36ec48d3666b452426d3 \
+    size    53775727
 
 depends_build \
     port:bison \
@@ -73,7 +73,6 @@ patchfiles-append \
     0001-ntdll-CW-HACK-18947.patch \
     0002-ntdll-CW-HACK-20186.patch \
     0003-wow64cpu-CW-HACK-20760.patch \
-    0004-ntdll-CW-HACK-22131.patch \
     0005-ntdll-CW-HACK-23427.patch \
     0006-ntdll-CW-Hack-24256.patch \
     0007-ntdll-CW-HACK-24265.patch \
@@ -169,9 +168,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  624ff2a5ed0d99dbecc5a42f69d3fbdb8448a634 \
-        sha256  4df52c8f0b4e4b33af76fc2fe9fc7d00148af14c28ef8d11ac6e9f2f5839989b \
-        size    9323202
+        rmd160  2c9e58b6432bbeaee305b2896cb2757b1d8c15e2 \
+        sha256  0b003f7eff081badd053a26aead48360efbfc70a7f05a273764ec07348871076 \
+        size    9323254
 
     depends_patch-append    port:autoconf
 
