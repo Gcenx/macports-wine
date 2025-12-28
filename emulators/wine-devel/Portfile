@@ -159,7 +159,7 @@ compiler.blacklist-append   {*gcc*} {clang < 800} {macports-clang-3.*}
 
 subport wine-staging {
     conflicts               wine-stable wine-devel wine-crossover
-    set staging_version     11.0-rc2
+    set staging_version     ${version}
     set wine_staging_distfile v${staging_version}${extract.suffix}
     distfiles-append        ${wine_staging_distfile}:stagingsource
     master_sites-append     https://github.com/wine-staging/wine-staging/archive/:stagingsource
