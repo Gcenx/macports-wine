@@ -6,11 +6,10 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 10.0 wine-
+github.setup                wine-mirror wine 11.0 wine-
 github.tarball_from         archive
 name                        wine-stable
 conflicts                   wine-devel wine-staging wine-crossover
-set my_name                 wine
 revision                    0
 platforms                   {darwin > 15}
 set branch                  [lindex [split ${version} .] 0].0
@@ -19,7 +18,7 @@ categories                  emulators
 supported_archs             i386 x86_64
 maintainers                 {@Gcenx}
 homepage                    https://www.winehq.org
-dist_subdir                 ${my_name}
+dist_subdir                 wine
 
 description \
     A Windows API implementation
@@ -36,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  0807d7f380af0851151b7abd04490a9636b187f1 \
-    sha256  b3edf134a5698d55bd210f11c3ae833c943abcece75810f6aa8cbd7a9f293ff7 \
-    size    51935194
+    rmd160  b700678636ea8a9a48f650d49d06eb10ed3a97bc \
+    sha256  f09e8153aa46a581d2b56a5b1363b04832070b9409d9244a68cf482b243ff14a \
+    size    53784681
 
 depends_build \
     port:bison \
@@ -57,7 +56,7 @@ depends_lib \
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
-    port:mingw-w64-wine-mono-9.4.0
+    port:mingw-w64-wine-mono-10.4.1
 
 post-extract {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -67,12 +66,30 @@ post-extract {
 
 patch.pre_args-replace -p0 -p1
 
-patchfiles-append \
-    0001-winehq_macos_hacks.diff
+# Upstream bug fixes here
 
+# Rosetta2 hacks here
 patchfiles-append \
-    MR6866.diff \
-    MR7328.diff
+    0001-ntdll-CW-HACK-18947.patch \
+    0002-ntdll-CW-HACK-20186.patch \
+    0003-wow64cpu-CW-HACK-20760.patch \
+    0005-ntdll-CW-HACK-23427.patch \
+    0006-ntdll-CW-Hack-24256.patch \
+    0007-ntdll-CW-HACK-24265.patch \
+    0008-ntdll-CW-HACK-24945.patch \
+    0009-ntdll-CW-HACK-25719.patch \
+    0010-ntdll-HACK-Winehq-Bug-56441.patch
+
+# Steam hacks here
+patchfiles-append \
+    0011-kernelbase-HACK-Add-hack_append_command_line.patch \
+    0012-kernelbase-CW-HACK-13322-17315-21883.patch
+
+# DXMT hacks here
+patchfiles-append \
+    0013-ntdll-CW-HACK-22435.patch \
+    0014-winemac-DXMT-export.patch \
+    0015-winemetal-new-stub.patch
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -110,7 +127,7 @@ configure.args \
     --with-mingw \
     --without-netapi \
     --with-opencl \
-    --with-opengl \
+    --without-opengl \
     --without-oss \
     --with-pcap \
     --with-pcsclite \
@@ -167,6 +184,18 @@ variant kerberos description "Build ${subport} with Kerberos, for network authen
     configure.args-replace  --without-krb5 --with-krb5
 }
 
+if {${os.major} >= 24} {
+    # https://gitlab.winehq.org/wine/wine/-/merge_requests/5935#note_74758
+    macosx_deployment_target    14.0
+}
+
+if {${os.major} >= 19} {
+    depends_lib-append          path:lib/libMoltenVK.dylib:MoltenVK-latest
+    configure.args.x86_64-append --enable-archs=i386,x86_64
+    configure.args-replace      --without-vulkan --with-vulkan
+    default_variants            +gstreamer
+}
+
 if {${os.major} < 19} {
     # CodeWeavers only tests i386 using MacOSX10.13.sdk
     configure.sdk_version       10.13
@@ -198,26 +227,6 @@ if {${os.major} < 19} {
     }
 }
 
-# MacPorts does not support i386 on macOS Mojave by default
-if {${os.major} == 18} {
-    if {[vercmp ${macosx_deployment_target} != 10.13]} {
-        platforms {darwin > 15 != 18.*}
-    }
-}
-
-if {${os.major} > 18} {
-    depends_lib-append          path:lib/libMoltenVK.dylib:MoltenVK-latest
-
-    configure.args.x86_64-append --enable-archs=i386,x86_64
-    configure.args-replace      --without-vulkan --with-vulkan
-
-    # Setting an older deployment target avoids build error with MacOSX15.sdk
-    # https://gitlab.winehq.org/wine/wine/-/merge_requests/5935#note_74758
-    macosx_deployment_target    10.15
-
-    default_variants            +gstreamer
-}
-
 triplet.add_build           cross
 triplet.add_host            none
 
@@ -234,7 +243,7 @@ configure.env-append        "CROSSCFLAGS=${configure.optflags}"
 destroot.target             install-lib
 
 post-destroot {
-    set docdir ${prefix}/share/doc/${my_name}
+    set docdir ${prefix}/share/doc/${subport}
     xinstall -d ${destroot}${docdir}
     xinstall -m 0644 -W ${worksrcpath} \
         ANNOUNCE.md \
