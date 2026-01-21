@@ -17,7 +17,7 @@ A MacPorts overlay that provides recent versions of wine.
 - `wine-devel`              *(v11.0)*
 - `wine-staging`            *(v11.0)*
 - `winetricks`              *(v20251121)*
-- `sikarugir`               *(v1.0)*
+- `sikarugir`               *(v1.0.1)*
 
 <br>
 

@@ -3,13 +3,12 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        Sikarugir-App Creator 1.0 v 
+github.setup        Sikarugir-App Creator 1.0.1 v
 github.tarball_from releases
 revision            0
 name                sikarugir
 platforms           {darwin >= 19}
-# Winery is LGPL-2.1 but will be changed later once the new codebase it finished
-license             LGPL-2.1
+license             Restrictive/Distributable
 categories          emulators
 
 supported_archs     x86_64
@@ -22,15 +21,15 @@ long_description    {*}${description}
 distname            Creator-v${version}
 use_xz              yes
 
-checksums           rmd160  621334417ff0480174168073248450b2bb5cbf3d \
-                    sha256  f98d737bf4d1b5274e4a74102b8995ab57fcbb408343cb5d631a09cc4d96cb0f \
-                    size    1462908
+checksums           rmd160  9a803108fc5529dc5ea9b3a413fb50a9c83b0516 \
+                    sha256  4432471d21f935a1d0f6e0df01e8584e279a7f14ecd4e8b6ab52d41c0aad8122 \
+                    size    569548
 
 use_configure       no
 build {}
 
 destroot {
-    move "${workpath}/Creator.app" "${destroot}${applications_dir}/Sikarugir Creator.app"
+    move "${workpath}/Sikarugir Creator.app" "${destroot}${applications_dir}/Sikarugir Creator.app"
     system -W ${destroot}${applications_dir} "/usr/bin/codesign --deep --force --sign - 'Sikarugir Creator.app'"
 }
 
