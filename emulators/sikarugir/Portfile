@@ -11,7 +11,7 @@ platforms           {darwin >= 19}
 license             Restrictive/Distributable
 categories          emulators
 
-supported_archs     x86_64
+supported_archs     arm64 x86_64
 maintainers         {@Gcenx}
 homepage            https://github.com/Sikarugir-App/Sikarugir/
 
@@ -21,9 +21,9 @@ long_description    {*}${description}
 distname            Creator-v${version}
 use_xz              yes
 
-checksums           rmd160  9a803108fc5529dc5ea9b3a413fb50a9c83b0516 \
-                    sha256  4432471d21f935a1d0f6e0df01e8584e279a7f14ecd4e8b6ab52d41c0aad8122 \
-                    size    569548
+checksums           rmd160  1429f5b485b4fc66a4ded0943c7691893fbc05cb \
+                    sha256  1f867b36f0e3cfd631d9b40a986cf4e3594d47e4555f5a739e6d82de8cce34d1 \
+                    size    790780
 
 use_configure       no
 build {}
