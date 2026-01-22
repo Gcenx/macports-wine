@@ -21,9 +21,9 @@ long_description    {*}${description}
 distname            Creator-v${version}
 use_xz              yes
 
-checksums           rmd160  1429f5b485b4fc66a4ded0943c7691893fbc05cb \
-                    sha256  1f867b36f0e3cfd631d9b40a986cf4e3594d47e4555f5a739e6d82de8cce34d1 \
-                    size    790780
+checksums           rmd160  babddfebd0715b35f2c2956d9dbbbac44aa31fea \
+                    sha256  fbc86992107e054cacb0d09e28f6da93648cab3e29f5e46ae2c6d77e0fa62c2e \
+                    size    793416
 
 use_configure       no
 build {}
@@ -38,4 +38,9 @@ pre-activate {
         ui_error "You must first update to macOS 10.15.4."
         return -code error "You must first update to macOS 10.15.4."
     }
+}
+
+if {[llength ${supported_archs}] > 1} {
+    configure.universal_archs {*}${supported_archs}
+    variant universal {}
 }
