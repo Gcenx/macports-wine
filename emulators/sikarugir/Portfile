@@ -21,9 +21,9 @@ long_description    {*}${description}
 distname            Creator-v${version}
 use_xz              yes
 
-checksums           rmd160  babddfebd0715b35f2c2956d9dbbbac44aa31fea \
-                    sha256  fbc86992107e054cacb0d09e28f6da93648cab3e29f5e46ae2c6d77e0fa62c2e \
-                    size    793416
+checksums           rmd160  0a011bdab55d4952843d48fa24092412bd38195d \
+                    sha256  187825e4e6bf96f294cf9ccb65e53049432b3ee2925480e8ad1cbca12a96e819 \
+                    size    793320
 
 use_configure       no
 build {}
