@@ -43,7 +43,7 @@ depends_build \
     port:bison \
     bin:flex:flex \
     port:gettext \
-    port:mingw-w64 \
+    port:llvm-mingw \
     path:bin/pkg-config:pkgconfig
 
 depends_lib \
@@ -67,6 +67,8 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
+patchfiles-append \
+    llvm-mingw_fixes.patch
 
 # Rosetta2 hacks here
 patchfiles-append \
@@ -197,6 +199,9 @@ if {${os.major} >= 19} {
 }
 
 if {${os.major} < 19} {
+    # llvm-mingw only is compiled for arm64 & x86_64
+    depends_skip_archcheck-append llvm-mingw
+
     # CodeWeavers only tests i386 using MacOSX10.13.sdk
     configure.sdk_version       10.13
     if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
@@ -246,6 +251,11 @@ muniversal.arch_compiler    yes
 configure.ldflags-delete    -L${compiler.library_path}
 configure.optflags          -O2
 configure.env-append        "CROSSCFLAGS=${configure.optflags}"
+
+# Make sure llvm-mingw is in PATH
+foreach stage {configure build destroot test} {
+    ${stage}.env-append     PATH=${prefix}/libexec/llvm-mingw/bin:$env(PATH)
+}
 
 # Were only installing wine not the development files
 destroot.target             install-lib

@@ -1,0 +1,818 @@
+From 8275bd8daea9fc194023bb62c67a4e2956eba5e5 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Wed, 21 Jan 2026 14:15:12 +0100
+Subject: [PATCH 1/6] ntdll: Remove the machine frame in
+ KiUserExceptionDispatcher on ARM64.
+
+Recent Windows version don't have it, the corresponding tests were
+removed in 204ea3892b8e4f1833641e1a2a60c62801d06d08.
+
+cherry picked from commit 2d0ceb6b497032e37792f4280a2b13b967dddf1b
+---
+ dlls/ntdll/unix/signal_arm64.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/dlls/ntdll/unix/signal_arm64.c b/dlls/ntdll/unix/signal_arm64.c
+index a08175d951d..0c9b0be571d 100644
+--- a/dlls/ntdll/unix/signal_arm64.c
++++ b/dlls/ntdll/unix/signal_arm64.c
+@@ -131,12 +131,10 @@ struct exc_stack_layout
+     CONTEXT_EX           context_ex;     /* 390 */
+     EXCEPTION_RECORD     rec;            /* 3b0 */
+     ULONG64              align;          /* 448 */
+-    ULONG64              sp;             /* 450 */
+-    ULONG64              pc;             /* 458 */
+-    ULONG64              redzone[2];     /* 460 */
++    ULONG64              redzone[2];     /* 450 */
+ };
+ C_ASSERT( offsetof(struct exc_stack_layout, rec) == 0x3b0 );
+-C_ASSERT( sizeof(struct exc_stack_layout) == 0x470 );
++C_ASSERT( sizeof(struct exc_stack_layout) == 0x460 );
+ 
+ /* stack layout when calling KiUserApcDispatcher */
+ struct apc_stack_layout
+@@ -720,8 +718,6 @@ static void setup_raise_exception( ucontext_t *sigcontext, EXCEPTION_RECORD *rec
+     stack->rec = *rec;
+     stack->context = *context;
+     context_init_empty_xstate( &stack->context, stack->redzone );
+-    stack->sp = stack->context.Sp;
+-    stack->pc = stack->context.Pc;
+ 
+     SP_sig(sigcontext) = (ULONG_PTR)stack;
+     PC_sig(sigcontext) = (ULONG_PTR)pKiUserExceptionDispatcher;
+@@ -806,8 +802,6 @@ NTSTATUS call_user_exception_dispatcher( EXCEPTION_RECORD *rec, CONTEXT *context
+     memmove( &stack->context, context, sizeof(*context) );
+     memmove( &stack->rec, rec, sizeof(*rec) );
+     context_init_empty_xstate( &stack->context, stack->redzone );
+-    stack->sp = stack->context.Sp;
+-    stack->pc = stack->context.Pc;
+ 
+     frame->pc = (ULONG64)pKiUserExceptionDispatcher;
+     frame->sp = (ULONG64)stack;
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 172d5bb17d3df05c99253aa4ef60d634f38a370e Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Thu, 22 Jan 2026 16:14:57 +0100
+Subject: [PATCH 2/6] ntdll/tests: Add a test for passing BOOLEAN values in
+ syscalls.
+
+To demonstrate the clang x86-64 ABI breakage.
+
+cherry picked from commit 565091afa40c963212a72115d71cf315bbcd7a29
+---
+ dlls/ntdll/tests/virtual.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/dlls/ntdll/tests/virtual.c b/dlls/ntdll/tests/virtual.c
+index 6730315d5fb..809c45e278d 100644
+--- a/dlls/ntdll/tests/virtual.c
++++ b/dlls/ntdll/tests/virtual.c
+@@ -2510,6 +2510,33 @@ static void test_syscall_numbers(void)
+     }
+ }
+ 
++static void test_syscall_abi(void)
++{
++    LCID user_lcid, system_lcid, prev_user_lcid = 0, lcid;
++    NTSTATUS (WINAPI *pNtQueryDefaultLocale)( ULONG user, LCID *lcid );
++
++    /* test that BOOLEAN values are correctly extended */
++
++    pNtQueryDefaultLocale = (void *)GetProcAddress( GetModuleHandleA("ntdll.dll"), "NtQueryDefaultLocale" );
++    pNtQueryDefaultLocale( 0, &system_lcid );
++    pNtQueryDefaultLocale( 1, &user_lcid );
++    if (system_lcid == user_lcid)
++    {
++        prev_user_lcid = user_lcid;
++        user_lcid += 0x400;
++        NtSetDefaultLocale( TRUE, user_lcid );
++    }
++    pNtQueryDefaultLocale( 0, &lcid );
++    ok( lcid == system_lcid, "got %04lx / %04lx\n", lcid, system_lcid );
++    for (ULONG i = 1; i < 0x10000; i <<= 1)
++    {
++        LCID expect = LOBYTE(i) ? user_lcid : system_lcid;
++        pNtQueryDefaultLocale( i, &lcid );
++        ok( lcid == expect, "%lx: got %04lx / %04lx\n", i, lcid, expect );
++    }
++    if (prev_user_lcid) NtSetDefaultLocale( TRUE, prev_user_lcid );
++}
++
+ static void test_NtFreeVirtualMemory(void)
+ {
+     void *addr1, *addr;
+@@ -3574,6 +3601,7 @@ START_TEST(virtual)
+     test_syscalls();
+     test_invalid_syscalls();
+     test_syscall_numbers();
++    test_syscall_abi();
+     test_query_region_information();
+     test_query_image_information();
+     test_exec_memory_writes();
+-- 
+2.50.1 (Apple Git-155)
+
+
+From de445c8238e3e3c324b784dd2258b608fd0e1201 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Thu, 22 Jan 2026 11:42:34 +0100
+Subject: [PATCH 3/6] ntdll: Move NT syscall Unix-side support to a new
+ syscall.c file.
+
+cherry picked from commit d1415ab24e9c842dbf484426f3a33803014da3cc
+---
+ dlls/ntdll/Makefile.in    |   1 +
+ dlls/ntdll/unix/loader.c  | 123 -----------------------------
+ dlls/ntdll/unix/syscall.c | 157 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 158 insertions(+), 123 deletions(-)
+ create mode 100644 dlls/ntdll/unix/syscall.c
+
+diff --git a/dlls/ntdll/Makefile.in b/dlls/ntdll/Makefile.in
+index f849a0b6ad2..ef147060d37 100644
+--- a/dlls/ntdll/Makefile.in
++++ b/dlls/ntdll/Makefile.in
+@@ -64,6 +64,7 @@ SOURCES = \
+ 	unix/signal_x86_64.c \
+ 	unix/socket.c \
+ 	unix/sync.c \
++	unix/syscall.c \
+ 	unix/system.c \
+ 	unix/tape.c \
+ 	unix/thread.c \
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+index 8387a7b75fa..f4131126040 100644
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -92,11 +92,9 @@
+ #include "unix_private.h"
+ #include "msync.h"
+ #include "wine/list.h"
+-#include "ntsyscalls.h"
+ #include "wine/debug.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(module);
+-WINE_DECLARE_DEBUG_CHANNEL(syscall);
+ 
+ #if defined __i386__ || defined __x86_64__
+ #define SO_DLLS_SUPPORTED
+@@ -113,67 +111,6 @@ void *pRtlUserThreadStart = NULL;
+ void *p__wine_ctrl_routine = NULL;
+ SYSTEM_DLL_INIT_BLOCK *pLdrSystemDllInitBlock = NULL;
+ 
+-static void stub_syscall( const char *name )
+-{
+-    CONTEXT context = { .ContextFlags = CONTEXT_FULL };
+-    EXCEPTION_RECORD rec =
+-    {
+-        .ExceptionCode = EXCEPTION_WINE_STUB,
+-        .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
+-        .NumberParameters = 2,
+-        .ExceptionInformation[0] = (ULONG_PTR)"ntdll",
+-        .ExceptionInformation[1] = (ULONG_PTR)name,
+-    };
+-    NtGetContextThread( GetCurrentThread(), &context );
+-#ifdef __i386__
+-    rec.ExceptionAddress = (void *)context.Eip;
+-#elif defined __x86_64__
+-    rec.ExceptionAddress = (void *)context.Rip;
+-#elif defined __arm__ || defined __aarch64__
+-    rec.ExceptionAddress = (void *)context.Pc;
+-#endif
+-    NtRaiseException( &rec, &context, TRUE );
+-}
+-
+-
+-#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }
+-ALL_SYSCALL_STUBS
+-
+-static void * const syscalls[] =
+-{
+-#define SYSCALL_ENTRY(id,name,args) name,
+-    ALL_SYSCALLS
+-#undef SYSCALL_ENTRY
+-};
+-
+-static BYTE syscall_args[ARRAY_SIZE(syscalls)] =
+-{
+-#define SYSCALL_ENTRY(id,name,args) args,
+-    ALL_SYSCALLS
+-#undef SYSCALL_ENTRY
+-};
+-
+-SYSTEM_SERVICE_TABLE KeServiceDescriptorTable[4] =
+-{
+-    { (ULONG_PTR *)syscalls, NULL, ARRAY_SIZE(syscalls), syscall_args }
+-};
+-
+-static const char *ntsyscall_names[] =
+-{
+-#define SYSCALL_ENTRY(id,name,args) #name,
+-    ALL_SYSCALLS
+-#undef SYSCALL_ENTRY
+-};
+-
+-static const char **syscall_names[4] = { ntsyscall_names };
+-static const char **usercall_names;
+-
+-void ntdll_add_syscall_debug_info( UINT idx, const char **names, const char **user_names )
+-{
+-    syscall_names[idx] = names;
+-    usercall_names = user_names;
+-}
+-
+ #ifdef __GNUC__
+ static void fatal_error( const char *err, ... ) __attribute__((noreturn, format(printf,1,2)));
+ #endif
+@@ -635,66 +572,6 @@ void start_server( BOOL debug )
+ }
+ 
+ 
+-/***********************************************************************
+- *           KeAddSystemServiceTable
+- */
+-BOOLEAN KeAddSystemServiceTable( ULONG_PTR *funcs, ULONG_PTR *counters, ULONG limit,
+-                                 BYTE *arguments, ULONG index )
+-{
+-    if (index >= ARRAY_SIZE(KeServiceDescriptorTable)) return FALSE;
+-    KeServiceDescriptorTable[index].ServiceTable  = funcs;
+-    KeServiceDescriptorTable[index].CounterTable  = counters;
+-    KeServiceDescriptorTable[index].ServiceLimit  = limit;
+-    KeServiceDescriptorTable[index].ArgumentTable = arguments;
+-    return TRUE;
+-}
+-
+-void trace_syscall( UINT id, ULONG_PTR *args, ULONG len )
+-{
+-    UINT idx = (id >> 12) & 3, num = id & 0xfff;
+-    const char **names = syscall_names[idx];
+-
+-    if (names && names[num])
+-        TRACE_(syscall)( "\1SysCall  %s(", names[num] );
+-    else
+-        TRACE_(syscall)( "\1SysCall  %04x(", id );
+-
+-    len /= sizeof(ULONG_PTR);
+-    for (ULONG i = 0; i < len; i++)
+-    {
+-        TRACE_(syscall)( "%08lx", args[i] );
+-        if (i < len - 1) TRACE_(syscall)( "," );
+-    }
+-    TRACE_(syscall)( ")\n" );
+-}
+-
+-void trace_sysret( UINT id, ULONG_PTR retval )
+-{
+-    UINT idx = (id >> 12) & 3, num = id & 0xfff;
+-    const char **names = syscall_names[idx];
+-
+-    if (names && names[num])
+-        TRACE_(syscall)( "\1SysRet   %s() retval=%08lx\n", names[num], retval );
+-    else
+-        TRACE_(syscall)( "\1SysRet   %04x() retval=%08lx\n", id, retval );
+-}
+-
+-void trace_usercall( UINT id, ULONG_PTR *args, ULONG len )
+-{
+-    if (usercall_names)
+-        TRACE_(syscall)("\1UserCall %s(%p,%u)\n", usercall_names[id], args, len );
+-    else
+-        TRACE_(syscall)("\1UserCall %04x(%p,%u)\n", id, args, len );
+-}
+-
+-void trace_userret( void *ret_ptr, ULONG len, NTSTATUS status, UINT id )
+-{
+-    if (usercall_names)
+-        TRACE_(syscall)("\1UserRet  %s(%p,%u) retval=%08x\n", usercall_names[id], ret_ptr, len, status );
+-    else
+-        TRACE_(syscall)("\1UserRet  %04x(%p,%u) retval=%08x\n", id, ret_ptr, len, status );
+-}
+-
+ #ifdef SO_DLLS_SUPPORTED
+ 
+ /* adjust an array of pointers to make them into RVAs */
+diff --git a/dlls/ntdll/unix/syscall.c b/dlls/ntdll/unix/syscall.c
+new file mode 100644
+index 00000000000..86531cc0e2d
+--- /dev/null
++++ b/dlls/ntdll/unix/syscall.c
+@@ -0,0 +1,157 @@
++/*
++ * Unix interface for NT system calls
++ *
++ * Copyright 2025, 2026 Alexandre Julliard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#if 0
++#pragma makedep unix
++#endif
++
++#include "config.h"
++
++#include <stdarg.h>
++#include <stdlib.h>
++
++#include "ntstatus.h"
++#define WIN32_NO_STATUS
++#include "windef.h"
++#include "winnt.h"
++#include "winbase.h"
++#include "winternl.h"
++#include "unix_private.h"
++#include "ntsyscalls.h"
++#include "wine/debug.h"
++
++WINE_DEFAULT_DEBUG_CHANNEL(syscall);
++
++static void stub_syscall( const char *name )
++{
++    CONTEXT context = { .ContextFlags = CONTEXT_FULL };
++    EXCEPTION_RECORD rec =
++    {
++        .ExceptionCode = EXCEPTION_WINE_STUB,
++        .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
++        .NumberParameters = 2,
++        .ExceptionInformation[0] = (ULONG_PTR)"ntdll",
++        .ExceptionInformation[1] = (ULONG_PTR)name,
++    };
++    NtGetContextThread( GetCurrentThread(), &context );
++#ifdef __i386__
++    rec.ExceptionAddress = (void *)context.Eip;
++#elif defined __x86_64__
++    rec.ExceptionAddress = (void *)context.Rip;
++#elif defined __arm__ || defined __aarch64__
++    rec.ExceptionAddress = (void *)context.Pc;
++#endif
++    NtRaiseException( &rec, &context, TRUE );
++}
++
++#define SYSCALL_STUB(name) static void name(void) { stub_syscall( #name ); }
++ALL_SYSCALL_STUBS
++
++static void * const syscalls[] =
++{
++#define SYSCALL_ENTRY(id,name,args) name,
++    ALL_SYSCALLS
++#undef SYSCALL_ENTRY
++};
++
++static BYTE syscall_args[ARRAY_SIZE(syscalls)] =
++{
++#define SYSCALL_ENTRY(id,name,args) args,
++    ALL_SYSCALLS
++#undef SYSCALL_ENTRY
++};
++
++SYSTEM_SERVICE_TABLE KeServiceDescriptorTable[4] =
++{
++    { (ULONG_PTR *)syscalls, NULL, ARRAY_SIZE(syscalls), syscall_args }
++};
++
++static const char *ntsyscall_names[] =
++{
++#define SYSCALL_ENTRY(id,name,args) #name,
++    ALL_SYSCALLS
++#undef SYSCALL_ENTRY
++};
++
++static const char **syscall_names[4] = { ntsyscall_names };
++static const char **usercall_names;
++
++void ntdll_add_syscall_debug_info( UINT idx, const char **names, const char **user_names )
++{
++    syscall_names[idx] = names;
++    usercall_names = user_names;
++}
++
++BOOLEAN KeAddSystemServiceTable( ULONG_PTR *funcs, ULONG_PTR *counters, ULONG limit,
++                                 BYTE *arguments, ULONG index )
++{
++    if (index >= ARRAY_SIZE(KeServiceDescriptorTable)) return FALSE;
++    KeServiceDescriptorTable[index].ServiceTable  = funcs;
++    KeServiceDescriptorTable[index].CounterTable  = counters;
++    KeServiceDescriptorTable[index].ServiceLimit  = limit;
++    KeServiceDescriptorTable[index].ArgumentTable = arguments;
++    return TRUE;
++}
++
++void trace_syscall( UINT id, ULONG_PTR *args, ULONG len )
++{
++    UINT idx = (id >> 12) & 3, num = id & 0xfff;
++    const char **names = syscall_names[idx];
++
++    if (names && names[num])
++        TRACE( "\1SysCall  %s(", names[num] );
++    else
++        TRACE( "\1SysCall  %04x(", id );
++
++    len /= sizeof(ULONG_PTR);
++    for (ULONG i = 0; i < len; i++)
++    {
++        TRACE( "%08lx", args[i] );
++        if (i < len - 1) TRACE( "," );
++    }
++    TRACE( ")\n" );
++}
++
++void trace_sysret( UINT id, ULONG_PTR retval )
++{
++    UINT idx = (id >> 12) & 3, num = id & 0xfff;
++    const char **names = syscall_names[idx];
++
++    if (names && names[num])
++        TRACE( "\1SysRet   %s() retval=%08lx\n", names[num], retval );
++    else
++        TRACE( "\1SysRet   %04x() retval=%08lx\n", id, retval );
++}
++
++void trace_usercall( UINT id, ULONG_PTR *args, ULONG len )
++{
++    if (usercall_names)
++        TRACE("\1UserCall %s(%p,%u)\n", usercall_names[id], args, len );
++    else
++        TRACE("\1UserCall %04x(%p,%u)\n", id, args, len );
++}
++
++void trace_userret( void *ret_ptr, ULONG len, NTSTATUS status, UINT id )
++{
++    if (usercall_names)
++        TRACE("\1UserRet  %s(%p,%u) retval=%08x\n", usercall_names[id], ret_ptr, len, status );
++    else
++        TRACE("\1UserRet  %04x(%p,%u) retval=%08x\n", id, ret_ptr, len, status );
++}
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 47e38ff0206a24ab30dcf6f55fb3c72e4c579848 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Thu, 22 Jan 2026 15:30:53 +0100
+Subject: [PATCH 4/6] ntdll: Add syscall wrappers to work around ABI breakages.
+
+To work around clang assuming that function parameters are extended
+by the caller, cf. https://github.com/llvm/llvm-project/issues/12579,
+and macOS ABI incompatibilities on ARM64.
+
+cherry picked from commit f43402cde33ef3c35a585d877bcd19f8caf87255
+---
+ dlls/ntdll/unix/syscall.c | 166 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
+
+diff --git a/dlls/ntdll/unix/syscall.c b/dlls/ntdll/unix/syscall.c
+index 86531cc0e2d..a7ca90ab06f 100644
+--- a/dlls/ntdll/unix/syscall.c
++++ b/dlls/ntdll/unix/syscall.c
+@@ -35,10 +35,176 @@
+ #include "winternl.h"
+ #include "unix_private.h"
+ #include "ntsyscalls.h"
++#include "wine/asm.h"
+ #include "wine/debug.h"
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(syscall);
+ 
++/* Clang on x86-64, and on macOS ARM64, assumes that function parameters are extended by the caller,
++ * contrary to the ABI standards */
++#if (defined(__x86_64__) && defined(__clang__)) || (defined(__aarch64__) && defined(__APPLE__))
++
++#ifdef __x86_64__
++
++#define WRAP_FUNC(name,code) \
++    extern NTSTATUS wrap_##name(void); \
++    __ASM_GLOBAL_FUNC( wrap_##name, code "jmp " __ASM_NAME(#name) )
++#define ARG1 "movzbl %dil,%edi\n\t"
++#define ARG2 "movzbl %sil,%esi\n\t"
++#define ARG3 "movzbl %dl,%edx\n\t"
++#define ARG4 "movzbl %cl,%ecx\n\t"
++#define ARG5 "movzbl %r8b,%r8d\n\t"
++#define ARG6 "movzbl %r9b,%r9d\n\t"
++#define ARG7 ARGn(7)
++#define ARG8 ARGn(8)
++#define ARGn(n) "andq $0xff,(" #n "-6)*8(%rsp)\n\t"
++
++WRAP_FUNC( NtAccessCheckByTypeAndAuditAlarm, ARGn(13) )
++WRAP_FUNC( NtLockFile, ARGn(9) ARGn(10) )
++WRAP_FUNC( NtNotifyChangeDirectoryFile, ARGn(9) )
++WRAP_FUNC( NtNotifyChangeKey, ARG7 ARGn(10) )
++WRAP_FUNC( NtNotifyChangeMultipleKeys, ARGn(9) ARGn(12) )
++WRAP_FUNC( NtQueryDirectoryFile, ARGn(9) ARGn(11) )
++WRAP_FUNC( NtQueryEaFile, ARG5 ARGn(9) )
++
++#define NtAccessCheckByTypeAndAuditAlarm wrap_NtAccessCheckByTypeAndAuditAlarm
++#define NtLockFile wrap_NtLockFile
++#define NtNotifyChangeDirectoryFile wrap_NtNotifyChangeDirectoryFile
++#define NtNotifyChangeKey wrap_NtNotifyChangeKey
++#define NtNotifyChangeMultipleKeys wrap_NtNotifyChangeMultipleKeys
++#define NtQueryDirectoryFile wrap_NtQueryDirectoryFile
++#define NtQueryEaFile wrap_NtQueryEaFile
++
++#else
++
++#define WRAP_FUNC(name,code) \
++    extern NTSTATUS wrap_##name(void); \
++    __ASM_GLOBAL_FUNC( wrap_##name, code "b " __ASM_NAME(#name) )
++#define ARG1 "and w0, w0, #0xff\n\t"
++#define ARG2 "and w1, w1, #0xff\n\t"
++#define ARG3 "and w2, w2, #0xff\n\t"
++#define ARG4 "and w3, w3, #0xff\n\t"
++#define ARG5 "and w4, w4, #0xff\n\t"
++#define ARG6 "and w5, w5, #0xff\n\t"
++#define ARG7 "and w6, w6, #0xff\n\t"
++#define ARG8 "and w7, w7, #0xff\n\t"
++
++/* Additionally, macOS doesn't follow the standard ABI for stack packing:
++ * types smaller that 64-bit are packed on the stack. The first 8 args are
++ * in registers, so it only affects a few functions.
++ */
++
++WRAP_FUNC( NtCreateNamedPipeFile, /* ULONG, ULONG, ULONG, ULONG, ULONG, LARGE_INTEGER* */
++           "ldr w8, [sp, #0x08]\n\t"
++           "ldp x9, x10, [sp, #0x10]\n\t"
++           "ldp x11, x12, [sp, #0x20]\n\t"
++           "str w8, [sp, #0x04]\n\t"
++           "stp w9, w10, [sp, #0x8]\n\t"
++           "stp x11, x12, [sp, #0x10]\n\t" )
++WRAP_FUNC( NtLockFile, /* BOOLEAN, BOOLEAN */
++           "ldrb w8, [sp, #8]\n\t"
++           "strb w8, [sp, #1]\n\t" )
++WRAP_FUNC( NtMapViewOfSection, /* ULONG, ULONG */
++           "ldr w8, [sp, #8]\n\t"
++           "str w8, [sp, #4]\n\t" )
++WRAP_FUNC( NtNotifyChangeKey, /* ULONG, BOOLEAN */
++           ARG7
++           "ldrb w8, [sp, #8]\n\t"
++           "strb w8, [sp, #4]\n\t" )
++WRAP_FUNC( NtNotifyChangeMultipleKeys, /* BOOLEAN, void*, ULONG, BOOLEAN */
++           "ldrb w8, [sp, #0x18]\n\t"
++           "strb w8, [sp, #0x14]\n\t" )
++WRAP_FUNC( NtQueryEaFile, ARG5 )
++
++#define NtCreateNamedPipeFile wrap_NtCreateNamedPipeFile
++#define NtLockFile wrap_NtLockFile
++#define NtMapViewOfSection wrap_NtMapViewOfSection
++#define NtNotifyChangeKey wrap_NtNotifyChangeKey
++#define NtNotifyChangeMultipleKeys wrap_NtNotifyChangeMultipleKeys
++#define NtQueryEaFile wrap_NtQueryEaFile
++
++#endif
++
++WRAP_FUNC( NtAcceptConnectPort, ARG4 )
++WRAP_FUNC( NtAccessCheckAndAuditAlarm, ARG8 )
++WRAP_FUNC( NtAdjustGroupsToken, ARG2 )
++WRAP_FUNC( NtAdjustPrivilegesToken, ARG2 )
++WRAP_FUNC( NtCloseObjectAuditAlarm, ARG3 )
++WRAP_FUNC( NtCommitTransaction, ARG2 )
++WRAP_FUNC( NtContinue, ARG2 )
++WRAP_FUNC( NtCreateEvent, ARG5 )
++WRAP_FUNC( NtCreateMutant, ARG4 )
++/* WRAP_FUNC( NtCreateProcess, ARG5 ) */
++WRAP_FUNC( NtCreateThread, ARG8 )
++WRAP_FUNC( NtDelayExecution, ARG1 )
++WRAP_FUNC( NtDuplicateToken, ARG4 )
++WRAP_FUNC( NtInitiatePowerAction, ARG4 )
++WRAP_FUNC( NtOpenThreadToken, ARG3 )
++WRAP_FUNC( NtOpenThreadTokenEx, ARG3 )
++/* WRAP_FUNC( NtPrivilegeObjectAuditAlarm, ARG6 ) */
++/* WRAP_FUNC( NtPrivilegedServiceAuditAlarm, ARG5 ) */
++WRAP_FUNC( NtQueryDefaultLocale, ARG1 )
++WRAP_FUNC( NtQueryDirectoryObject, ARG4 ARG5 )
++WRAP_FUNC( NtReleaseKeyedEvent, ARG3 )
++WRAP_FUNC( NtRemoveIoCompletionEx, ARG6 )
++WRAP_FUNC( NtRollbackTransaction, ARG2 )
++WRAP_FUNC( NtSetDebugFilterState, ARG3 )
++WRAP_FUNC( NtSetDefaultLocale, ARG1 )
++WRAP_FUNC( NtSetTimer, ARG5 )
++WRAP_FUNC( NtSetTimerResolution, ARG2 )
++WRAP_FUNC( NtSignalAndWaitForSingleObject, ARG3 )
++WRAP_FUNC( NtWaitForDebugEvent, ARG2 )
++WRAP_FUNC( NtWaitForKeyedEvent, ARG3 )
++WRAP_FUNC( NtWaitForMultipleObjects, ARG4 )
++WRAP_FUNC( NtWaitForSingleObject, ARG2 )
++
++#define NtAcceptConnectPort wrap_NtAcceptConnectPort
++#define NtAccessCheckAndAuditAlarm wrap_NtAccessCheckAndAuditAlarm
++#define NtAdjustGroupsToken wrap_NtAdjustGroupsToken
++#define NtAdjustPrivilegesToken wrap_NtAdjustPrivilegesToken
++#define NtCloseObjectAuditAlarm wrap_NtCloseObjectAuditAlarm
++#define NtCommitTransaction wrap_NtCommitTransaction
++#define NtContinue wrap_NtContinue
++#define NtCreateEvent wrap_NtCreateEvent
++#define NtCreateMutant wrap_NtCreateMutant
++#define NtCreateProcess wrap_NtCreateProcess
++#define NtCreateThread wrap_NtCreateThread
++#define NtDelayExecution wrap_NtDelayExecution
++#define NtDuplicateToken wrap_NtDuplicateToken
++#define NtInitiatePowerAction wrap_NtInitiatePowerAction
++#define NtOpenThreadToken wrap_NtOpenThreadToken
++#define NtOpenThreadTokenEx wrap_NtOpenThreadTokenEx
++#define NtPrivilegeObjectAuditAlarm wrap_NtPrivilegeObjectAuditAlarm
++#define NtPrivilegedServiceAuditAlarm wrap_NtPrivilegedServiceAuditAlarm
++#define NtQueryDefaultLocale wrap_NtQueryDefaultLocale
++#define NtQueryDirectoryObject wrap_NtQueryDirectoryObject
++#define NtReleaseKeyedEvent wrap_NtReleaseKeyedEvent
++#define NtRemoveIoCompletionEx wrap_NtRemoveIoCompletionEx
++#define NtRollbackTransaction wrap_NtRollbackTransaction
++#define NtSetDebugFilterState wrap_NtSetDebugFilterState
++#define NtSetDefaultLocale wrap_NtSetDefaultLocale
++#define NtSetTimer wrap_NtSetTimer
++#define NtSetTimerResolution wrap_NtSetTimerResolution
++#define NtSignalAndWaitForSingleObject wrap_NtSignalAndWaitForSingleObject
++#define NtWaitForDebugEvent wrap_NtWaitForDebugEvent
++#define NtWaitForKeyedEvent wrap_NtWaitForKeyedEvent
++#define NtWaitForMultipleObjects wrap_NtWaitForMultipleObjects
++#define NtWaitForSingleObject wrap_NtWaitForSingleObject
++
++#undef ARG1
++#undef ARG2
++#undef ARG3
++#undef ARG4
++#undef ARG5
++#undef ARG6
++#undef ARG7
++#undef ARG8
++#undef ARGn
++#undef WRAP_FUNC
++
++#endif  /* (__x86_64__ && __clang__) || (__aarch64__ && __APPLE__) */
++
++
+ static void stub_syscall( const char *name )
+ {
+     CONTEXT context = { .ContextFlags = CONTEXT_FULL };
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 4140190adb55dc116ed0e649de768041737789ac Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Fri, 23 Jan 2026 11:27:19 +0100
+Subject: [PATCH 5/6] win32u: Add syscall wrappers to work around the macOS ABI
+ breakage on ARM64.
+
+cherry picked from commit 2a61baa185ebd1300ea49704510a7ffb02d7ad80
+---
+ dlls/win32u/syscall.c | 80 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
+index 59913497915..4bbd8c6f4ec 100644
+--- a/dlls/win32u/syscall.c
++++ b/dlls/win32u/syscall.c
+@@ -31,11 +31,91 @@
+ #include "ntgdi_private.h"
+ #include "ntuser_private.h"
+ #include "ntuser.h"
++#include "wine/asm.h"
+ #include "wine/unixlib.h"
+ #include "win32syscalls.h"
+ 
+ ULONG_PTR zero_bits = 0;
+ 
++#if defined(__aarch64__) && defined(__APPLE__)
++
++/* macOS doesn't follow the standard ABI for stack packing: types
++ * smaller that 64-bit are packed on the stack. The first 8 args are
++ * in registers, so it only affects a few functions.
++ */
++
++#define WRAP_FUNC(name,code) \
++    extern NTSTATUS wrap_##name(void); \
++    __ASM_GLOBAL_FUNC( wrap_##name, code "b " __ASM_NAME(#name) )
++
++WRAP_FUNC( NtGdiAlphaBlend, /* int, int, DWORD, HANDLE */
++           "ldp x8, x9, [sp, #0x08]\n\t"
++           "ldr x10, [sp, #0x18]\n\t"
++           "stp w8, w9, [sp, #0x4]\n\t"
++           "str x10, [sp, #0x10]\n\t" )
++WRAP_FUNC( NtGdiArcInternal, /* INT, INT */
++           "ldr w8, [sp, #8]\n\t"
++           "str w8, [sp, #4]\n\t" )
++WRAP_FUNC( NtGdiBitBlt, /* DWORD, DWORD, FLONG */
++           "ldp x8, x9, [sp, #8]\n\t"
++           "stp w8, w9, [sp, #4]\n\t" )
++WRAP_FUNC( NtGdiCreateDIBitmapInternal, /* UINT, ULONG, HANDLE */
++           "ldp x8, x9, [sp, #8]\n\t"
++           "str w8, [sp, #4]\n\t"
++           "str x9, [sp, #8]\n\t" )
++WRAP_FUNC( NtGdiExtCreatePen, /* ULONG, BOOL, HBRUSH */
++           "ldp x8, x9, [sp, #8]\n\t"
++           "str w8, [sp, #4]\n\t"
++           "str x9, [sp, #8]\n\t" )
++WRAP_FUNC( NtGdiMaskBlt, /* HBITMAP, INT, INT, DWORD, DWORD */
++           "ldp x8, x9, [sp, #0x8]\n\t"
++           "ldp x10, x11, [sp, #0x18]\n\t"
++           "stp w8, w9, [sp, #0x8]\n\t"
++           "stp w10, w11, [sp, #0x10]\n\t" )
++WRAP_FUNC( NtGdiPlgBlt,/* INT, INT, DWORD */
++           "ldp x8, x9, [sp, #8]\n\t"
++           "stp w8, w9, [sp, #4]\n\t" )
++WRAP_FUNC( NtGdiSetDIBitsToDeviceInternal, /* UINT, void*, BITMAPINFO*, UINT, UINT, UINT, BOOL, HANDLE */
++           "ldp x8, x9, [sp, #0x20]\n\t"
++           "ldp x10, x11, [sp, #0x30]\n\t"
++           "str w8, [sp, #0x1c]\n\t"
++           "stp w9, w10, [sp, #0x20]\n\t"
++           "str x11, [sp, #0x28]\n\t" )
++WRAP_FUNC( NtGdiStretchBlt, /* INT, INT, DWORD, COLORREF */
++           "ldr w8, [sp, #0x8]\n\t"
++           "ldp x9, x10, [sp, #0x10]\n\t"
++           "str w8, [sp, #0x4]\n\t"
++           "stp w9, w10, [sp, #0x8]\n\t" )
++WRAP_FUNC( NtGdiStretchDIBitsInternal, /* INT, void*, BITMAPINFO*, UINT, DWORD, UINT, UINT, HANDLE */
++           "ldp x8, x9, [sp, #0x20]\n\t"
++           "ldp x10, x11, [sp, #0x30]\n\t"
++           "str w8, [sp, #0x1c]\n\t"
++           "stp w9, w10, [sp, #0x20]\n\t"
++           "str x11, [sp, #0x28]\n\t" )
++WRAP_FUNC( NtGdiTransparentBlt, /* int, int, UINT */
++           "ldp x8, x9, [sp, #8]\n\t"
++           "stp w8, w9, [sp, #4]\n\t" )
++WRAP_FUNC( NtUserDeferWindowPosAndBand, /* UINT, UINT */
++           "ldr w8, [sp, #8]\n\t"
++           "str w8, [sp, #4]\n\t" )
++
++#define NtGdiAlphaBlend wrap_NtGdiAlphaBlend
++#define NtGdiArcInternal wrap_NtGdiArcInternal
++#define NtGdiBitBlt wrap_NtGdiBitBlt
++#define NtGdiCreateDIBitmapInternal wrap_NtGdiCreateDIBitmapInternal
++#define NtGdiExtCreatePen wrap_NtGdiExtCreatePen
++#define NtGdiMaskBlt wrap_NtGdiMaskBlt
++#define NtGdiPlgBlt wrap_NtGdiPlgBlt
++#define NtGdiSetDIBitsToDeviceInternal wrap_NtGdiSetDIBitsToDeviceInternal
++#define NtGdiStretchBlt wrap_NtGdiStretchBlt
++#define NtGdiStretchDIBitsInternal wrap_NtGdiStretchDIBitsInternal
++#define NtGdiTransparentBlt wrap_NtGdiTransparentBlt
++#define NtUserDeferWindowPosAndBand wrap_NtUserDeferWindowPosAndBand
++
++#undef WRAP_FUNC
++
++#endif  /* __aarch64__ && __APPLE__ */
++
+ static void stub_syscall( const char *name )
+ {
+     CONTEXT context = { .ContextFlags = CONTEXT_FULL };
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 7d2af0d7d66c424fd91810782539267e5a1ee8e1 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Fri, 23 Jan 2026 16:31:16 +0100
+Subject: [PATCH 6/6] ntdll/tests: Mark a test that sometimes fails as flaky.
+
+We can't assume that available disk space won't change while running
+the test.
+
+cherry picked from commit 862211e2bf60b32e18bc795e324bc0658e93855e
+---
+ dlls/ntdll/tests/file.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/dlls/ntdll/tests/file.c b/dlls/ntdll/tests/file.c
+index f8904457740..ead174f0d1f 100644
+--- a/dlls/ntdll/tests/file.c
++++ b/dlls/ntdll/tests/file.c
+@@ -1425,14 +1425,17 @@ static void test_file_full_size_information(void)
+         "[ffsie] TotalAllocationUnits error ffsi:0x%s, ffsie:0x%s\n",
+         wine_dbgstr_longlong(ffsi.TotalAllocationUnits.QuadPart),
+         wine_dbgstr_longlong(ffsie.ActualTotalAllocationUnits));
+-    ok(ffsie.CallerAvailableAllocationUnits == ffsi.CallerAvailableAllocationUnits.QuadPart,
+-        "[ffsie] CallerAvailableAllocationUnits error ffsi:0x%s, ffsie:0x%s\n",
+-        wine_dbgstr_longlong(ffsi.CallerAvailableAllocationUnits.QuadPart),
+-        wine_dbgstr_longlong(ffsie.CallerAvailableAllocationUnits));
+-    ok(ffsie.ActualAvailableAllocationUnits == ffsi.ActualAvailableAllocationUnits.QuadPart,
+-        "[ffsie] ActualAvailableAllocationUnits error ffsi:0x%s, ffsie:0x%s\n",
+-        wine_dbgstr_longlong(ffsi.ActualAvailableAllocationUnits.QuadPart),
+-        wine_dbgstr_longlong(ffsie.ActualAvailableAllocationUnits));
++    flaky  /* available disk space can change outside of our control */
++    {
++        ok(ffsie.CallerAvailableAllocationUnits == ffsi.CallerAvailableAllocationUnits.QuadPart,
++           "[ffsie] CallerAvailableAllocationUnits error ffsi:0x%s, ffsie:0x%s\n",
++           wine_dbgstr_longlong(ffsi.CallerAvailableAllocationUnits.QuadPart),
++           wine_dbgstr_longlong(ffsie.CallerAvailableAllocationUnits));
++        ok(ffsie.ActualAvailableAllocationUnits == ffsi.ActualAvailableAllocationUnits.QuadPart,
++           "[ffsie] ActualAvailableAllocationUnits error ffsi:0x%s, ffsie:0x%s\n",
++           wine_dbgstr_longlong(ffsi.ActualAvailableAllocationUnits.QuadPart),
++           wine_dbgstr_longlong(ffsie.ActualAvailableAllocationUnits));
++    }
+ 
+     /* Assume file system is NTFS */
+     ok(ffsie.BytesPerSector == 512, "[ffsie] BytesPerSector expected 512, got %ld\n",ffsie.BytesPerSector);
+-- 
+2.50.1 (Apple Git-155)
+
