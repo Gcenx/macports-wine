@@ -23,9 +23,9 @@ dist_subdir         ${github.project}
 distname            ${name}-1.0-${github.version}-x86_64
 use_xz              yes
 
-checksums           rmd160  4b5fb23e520ee4ba2cba6ad1b2c8882e46b6a4e7 \
-                    sha256  c6517f6370ed286ed65ba9292579e8bf55fcbc7319e9869acefbaf26ec5dd34f \
-                    size    296193968
+checksums           rmd160  5e4b702061019f96396d7527f4cc38b372b9097a \
+                    sha256  a21508b9f1602b1792bb50f9917a30d57a9af8f5324042de13ca9dd0fc1bcfcf \
+                    size    294532544
 
 use_configure       no
 build {}
