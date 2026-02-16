@@ -1,7 +1,7 @@
-From 8275bd8daea9fc194023bb62c67a4e2956eba5e5 Mon Sep 17 00:00:00 2001
+From b09364ac86b26aa9bff6d7c436ee407d2d12d4f5 Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Wed, 21 Jan 2026 14:15:12 +0100
-Subject: [PATCH 1/6] ntdll: Remove the machine frame in
+Subject: [PATCH 1/9] ntdll: Remove the machine frame in
  KiUserExceptionDispatcher on ARM64.
 
 Recent Windows version don't have it, the corresponding tests were
@@ -13,7 +13,7 @@ cherry picked from commit 2d0ceb6b497032e37792f4280a2b13b967dddf1b
  1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/dlls/ntdll/unix/signal_arm64.c b/dlls/ntdll/unix/signal_arm64.c
-index a08175d951d..0c9b0be571d 100644
+index a08175d951d5..0c9b0be571dd 100644
 --- a/dlls/ntdll/unix/signal_arm64.c
 +++ b/dlls/ntdll/unix/signal_arm64.c
 @@ -131,12 +131,10 @@ struct exc_stack_layout
@@ -49,14 +49,11 @@ index a08175d951d..0c9b0be571d 100644
  
      frame->pc = (ULONG64)pKiUserExceptionDispatcher;
      frame->sp = (ULONG64)stack;
--- 
-2.50.1 (Apple Git-155)
 
-
-From 172d5bb17d3df05c99253aa4ef60d634f38a370e Mon Sep 17 00:00:00 2001
+From 1f01c9cf8018167595380069602d6bc605d752d9 Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Thu, 22 Jan 2026 16:14:57 +0100
-Subject: [PATCH 2/6] ntdll/tests: Add a test for passing BOOLEAN values in
+Subject: [PATCH 2/9] ntdll/tests: Add a test for passing BOOLEAN values in
  syscalls.
 
 To demonstrate the clang x86-64 ABI breakage.
@@ -67,7 +64,7 @@ cherry picked from commit 565091afa40c963212a72115d71cf315bbcd7a29
  1 file changed, 28 insertions(+)
 
 diff --git a/dlls/ntdll/tests/virtual.c b/dlls/ntdll/tests/virtual.c
-index 6730315d5fb..809c45e278d 100644
+index 6730315d5fbe..809c45e278d7 100644
 --- a/dlls/ntdll/tests/virtual.c
 +++ b/dlls/ntdll/tests/virtual.c
 @@ -2510,6 +2510,33 @@ static void test_syscall_numbers(void)
@@ -112,14 +109,11 @@ index 6730315d5fb..809c45e278d 100644
      test_query_region_information();
      test_query_image_information();
      test_exec_memory_writes();
--- 
-2.50.1 (Apple Git-155)
 
-
-From de445c8238e3e3c324b784dd2258b608fd0e1201 Mon Sep 17 00:00:00 2001
+From 20ab841a1bd502ff09046acbf5248b6ad35f6b9b Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Thu, 22 Jan 2026 11:42:34 +0100
-Subject: [PATCH 3/6] ntdll: Move NT syscall Unix-side support to a new
+Subject: [PATCH 3/9] ntdll: Move NT syscall Unix-side support to a new
  syscall.c file.
 
 cherry picked from commit d1415ab24e9c842dbf484426f3a33803014da3cc
@@ -131,10 +125,10 @@ cherry picked from commit d1415ab24e9c842dbf484426f3a33803014da3cc
  create mode 100644 dlls/ntdll/unix/syscall.c
 
 diff --git a/dlls/ntdll/Makefile.in b/dlls/ntdll/Makefile.in
-index f849a0b6ad2..ef147060d37 100644
+index 3c0dfa7a8958..fc51077242d4 100644
 --- a/dlls/ntdll/Makefile.in
 +++ b/dlls/ntdll/Makefile.in
-@@ -64,6 +64,7 @@ SOURCES = \
+@@ -63,6 +63,7 @@ SOURCES = \
  	unix/signal_x86_64.c \
  	unix/socket.c \
  	unix/sync.c \
@@ -143,12 +137,12 @@ index f849a0b6ad2..ef147060d37 100644
  	unix/tape.c \
  	unix/thread.c \
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index 8387a7b75fa..f4131126040 100644
+index cb700dd80e8e..c9696fef1155 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
-@@ -92,11 +92,9 @@
+@@ -91,11 +91,9 @@
+ #include "winternl.h"
  #include "unix_private.h"
- #include "msync.h"
  #include "wine/list.h"
 -#include "ntsyscalls.h"
  #include "wine/debug.h"
@@ -158,7 +152,7 @@ index 8387a7b75fa..f4131126040 100644
  
  #if defined __i386__ || defined __x86_64__
  #define SO_DLLS_SUPPORTED
-@@ -113,67 +111,6 @@ void *pRtlUserThreadStart = NULL;
+@@ -112,67 +110,6 @@ void *pRtlUserThreadStart = NULL;
  void *p__wine_ctrl_routine = NULL;
  SYSTEM_DLL_INIT_BLOCK *pLdrSystemDllInitBlock = NULL;
  
@@ -226,7 +220,7 @@ index 8387a7b75fa..f4131126040 100644
  #ifdef __GNUC__
  static void fatal_error( const char *err, ... ) __attribute__((noreturn, format(printf,1,2)));
  #endif
-@@ -635,66 +572,6 @@ void start_server( BOOL debug )
+@@ -619,66 +556,6 @@ void start_server( BOOL debug )
  }
  
  
@@ -295,7 +289,7 @@ index 8387a7b75fa..f4131126040 100644
  /* adjust an array of pointers to make them into RVAs */
 diff --git a/dlls/ntdll/unix/syscall.c b/dlls/ntdll/unix/syscall.c
 new file mode 100644
-index 00000000000..86531cc0e2d
+index 000000000000..86531cc0e2de
 --- /dev/null
 +++ b/dlls/ntdll/unix/syscall.c
 @@ -0,0 +1,157 @@
@@ -456,14 +450,11 @@ index 00000000000..86531cc0e2d
 +    else
 +        TRACE("\1UserRet  %04x(%p,%u) retval=%08x\n", id, ret_ptr, len, status );
 +}
--- 
-2.50.1 (Apple Git-155)
 
-
-From 47e38ff0206a24ab30dcf6f55fb3c72e4c579848 Mon Sep 17 00:00:00 2001
+From cfc4ae5dfb45b355ad7192e37136deb157d41900 Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Thu, 22 Jan 2026 15:30:53 +0100
-Subject: [PATCH 4/6] ntdll: Add syscall wrappers to work around ABI breakages.
+Subject: [PATCH 4/9] ntdll: Add syscall wrappers to work around ABI breakages.
 
 To work around clang assuming that function parameters are extended
 by the caller, cf. https://github.com/llvm/llvm-project/issues/12579,
@@ -475,7 +466,7 @@ cherry picked from commit f43402cde33ef3c35a585d877bcd19f8caf87255
  1 file changed, 166 insertions(+)
 
 diff --git a/dlls/ntdll/unix/syscall.c b/dlls/ntdll/unix/syscall.c
-index 86531cc0e2d..a7ca90ab06f 100644
+index 86531cc0e2de..a7ca90ab06fe 100644
 --- a/dlls/ntdll/unix/syscall.c
 +++ b/dlls/ntdll/unix/syscall.c
 @@ -35,10 +35,176 @@
@@ -655,14 +646,11 @@ index 86531cc0e2d..a7ca90ab06f 100644
  static void stub_syscall( const char *name )
  {
      CONTEXT context = { .ContextFlags = CONTEXT_FULL };
--- 
-2.50.1 (Apple Git-155)
 
-
-From 4140190adb55dc116ed0e649de768041737789ac Mon Sep 17 00:00:00 2001
+From ba89b9d1454f740c5e4be65ee87a745a48c2899f Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Fri, 23 Jan 2026 11:27:19 +0100
-Subject: [PATCH 5/6] win32u: Add syscall wrappers to work around the macOS ABI
+Subject: [PATCH 5/9] win32u: Add syscall wrappers to work around the macOS ABI
  breakage on ARM64.
 
 cherry picked from commit 2a61baa185ebd1300ea49704510a7ffb02d7ad80
@@ -671,7 +659,7 @@ cherry picked from commit 2a61baa185ebd1300ea49704510a7ffb02d7ad80
  1 file changed, 80 insertions(+)
 
 diff --git a/dlls/win32u/syscall.c b/dlls/win32u/syscall.c
-index 59913497915..4bbd8c6f4ec 100644
+index 599134979155..4bbd8c6f4ec0 100644
 --- a/dlls/win32u/syscall.c
 +++ b/dlls/win32u/syscall.c
 @@ -31,11 +31,91 @@
@@ -766,14 +754,11 @@ index 59913497915..4bbd8c6f4ec 100644
  static void stub_syscall( const char *name )
  {
      CONTEXT context = { .ContextFlags = CONTEXT_FULL };
--- 
-2.50.1 (Apple Git-155)
 
-
-From 7d2af0d7d66c424fd91810782539267e5a1ee8e1 Mon Sep 17 00:00:00 2001
+From 94c9f34fc8534e0256b9e1ffe0a22ac740288d50 Mon Sep 17 00:00:00 2001
 From: Alexandre Julliard <julliard@winehq.org>
 Date: Fri, 23 Jan 2026 16:31:16 +0100
-Subject: [PATCH 6/6] ntdll/tests: Mark a test that sometimes fails as flaky.
+Subject: [PATCH 6/9] ntdll/tests: Mark a test that sometimes fails as flaky.
 
 We can't assume that available disk space won't change while running
 the test.
@@ -784,7 +769,7 @@ cherry picked from commit 862211e2bf60b32e18bc795e324bc0658e93855e
  1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/dlls/ntdll/tests/file.c b/dlls/ntdll/tests/file.c
-index f8904457740..ead174f0d1f 100644
+index f89044577400..ead174f0d1fe 100644
 --- a/dlls/ntdll/tests/file.c
 +++ b/dlls/ntdll/tests/file.c
 @@ -1425,14 +1425,17 @@ static void test_file_full_size_information(void)
@@ -813,14 +798,11 @@ index f8904457740..ead174f0d1f 100644
  
      /* Assume file system is NTFS */
      ok(ffsie.BytesPerSector == 512, "[ffsie] BytesPerSector expected 512, got %ld\n",ffsie.BytesPerSector);
--- 
-2.50.1 (Apple Git-155)
 
-
-From a3526fa71f29e6ea7430df4ecc654f4b340a6c86 Mon Sep 17 00:00:00 2001
+From 406b8d35ef6ca9ed658d385fea026115f812976f Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Tue, 10 Feb 2026 15:10:41 +0100
-Subject: [PATCH 1/3] winebuild: Check for LLVM tool name too when using
+Subject: [PATCH 7/9] winebuild: Check for LLVM tool name too when using
  cc_command in find_tool.
 
 Similar to how we check for in case of clang from the PATH.
@@ -831,7 +813,7 @@ cherry picked from commit a3526fa71f29e6ea7430df4ecc654f4b340a6c86
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/winebuild/utils.c b/tools/winebuild/utils.c
-index 1f0cde60bf9..5492de99c90 100644
+index 1f0cde60bf9f..5492de99c905 100644
 --- a/tools/winebuild/utils.c
 +++ b/tools/winebuild/utils.c
 @@ -227,7 +227,11 @@ struct strarray find_tool( const char *name, const char * const *names )
@@ -847,14 +829,11 @@ index 1f0cde60bf9..5492de99c90 100644
      if (!file) file = find_binary( "llvm", name );
      if (!file) file = find_clang_tool( empty_strarray, strmake( "llvm-%s", name ));
      if (!file) file = find_clang_tool( empty_strarray, name );
---
-GitLab
 
-
-From 0636893a4b9edc481519528d2ee1ef99e22b373d Mon Sep 17 00:00:00 2001
+From 773d1ef9e12464e44b7dd6db687b86ea0738aef5 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Tue, 10 Feb 2026 15:14:29 +0100
-Subject: [PATCH 2/3] winegcc: Add --cc-cmd option support.
+Subject: [PATCH 8/9] winegcc: Add --cc-cmd option support.
 
 Similar to winebuild's --cc-cmd option.
 
@@ -864,7 +843,7 @@ cherry picked from commit 0636893a4b9edc481519528d2ee1ef99e22b373d
  1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/tools/winegcc/winegcc.c b/tools/winegcc/winegcc.c
-index b3cfa15fabc..3ce6ed1ee4f 100644
+index f8651804fa2a..7b9a7cf39b9f 100644
 --- a/tools/winegcc/winegcc.c
 +++ b/tools/winegcc/winegcc.c
 @@ -151,6 +151,7 @@ struct strarray temp_files = { 0 };
@@ -925,17 +904,17 @@ index b3cfa15fabc..3ce6ed1ee4f 100644
      return ret;
  }
  
-@@ -1684,7 +1694,8 @@ int main(int argc, char **argv)
+@@ -1683,7 +1693,8 @@ int main(int argc, char **argv)
                      next_is_arg = strcmp("-target", args.str[i]) == 0;
                      break;
-         case '-':
--            next_is_arg = (strcmp("--param", args.str[i]) == 0 ||
-+            next_is_arg = (strcmp("--cc-cmd", args.str[i]) == 0 ||
+ 		case '-':
+-		    next_is_arg = (strcmp("--param", args.str[i]) == 0 ||
++		    next_is_arg = (strcmp("--cc-cmd", args.str[i]) == 0 ||
 +                                   strcmp("--param", args.str[i]) == 0 ||
                                     strcmp("--sysroot", args.str[i]) == 0 ||
                                     strcmp("--target", args.str[i]) == 0 ||
                                     strcmp("--wine-objdir", args.str[i]) == 0 ||
-@@ -1970,6 +1981,11 @@ int main(int argc, char **argv)
+@@ -1969,6 +1980,11 @@ int main(int argc, char **argv)
                          no_default_config = true;
                          raw_compiler_arg = raw_linker_arg = 1;
                      }
@@ -947,14 +926,11 @@ index b3cfa15fabc..3ce6ed1ee4f 100644
                      else if (is_option( args, i, "--sysroot", &option_arg ))
                      {
                          sysroot = option_arg;
---
-GitLab
 
-
-From cad3c22fede8988ee5c9d460812788d81a425c7c Mon Sep 17 00:00:00 2001
+From 91dd7bc9c2c14d114f9051f07af8d47c6ca13df1 Mon Sep 17 00:00:00 2001
 From: Jacek Caban <jacek@codeweavers.com>
 Date: Tue, 10 Feb 2026 15:15:24 +0100
-Subject: [PATCH 3/3] makedep: Pass configured compiler with --cc-cmd to
+Subject: [PATCH 9/9] makedep: Pass configured compiler with --cc-cmd to
  winegcc and winebuild.
 
 cherry picked from commit cad3c22fede8988ee5c9d460812788d81a425c7c
@@ -963,7 +939,7 @@ cherry picked from commit cad3c22fede8988ee5c9d460812788d81a425c7c
  1 file changed, 5 insertions(+)
 
 diff --git a/tools/makedep.c b/tools/makedep.c
-index 3baf7d42547..b439d933b17 100644
+index efc7517f0c84..685327f7afb4 100644
 --- a/tools/makedep.c
 +++ b/tools/makedep.c
 @@ -177,6 +177,7 @@ static const char *arch_dirs[MAX_ARCHS];
@@ -974,7 +950,7 @@ index 3baf7d42547..b439d933b17 100644
  static const char *delay_load_flags[MAX_ARCHS];
  static struct strarray debug_flags[MAX_ARCHS];
  static struct strarray target_flags[MAX_ARCHS];
-@@ -2723,6 +2724,7 @@ static void output_winegcc_command( struct makefile *make, unsigned int arch )
+@@ -2626,6 +2627,7 @@ static void output_winegcc_command( struct makefile *make, unsigned int arch )
          output_filename( "--winebuild" );
          output_filename( winebuild );
      }
@@ -982,7 +958,7 @@ index 3baf7d42547..b439d933b17 100644
      output_filenames( target_flags[arch] );
      if (native_archs[arch] && !make->disabled[native_archs[arch]])
          output_filenames( hybrid_target_flags[arch] );
-@@ -3814,6 +3816,7 @@ static void output_import_lib( struct makefile *make, unsigned int arch )
+@@ -3681,6 +3683,7 @@ static void output_import_lib( struct makefile *make, unsigned int arch )
      if (hybrid_arch) output_filenames_obj_dir( make, make->implib_files[hybrid_arch] );
      output( "\n" );
      output( "\t%s%s -w --implib -o $@", cmd_prefix( "BUILD" ), winebuild );
@@ -990,7 +966,7 @@ index 3baf7d42547..b439d933b17 100644
      if (!delay_load_flags[arch]) output_filename( "--without-dlltool" );
      output_filenames( target_flags[hybrid_arch ? hybrid_arch : arch] );
      if (make->is_win16) output_filename( "-m16" );
-@@ -3874,6 +3877,7 @@ static void output_static_lib( struct makefile *make, unsigned int arch )
+@@ -3741,6 +3744,7 @@ static void output_static_lib( struct makefile *make, unsigned int arch )
      if (!arch) output_filenames_obj_dir( make, make->unixobj_files );
      output( "\n" );
      output( "\t%s%s -w --staticlib -o $@", cmd_prefix( "BUILD" ), winebuild );
@@ -998,7 +974,7 @@ index 3baf7d42547..b439d933b17 100644
      output_filenames( target_flags[hybrid_arch ? hybrid_arch : arch] );
      output_filenames_obj_dir( make, make->object_files[arch] );
      if (hybrid_arch) output_filenames_obj_dir( make, make->object_files[hybrid_arch] );
-@@ -4945,6 +4949,7 @@ int main( int argc, char *argv[] )
+@@ -4814,6 +4818,7 @@ int main( int argc, char *argv[] )
          if (!is_multiarch( arch )) continue;
          delay_load_flags[arch] = get_expanded_arch_var( top_makefile, "DELAYLOADFLAG", arch );
          debug_flags[arch] = get_expanded_arch_var_array( top_makefile, "DEBUG", arch );
@@ -1006,6 +982,3 @@ index 3baf7d42547..b439d933b17 100644
      }
  
      if (unix_lib_supported)
---
-GitLab
-
