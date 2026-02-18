@@ -37,7 +37,7 @@ checksums               rmd160  d71fda5b26335644b72dd4e263a20dfd16312a9c \
                         size    387055236
 
 variant gstreamer description "Modify ${subport} to use GStreamer.framework" {
-    depends_run-append  port:gstreamer-runtime
+    depends_run-append  path:Library/Frameworks/GStreamer.framework:gstreamer.framework
 }
 
 use_configure           no
@@ -151,7 +151,7 @@ post-build {
         system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix \
             "/usr/bin/install_name_tool -delete_rpath @loader_path/../../../lib64 winegstreamer.so"
         system -W ${workpath}/CrossOver.app/Contents/SharedSupport/CrossOver/lib/wine/x86_64-unix \
-            "/usr/bin/install_name_tool -add_rpath /Library/Frameworks/GStreamer.framework/Libraries winegstreamer.so"
+            "/usr/bin/install_name_tool -add_rpath ${frameworks_dir}/GStreamer.framework/Libraries winegstreamer.so"
     }
 }
 
