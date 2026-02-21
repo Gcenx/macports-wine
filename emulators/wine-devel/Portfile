@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 11.2 wine-
+github.setup                wine-mirror wine 11.3 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  7a9077f0b0f499b72c60970d32ff1cd0b5a7bd06 \
-    sha256  7ad20137b31dda7e7e75e696d5c6553563bf0e13fbb6d5e3d4c499ce4be49452 \
-    size    53859106
+    rmd160  60c9c1eec03991a0ef730e63c587fbdd9c71389c \
+    sha256  e74b93072d19d07d1963f6b0d6b3f5f73ae4e5c15d7a4246aee9bbf5911d8d70 \
+    size    53913955
 
 depends_build \
     port:bison \
@@ -67,8 +67,6 @@ post-extract {
 patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
-patchfiles-append \
-    llvm-mingw_fixes.patch
 
 # Rosetta2 hacks here
 patchfiles-append \
@@ -169,9 +167,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  935b101f88331a84cd5237df87e51d1d95b7a806 \
-        sha256  c23113d0fd50c52f07d42eb3ef8bdcc80143e9d5204f445a0569307d67afcbdc \
-        size    9268799
+        rmd160  0a7997f3a601459fb625c14afceddabde8fd9247 \
+        sha256  276956a3e230ca599cfd88656af7a6e11b9edf3c94c3555a1ff323325117dc32 \
+        size    9116020
 
     depends_patch-append    port:autoconf
 
