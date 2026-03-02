@@ -31,6 +31,7 @@ use_configure       no
 build {}
 
 destroot {
+    delete ${workpath}/GStreamer.framework/.gitignore
     copy ${workpath}/GStreamer.framework ${destroot}${frameworks_dir}
     system -W ${destroot}${frameworks_dir} \
         "codesign --force --deep --sign - GStreamer.framework"
