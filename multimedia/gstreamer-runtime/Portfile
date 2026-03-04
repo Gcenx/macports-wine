@@ -26,7 +26,7 @@ extract.suffix      .pkg
 
 checksums           rmd160  4fcfe71e602bd554f6886fcb9f5e810973834d06 \
                     sha256  02803f73435daabe8fb12b79c38c6775d0efb83af001474558ba25c4f874d305 \
-                    size    15184692
+                    size    151846922
 
 extract             {}
 use_configure       no
