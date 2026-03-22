@@ -1,11 +1,13 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index 82c9821a949..1d0a1461fb2 100644
+index cbe258b12a6..a4b9d8c8efa 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -2678,6 +2678,15 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2817,6 +2817,18 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
  
  
- #ifdef __APPLE__
+ #if defined(__APPLE__) || defined(PR_SET_SYSCALL_USER_DISPATCH)
++
++#ifdef __APPLE__
 +/* CW Hack 24265 */
 +extern void __restore_mxcsr_thunk(void);
 +__ASM_GLOBAL_FUNC( __restore_mxcsr_thunk,
@@ -14,15 +16,17 @@ index 82c9821a949..1d0a1461fb2 100644
 +                   "ldmxcsr 0x33c(%rcx)\n\t"  /* amd64_thread_data()->mxcsr */
 +                   "popq %rcx\n\t"
 +                   "jmp " __ASM_LOCAL_LABEL("__wine_syscall_dispatcher_prolog_end") );
++#endif
 +
  /**********************************************************************
   *		sigsys_handler
   *
-@@ -2705,6 +2714,27 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2853,6 +2865,30 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
          frame->restore_flags |= CONTEXT_CONTROL;
      }
      RIP_sig(ucontext) = (ULONG64)__wine_syscall_dispatcher_prolog_end_ptr;
 +
++#ifdef __APPLE__
 +    /* CW Hack 24265 */
 +    if (is_rosetta2 && FPU_sig(ucontext))
 +    {
@@ -43,6 +47,8 @@ index 82c9821a949..1d0a1461fb2 100644
 +            RIP_sig(ucontext) = (ULONG64)__restore_mxcsr_thunk;
 +        }
 +    }
++#endif
++
  }
  #endif
  

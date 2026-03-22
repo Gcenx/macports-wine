@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  6651bccee8c3ffccbb544e800dc9285aed46161d \
-    sha256  8dc461d1197b3cea54282bbe7bb45364f5f9aade4ca93fa8ad9d0948c19e0f41 \
-    size    54054155
+    rmd160  1a9f9cbb31a0d779ddfb8097d882b68adba9978b \
+    sha256  867c53d68e440d025ea7528f2167d7e16838ee3e552fc8c773e21c2821505e3f \
+    size    70795636
 
 depends_build \
     port:bison \
@@ -167,9 +167,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  2a1f9e94ca79bc28ff7420da321689f89d1e9209 \
-        sha256  671f87a8b8bfa002dd020cc2e0faa8112961975a428483ea1ff3b1403d81da4e \
-        size    9150894
+        rmd160  4b74f6335aed8dfd1d310967e0f2ec3d65d03b7f \
+        sha256  1b3772b9ef0b736bc0d900f2a24d62674a8b9b4d7ad38e67cfac08dc8b68d85a \
+        size    9194266
 
     depends_patch-append    port:autoconf
 
