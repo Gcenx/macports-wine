@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        mstorsjo llvm-mingw 20260224
+github.setup        mstorsjo llvm-mingw 20260311
 github.tarball_from releases
 platforms           {darwin any >= 15}
 categories          cross
@@ -17,9 +17,9 @@ long_description    ${description}
 distname            ${github.project}-${version}-ucrt-macos-universal
 use_xz              yes
 
-checksums           sha256  9dec187ce9bcab6823b9a3a40845e7c0f7149790289fde4015f902e4c2cde7b2 \
-                    rmd160  af60a8edc9e49d67a53ba82b742fd8fe14ae30d2 \
-                    size    121787540
+checksums           sha256  42715d845b8f92941b1226d5d648c7de82dd79d67613209fea8397cf78d955a0 \
+                    rmd160  37222c09863512eb12bf04c840fcee6949a316a7 \
+                    size    121902388
 
 use_configure       no
 build {}
