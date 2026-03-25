@@ -3,7 +3,7 @@
 PortSystem              1.0
 
 name                    mingw-w64-pkgconfig
-version                 0.0.1
+version                 0.0.2
 categories              cross
 maintainers             {@gcenx}
 
@@ -44,7 +44,7 @@ subport x86_64-w64-mingw32-pkgconfig {
 distfiles
 patchfiles
 use_configure           no
-depends_run             port:pkgconfig
+depends_run             path:bin/pkg-config:pkgconfig
 
 build {}
 
