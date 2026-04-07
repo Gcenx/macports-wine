@@ -1,0 +1,388 @@
+diff --git a/dlls/win32u/dce.c b/dlls/win32u/dce.c
+index cf641c4ec2b..c217e7d27ac 100644
+--- a/dlls/win32u/dce.c
++++ b/dlls/win32u/dce.c
+@@ -726,6 +726,212 @@ void window_surface_set_shape( struct window_surface *surface, HRGN shape_region
+     window_surface_flush( surface );
+ }
+ 
++/* CW HACK 23950 - START */
++
++struct shm_window_surface
++{
++    struct window_surface header;
++    HANDLE      section;
++    HWND        parent;
++    BITMAPINFO  info;
++};
++
++static struct shm_window_surface *get_shm_surface( struct window_surface *surface )
++{
++    return CONTAINING_RECORD(surface, struct shm_window_surface, header);
++}
++
++static void shm_surface_set_clip( struct window_surface *window_surface, const RECT *rects, UINT count )
++{
++    struct shm_window_surface *surface = get_shm_surface( window_surface );
++    FIXME( "(%p %p)\n", surface, rects );
++}
++
++static BOOL shm_surface_flush( struct window_surface *window_surface, const RECT *rect, const RECT *dirty,
++                               const BITMAPINFO *color_info, const void *color_bits, BOOL shape_changed,
++                               const BITMAPINFO *shape_info, const void *shape_bits )
++{
++    struct shm_window_surface *surface = get_shm_surface( window_surface );
++    struct flush_shm_surface_params params;
++
++    TRACE("%p\n", surface);
++
++    params.section = HandleToLong( surface->section );
++    params.hwnd = HandleToLong( surface->header.hwnd );
++    params.info = surface->info;
++    params.bounds = *dirty;
++
++    return send_message_timeout( surface->parent, WM_WINE_FLUSHSHMSURFACE, 0, (LPARAM)&params,
++                                 SMTO_ABORTIFHUNG | SMTO_BLOCK, 500, FALSE );
++}
++
++static void shm_surface_destroy( struct window_surface *window_surface )
++{
++    struct shm_window_surface *surface = get_shm_surface( window_surface );
++    OBJECT_ATTRIBUTES attr = { .Length = sizeof(OBJECT_ATTRIBUTES) };
++    HANDLE parent_process;
++    unsigned int status;
++    CLIENT_ID cid;
++    HANDLE h2;
++    DWORD pid;
++
++    TRACE( "freeing %p\n", surface );
++    if (surface->section)
++    {
++        get_window_thread( surface->parent, &pid );
++        cid.UniqueProcess = ULongToHandle(pid);
++        cid.UniqueThread  = 0;
++        status = NtOpenProcess( &parent_process, PROCESS_DUP_HANDLE, &attr, &cid );
++        if (status)
++        {
++            ERR( "NtOpenProcess failed: %x\n", status );
++        }
++        else
++        {
++            status = NtDuplicateObject( parent_process, surface->section, GetCurrentProcess(), &h2,
++                                        0, FALSE, DUPLICATE_CLOSE_SOURCE );
++            if (status)
++                ERR( "NtDuplicateObject failed: %x\n", status );
++            else
++                NtClose(h2);
++
++            NtClose(parent_process);
++        }
++    }
++}
++
++static const struct window_surface_funcs shm_surface_funcs =
++{
++    shm_surface_set_clip,
++    shm_surface_flush,
++    shm_surface_destroy,
++};
++
++struct window_surface *create_shm_surface( HWND window, HWND parent, const RECT *visible_rect,
++                                           struct window_surface *old_surface )
++{
++    OBJECT_ATTRIBUTES attr = { .Length = sizeof(OBJECT_ATTRIBUTES) };
++    struct shm_window_surface *surface;
++    LARGE_INTEGER section_size;
++    HANDLE parent_process;
++    CLIENT_ID cid;
++    BITMAPINFO info;
++    HANDLE mapping;
++    unsigned int status;
++    HBITMAP bitmap;
++    DWORD pid;
++    RECT r;
++
++    TRACE( "hwnd %p parent %p\n", window, parent );
++
++    r = *visible_rect;
++    OffsetRect( &r, -r.left, -r.top );
++    if (IsRectEmpty( &r )) return NULL;
++
++    if (old_surface && old_surface->funcs == &shm_surface_funcs)
++    {
++        surface = get_shm_surface( old_surface );
++        if (EqualRect( &surface->header.rect, &r ))
++        {
++            TRACE( "reusing surface %p\n", surface );
++            window_surface_add_ref( old_surface );
++            return old_surface;
++        }
++    }
++
++    info.bmiHeader.biSize        = sizeof(info.bmiHeader);
++    info.bmiHeader.biWidth       = r.right;
++    info.bmiHeader.biHeight      = -r.bottom;
++    info.bmiHeader.biPlanes      = 1;
++    info.bmiHeader.biBitCount    = 32;
++    info.bmiHeader.biSizeImage   = get_dib_image_size( &info );
++    info.bmiHeader.biCompression = BI_RGB;
++    info.bmiHeader.biClrUsed     = 0;
++
++    section_size.QuadPart = info.bmiHeader.biSizeImage;
++    status = NtCreateSection( &mapping,
++                              GENERIC_READ | SECTION_MAP_READ | SECTION_MAP_WRITE,
++                              NULL, &section_size, PAGE_READWRITE, SEC_COMMIT, 0 );
++    if (status)
++    {
++        ERR( "NtCreateSection failed: %x\n", status );
++        return NULL;
++    }
++
++    if (!(bitmap = NtGdiCreateDIBSection( 0, mapping, 0, &info, DIB_RGB_COLORS, 0, 0, 0, NULL )))
++    {
++        ERR( "NtGdiCreateDIBSection failed: %x\n", status );
++        NtClose( mapping );
++        return NULL;
++    }
++
++    surface = (struct shm_window_surface *)window_surface_create( sizeof(*surface), &shm_surface_funcs, window, &r, &info, bitmap );
++    surface->info = info;
++
++    TRACE( "crating surface %p for visible_rect %s of window %p\n", surface,
++           wine_dbgstr_rect(visible_rect), window );
++
++    surface->parent = parent;
++
++    get_window_thread( parent, &pid );
++    cid.UniqueProcess = ULongToHandle(pid);
++    cid.UniqueThread  = 0;
++    status = NtOpenProcess( &parent_process, PROCESS_DUP_HANDLE, &attr, &cid );
++    if (status)
++    {
++        ERR( "NtDuplicateObject failed: %x\n", status );
++        window_surface_release( &surface->header );
++        NtClose( mapping );
++        return NULL;
++    }
++
++    status = NtDuplicateObject( GetCurrentProcess(), mapping, parent_process,
++                                &surface->section, FILE_MAP_READ, FALSE, 0 );
++    NtClose( parent_process );
++    NtClose( mapping );
++    if (status)
++    {
++        ERR( "NtDuplicateObject failed: %x\n", status );
++        window_surface_release( &surface->header );
++        return NULL;
++    }
++
++    return &surface->header;
++}
++
++void process_surface_message( struct flush_shm_surface_params *params )
++{
++    HANDLE mapping = LongToHandle( params->section );
++    HWND hwnd = LongToHandle( params->hwnd );
++    SIZE_T view_size = 0;
++    unsigned int height;
++    unsigned int status;
++    void *bits = NULL;
++    HDC hdc;
++
++    TRACE( "Flushing %p window surface %s\n", hwnd, wine_dbgstr_rect( &params->bounds ));
++
++    status = NtMapViewOfSection( mapping, GetCurrentProcess(), (void**)&bits,
++                                 0, 0, NULL, &view_size, ViewShare, 0, PAGE_READONLY );
++    if (!bits)
++    {
++        ERR( "NtMapViewOfSection failed: %x\n", status );
++        return;
++    }
++    height = abs( params->info.bmiHeader.biHeight );
++
++    hdc = NtUserGetDCEx( hwnd, NULL, DCX_CLIPSIBLINGS );
++    NtGdiSetDIBitsToDeviceInternal( hdc, params->bounds.left, params->bounds.top,
++                                    params->bounds.right - params->bounds.left, params->bounds.bottom - params->bounds.top,
++                                    params->bounds.left, height - params->bounds.bottom, 0, height,
++                                    bits, &params->info, DIB_RGB_COLORS, 0, 0, FALSE, NULL);
++    NtUserReleaseDC( hwnd, hdc );
++    NtUnmapViewOfSection( GetCurrentProcess(), bits );
++}
++
++/* CW HACK 23950 - END */
++
++
+ /*******************************************************************
+  *           register_window_surface
+  *
+diff --git a/dlls/win32u/message.c b/dlls/win32u/message.c
+index fe0cd2a61fe..8b9c929b2ae 100644
+--- a/dlls/win32u/message.c
++++ b/dlls/win32u/message.c
+@@ -916,6 +916,9 @@ static BOOL unpack_message( HWND hwnd, UINT message, WPARAM *wparam, LPARAM *lpa
+         memcpy( &ps->hook, &h_extra, sizeof(h_extra) );
+         break;
+     }
++    case WM_WINE_FLUSHSHMSURFACE: /* CW HACK 23950 */
++        minsize = sizeof(struct flush_shm_surface_params);
++        break;
+     case CB_GETCOMBOBOXINFO:
+     {
+         COMBOBOXINFO cbi = { sizeof(COMBOBOXINFO) };
+@@ -1285,6 +1288,9 @@ static size_t pack_message( HWND hwnd, UINT message, WPARAM wparam, LPARAM lpara
+         push_data( data, (LPVOID)h_extra->lparam, sizeof(MSLLHOOKSTRUCT) );
+         return 0;
+     }
++    case WM_WINE_FLUSHSHMSURFACE: /* CW HACK 23950 */
++        push_data( data, (struct flush_shm_surface_params *)lparam, sizeof(struct flush_shm_surface_params) );
++        return 0;
+     case WM_NCPAINT:
+         if (wparam <= 1) return 0;
+         FIXME( "WM_NCPAINT hdc packing not supported yet\n" );
+@@ -2264,6 +2270,9 @@ static LRESULT handle_internal_message( HWND hwnd, UINT msg, WPARAM wparam, LPAR
+         info.dwHoverTime = lparam;
+         return NtUserTrackMouseEvent( &info );
+     }
++    case WM_WINE_FLUSHSHMSURFACE: /* CW HACK 23950 */
++        process_surface_message( (struct flush_shm_surface_params *)lparam );
++        return 1;
+     default:
+         if (msg >= WM_WINE_FIRST_DRIVER_MSG && msg <= WM_WINE_LAST_DRIVER_MSG)
+             return user_driver->pWindowMessage( hwnd, msg, wparam, lparam );
+diff --git a/dlls/win32u/win32u_private.h b/dlls/win32u/win32u_private.h
+index cab58dfd499..abbc8136144 100644
+--- a/dlls/win32u/win32u_private.h
++++ b/dlls/win32u/win32u_private.h
+@@ -54,6 +54,9 @@ extern void move_window_bits_surface( HWND hwnd, const RECT *window_rect, struct
+                                       const RECT *old_visible_rect, const RECT *valid_rects );
+ extern void register_window_surface( struct window_surface *old,
+                                      struct window_surface *new );
++extern struct window_surface *create_shm_surface( HWND hwnd, HWND parent, const RECT *visible_rect,
++                                                  struct window_surface *old_surface );
++extern void process_surface_message( struct flush_shm_surface_params *params );
+ 
+ extern void window_surface_lock( struct window_surface *surface );
+ extern void window_surface_unlock( struct window_surface *surface );
+@@ -313,7 +316,6 @@ extern HWND get_shell_window(void);
+ extern HWND get_progman_window(void);
+ extern HWND get_taskman_window(void);
+ extern BOOL is_client_surface_window( struct client_surface *surface, HWND hwnd );
+-extern void add_window_client_surface( HWND hwnd, struct client_surface *surface );
+ extern HICON get_window_icon_info( HWND hwnd, UINT type, HICON icon, ICONINFO *ret );
+ extern void init_startup_info(void);
+ 
+diff --git a/dlls/win32u/window.c b/dlls/win32u/window.c
+index bcf25bf65ab..280fa2e81f6 100644
+--- a/dlls/win32u/window.c
++++ b/dlls/win32u/window.c
+@@ -2249,13 +2249,27 @@ static BOOL apply_window_pos( HWND hwnd, HWND insert_after, UINT swp_flags, stru
+     WND *win;
+     HWND owner_hint, surface_win = 0, toplevel;
+     UINT raw_dpi, monitor_dpi, dpi = get_thread_dpi();
+-    BOOL ret, is_layered, is_child, need_icons = FALSE;
++    BOOL ret, is_layered, is_child, need_icons = FALSE, dummy_shm_surface = FALSE;
+     struct window_rects old_rects;
+     RECT extra_rects[3];
+     struct window_surface *old_surface;
+     HICON icon, icon_small;
+     ICONINFO ii, ii_small;
+ 
++    /* CW HACK 23950: provide a default shm surface for windows with parents in other process */
++    HWND parent = NtUserGetAncestor( hwnd, GA_PARENT );
++    if (!(swp_flags & SWP_HIDEWINDOW))
++    {
++        win = get_win_ptr( parent );
++        if (win == OBJ_OTHER_PROCESS)
++        {
++            new_surface = &dummy_surface;
++            window_surface_add_ref( new_surface );
++            dummy_shm_surface = TRUE;
++        }
++        else if (win && win != WND_DESKTOP) release_win_ptr( win );
++    }
++
+     toplevel = NtUserGetAncestor( hwnd, GA_ROOT );
+     is_layered = new_surface && new_surface->alpha_mask;
+     is_child = toplevel && toplevel != hwnd;
+@@ -2268,6 +2282,14 @@ static BOOL apply_window_pos( HWND hwnd, HWND insert_after, UINT swp_flags, stru
+ 
+     if (!(win = get_win_ptr( hwnd )) || win == WND_DESKTOP || win == WND_OTHER_PROCESS) return FALSE;
+     old_surface = win->surface;
++
++    /* CW HACK 23950 */
++    if (dummy_shm_surface && new_surface == &dummy_surface)
++    {
++        window_surface_release( new_surface );
++        new_surface = create_shm_surface( hwnd, parent, &new_rects->visible, old_surface );
++    }
++
+     if (old_surface != new_surface) swp_flags |= SWP_FRAMECHANGED;  /* force refreshing non-client area */
+ 
+     if (new_surface == &dummy_surface) swp_flags |= SWP_NOREDRAW;
+diff --git a/dlls/winemac.drv/d3dmetal.c b/dlls/winemac.drv/d3dmetal.c
+index 954b6a3cb1b..318ba07a8de 100644
+--- a/dlls/winemac.drv/d3dmetal.c
++++ b/dlls/winemac.drv/d3dmetal.c
+@@ -133,6 +133,7 @@ static struct d3dmetal_macdrv_win_data *my_get_win_data(HWND hwnd)
+     d3dm_data->client_cocoa_view = client_surface->cocoa_view;
+     d3dm_data->padding[0] = data;
+ 
++    add_window_client_surface( hwnd, client_surface ); /* CW HACK 23950 */
+     return d3dm_data;
+ }
+ 
+diff --git a/include/ntuser.h b/include/ntuser.h
+index 939771c9121..5868e45a658 100644
+--- a/include/ntuser.h
++++ b/include/ntuser.h
+@@ -633,6 +633,15 @@ enum associate_input_context_result
+     AICR_FAILED,
+ };
+ 
++/* CW HACK 23950 */
++struct flush_shm_surface_params
++{
++    BITMAPINFO info;
++    RECT bounds;
++    ULONG section;
++    ULONG hwnd;
++};
++
+ /* internal messages codes */
+ enum wine_internal_message
+ {
+@@ -650,6 +659,7 @@ enum wine_internal_message
+     WM_WINE_UPDATEWINDOWSTATE,
+     WM_WINE_TRACKMOUSEEVENT,
+     WM_WINE_SETPIXELFORMAT,
++    WM_WINE_FLUSHSHMSURFACE, /* CW HACK 23950 */
+     WM_WINE_FIRST_DRIVER_MSG = 0x80001000,  /* range of messages reserved for the USER driver */
+     WM_WINE_CLIPCURSOR = 0x80001ff0, /* internal driver notification messages */
+     WM_WINE_SETCURSOR,
+diff --git a/include/wine/gdi_driver.h b/include/wine/gdi_driver.h
+index f6390bce878..20538b27149 100644
+--- a/include/wine/gdi_driver.h
++++ b/include/wine/gdi_driver.h
+@@ -274,6 +274,7 @@ W32KAPI void client_surface_release( struct client_surface *surface );
+ W32KAPI void client_surface_present( struct client_surface *surface );
+ W32KAPI void client_surface_update( struct client_surface *surface );
+ W32KAPI void detach_client_surfaces( HWND hwnd );
++W32KAPI void add_window_client_surface( HWND hwnd, struct client_surface *surface ); /* CW HACK 23950 */
+ 
+ static inline const char *debugstr_client_surface( struct client_surface *surface )
+ {
+diff --git a/server/window.c b/server/window.c
+index f222b5c2a59..47d038b0de4 100644
+--- a/server/window.c
++++ b/server/window.c
+@@ -1255,7 +1255,9 @@ static void set_region_visible_rect( struct region *region, struct window *win )
+ /* get the top-level window to clip against for a given window */
+ static inline struct window *get_top_clipping_window( struct window *win )
+ {
+-    while (!(win->paint_flags & PAINT_HAS_SURFACE) && win->parent && !is_desktop_window(win->parent))
++    while ((!(win->paint_flags & PAINT_HAS_SURFACE) || !win->thread ||
++            win->thread->process != current->process) /* CW HACK 23950 */
++           && win->parent && !is_desktop_window(win->parent))
+         win = win->parent;
+     return win;
+ }

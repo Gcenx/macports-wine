@@ -1,8 +1,8 @@
 diff --git a/dlls/kernelbase/process.c b/dlls/kernelbase/process.c
-index 4bec68a0af3..8394182e7ff 100644
+index df440503117..14185ad232b 100644
 --- a/dlls/kernelbase/process.c
 +++ b/dlls/kernelbase/process.c
-@@ -502,6 +502,16 @@ done:
+@@ -503,6 +503,16 @@ done:
  
  static const WCHAR *hack_append_command_line( const WCHAR *cmd, const WCHAR *cmd_line )
  {
@@ -19,7 +19,7 @@ index 4bec68a0af3..8394182e7ff 100644
      static const struct
      {
          const WCHAR *exe_name;
-@@ -511,6 +521,7 @@ static const WCHAR *hack_append_command_line( const WCHAR *cmd, const WCHAR *cmd
+@@ -512,6 +522,7 @@ static const WCHAR *hack_append_command_line( const WCHAR *cmd, const WCHAR *cmd
      }
      options[] =
      {

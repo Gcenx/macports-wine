@@ -1,0 +1,51 @@
+diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
+index 0b26500ea1e..1c331475e36 100644
+--- a/dlls/ntdll/unix/loader.c
++++ b/dlls/ntdll/unix/loader.c
+@@ -447,8 +447,9 @@ char *get_alternate_wineloader( WORD machine )
+ }
+ 
+ 
+-static void preloader_exec( char **argv )
++static void preloader_exec( char **argv, WORD machine )
+ {
++    char *path;
+ #ifdef HAVE_WINE_PRELOADER
+     asprintf( &argv[0], "%s-preloader", argv[1] );
+ #ifdef __APPLE__
+@@ -463,7 +464,12 @@ static void preloader_exec( char **argv )
+     execv( argv[0], argv );
+     free( argv[0] );
+ #endif
+-    execv( argv[1], argv + 1 );
++    path = getenv( "ROSETTA_X87_PATH" );
++    if (path && machine == IMAGE_FILE_MACHINE_I386) {
++        argv[0] = strdup( path );
++        execv( argv[0], argv );
++    } else
++        execv( argv[1], argv + 1 );
+ }
+ 
+ /* exec the appropriate wine loader for the specified machine */
+@@ -473,10 +479,10 @@ static NTSTATUS loader_exec( char **argv, WORD machine )
+ 
+     putenv( noexec );
+ 
+-    if (((argv[1] = get_alternate_wineloader( machine )))) preloader_exec( argv );
++    //if (((argv[1] = get_alternate_wineloader( machine )))) preloader_exec( argv );
+ 
+     argv[1] = strdup( wineloader );
+-    preloader_exec( argv );
++    preloader_exec( argv, machine );
+     return STATUS_INVALID_IMAGE_FORMAT;
+ }
+ 
+@@ -2166,7 +2172,7 @@ static void reexec_loader( int argc, char *argv[], char *extra_arg )
+     }
+ 
+     /* default to 32-bit loader to support 32-bit prefixes */
+-    if (machine == IMAGE_FILE_MACHINE_AMD64) machine = IMAGE_FILE_MACHINE_I386;
++    //if (machine == IMAGE_FILE_MACHINE_AMD64) machine = IMAGE_FILE_MACHINE_I386;
+ 
+     loader_exec( new_argv, machine );
+     fatal_error( "could not exec the wine loader\n" );

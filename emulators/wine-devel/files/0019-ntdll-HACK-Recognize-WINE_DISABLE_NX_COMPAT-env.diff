@@ -1,0 +1,26 @@
+diff --git a/dlls/ntdll/loader.c b/dlls/ntdll/loader.c
+index b19bf78a456..8e638e7fd11 100644
+--- a/dlls/ntdll/loader.c
++++ b/dlls/ntdll/loader.c
+@@ -1593,11 +1593,18 @@ static WINE_MODREF *alloc_module( HMODULE hModule, const UNICODE_STRING *nt_name
+         ERR( "rtl_rb_tree_put failed.\n" );
+     /* wait until init is called for inserting into InInitializationOrderModuleList */
+ 
++    /* HACK: MEM_EXECUTE_OPTION_ENABLE calls virtual_set_force_exec, which mprotects every mapped
++     * view — brutally slow on macOS 26.x under Rosetta. Skip it if WINE_DISABLE_NX_COMPAT is set. */
+     if (!(nt->OptionalHeader.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_NX_COMPAT))
+     {
+-        ULONG flags = MEM_EXECUTE_OPTION_ENABLE;
+-        WARN( "disabling no-exec because of %s\n", debugstr_w(wm->ldr.BaseDllName.Buffer) );
+-        NtSetInformationProcess( GetCurrentProcess(), ProcessExecuteFlags, &flags, sizeof(flags) );
++        UNICODE_STRING val_str, name_str = RTL_CONSTANT_STRING( L"WINE_DISABLE_NX_COMPAT" );
++        val_str.MaximumLength = 0;
++        if (RtlQueryEnvironmentVariable_U( NULL, &name_str, &val_str ) == STATUS_VARIABLE_NOT_FOUND)
++        {
++            ULONG flags = MEM_EXECUTE_OPTION_ENABLE;
++            WARN( "disabling no-exec because of %s\n", debugstr_w(wm->ldr.BaseDllName.Buffer) );
++            NtSetInformationProcess( GetCurrentProcess(), ProcessExecuteFlags, &flags, sizeof(flags) );
++        }
+     }
+     return wm;
+ }

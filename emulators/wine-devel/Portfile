@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 11.5 wine-
+github.setup                wine-mirror wine 11.6 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  1a9f9cbb31a0d779ddfb8097d882b68adba9978b \
-    sha256  867c53d68e440d025ea7528f2167d7e16838ee3e552fc8c773e21c2821505e3f \
-    size    70795636
+    rmd160  a186df00ce1b0842f55513146cb78b559eb21735 \
+    sha256  1282f439e889ab09b71983667c8eec6736c0d633b56493fd1817d65f3d4fa41d \
+    size    70935005
 
 depends_build \
     port:bison \
@@ -68,28 +68,27 @@ patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
 
-# Rosetta2 hacks here
+# Hacks applied to Winehq macOS pacakges
 patchfiles-append \
     0001-ntdll-CW-HACK-18947.diff \
     0002-ntdll-CW-HACK-20186.diff \
     0003-wow64cpu-CW-HACK-20760.diff \
-    0005-ntdll-CW-HACK-23427.diff \
-    0006-ntdll-CW-Hack-24256.diff \
-    0007-ntdll-CW-HACK-24265.diff \
-    0008-ntdll-CW-HACK-24945.diff \
-    0009-ntdll-CW-HACK-25719.diff \
-    0010-ntdll-HACK-Winehq-Bug-56441.diff
-
-# Steam hacks here
-patchfiles-append \
-    0011-kernelbase-HACK-Add-hack_append_command_line.diff \
-    0012-kernelbase-CW-HACK-13322-17315-21883.diff
-
-# DXMT hacks here
-patchfiles-append \
-    0013-ntdll-CW-HACK-22435.diff \
-    0014-winemac-DXMT-export.diff \
-    0015-winemetal-new-stub.diff
+    0004-kernelbase-HACK-Add-hack_append_command_line.diff \
+    0005-kernelbase-CW-HACK-13322-17315-21883.diff \
+    0006-winemac-CW-HACK-22435.diff \
+    0007-ntdll-CW-HACK-22435.diff \
+    0008-ntdll-CW-HACK-23427.diff \
+    0009-win32u-CW-HACK-23950.diff \
+    0010-ntdll-CW-HACK-24256.diff \
+    0011-ntdll-CW-Hack-24265.diff \
+    0012-ntdll-CW-HACK-24711.diff \
+    0013-ntdll-CW-HACK-24945.diff \
+    0014-ntdll-CW-HACK-25719.diff \
+    0015-win32u-CW-HACK-25909.diff \
+    0016-ntdll-HACK-Winehq-Bug-56441.diff \
+    0017-winemetal-new-stub.diff \
+    0018-ntdll-HACK-Recognize-ROSETTA_X87_PATH-env.diff \
+    0019-ntdll-HACK-Recognize-WINE_DISABLE_NX_COMPAT-env.diff
 
 configure.checks.implicit_function_declaration.whitelist-append \
     __clear_cache \
@@ -167,9 +166,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  4b74f6335aed8dfd1d310967e0f2ec3d65d03b7f \
-        sha256  1b3772b9ef0b736bc0d900f2a24d62674a8b9b4d7ad38e67cfac08dc8b68d85a \
-        size    9194266
+        rmd160  2089174fa1d79ccb7ed595260594d70c31c66438 \
+        sha256  e5e4f56b10dfd5ba74848b51d19687091eeafaa338aa367bc8276c9ad2a8f5c1 \
+        size    9266638
 
     depends_patch-append    port:autoconf
 

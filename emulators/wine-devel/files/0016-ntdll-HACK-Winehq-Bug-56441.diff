@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index 1d0a1461fb2..dd27df88990 100644
+index 223e0cf1987..17d7c1300bc 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -2056,6 +2056,67 @@ static inline BOOL emulate_xgetbv( ucontext_t *sigcontext, CONTEXT *context )
+@@ -1918,6 +1918,67 @@ static inline BOOL emulate_xgetbv( ucontext_t *sigcontext, CONTEXT *context )
      TRACE_(seh)( "emulated an XGETBV instruction\n" );
      return TRUE;
  }
@@ -70,7 +70,7 @@ index 1d0a1461fb2..dd27df88990 100644
  #endif
  
  /***********************************************************************
-@@ -2407,6 +2468,8 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2404,6 +2465,8 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
          if (handle_cet_nop( ucontext, &context.c )) return;
          /* CW HACK 23427 */
          if (emulate_xgetbv( ucontext, &context.c )) return;

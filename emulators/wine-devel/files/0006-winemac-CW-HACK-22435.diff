@@ -1,0 +1,586 @@
+diff --git a/dlls/winemac.drv/Makefile.in b/dlls/winemac.drv/Makefile.in
+index 576a2fbd0c5..f4f9bb5c1fe 100644
+--- a/dlls/winemac.drv/Makefile.in
++++ b/dlls/winemac.drv/Makefile.in
+@@ -27,6 +27,8 @@ SOURCES = \
+ 	cocoa_opengl.m \
+ 	cocoa_status_item.m \
+ 	cocoa_window.m \
++	d3dmetal.c \
++	d3dmetal_objc.m \
+ 	display.c \
+ 	dllmain.c \
+ 	event.c \
+diff --git a/dlls/winemac.drv/cocoa_window.m b/dlls/winemac.drv/cocoa_window.m
+index 7d6d704436c..58f4f8c13c0 100644
+--- a/dlls/winemac.drv/cocoa_window.m
++++ b/dlls/winemac.drv/cocoa_window.m
+@@ -32,6 +32,7 @@
+ #import "cocoa_app.h"
+ #import "cocoa_event.h"
+ #import "cocoa_opengl.h"
++#import "d3dmetal_objc.h" /* CW HACK 22435 */
+ 
+ #pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
+ 
+@@ -374,6 +375,8 @@ @interface WineContentView : WineBaseView <NSTextInputClient, NSViewLayerContent
+     int backingSize[2];
+ 
+     WineMetalView *_metalView;
++
++@public void *d3dmetal_client_surface;   /* CW HACK 22435 */
+ }
+ 
+ @property (readonly, nonatomic) BOOL everHadGLContext;
+@@ -979,7 +982,7 @@ - (void) setRetinaMode:(BOOL)mode
+ 
+     - (CALayer*) makeBackingLayer
+     {
+-        CAMetalLayer *layer = [CAMetalLayer layer];
++        CAMetalLayer *layer = [WineMetalLayer layer];   /* CW HACK 22435 */
+         layer.device = _device;
+         layer.framebufferOnly = YES;
+         layer.magnificationFilter = kCAFilterNearest;
+@@ -3991,6 +3994,23 @@ void macdrv_set_view_backing_size(macdrv_view v, const int backing_size[2])
+         [view wine_setBackingSize:backing_size];
+ }
+ 
++/* CW HACK 22435 */
++void *macdrv_get_view_d3dmetal_client_surface(macdrv_view v)
++{
++    WineContentView* view = (WineContentView*)v;
++
++    if ([view isKindOfClass:[WineContentView class]])
++        return view->d3dmetal_client_surface;
++    return NULL;
++}
++void macdrv_set_view_d3dmetal_client_surface(macdrv_view v, void *client_surface)
++{
++    WineContentView* view = (WineContentView*)v;
++
++    if ([view isKindOfClass:[WineContentView class]])
++        view->d3dmetal_client_surface = client_surface;
++}
++
+ /***********************************************************************
+  *              macdrv_window_background_color
+  *
+diff --git a/dlls/winemac.drv/d3dmetal.c b/dlls/winemac.drv/d3dmetal.c
+new file mode 100644
+index 00000000000..954b6a3cb1b
+--- /dev/null
++++ b/dlls/winemac.drv/d3dmetal.c
+@@ -0,0 +1,314 @@
++/*
++ * Mac graphics driver hooks used by D3DMetal (part of the Apple Game Porting Toolkit)
++ *
++ * Copyright 2023 Brendan Shanks for CodeWeavers, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#if 0
++#pragma makedep unix
++#endif
++
++#include "config.h"
++
++#include "ntstatus.h"
++#define WIN32_NO_STATUS
++#include "macdrv.h"
++#include "shellapi.h"
++#include "wine/server.h"
++
++WINE_DEFAULT_DEBUG_CHANNEL(macdrv_d3dmtl);
++
++typedef LONG LSTATUS;
++
++struct macdrv_functions_t
++{
++    void (*macdrv_init_display_devices)(BOOL);
++    struct d3dmetal_macdrv_win_data* (*get_win_data)(HWND hwnd);
++    void (*release_win_data)(struct d3dmetal_macdrv_win_data *data);
++    macdrv_window(*macdrv_get_cocoa_window)(HWND hwnd, BOOL require_on_screen);
++    macdrv_metal_device (*macdrv_create_metal_device)(void);
++    void (*macdrv_release_metal_device)(macdrv_metal_device d);
++    macdrv_metal_view (*macdrv_view_create_metal_view)(macdrv_view v, macdrv_metal_device d);
++    macdrv_metal_layer (*macdrv_view_get_metal_layer)(macdrv_metal_view v);
++    void (*macdrv_view_release_metal_view)(macdrv_metal_view v);
++    void (*on_main_thread)(dispatch_block_t b);
++    LSTATUS(WINAPI*RegQueryValueExA)(HKEY, LPCSTR, LPDWORD, LPDWORD, BYTE*, LPDWORD);
++    LSTATUS(WINAPI*RegSetValueExA)(HKEY, LPCSTR, DWORD, DWORD, const BYTE*, DWORD);
++    LSTATUS(WINAPI*RegOpenKeyExA)(HKEY, LPCSTR, DWORD, DWORD, HKEY*);
++    LSTATUS(WINAPI*RegCreateKeyExA)(HKEY, LPCSTR, DWORD, LPSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, HKEY*, LPDWORD);
++    LSTATUS(WINAPI*RegCloseKey)(HKEY);
++    BOOL(WINAPI*EnumDisplayMonitors)(HDC,LPRECT,MONITORENUMPROC,LPARAM);
++    BOOL(WINAPI*GetMonitorInfoA)(HMONITOR,LPMONITORINFO);
++    BOOL(WINAPI*AdjustWindowRectEx)(LPRECT,DWORD,BOOL,DWORD);
++    LONG_PTR(WINAPI*GetWindowLongPtrW)(HWND,int);
++    BOOL(WINAPI*GetWindowRect)(HWND,LPRECT);
++    BOOL(WINAPI*MoveWindow)(HWND,int,int,int,int,BOOL);
++    BOOL(WINAPI*SetWindowPos)(HWND,HWND,int,int,int,int,UINT);
++    INT(WINAPI*GetSystemMetrics)(INT);
++    LONG_PTR(WINAPI*SetWindowLongPtrW)(HWND,INT,LONG_PTR);
++};
++C_ASSERT(sizeof(struct macdrv_functions_t) == 192);
++
++/* macdrv private window data expected by D3DMetal */
++struct d3dmetal_macdrv_win_data
++{
++    HWND                hwnd;                   /* hwnd that this private data belongs to */
++    macdrv_window       cocoa_window;
++    macdrv_view         cocoa_view;
++    macdrv_view         client_cocoa_view;
++    RECT                window_rect;            /* USER window rectangle relative to parent */
++    RECT                whole_rect;             /* Mac window rectangle for the whole window relative to parent */
++    RECT                client_rect;            /* client area relative to parent */
++    int                 pixel_format;           /* pixel format for GL */
++    COLORREF            color_key;              /* color key for layered window; CLR_INVALID is not color keyed */
++    HANDLE              drag_event;             /* event to signal that Cocoa-driven window dragging has ended */
++    unsigned int        on_screen : 1;          /* is window ordered in? (minimized or not) */
++    unsigned int        shaped : 1;             /* is window using a custom region shape? */
++    unsigned int        layered : 1;            /* is window layered and with valid attributes? */
++    unsigned int        ulw_layered : 1;        /* has UpdateLayeredWindow() been called for window? */
++    unsigned int        per_pixel_alpha : 1;    /* is window using per-pixel alpha? */
++    unsigned int        minimized : 1;          /* is window minimized? */
++    void *              padding[2];             /* used to be struct window_surface* surface/unminimized_surface */
++};
++
++C_ASSERT(sizeof(struct d3dmetal_macdrv_win_data) == 120);
++
++static void cf_client_surface_release(CFAllocatorRef allocator, const void *client_surface);
++
++static void my_macdrv_init_display_devices(BOOL p1)
++{
++    TRACE("macdrv_init_display_devices %d - no-op\n", p1);
++}
++
++static struct d3dmetal_macdrv_win_data *my_get_win_data(HWND hwnd)
++{
++    struct macdrv_win_data *data;
++    struct d3dmetal_macdrv_win_data *d3dm_data;
++    struct macdrv_client_surface *client_surface;
++    TRACE("get_win_data %p\n", hwnd);
++
++    /* Creating a client surface on each call to get_win_data() means it's no longer idempotent,
++     * but D3DMetal/DXMT both call it only when creating a new DXGI swapchain.
++     * They do:
++     * get_win_data() -> create_metal_device() -> create_metal_view() -> get_metal_layer() -> release_win_data()
++     */
++    client_surface = macdrv_client_surface_create(hwnd);
++
++    /* get_win_data() needs to happen after client_surface creation to avoid deadlocks */
++    data = get_win_data(hwnd);
++    if (!data)
++    {
++        client_surface_release((struct client_surface *)client_surface);
++        return NULL;
++    }
++
++    macdrv_set_view_d3dmetal_client_surface(client_surface->cocoa_view, &client_surface->client);
++
++    if (!data->d3dmetal_client_surfaces)
++    {
++        static const CFArrayCallBacks callbacks = { .release = cf_client_surface_release };
++        data->d3dmetal_client_surfaces = CFArrayCreateMutable(NULL, 0, &callbacks);
++    }
++    CFArrayAppendValue(data->d3dmetal_client_surfaces, client_surface);
++
++    d3dm_data = calloc(1, sizeof(*d3dm_data));
++
++    /* client_cocoa_view is the only variable actually used by D3DMetal (at least 3.0) and DXMT.
++     * Don't populate anything else.
++     */
++    d3dm_data->client_cocoa_view = client_surface->cocoa_view;
++    d3dm_data->padding[0] = data;
++
++    return d3dm_data;
++}
++
++static void my_release_win_data(struct d3dmetal_macdrv_win_data *data)
++{
++    TRACE("release_win_data %p\n", data);
++
++    if (!data)
++        return;
++
++    release_win_data(data->padding[0]);
++    free(data);
++}
++
++static macdrv_window my_macdrv_get_cocoa_window(HWND hwnd, BOOL require_on_screen)
++{
++    TRACE("macdrv_get_cocoa_window %p %d\n", hwnd, require_on_screen);
++    return macdrv_get_cocoa_window(hwnd, require_on_screen);
++}
++
++static macdrv_metal_device my_macdrv_create_metal_device(void)
++{
++    TRACE("macdrv_create_metal_device\n");
++    return macdrv_create_metal_device();
++}
++
++static void my_macdrv_release_metal_device(macdrv_metal_device d)
++{
++    TRACE("macdrv_release_metal_device %p\n", d);
++    macdrv_release_metal_device(d);
++}
++
++static macdrv_metal_view my_macdrv_view_create_metal_view(macdrv_view v, macdrv_metal_device d)
++{
++    TRACE("macdrv_view_create_metal_view %p %p\n", v, d);
++    return macdrv_view_create_metal_view(v, d);
++}
++
++static macdrv_metal_layer my_macdrv_view_get_metal_layer(macdrv_metal_view v)
++{
++    TRACE("macdrv_view_get_metal_layer %p\n", v);
++    return macdrv_view_get_metal_layer(v);
++}
++
++static void my_macdrv_view_release_metal_view(macdrv_metal_view v)
++{
++    TRACE("macdrv_view_release_metal_view %p\n", v);
++    return macdrv_view_release_metal_view(v);
++}
++
++static void my_OnMainThread(dispatch_block_t b)
++{
++    FIXME("OnMainThread %p - unimplemented\n", b);
++}
++
++
++static LSTATUS WINAPI my_RegQueryValueExA(HKEY p1, LPCSTR p2, LPDWORD p3, LPDWORD p4, BYTE* p5, LPDWORD p6)
++{
++    FIXME("RegQueryValueExA %p %s %p %p %p %p - unimplemented\n", p1, p2, p3, p4, p5, p6);
++    return ERROR_CALL_NOT_IMPLEMENTED;
++}
++
++static LSTATUS WINAPI my_RegSetValueExA(HKEY p1, LPCSTR p2, DWORD p3, DWORD p4, const BYTE* p5, DWORD p6)
++{
++    FIXME("RegSetValueExA %p %s(%p) %d %p %d - unimplemented\n", p1, p2, p2, p4, p5, p6);
++    return ERROR_CALL_NOT_IMPLEMENTED;
++}
++
++static LSTATUS WINAPI my_RegOpenKeyExA(HKEY p1, LPCSTR p2, DWORD p3, DWORD p4, HKEY* p5)
++{
++    FIXME("RegOpenKeyExA %p %s - unimplemented\n", p1, p2);
++    return ERROR_CALL_NOT_IMPLEMENTED;
++}
++
++static LSTATUS WINAPI my_RegCreateKeyExA(HKEY p1, LPCSTR p2, DWORD p3, LPSTR p4, DWORD p5, DWORD p6, LPSECURITY_ATTRIBUTES p7, HKEY* p8, LPDWORD p9)
++{
++    FIXME("RegCreateKeyExA %p %s - unimplemented\n", p1, p2);
++    return ERROR_CALL_NOT_IMPLEMENTED;
++}
++
++static LSTATUS WINAPI my_RegCloseKey(HKEY hkey)
++{
++    FIXME("RegCloseKey %p - unimplemented\n", hkey);
++    return ERROR_CALL_NOT_IMPLEMENTED;
++}
++
++static BOOL WINAPI my_EnumDisplayMonitors(HDC h, LPRECT p2, MONITORENUMPROC p3, LPARAM p4)
++{
++    FIXME("EnumDisplayMonitors %p %p %p %ld - unimplemented\n", h, p2, p3, p4);
++    return 0;
++}
++
++static BOOL WINAPI my_GetMonitorInfoA(HMONITOR monitor, LPMONITORINFO info)
++{
++    FIXME("GetMonitorInfoA %p %p - unimplemented\n", monitor, info);
++    return 0;
++}
++
++static BOOL WINAPI my_AdjustWindowRectEx(LPRECT p1,DWORD p2,BOOL p3,DWORD p4)
++{
++    FIXME("AdjustWindowRectEx %p %u %d %u - unimplemented\n", p1, p2, p3, p4);
++    return 0;
++}
++
++static LONG_PTR WINAPI my_GetWindowLongPtrW(HWND h,int nIndex)
++{
++    FIXME("GetWindowLongPtrW %p - unimplemented\n", h);
++    return 0;
++}
++
++static BOOL WINAPI my_GetWindowRect(HWND h, LPRECT rect)
++{
++    FIXME("GetWindowRect %p %p - unimplemented\n", h, rect);
++    return 0;
++}
++
++static BOOL WINAPI my_MoveWindow(HWND h, int X,int Y,int nWidth,int nHeight,BOOL bRepaint)
++{
++    FIXME("MoveWindow %p %d %d %d %d %d - unimplemented\n", h, X, Y, nWidth, nHeight, bRepaint);
++    return 0;
++}
++
++static BOOL WINAPI my_SetWindowPos(HWND h,HWND h2,int x,int y,int cx,int cy,UINT flags)
++{
++    FIXME("SetWindowPos %p %p %d %d %d %d %u - unimplemented\n", h, h2, x, y, cx, cy, flags);
++    return 0;
++}
++
++static INT WINAPI my_GetSystemMetrics(INT index)
++{
++    FIXME("GetSystemMetrics %d - unimplemented\n", index);
++    return 0;
++}
++
++static LONG_PTR WINAPI my_SetWindowLongPtrW(HWND hwnd, INT offset, LONG_PTR newval)
++{
++    FIXME("SetWindowLongPtrW %p %d %ld - unimplemented\n", hwnd, offset, newval);
++    return 0;
++}
++
++DECLSPEC_EXPORT struct macdrv_functions_t macdrv_functions =
++{
++    &my_macdrv_init_display_devices,
++    &my_get_win_data,
++    &my_release_win_data,
++    &my_macdrv_get_cocoa_window,
++    &my_macdrv_create_metal_device,
++    &my_macdrv_release_metal_device,
++    &my_macdrv_view_create_metal_view,
++    &my_macdrv_view_get_metal_layer,
++    &my_macdrv_view_release_metal_view,
++    &my_OnMainThread,
++    &my_RegQueryValueExA,
++    &my_RegSetValueExA,
++    &my_RegOpenKeyExA,
++    &my_RegCreateKeyExA,
++    &my_RegCloseKey,
++    &my_EnumDisplayMonitors,
++    &my_GetMonitorInfoA,
++    &my_AdjustWindowRectEx,
++    &my_GetWindowLongPtrW,
++    &my_GetWindowRect,
++    &my_MoveWindow,
++    &my_SetWindowPos,
++    &my_GetSystemMetrics,
++    &my_SetWindowLongPtrW,
++};
++
++void macdrv_client_surface_presented(const macdrv_event *event)
++{
++    TRACE("client_surface %p\n", event->client_surface_presented.client_surface);
++
++    client_surface_present(event->client_surface_presented.client_surface);
++}
++
++static void cf_client_surface_release(CFAllocatorRef allocator, const void *client_surface)
++{
++    client_surface_release((struct client_surface *)client_surface);
++}
+diff --git a/dlls/winemac.drv/d3dmetal_objc.h b/dlls/winemac.drv/d3dmetal_objc.h
+new file mode 100644
+index 00000000000..87e281eff45
+--- /dev/null
++++ b/dlls/winemac.drv/d3dmetal_objc.h
+@@ -0,0 +1,25 @@
++/*
++ * Mac graphics driver hooks used by D3DMetal (part of the Apple Game Porting Toolkit)
++ *
++ * Copyright 2025 Brendan Shanks for CodeWeavers, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#import <QuartzCore/QuartzCore.h>
++
++@interface WineMetalLayer : CAMetalLayer
++
++@end
+diff --git a/dlls/winemac.drv/d3dmetal_objc.m b/dlls/winemac.drv/d3dmetal_objc.m
+new file mode 100644
+index 00000000000..a728ae1ab7b
+--- /dev/null
++++ b/dlls/winemac.drv/d3dmetal_objc.m
+@@ -0,0 +1,71 @@
++/*
++ * Mac graphics driver hooks used by D3DMetal (part of the Apple Game Porting Toolkit)
++ *
++ * Copyright 2025 Brendan Shanks for CodeWeavers, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#include "config.h"
++
++#import <AppKit/AppKit.h>
++#import <QuartzCore/QuartzCore.h>
++#import <objc/runtime.h>
++
++#include "macdrv_cocoa.h"
++#import "cocoa_app.h"
++#import "cocoa_event.h"
++#import "cocoa_window.h"
++#import "d3dmetal_objc.h"
++
++#pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
++
++
++@implementation WineMetalLayer
++
++    /* Extend [CAMetalLayer nextDrawable] so client_surface_present() can be
++     * called for the corresponding client_surface.
++     */
++    - (id<CAMetalDrawable>) nextDrawable
++    {
++        /* CAMetalLayer's delegate is the WineMetalView that contains it (seems like that's always true
++         * for an NSView backing layer).
++         * That WineMetalView's parent is the client_surface->cocoa_view WineContentView, it has the
++         * client_surface set on it as an associated object.
++         */
++        if ([self.delegate isKindOfClass:NSClassFromString(@"WineMetalView")])
++        {
++            NSView* view = (NSView *)self.delegate;
++            if ([view.superview isKindOfClass:NSClassFromString(@"WineContentView")] &&
++                [view.window    isKindOfClass:NSClassFromString(@"WineWindow")])
++            {
++                void *client_surface = macdrv_get_view_d3dmetal_client_surface((macdrv_view)view.superview);
++                if (client_surface)
++                {
++                    macdrv_event* event;
++                    event = macdrv_create_event(CLIENT_SURFACE_PRESENTED, (WineWindow*)view.window);
++                    event->client_surface_presented.client_surface = client_surface;
++
++                    WineEventQueue *queue = [(WineWindow*)view.window queue];
++                    [queue postEvent:event];
++                    macdrv_release_event(event);
++                }
++            }
++        }
++
++        return [super nextDrawable];
++    }
++
++@end
+diff --git a/dlls/winemac.drv/event.c b/dlls/winemac.drv/event.c
+index c7e5fb1c7a8..24062240ec5 100644
+--- a/dlls/winemac.drv/event.c
++++ b/dlls/winemac.drv/event.c
+@@ -45,6 +45,7 @@ static const char *dbgstr_event(int type)
+         "APP_ACTIVATED",
+         "APP_DEACTIVATED",
+         "APP_QUIT_REQUESTED",
++        "CLIENT_SURFACE_PRESENTED", /* CW HACK 22435 */
+         "DISPLAYS_CHANGED",
+         "HOTKEY_PRESS",
+         "IM_SET_TEXT",
+@@ -119,6 +120,7 @@ static macdrv_event_mask get_event_mask(DWORD mask)
+         event_mask |= event_mask_for_type(APP_ACTIVATED);
+         event_mask |= event_mask_for_type(APP_DEACTIVATED);
+         event_mask |= event_mask_for_type(APP_QUIT_REQUESTED);
++        event_mask |= event_mask_for_type(CLIENT_SURFACE_PRESENTED); /* CW HACK 22435 */
+         event_mask |= event_mask_for_type(DISPLAYS_CHANGED);
+         event_mask |= event_mask_for_type(IM_SET_TEXT);
+         event_mask |= event_mask_for_type(LOST_PASTEBOARD_OWNERSHIP);
+@@ -393,6 +395,9 @@ void macdrv_handle_event(const macdrv_event *event)
+     case APP_QUIT_REQUESTED:
+         macdrv_app_quit_requested(event);
+         break;
++    case CLIENT_SURFACE_PRESENTED:    /* CW HACK 22435 */
++	macdrv_client_surface_presented(event);
++	break;
+     case DISPLAYS_CHANGED:
+         macdrv_displays_changed(event);
+         break;
+diff --git a/dlls/winemac.drv/macdrv.h b/dlls/winemac.drv/macdrv.h
+index 0ef7a706d91..2b8f472aa84 100644
+--- a/dlls/winemac.drv/macdrv.h
++++ b/dlls/winemac.drv/macdrv.h
+@@ -188,6 +188,9 @@ extern BOOL macdrv_SystemParametersInfo(UINT action, UINT int_param, void *ptr_p
+     unsigned int        per_pixel_alpha : 1;    /* is window using per-pixel alpha? */
+     unsigned int        minimized : 1;          /* is window minimized? */
+     unsigned int        fullscreen : 1;         /* is the window visible rect fullscreen? (unrelated to native AppKit/Cocoa fullscreen) */
++
++    /* CW HACK 22435 */
++    CFMutableArrayRef   d3dmetal_client_surfaces;
+ };
+ 
+ struct macdrv_client_surface
+diff --git a/dlls/winemac.drv/macdrv_cocoa.h b/dlls/winemac.drv/macdrv_cocoa.h
+index 6a6b6975f55..2cfe88584e8 100644
+--- a/dlls/winemac.drv/macdrv_cocoa.h
++++ b/dlls/winemac.drv/macdrv_cocoa.h
+@@ -272,6 +272,7 @@ static inline CGPoint cgpoint_win_from_mac(CGPoint point)
+     APP_ACTIVATED,
+     APP_DEACTIVATED,
+     APP_QUIT_REQUESTED,
++    CLIENT_SURFACE_PRESENTED, /* CW HACK 22435 */
+     DISPLAYS_CHANGED,
+     HOTKEY_PRESS,
+     IM_SET_TEXT,
+@@ -323,6 +324,10 @@ static inline CGPoint cgpoint_win_from_mac(CGPoint point)
+         struct {
+             int reason;
+         }                                           app_quit_requested;
++        /* CW HACK 22435 */
++        struct {
++            void           *client_surface;
++        }                                           client_surface_presented;
+         struct {
+             bool activating;
+         }                                           displays_changed;
+@@ -573,4 +578,9 @@ extern void macdrv_get_input_source_info(CFDataRef* uchr,CGEventSourceKeyboardTy
+ extern CGRect ime_composition_rect;
+ extern void macdrv_clear_ime_text(void);
+ 
++/* CW HACK 22435 */
++extern void macdrv_client_surface_presented(const macdrv_event *event);
++extern void *macdrv_get_view_d3dmetal_client_surface(macdrv_view v);
++void macdrv_set_view_d3dmetal_client_surface(macdrv_view v, void *client_surface);
++
+ #endif  /* __WINE_MACDRV_COCOA_H */
+diff --git a/dlls/winemac.drv/window.c b/dlls/winemac.drv/window.c
+index 5236cda0baa..de50bfe1c89 100644
+--- a/dlls/winemac.drv/window.c
++++ b/dlls/winemac.drv/window.c
+@@ -1250,6 +1250,9 @@ void macdrv_DestroyWindow(HWND hwnd)
+ 
+     destroy_cocoa_window(data);
+ 
++    /* CW HACK 22435 */
++    if (data->d3dmetal_client_surfaces) CFRelease(data->d3dmetal_client_surfaces);
++
+     CFDictionaryRemoveValue(win_datas, hwnd);
+     release_win_data(data);
+     free(data);

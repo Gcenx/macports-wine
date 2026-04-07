@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index d298afe05de..82c9821a949 100644
+index 91f6038499a7..5f7dcbc7f68b 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -89,6 +89,10 @@ WINE_DECLARE_DEBUG_CHANNEL(seh);
+@@ -90,6 +90,10 @@ WINE_DECLARE_DEBUG_CHANNEL(seh);
  #include "dwarf.h"
  
  #ifdef __APPLE__
@@ -13,7 +13,7 @@ index d298afe05de..82c9821a949 100644
  /* CW Hack 23427 */
  static BOOL sequoia_or_later = FALSE;
  #endif
-@@ -1013,6 +1017,13 @@ static void save_context( struct xcontext *xcontext, const ucontext_t *sigcontex
+@@ -885,6 +889,13 @@ static void save_context( struct xcontext *xcontext, const ucontext_t *sigcontex
  
          context->ContextFlags |= CONTEXT_FLOATING_POINT;
          memcpy( &context->FltSave, FPU_sig(sigcontext), sizeof(context->FltSave) );
@@ -27,7 +27,7 @@ index d298afe05de..82c9821a949 100644
          context->MxCsr = context->FltSave.MxCsr;
          if (xstate_extended_features && (xs = XState_sig(FPU_sig(sigcontext))))
          {
-@@ -2845,6 +2856,17 @@ void signal_init_process(void)
+@@ -2894,6 +2905,17 @@ void signal_init_process(void)
      signal_alloc_thread( NtCurrentTeb() );
  
  #ifdef __APPLE__

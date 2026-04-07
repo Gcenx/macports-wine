@@ -1,8 +1,8 @@
 diff --git a/configure b/configure
-index f282bb34d91..6d90a87985a 100755
+index b6a89aa3bf5..beacfb6481d 100755
 --- a/configure
 +++ b/configure
-@@ -1544,6 +1544,7 @@ enable_winegstreamer
+@@ -1577,6 +1577,7 @@ enable_winegstreamer
  enable_winehid_sys
  enable_winemac_drv
  enable_winemapi
@@ -10,7 +10,7 @@ index f282bb34d91..6d90a87985a 100755
  enable_wineoss_drv
  enable_wineps_drv
  enable_winepulse_drv
-@@ -23213,6 +23214,7 @@ wine_fn_config_makefile dlls/winegstreamer enable_winegstreamer
+@@ -24223,6 +24224,7 @@ wine_fn_config_makefile dlls/winegstreamer enable_winegstreamer
  wine_fn_config_makefile dlls/winehid.sys enable_winehid_sys
  wine_fn_config_makefile dlls/winemac.drv enable_winemac_drv
  wine_fn_config_makefile dlls/winemapi enable_winemapi
@@ -19,10 +19,10 @@ index f282bb34d91..6d90a87985a 100755
  wine_fn_config_makefile dlls/wineps.drv enable_wineps_drv
  wine_fn_config_makefile dlls/wineps16.drv16 enable_win16
 diff --git a/configure.ac b/configure.ac
-index 624e6ce6b6b..8514c579a5d 100644
+index a83c76127a5..e0d37830b9d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3358,6 +3358,7 @@ WINE_CONFIG_MAKEFILE(dlls/winegstreamer)
+@@ -3397,6 +3397,7 @@ WINE_CONFIG_MAKEFILE(dlls/winegstreamer)
  WINE_CONFIG_MAKEFILE(dlls/winehid.sys)
  WINE_CONFIG_MAKEFILE(dlls/winemac.drv)
  WINE_CONFIG_MAKEFILE(dlls/winemapi)

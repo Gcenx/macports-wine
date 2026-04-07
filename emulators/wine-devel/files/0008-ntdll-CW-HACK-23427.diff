@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index 74ae5273941..d298afe05de 100644
+index 73189df16430..91f6038499a7 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -88,6 +88,11 @@ WINE_DECLARE_DEBUG_CHANNEL(seh);
+@@ -89,6 +89,11 @@ WINE_DECLARE_DEBUG_CHANNEL(seh);
  
  #include "dwarf.h"
  
@@ -14,7 +14,7 @@ index 74ae5273941..d298afe05de 100644
  static USHORT cs32_sel;  /* selector for %cs in 32-bit mode */
  static USHORT cs64_sel;  /* selector for %cs in 64-bit mode */
  static USHORT ds64_sel;  /* selector for %ds/%es/%ss in 64-bit mode */
-@@ -2005,6 +2010,41 @@ static inline BOOL handle_cet_nop( ucontext_t *sigcontext, CONTEXT *context )
+@@ -1867,6 +1872,41 @@ static inline BOOL handle_cet_nop( ucontext_t *sigcontext, CONTEXT *context )
      }
      return FALSE;
  }
@@ -56,7 +56,7 @@ index 74ae5273941..d298afe05de 100644
  #endif
  
  /***********************************************************************
-@@ -2354,6 +2394,8 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2351,6 +2391,8 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
  #ifdef __APPLE__
          /* CW HACK 20186 */
          if (handle_cet_nop( ucontext, &context.c )) return;
@@ -65,7 +65,7 @@ index 74ae5273941..d298afe05de 100644
  #endif
          rec.ExceptionCode = EXCEPTION_ILLEGAL_INSTRUCTION;
          break;
-@@ -2802,6 +2844,12 @@ void signal_init_process(void)
+@@ -2851,6 +2893,12 @@ void signal_init_process(void)
  
      signal_alloc_thread( NtCurrentTeb() );
  

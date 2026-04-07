@@ -1,8 +1,8 @@
 diff --git a/dlls/wow64cpu/cpu.c b/dlls/wow64cpu/cpu.c
-index 4a49989ee57..7c89fc34364 100644
+index 3d73ff3b3c2..02ef80b3fc5 100644
 --- a/dlls/wow64cpu/cpu.c
 +++ b/dlls/wow64cpu/cpu.c
-@@ -40,10 +40,35 @@ struct thunk_32to64
+@@ -39,10 +39,35 @@ struct thunk_32to64
      DWORD addr;
      WORD  cs;
  };
@@ -40,7 +40,7 @@ index 4a49989ee57..7c89fc34364 100644
  };
  #pragma pack(pop)
  
-@@ -58,6 +83,19 @@ static USHORT fs32_sel;
+@@ -57,6 +82,19 @@ static USHORT fs32_sel;
  
  void **__wine_unix_call_dispatcher = NULL;
  
@@ -60,7 +60,7 @@ index 4a49989ee57..7c89fc34364 100644
  BOOL WINAPI DllMain( HINSTANCE inst, DWORD reason, void *reserved )
  {
      if (reason == DLL_PROCESS_ATTACH) LdrDisableThreadCalloutsForDll( inst );
-@@ -211,7 +249,21 @@ __ASM_GLOBAL_FUNC( syscall_32to64,
+@@ -210,7 +248,21 @@ __ASM_GLOBAL_FUNC( syscall_32to64,
                     "movl %edx,4(%rsp)\n\t"
                     "movl 0xc4(%r13),%r14d\n\t"  /* context->Esp */
                     "xchgq %r14,%rsp\n\t"
@@ -83,7 +83,7 @@ index 4a49989ee57..7c89fc34364 100644
                     ".Lsyscall_32to64_return:\n\t"
                     "movq %rsp,%r14\n\t"
                     "movl 0xa8(%r13),%edx\n\t"   /* context->Edx */
-@@ -271,7 +323,20 @@ __ASM_GLOBAL_FUNC( unix_call_32to64,
+@@ -270,7 +322,20 @@ __ASM_GLOBAL_FUNC( unix_call_32to64,
                     "movl %edx,4(%rsp)\n\t"
                     "movl 0xc4(%r13),%r14d\n\t"  /* context->Esp */
                     "xchgq %r14,%rsp\n\t"
@@ -105,7 +105,7 @@ index 4a49989ee57..7c89fc34364 100644
  
  
  /**********************************************************************
-@@ -322,6 +387,8 @@ NTSTATUS WINAPI BTCpuProcessInit(void)
+@@ -321,6 +386,8 @@ NTSTATUS WINAPI BTCpuProcessInit(void)
  
      wow64info->CpuFlags |= WOW64_CPUFLAGS_MSFT64;
  
@@ -114,7 +114,7 @@ index 4a49989ee57..7c89fc34364 100644
      LdrGetDllHandle( NULL, 0, &str, &module );
      p__wine_unix_call_dispatcher = RtlFindExportedRoutineByName( module, "__wine_unix_call_dispatcher" );
      __wine_unix_call_dispatcher = *p__wine_unix_call_dispatcher;
-@@ -336,17 +403,65 @@ NTSTATUS WINAPI BTCpuProcessInit(void)
+@@ -335,17 +402,65 @@ NTSTATUS WINAPI BTCpuProcessInit(void)
      cs32_sel = context_i386.SegCs;
      ss32_sel = context_i386.SegSs;
  

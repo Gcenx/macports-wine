@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index 94d48c0fb47..9598e6523f7 100644
+index 54b479d1191..0e2814938ae 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -4589,6 +4589,16 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4580,6 +4580,16 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
          ret = STATUS_SUCCESS;
          goto done;
      }

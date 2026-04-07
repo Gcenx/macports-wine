@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index 964ce7bcf68..94d48c0fb47 100644
+index 42700d14107..54b479d1191 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -4578,6 +4578,17 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4569,6 +4569,17 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
          WARN( "treating read fault in a readable page as a write fault, addr %p\n", addr );
          err = EXCEPTION_WRITE_FAULT;
      }
@@ -20,7 +20,7 @@ index 964ce7bcf68..94d48c0fb47 100644
  #endif
  
      if (!is_inside_signal_stack( stack ) && (vprot & VPROT_GUARD))
-@@ -4614,6 +4625,10 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
+@@ -4605,6 +4616,10 @@ NTSTATUS virtual_handle_fault( EXCEPTION_RECORD *rec, void *stack )
                  ret = STATUS_SUCCESS;
          }
      }

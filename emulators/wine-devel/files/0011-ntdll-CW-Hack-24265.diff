@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index cbe258b12a6..a4b9d8c8efa 100644
+index 5f7dcbc7f68..223e0cf1987 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -2817,6 +2817,18 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2678,6 +2678,18 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *sigcontext )
  
  
  #if defined(__APPLE__) || defined(PR_SET_SYSCALL_USER_DISPATCH)
@@ -21,7 +21,7 @@ index cbe258b12a6..a4b9d8c8efa 100644
  /**********************************************************************
   *		sigsys_handler
   *
-@@ -2853,6 +2865,30 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2714,6 +2726,30 @@ static void sigsys_handler( int signal, siginfo_t *siginfo, void *sigcontext )
          frame->restore_flags |= CONTEXT_CONTROL;
      }
      RIP_sig(ucontext) = (ULONG64)__wine_syscall_dispatcher_prolog_end_ptr;

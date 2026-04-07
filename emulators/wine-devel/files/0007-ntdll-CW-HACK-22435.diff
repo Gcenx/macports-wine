@@ -1,10 +1,8 @@
-extracted from crossover-sources-23.5.0
-
 diff --git a/dlls/ntdll/unix/loader.c b/dlls/ntdll/unix/loader.c
-index cb700dd80e8..a6222009f5a 100644
+index b66be2bb06e..0b26500ea1e 100644
 --- a/dlls/ntdll/unix/loader.c
 +++ b/dlls/ntdll/unix/loader.c
-@@ -361,13 +361,22 @@ static WORD get_alt_machine( WORD machine )
+@@ -297,13 +297,22 @@ static WORD get_alt_machine( WORD machine )
  static void set_dll_path(void)
  {
      char *p, *path = getenv( "WINEDLLPATH" );

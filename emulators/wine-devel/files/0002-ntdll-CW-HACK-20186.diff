@@ -1,8 +1,8 @@
 diff --git a/dlls/ntdll/unix/signal_x86_64.c b/dlls/ntdll/unix/signal_x86_64.c
-index 8c7c6cdc8d6..7cdf148488d 100644
+index c321b98c4ed..73189df1643 100644
 --- a/dlls/ntdll/unix/signal_x86_64.c
 +++ b/dlls/ntdll/unix/signal_x86_64.c
-@@ -1930,6 +1930,70 @@ NTSTATUS WINAPI NtCallbackReturn( void *ret_ptr, ULONG ret_len, NTSTATUS status
+@@ -1804,6 +1804,70 @@ NTSTATUS WINAPI NtCallbackReturn( void *ret_ptr, ULONG ret_len, NTSTATUS status
      user_mode_callback_return( ret_ptr, ret_len, status, NtCurrentTeb() );
  }
  
@@ -73,7 +73,7 @@ index 8c7c6cdc8d6..7cdf148488d 100644
  
  /***********************************************************************
   *           is_privileged_instr
-@@ -2275,6 +2339,10 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
+@@ -2284,6 +2348,10 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
          rec.ExceptionCode = EXCEPTION_ARRAY_BOUNDS_EXCEEDED;
          break;
      case TRAP_x86_PRIVINFLT:   /* Invalid opcode exception */
