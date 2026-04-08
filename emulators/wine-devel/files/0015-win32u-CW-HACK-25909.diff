@@ -1,12 +1,12 @@
 diff --git a/dlls/win32u/vulkan.c b/dlls/win32u/vulkan.c
-index 37b37e84d8a..de54ac8e035 100644
+index 37b37e84d8a..da6cf6cdc35 100644
 --- a/dlls/win32u/vulkan.c
 +++ b/dlls/win32u/vulkan.c
-@@ -3028,14 +3028,21 @@ static void vulkan_init_once(void)
+@@ -3028,14 +3028,19 @@ static void vulkan_init_once(void)
      VkExtensionProperties *properties = NULL;
      uint32_t count = 0;
      VkResult res;
-+    const char *libvulkan, *graphics_backend;
++    const char *libvulkan;
  
 -#ifdef SONAME_LIBVULKAN
 -    vulkan_handle = dlopen( SONAME_LIBVULKAN, RTLD_NOW );
@@ -16,9 +16,7 @@ index 37b37e84d8a..de54ac8e035 100644
 -#endif
 -    if (!vulkan_handle) return;
 +    /* CW HACK 25909: Allow specifying libvulkan */
-+    if (!(libvulkan = getenv( "CX_LIBVULKAN" )) ||
-+        !(graphics_backend = getenv( "CX_ACTIVE_GRAPHICS_BACKEND" )) ||
-+        strcmp( graphics_backend, "wined3d" ))
++    if (!(libvulkan = getenv( "CX_LIBVULKAN" )))
 +        libvulkan = SONAME_LIBVULKAN;
 +    else
 +        ERR( "Using %s\n", libvulkan );
