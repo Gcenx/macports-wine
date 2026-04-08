@@ -135,7 +135,6 @@ configure.args \
     --without-sane \
     --with-sdl \
     --without-udev \
-    --with-unwind \
     --without-usb \
     --without-v4l2 \
     --without-vulkan \
