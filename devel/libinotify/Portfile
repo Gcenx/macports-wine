@@ -1,0 +1,29 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem                  1.0
+PortGroup                   github 1.0
+PortGroup                   muniversal 1.1
+
+github.setup                libinotify-kqueue libinotify-kqueue 20240724
+github.tarball_from         archive
+# Version must use the following scheme YYYYMMDD
+version                     20240724
+name                        libinotify
+
+categories                  graphics
+maintainers                 {@gcenx}
+license                     MIT
+
+description                 Inotify shim for macOS and BSD
+long_description            {*}${description}
+
+checksums                   rmd160  fd1cd0d82b4e0f8e013a67cc27802616535709fd \
+                            sha256  120398ff95336d04f3ce7ac820e0490059625976264100dcc9af9d11e992b0ca \
+                            size    77857
+
+use_autoreconf              yes
+
+configure.checks.implicit_function_declaration.whitelist-append \
+                            pthread_barrier_init \
+                            pthread_barrier_wait \
+                            pthread_barrier_destroy

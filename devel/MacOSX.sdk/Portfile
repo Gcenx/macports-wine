@@ -1,0 +1,193 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+name                    MacOSX.sdk
+categories              devel
+platforms               {darwin >= 12}
+maintainers             {@Gcenx}
+license                 Restrictive Nomirror
+installs_libs           no
+homepage                https://developer.apple.com/macos/
+dist_subdir             MacOSX.sdk
+use_bzip2               yes
+set sdk_dir             ${prefix}/Developer/SDKs
+
+use_configure           no
+build {}
+
+subport MacOSX15.sdk {
+    github.setup        gcenx macos-sdk 15.5
+    set macos_name      {macOS Sequoia}
+    set xcode_vers      16.4
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-16_4-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  06eb1bf497d8b2923b83b97c07d9eb665b8c3578 \
+                        sha256  ed6c699c840f27bf0f3bdfb4ee83977c2baf830fa66680226b0c1ce9eae48e81 \
+                        size    75733323
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX15.5.sdk ${destroot}${sdk_dir}/MacOSX15.sdk
+    }
+}
+
+subport MacOSX14.sdk {
+    github.setup        gcenx macos-sdk 14.5
+    set macos_name      {macOS Sonoma}
+    set xcode_vers      15.4
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-15_4-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  139e70af8afdd602bbae1eddcdb7f35263e985bf \
+                        sha256  0aa945fa4f3f0e8d53c791f4468b61d35ac36dbc10753544c5d066596fb39fbc \
+                        size    79527486
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX14.5.sdk ${destroot}${sdk_dir}/MacOSX14.sdk
+    }
+}
+
+subport MacOSX13.sdk {
+    github.setup        gcenx macos-sdk 13.3
+    set macos_name      {macOS Ventura}
+    set xcode_vers      14.3
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-13_3-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  66a2ea8860bac4eda3d85f2789540b3228e7898c \
+                        sha256  e6608c69387b19840d2b38a77b2f43edbda8024c892fe4fa34d48f7447b07f8a \
+                        size    69926087
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX13.3.sdk ${destroot}${sdk_dir}/MacOSX13.sdk
+    }
+}
+
+subport MacOSX12.sdk {
+    github.setup        gcenx macos-sdk 12.3
+    set macos_name      {macOS Montery}
+    set xcode_vers      13.3
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-12_3-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  a461015180833f888df142ed184b9c09f7a0d189 \
+                        sha256  e951a52b9a1d3304f85aa93a45bbbe2237e0634efdb37d16a5bcbaaff8d4b210 \
+                        size    67238967
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX12.3.sdk ${destroot}${sdk_dir}/MacOSX12.sdk
+    }
+}
+
+subport MacOSX11.sdk {
+    github.setup        gcenx macos-sdk 11.3
+    set macos_name      {macOS Big Sur}
+    set xcode_vers      12.5
+    revision            0
+    supported_archs     arm64 x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_3-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  3868c756a2ed1d778016b7fa5d6b2950d2c246af \
+                        sha256  d6604578f4ee3090d1c3efce1e5c336ecfd7be345d046c729189d631ea3b8ec6 \
+                        size    75910500
+
+    post-build {
+        xinstall -d ${destroot}${sdk_dir}
+        ln -sf ${sdk_dir}/MacOSX11.3.sdk ${destroot}${sdk_dir}/MacOSX11.sdk
+    }
+}
+
+subport MacOSX10.15.sdk {
+    github.setup        gcenx macos-sdk 10.15
+    set macos_name      {macOS Catalina}
+    set xcode_vers      12
+    revision            0
+    supported_archs     x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-catalina-10_15-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  580ec054e9d38fe846ce597a0f775d3fc46526b5 \
+                        sha256  bb548125ebf5cf4ae6c80d226f40ad39e155564ca78bc00554a2e84074d0180e \
+                        size    41636648
+}
+
+subport MacOSX10.14.sdk {
+    github.setup        gcenx macos-sdk 10.14
+    set macos_name      {macOS Mojave}
+    set xcode_vers      10.3
+    revision            0
+    supported_archs     x86_64
+    homepage            https://developer.apple.com/documentation/macos-release-notes/macos-mojave-10_14-release-notes
+
+    distname            MacOSX${version}
+    checksums           rmd160  7684478f171e30842274fafb784b91a8e79485dd \
+                        sha256  e0a9747ae9838aeac70430c005f9757587aa055c690383d91165cf7b4a80401d \
+                        size    31704241
+}
+
+subport MacOSX10.13.sdk {
+    github.setup        gcenx macos-sdk 10.13
+    set macos_name      {macOS High Sierra}
+    set xcode_vers      9.3
+    revision            0
+    supported_archs     i386 x86_64
+    homepage            https://developer.apple.com/library/archive/releasenotes/General/RN-macOSSDK-10.13
+
+    distname            MacOSX${version}
+    checksums           rmd160  255ee173939065c9d1b7433f287163cdd00e0033 \
+                        sha256  27943fb63c35e262b2da1cb4cc60d7427702a40caf20ec15c9d773919c6e409b \
+                        size    32183283
+}
+
+# Earlier SDKs contain only binaries not .tbd stubs (rev-upgrade)
+
+pre-destroot {
+    xinstall -d ${destroot}${sdk_dir}
+}
+
+if {${subport} eq ${name}} {
+    version             15
+    revision            0
+    description         latest macOS SDK
+    long_description    This port installs a symlink to the latest macOS SDK.
+    distfiles
+    supported_archs     noarch
+    depends_run-append  port:MacOSX${version}.sdk
+    destroot {
+        ln -s MacOSX${version}.sdk ${destroot}${sdk_dir}/MacOSX.sdk
+    }
+} else {
+    github.tarball_from releases
+    set macos_version   [lindex [split ${version} -] 0]
+    set macos_build     [lindex [split ${version} -] 1]
+    set macos_major     [join [lrange [split ${macos_version} .] 0 1] .]
+
+    description         ${macos_name} v${macos_version} (${macos_build}) SDK
+    long_description    This port installs the ${macos_name} v${macos_version} (${macos_build}) SDK.
+    destroot {
+        move ${workpath}/MacOSX${version}.sdk ${destroot}${sdk_dir}
+    }
+    livecheck           none
+}
+
+if {[llength ${supported_archs}] > 1} {
+    configure.universal_archs {*}${supported_archs}
+    variant universal {}
+    default_variants +universal
+    variant_set universal
+}

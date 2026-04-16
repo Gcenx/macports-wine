@@ -1,0 +1,35 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        mstorsjo llvm-mingw 20260407
+github.tarball_from releases
+platforms           {darwin any >= 15}
+categories          cross
+supported_archs     arm64 x86_64
+license             NCSA
+maintainers         {@Gcenx}
+
+description         {An LLVM/Clang/LLD based mingw-64 toolchain}
+long_description    ${description}
+
+distname            ${github.project}-${version}-ucrt-macos-universal
+use_xz              yes
+
+checksums           sha256  801b49549ae39043d7195062eede67916b5ab46318a89e3b8209dc8f49441abb \
+                    rmd160  dba8bafc1151cc4e61299075b14500246e025820 \
+                    size    121892544
+
+use_configure       no
+build {}
+
+destroot {
+    xinstall -d     ${destroot}${prefix}/libexec/llvm-mingw
+    system -W ${workpath} "mv ${workpath}/${distname}/* ${destroot}${prefix}/libexec/llvm-mingw/"
+}
+
+if {[llength ${supported_archs}] > 1} {
+    configure.universal_archs {*}${supported_archs}
+    variant universal {}
+}

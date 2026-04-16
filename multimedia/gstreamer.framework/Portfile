@@ -1,0 +1,38 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        Sikarugir-App gstreamer 1.28.1
+github.tarball_from releases
+revision            0
+
+name                ${github.project}.framework
+categories          multimedia
+maintainers         {@Gcenx}
+description         GStreamer is a streaming media framework
+long_description    {*}${description}
+
+supported_archs     x86_64
+platforms           {darwin >= 17}
+license             LGPL-2+
+
+homepage            https://gstreamer.freedesktop.org
+dist_subdir         ${github.project}
+
+distname            ${name}-1.0-${github.version}-x86_64
+use_xz              yes
+
+checksums           rmd160  8a4f7b5c14f3ea9d019a32b3d4bc5a09db9f96e8 \
+                    sha256  26dbeba8283e5a9f0c9429d059cb96642b6aaf245e5a694da9a3799e2b7ada0a \
+                    size    165980548
+
+use_configure       no
+build {}
+
+destroot {
+    delete ${workpath}/GStreamer.framework/.gitignore
+    copy ${workpath}/GStreamer.framework ${destroot}${frameworks_dir}
+    system -W ${destroot}${frameworks_dir} \
+        "codesign --force --deep --sign - GStreamer.framework"
+}
