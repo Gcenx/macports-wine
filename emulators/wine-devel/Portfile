@@ -149,9 +149,6 @@ subport wine-staging {
 
     depends_patch-append    port:autoconf
 
-    # Battle.net hacks here
-    patchfiles-append       1001-kernelbase-CW-HACK-19610.diff
-
     # https://trac.macports.org/wiki/Python
     set py_ver              3.14
     set py_ver_nodot        [string map {. {}} ${py_ver}]
