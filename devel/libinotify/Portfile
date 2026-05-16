@@ -28,8 +28,7 @@ configure.checks.implicit_function_declaration.whitelist-append \
                             pthread_barrier_wait \
                             pthread_barrier_destroy
 
-# MacOSX26.sdk/usr/include/dirent.h:176:6: note: 'fdclosedir' has been marked as being introduced in macOS 26.4 here, but the deployment target is macOS 26.0.0
+# MacOSX26.4.sdk exposes fdclosedir but macports sets the deplyment target to macOS 26.0.0
 if {${os.major} == 25} {
-    depends_build           port:MacOSX15.sdk
-    configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX15.sdk
+    ac_cv_func_fdclosedir=no
 }
