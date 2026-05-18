@@ -30,5 +30,5 @@ configure.checks.implicit_function_declaration.whitelist-append \
 
 # MacOSX26.4.sdk exposes fdclosedir but macports sets the deplyment target to macOS 26.0.0
 if {${os.major} == 25} {
-    ac_cv_func_fdclosedir=no
+    configure.env-append    ac_cv_func_fdclosedir=no
 }
