@@ -4,7 +4,7 @@ PortSystem              1.0
 
 name                    CrossOver
 
-version                 26.1.0
+version                 26.2.0
 revision                0
 platforms               {darwin any >= 19}
 
@@ -32,9 +32,9 @@ master_sites            https://media.codeweavers.com/pub/crossover/cxmac/demo/
 distname                crossover-${version}
 use_zip                 yes
 
-checksums               rmd160  c083a3c22ce4941e5e8b48be87b8018f4224627b \
-                        sha256  99812be77501995533a9fd4553efa75a4237eac6a20c5639ff43ad46660d9256 \
-                        size    387071704
+checksums               rmd160  23f3f2365c11695f817cc5bcff09ddb288f02534 \
+                        sha256  ab39680927a0d9c313cad27fed33dd15a799be40c93bfc432bef70518af10aa4 \
+                        size    387133190
 
 variant gstreamer description "Modify ${subport} to use GStreamer.framework" {
     depends_run-append  path:Library/Frameworks/GStreamer.framework:gstreamer.framework
