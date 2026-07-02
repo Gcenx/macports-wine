@@ -6,7 +6,7 @@ PortGroup                   muniversal 1.1
 
 # Keep the wine-stable, wine-devel and wine-crossover portfiles as similar as possible.
 
-github.setup                wine-mirror wine 11.11 wine-
+github.setup                wine-mirror wine 11.12 wine-
 github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
@@ -35,9 +35,9 @@ long_description \
 
 checksums \
     ${distname}${extract.suffix} \
-    rmd160  2f4e02934e77a403cbecc9dd7e6a7167e339721d \
-    sha256  0c27553b646a14c3ada5f10b683abdcf363e069bb0a4108d5010925f9eeec62d \
-    size    74339144
+    rmd160  0d4e5553606e700479d0f2a22616026cb91b6613 \
+    sha256  f3e5d965c359c70c28618748916f2d6a4266352528cb4e3f359e408e7951c24e \
+    size    75264846
 
 depends_build \
     port:bison \
@@ -56,7 +56,7 @@ depends_lib \
 
 depends_run \
     port:mingw-w64-wine-gecko-2.47.4 \
-    port:mingw-w64-wine-mono-11.1.0
+    port:mingw-w64-wine-mono-11.2.0
 
 post-extract {
     # https://gitlab.winehq.org/wine/wine/-/commit/c7a97b5d5d56ef00a0061b75412c6e0e489fdc99
@@ -108,7 +108,7 @@ configure.args \
     --without-opengl \
     --without-oss \
     --with-pcap \
-    --with-pcsclite \
+    --without-pcsclite \
     --with-pthread \
     --without-pulse \
     --without-sane \
@@ -144,9 +144,9 @@ subport wine-staging {
 
     checksums-append \
         ${wine_staging_distfile} \
-        rmd160  8786eacfe4bfe34cba83ac2640f6cd2fb672edad \
-        sha256  4172b735642a6c39eebee1182d2ae2dbe6a42d4933b5541a8d4053ecadf292b2 \
-        size    9262020
+        rmd160  0d4e5553606e700479d0f2a22616026cb91b6613 \
+        sha256  f3e5d965c359c70c28618748916f2d6a4266352528cb4e3f359e408e7951c24e \
+        size    75264846
 
     depends_patch-append    port:autoconf
 
