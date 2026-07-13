@@ -272,4 +272,4 @@ destroot {
     file copy       ${workpath}/wine-mono-${version} ${destroot}${prefix}/share/wine/mono
 }
 
-livecheck           none
+livecheck.type      none
