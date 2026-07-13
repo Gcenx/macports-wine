@@ -108,7 +108,7 @@ configure.args \
     --without-opengl \
     --without-oss \
     --with-pcap \
-    --without-pcsclite \
+    --with-pcsclite \
     --with-pthread \
     --without-pulse \
     --without-sane \
