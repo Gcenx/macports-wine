@@ -11,11 +11,11 @@ github.tarball_from         archive
 name                        wine-devel
 conflicts                   wine-stable wine-staging wine-crossover
 revision                    0
-platforms                   {darwin > 16}
+platforms                   {darwin > 18}
 set branch                  [lindex [split ${version} .] 0].x
 license                     LGPL-2.1+
 categories                  emulators
-supported_archs             i386 x86_64
+supported_archs             x86_64
 maintainers                 {@Gcenx}
 homepage                    https://www.winehq.org
 dist_subdir                 wine
@@ -47,6 +47,7 @@ depends_build \
     path:bin/pkg-config:pkgconfig
 
 depends_lib \
+    path:lib/libMoltenVK.dylib:MoltenVK-latest \
     port:freetype \
     port:gettext-runtime \
     port:gnutls-devel \
@@ -68,13 +69,8 @@ patch.pre_args-replace -p0 -p1
 
 # Upstream bug fixes here
 
-configure.checks.implicit_function_declaration.whitelist-append \
-    __clear_cache \
-    alignof \
-    fallocate \
-    gethostbyaddr_r \
-    gethostbyname_r \
-    sched_setaffinity
+configure.checks.implicit_int no
+configure.checks.implicit_function_declaration no
 
 # wine requires the program specified in INSTALL to create intermediate
 # directories; /usr/bin/install doesn't.
@@ -83,6 +79,7 @@ configure.install \
     ${worksrcpath}/tools/install-sh
 
 configure.args.x86_64 \
+    --enable-archs=i386,x86_64 \
     --enable-win64
 
 configure.args \
@@ -116,7 +113,7 @@ configure.args \
     --without-udev \
     --without-usb \
     --without-v4l2 \
-    --without-vulkan \
+    --with-vulkan \
     --without-wayland \
     --without-x
 
@@ -194,46 +191,7 @@ if {${os.major} >= 24} {
     macosx_deployment_target    14.0
 }
 
-if {${os.major} >= 19} {
-    depends_lib-append          path:lib/libMoltenVK.dylib:MoltenVK-latest
-    configure.args.x86_64-append --enable-archs=i386,x86_64
-    configure.args-replace      --without-vulkan --with-vulkan
-    default_variants            +gstreamer
-}
-
-if {${os.major} < 19} {
-    # llvm-mingw only is compiled for arm64 & x86_64
-    depends_skip_archcheck-append llvm-mingw
-
-    # CodeWeavers only tests i386 using MacOSX10.13.sdk
-    configure.sdk_version       10.13
-    if {${configure.sdkroot} != "${developer_dir}/SDKs/MacOSX${configure.sdk_version}.sdk"} {
-        depends_build-append    port:MacOSX${configure.sdk_version}.sdk
-        configure.sdkroot       ${prefix}/Developer/SDKs/MacOSX${configure.sdk_version}.sdk
-    }
-
-    default_variants            +universal
-
-    if {${universal_possible} && [variant_isset universal]} {
-        configure.args.i386     --with-wine64=${workpath}/${worksrcdir}-x86_64
-
-        notes-append "
-            \n
-            Wine supports both 32-bit and 64-bit now. It is compatible with your\
-            existing 32-bit wine prefix, but it will now default to 64-bit when you\
-            create a new wine prefix. The architecture can be selected using the\
-            WINEARCH environment variable which can be set to either \"win32\" or\
-            \"win64\".
-            \n
-            To create a new pure 32-bit prefix, you can run:
-                \$ WINEARCH=win32 WINEPREFIX=~/.wine32 winecfg
-            \n
-            See the Wine FAQ for details: https://wiki.winehq.org/FAQ#Wineprefixes
-        "
-    } else {
-        supported_archs         i386
-    }
-}
+default_variants            +gstreamer
 
 triplet.add_build           cross
 triplet.add_host            none
