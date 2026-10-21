@@ -6,7 +6,6 @@ A MacPorts overlay that provides recent versions of wine.
 ## This repository provides
 - `CrossOver`               *(v26.3.0)*
 - `crossovertricks`         *(winetricks wrapper for CrossOver)*
-- `game-porting-toolkit`    *(v1.1)*
 - `gstreamer.framework`     *(v1.28.1)*
 - `gstreamer-runtime`       *(v1.28.1)*
 - `gstreamer-development`   *(v1.28.1)*
