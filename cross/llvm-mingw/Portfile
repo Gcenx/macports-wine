@@ -3,13 +3,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        mstorsjo llvm-mingw 20260826
+github.setup        mstorsjo llvm-mingw 20261020
 github.tarball_from releases
 platforms           {darwin any >= 15}
 categories          cross
 supported_archs     arm64 x86_64
 license             NCSA
 maintainers         {@Gcenx}
+set llvm_version    23.1.4
 
 description         {An LLVM/Clang/LLD based mingw-64 toolchain}
 long_description    ${description}
@@ -17,9 +18,7 @@ long_description    ${description}
 distname            ${github.project}-${version}-ucrt-macos-universal
 use_xz              yes
 
-checksums           sha256  48bedd161f14ae25a3646cb750b57ee3188e97e34bd3c52240c1810aa74d6a7f \
-                    rmd160  3c362248d1dce6516d4eb765c72765f18f9c9b2e \
-                    size    124220620
+checksums           sha256  e9c13e4ede38e715003ffc674d4d00a1088df8235439d1f0c16188ff0704c17e
 
 use_configure       no
 build {}
