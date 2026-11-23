@@ -79,7 +79,7 @@ env -i HOME="$HOME" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
   is present. If none is found the script writes a minimal shell launcher so the
   `.app` is still valid for Finder. For a byte-for-byte release bundle, install
   a previous release asset first so the official launcher and icon are reused.
-- The `Contents/Resources/start/` helpers (`appdb`, `winehelp`) are not
-  generated; they are version-independent and are only used by the interactive
-  launcher. The cask adds the `wine*` binaries to `PATH` directly and does not
-  depend on them.
+- The `Contents/Resources/start/bin/` helpers (``appdb``, `winehelp`) are
+  required by the casks, which link them into `bin/`. The script writes minimal
+  self-contained versions. The published assets ship the originals; drop those
+  in before packaging if you want a byte-for-byte release bundle.

@@ -82,9 +82,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 	<string>10.15</string>
 	<key>CFBundleExecutable</key>
 	<string>wine</string>
-	<key>CFBundleIconFile</key>
-	<string>winehq.icns</string>
-	<key>CFBundleIdentifier</key>
+PLISTICON	<key>CFBundleIdentifier</key>
 	<string>org.winehq.${FLAVOUR}.wine</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
@@ -117,6 +115,16 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 printf 'APPLWINE' > "$APP/Contents/PkgInfo"
+# Drop the icon key unless an icon is present, so the bundle is never dangling.
+if [ ! -f "$RES/winehq.icns" ]; then
+    python3 - "$APP/Contents/Info.plist" <<'STRIPICON'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+s = s.replace("PLISTICON", "")
+open(p, "w").write(s)
+STRIPICON
+fi
 
 # The bundle needs a Contents/MacOS/<CFBundleExecutable> launcher and an icon.
 # Reuse them from an already-installed Wine .app when one is available (they are
@@ -164,6 +172,57 @@ done
 say "copying wine runtime tree"
 cp -R "$PREFIX/lib/wine" "$RWINE/lib/wine"
 cp -R "$PREFIX/share/wine" "$RWINE/share/wine"
+
+# ---------------------------------------------------------------------------
+# 2b. launcher helpers required by the casks (binary "start/bin/appdb" etc.)
+# ---------------------------------------------------------------------------
+say "writing start/ helpers"
+mkdir -p "$RES/start/bin"
+
+cat > "$RES/start/bin/winehelp" <<'HELPER'
+#!/bin/sh
+#
+# Help screen for the interactive Wine launcher. Prints the wine version and a
+# short usage summary. Kept self-contained: it only relies on this bundle.
+
+BUNDLE_BIN="${BUNDLE_BIN:-$(cd "$(dirname "$0")/../../wine/bin" && pwd)}"
+export PATH="$BUNDLE_BIN:$PATH"
+
+if [ "$1" = "--clear" ]; then
+    clear 2>/dev/null || true
+fi
+
+echo
+echo "Wine $(wine --version 2>/dev/null | sed 's/^wine-//')"
+echo
+echo "  wine <program.exe>     run a Windows program"
+echo "  winecfg                configure the wine prefix"
+echo "  wineboot -u            update the wine prefix"
+echo "  winepath -w <path>     convert a unix path to a windows path"
+echo
+echo "Prefix: ${WINEPREFIX:-$HOME/.wine}"
+echo
+echo "Press Enter to close this window."
+[ -t 0 ] && read -r _ || true
+HELPER
+chmod +x "$RES/start/bin/winehelp"
+
+cat > "$RES/start/bin/appdb" <<'HELPER'
+#!/bin/sh
+#
+# Open the Wine AppDB page for the given program (or the front page).
+# Usage: appdb [program.exe]
+
+PROG="$1"
+if [ -n "$PROG" ]; then
+    Q=$(printf '%s' "$(basename "$PROG")" | sed 's/ /+/g')
+    URL="https://appdb.winehq.org/objectManager.php?sClass=application&sTitle=$Q"
+else
+    URL="https://appdb.winehq.org/"
+fi
+exec /usr/bin/open "$URL"
+HELPER
+chmod +x "$RES/start/bin/appdb"
 
 # ---------------------------------------------------------------------------
 # 3. third-party dylibs: transitive closure of everything wine dlopens
